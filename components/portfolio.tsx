@@ -1,9 +1,14 @@
 export function Portfolio() {
   return (
-    <section id="portfolio" className="scroll-mt-14">
-      <div className="max-w-4xl mx-auto px-6">
-        <hr className="border-gray-200 mb-6" />
-        <h2 className="text-sm font-medium mb-8">portfolio</h2>
+    <section id="portfolio" className="scroll-mt-12">
+      <div className="max-w-3xl mx-auto px-6 mb-8">
+        <div className="flex items-center gap-4">
+          <hr className="flex-1 border-[var(--color-rule)]" />
+          <h2 className="text-[11px] tracking-[0.2em] uppercase text-[var(--color-muted)]">
+            portfolio
+          </h2>
+          <hr className="flex-1 border-[var(--color-rule)]" />
+        </div>
       </div>
       <div className="w-full">
         <iframe

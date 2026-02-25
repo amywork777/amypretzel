@@ -7,21 +7,26 @@ const links = [
 
 export function LinksSection() {
   return (
-    <section id="links" className="scroll-mt-14 py-16">
-      <div className="max-w-4xl mx-auto px-6">
-        <hr className="border-gray-200 mb-6" />
-        <h2 className="text-sm font-medium mb-8">links</h2>
-        <ul className="space-y-3">
+    <section id="links" className="scroll-mt-12 py-20">
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="flex items-center gap-4 mb-10">
+          <hr className="flex-1 border-[var(--color-rule)]" />
+          <h2 className="text-[11px] tracking-[0.2em] uppercase text-[var(--color-muted)]">
+            links
+          </h2>
+          <hr className="flex-1 border-[var(--color-rule)]" />
+        </div>
+        <ul className="flex flex-col items-center gap-4">
           {links.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm hover:underline underline-offset-4 inline-flex items-center gap-1 group"
+                className="text-sm text-neutral-500 hover:text-black transition-colors duration-200 inline-flex items-center gap-1.5 group"
               >
                 {link.label}
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="inline-block translate-x-0 group-hover:translate-x-1 opacity-0 group-hover:opacity-100 transition-all duration-200 text-xs">
                   →
                 </span>
               </a>
