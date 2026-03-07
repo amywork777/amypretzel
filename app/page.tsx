@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Bubbles from "./bubbles";
 import Timeline from "./timeline";
+import ClickHearts from "./click-hearts";
 
 export default function Home() {
   return (
     <div className="bg-aero h-screen flex flex-col overflow-hidden relative">
+      <ClickHearts />
       {/* === DECORATIVE BG === */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         {/* clouds */}
@@ -100,15 +102,15 @@ export default function Home() {
 
               {/* nav */}
               <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
-                <a href="#about" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">about</a>
-                <a href="/portfolio" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">portfolio</a>
-                <a href="#links" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">links</a>
-                <a href="#connect" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">connect</a>
+                <a href="#about" className="sticker-btn btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">about</a>
+                <a href="/portfolio" className="sticker-btn btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">portfolio</a>
+                <a href="#links" className="sticker-btn btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">links</a>
+                <a href="#connect" className="sticker-btn btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">connect</a>
               </div>
 
               {/* about me */}
               <div id="about">
-                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">about me</h2>
+                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">&#x2729; about me</h2>
                 <div className="text-[13px] leading-relaxed text-[#6a5a70] space-y-2.5 mb-8">
                   <p>hi, i&apos;m amy zhou. i am an engineer and designer who loves taking ideas and turning them into real products.</p>
                   <p>right now, i&apos;m a product design engineer at <strong className="text-[#7a5a8a]">vizcom</strong>, where i&apos;m building AI tools that help designers go from idea to reality faster. think concept sketches turning into production-ready visuals in seconds.</p>
@@ -128,7 +130,7 @@ export default function Home() {
 
               {/* connect */}
               <div id="connect" className="mb-8">
-                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">connect</h2>
+                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">&#x2709; connect</h2>
                 <div className="space-y-1.5">
                   <a href="mailto:amzyst@gmail.com" className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
                     <span className="text-[12px] font-bold text-[#b080a0] group-hover:text-[#8a5a7a] shrink-0">email</span>
@@ -158,7 +160,7 @@ export default function Home() {
 
               {/* links */}
               <div id="links" className="mb-8">
-                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-1">links &amp; stuff</h2>
+                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-1">&#x2605; links &amp; stuff</h2>
                 <p className="text-[10px] text-[#c0a8b8] mb-3">things i find useful or cool</p>
                 <div className="space-y-1.5">
                   {[

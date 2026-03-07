@@ -7,6 +7,11 @@
 
 html {
   scroll-behavior: smooth;
+  cursor: url('/cursor-heart.png') 6 3, auto;
+}
+
+a, button, [role="button"] {
+  cursor: url('/cursor-heart.png') 6 3, pointer;
 }
 
 body {
@@ -299,6 +304,35 @@ body {
 .animate-fish-left { animation: fishSwimLeft 16s ease-in-out infinite; }
 .animate-fish-dart { animation: fishDart 10s ease-in-out infinite; }
 .animate-jelly { animation: jellyPulse 4s ease-in-out infinite; }
+
+/* === FLOATING HEARTS ON CLICK === */
+@keyframes heartFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  50% { opacity: 0.8; transform: translateY(-40px) scale(1.1) rotate(-10deg); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.6) rotate(10deg); }
+}
+
+.heart-float {
+  pointer-events: none;
+  position: fixed;
+  font-size: 16px;
+  z-index: 999;
+  animation: heartFloat 1s ease-out forwards;
+}
+
+/* === STICKER NAV BUTTONS === */
+.sticker-btn {
+  transition: transform 0.15s ease;
+}
+
+.sticker-btn:nth-child(1) { transform: rotate(-2deg); }
+.sticker-btn:nth-child(2) { transform: rotate(1.5deg); }
+.sticker-btn:nth-child(3) { transform: rotate(-1deg); }
+.sticker-btn:nth-child(4) { transform: rotate(2.5deg); }
+
+.sticker-btn:hover {
+  transform: rotate(0deg) scale(1.08) !important;
+}
 
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
