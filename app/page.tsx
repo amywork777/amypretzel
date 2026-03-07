@@ -41,23 +41,20 @@ export default function Home() {
 
         {/* sea creatures */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/jellyfish.png" alt="" width={80} height={80}
-          className="absolute bottom-[6%] left-[4%] animate-jelly opacity-40" />
+        <img src="/graphics/jellyfish.png" alt="" width={75} height={75}
+          className="absolute bottom-[6%] left-[4%] animate-jelly opacity-45" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/graphics/fish.png" alt="" width={55} height={55}
-          className="absolute bottom-[14%] right-[6%] animate-fish-right opacity-35" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/bluefish.png" alt="" width={60} height={42}
-          className="absolute bottom-[22%] left-[10%] animate-fish-left opacity-30" style={{ animationDelay: "3s" }} />
+          className="absolute bottom-[14%] right-[6%] animate-fish-right opacity-40" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/graphics/goldfish.png" alt="" width={55} height={37}
-          className="absolute bottom-[10%] right-[25%] animate-fish-dart opacity-35" style={{ animationDelay: "5s" }} />
+          className="absolute bottom-[10%] right-[25%] animate-fish-dart opacity-40" style={{ animationDelay: "5s" }} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/yellowtang.png" alt="" width={55} height={30}
-          className="absolute bottom-[18%] left-[30%] animate-fish-right opacity-30" style={{ animationDelay: "7s" }} />
+        <img src="/graphics/yellowtang.png" alt="" width={60} height={35}
+          className="absolute bottom-[18%] left-[30%] animate-fish-right opacity-40" style={{ animationDelay: "7s" }} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/angelfish.png" alt="" width={60} height={33}
-          className="absolute bottom-[4%] right-[12%] animate-fish-left opacity-32" style={{ animationDelay: "2s" }} />
+        <img src="/graphics/angelfish.png" alt="" width={55} height={40}
+          className="absolute bottom-[4%] right-[12%] animate-fish-left opacity-38" style={{ animationDelay: "2s" }} />
       </div>
 
       {/* === COMPUTER WINDOW === */}
