@@ -113,7 +113,7 @@ export default function Home() {
                 <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">about me</h2>
                 <div className="text-[13px] leading-relaxed text-[#6a5a70] space-y-2.5 mb-8">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/amy-pretzel.png" alt="amy eating a pretzel" width={80} height={120}
+                  <img src="/graphics/amy-pretzel.png" alt="amy eating a pretzel" width={110} height={165}
                     className="float-right ml-3 -mt-1 drop-shadow-sm" />
                   <p>hi, i&apos;m amy zhou. i am an engineer and designer who loves taking ideas and turning them into real products.</p>
                   <p>right now, i&apos;m a product design engineer at <strong className="text-[#7a5a8a]">vizcom</strong>, where i&apos;m building AI tools that help designers go from idea to reality faster. think concept sketches turning into production-ready visuals in seconds.</p>
