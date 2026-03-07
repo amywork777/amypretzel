@@ -7,11 +7,6 @@
 
 html {
   scroll-behavior: smooth;
-  cursor: url('/cursor-heart.png') 6 3, auto;
-}
-
-a, button, [role="button"] {
-  cursor: url('/cursor-heart.png') 6 3, pointer;
 }
 
 body {
