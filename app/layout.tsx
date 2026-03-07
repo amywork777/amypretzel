@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nunito, Silkscreen } from "next/font/google";
 import "./globals.css";
 
@@ -16,7 +16,6 @@ const silkscreen = Silkscreen({
 export const metadata: Metadata = {
   title: "amy zhou",
   description: "physical design + engineering portfolio",
-  themeColor: "#f0e8f0",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
@@ -24,6 +23,12 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f0e8f0",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

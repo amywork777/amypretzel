@@ -59,8 +59,8 @@ export default function Home() {
       </div>
 
       {/* === COMPUTER WINDOW === */}
-      <div className="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-2xl h-full max-h-[90vh] flex flex-col window-frame rounded-lg overflow-hidden animate-scale-in">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 md:p-8">
+        <div className="w-full max-w-2xl h-full max-h-[95vh] sm:max-h-[90vh] flex flex-col window-frame rounded-lg overflow-hidden animate-scale-in">
 
           {/* title bar */}
           <div className="window-titlebar shrink-0 flex items-center gap-2 px-3 py-1.5">
@@ -85,7 +85,7 @@ export default function Home() {
 
           {/* scrollable content area */}
           <div className="flex-1 overflow-y-auto bg-[#faf5f8] window-content">
-            <div className="p-5 md:p-7 max-w-lg mx-auto">
+            <div className="p-4 sm:p-5 md:p-7 max-w-lg mx-auto">
 
               {/* hero */}
               <div className="text-center mb-6">
@@ -99,11 +99,11 @@ export default function Home() {
               </div>
 
               {/* nav */}
-              <div className="flex justify-center gap-3 mb-8">
-                <a href="#about" className="btn-glossy px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">about</a>
-                <a href="/portfolio" className="btn-glossy px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">portfolio</a>
-                <a href="#links" className="btn-glossy px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">links</a>
-                <a href="#connect" className="btn-glossy px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">connect</a>
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
+                <a href="#about" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">about</a>
+                <a href="/portfolio" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">portfolio</a>
+                <a href="#links" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">links</a>
+                <a href="#connect" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">connect</a>
               </div>
 
               {/* about me */}
