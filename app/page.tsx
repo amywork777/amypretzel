@@ -93,7 +93,7 @@ export default function Home() {
               <div className="text-center mb-6">
                 <div className="inline-block mb-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/amy-standing.png" alt="amy illustration" width={120} height={180}
+                  <img src="/graphics/amy-pretzel.png" alt="amy eating a pretzel" width={120} height={180}
                     className="drop-shadow-md mx-auto" />
                 </div>
                 <h1 className="font-pixel text-xl md:text-2xl font-bold tracking-wide text-[#7a5a8a] mb-1">
@@ -113,9 +113,6 @@ export default function Home() {
               <div id="about">
                 <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">about me</h2>
                 <div className="text-[13px] leading-relaxed text-[#6a5a70] space-y-2.5 mb-8">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/amy-laptop.png" alt="amy with laptop" width={70} height={56}
-                    className="float-right ml-3 mb-1 drop-shadow-sm" />
                   <p>hi, i&apos;m amy zhou. i am an engineer and designer who loves taking ideas and turning them into real products.</p>
                   <p>right now, i&apos;m a product design engineer at <strong className="text-[#7a5a8a]">vizcom</strong>, where i&apos;m building AI tools that help designers go from idea to reality faster. think concept sketches turning into production-ready visuals in seconds.</p>
                   <p>before that, i built <strong className="text-[#7a5a8a]">taiyaki</strong>, an AI assisted concept to CAD system, <strong className="text-[#7a5a8a]">taya</strong>, a wearable AI journal designed as jewelry, a custom AI jewelry pipeline that turned sketches into physical pieces, and <strong className="text-[#7a5a8a]">mobius</strong>, a company focused on bringing more transparency and efficiency to materials trading and recycling.</p>
