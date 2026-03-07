@@ -1,15 +1,29 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Nunito, Silkscreen } from "next/font/google";
 import "./globals.css";
 
-const jetbrainsMono = JetBrains_Mono({
+const nunito = Nunito({
   subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
+  variable: "--font-nunito",
+});
+
+const silkscreen = Silkscreen({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-pixel",
 });
 
 export const metadata: Metadata = {
-  title: "amy zhou — design engineer",
-  description: "design engineer",
+  title: "amy zhou",
+  description: "physical design + engineering portfolio",
+  themeColor: "#f0e8f0",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -18,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={jetbrainsMono.variable}>
-      <body className="font-mono antialiased bg-white text-black">
+    <html lang="en" className={`${nunito.variable} ${silkscreen.variable}`}>
+      <body className="font-sans antialiased">
         {children}
       </body>
     </html>
