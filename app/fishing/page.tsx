@@ -385,30 +385,6 @@ export default function FishingGame() {
             />
           </div>
 
-          {/* butterflies */}
-          <div
-            className="absolute z-[2] text-[10px]"
-            style={{
-              left: `${bf1X}%`, top: `${bf1Y}%`,
-              transition: "left 0.5s ease, top 0.5s ease",
-            }}
-          >
-            <span style={{ display: "inline-block", animation: "wiggle 0.5s ease-in-out infinite" }}>
-              <span className="text-[#e8a0c8]">&#x2767;</span>
-            </span>
-          </div>
-          <div
-            className="absolute z-[2] text-[8px]"
-            style={{
-              left: `${bf2X}%`, top: `${bf2Y}%`,
-              transition: "left 0.5s ease, top 0.5s ease",
-            }}
-          >
-            <span style={{ display: "inline-block", animation: "wiggle 0.6s ease-in-out infinite", animationDelay: "0.3s" }}>
-              <span className="text-[#c0b8e8]">&#x2767;</span>
-            </span>
-          </div>
-
           {/* water */}
           <div
             className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#a0d0e8] via-[#90c0d8] to-[#78a8c8]"
@@ -423,17 +399,6 @@ export default function FishingGame() {
             <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40" />
             <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35" />
             <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35" />
-          </div>
-
-          {/* lily pads */}
-          <div className="absolute z-[3]" style={{ left: "8%", top: `${53 + lilyBob1}%` }}>
-            <div className="w-8 h-5 rounded-full bg-[#70b878] opacity-50 border border-[#60a868]/30"
-              style={{ borderRadius: "50%", transform: "rotateX(60deg)" }} />
-            <div className="absolute top-[40%] left-[35%] w-1.5 h-1.5 rounded-full bg-[#f0a0b0] opacity-70" />
-          </div>
-          <div className="absolute z-[3]" style={{ left: "30%", top: `${55 + lilyBob2}%` }}>
-            <div className="w-6 h-4 rounded-full bg-[#78c080] opacity-45 border border-[#68b070]/30"
-              style={{ borderRadius: "50%", transform: "rotateX(60deg)" }} />
           </div>
 
           {/* background fish swimming lazily */}
@@ -469,10 +434,15 @@ export default function FishingGame() {
             <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50" />
             <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55" />
             <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45" />
-            {/* tiny flowers on grass */}
-            <div className="absolute top-[12%] left-[40%] w-2 h-2 text-[6px] text-[#f0b0c0]">&#10047;</div>
-            <div className="absolute top-[18%] left-[75%] w-2 h-2 text-[5px] text-[#e0a8d0]">&#10047;</div>
-            <div className="absolute top-[8%] left-[85%] w-2 h-2 text-[6px] text-[#f8d0a0]">&#10047;</div>
+            {/* flowers on grass */}
+            <div className="absolute top-[6%] left-[20%] text-[12px] text-[#f0a0b8]">&#10047;</div>
+            <div className="absolute top-[14%] left-[45%] text-[10px] text-[#e8b0d0]">&#10047;</div>
+            <div className="absolute top-[4%] left-[70%] text-[14px] text-[#f8c8a8]">&#10047;</div>
+            <div className="absolute top-[20%] left-[80%] text-[11px] text-[#c8b0e8]">&#10047;</div>
+            <div className="absolute top-[10%] left-[55%] text-[9px] text-[#f0d0a0]">&#10047;</div>
+            <div className="absolute top-[22%] left-[30%] text-[13px] text-[#f0b8c8]">&#10047;</div>
+            <div className="absolute top-[16%] left-[90%] text-[10px] text-[#d0c0f0]">&#10047;</div>
+            <div className="absolute top-[28%] left-[60%] text-[8px] text-[#f0c0b0]">&#10047;</div>
           </div>
 
           {/* dock */}
@@ -483,25 +453,6 @@ export default function FishingGame() {
             <div className="absolute top-0 left-[75%] w-[1px] h-full bg-[#c8a880] opacity-50" />
             <div className="absolute -bottom-4 left-[5%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
             <div className="absolute -bottom-4 left-[48%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
-          </div>
-
-          {/* little cat on dock */}
-          <div className="absolute z-[7]" style={{ right: "38%", top: "calc(48% - 14px)" }}>
-            <div className="relative">
-              {/* body */}
-              <div className="w-4 h-3 rounded-full bg-[#f0d8c0] border border-[#e0c0a0]/50" />
-              {/* head */}
-              <div className="absolute -top-2.5 left-0.5 w-3 h-2.5 rounded-full bg-[#f0d8c0] border border-[#e0c0a0]/50" />
-              {/* ears */}
-              <div className="absolute -top-3.5 left-0 w-0 h-0" style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderBottom: "4px solid #f0d8c0" }} />
-              <div className="absolute -top-3.5 left-1.5 w-0 h-0" style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderBottom: "4px solid #f0d8c0" }} />
-              {/* tail */}
-              <div className="absolute top-0 -right-2 w-3 h-1 bg-[#f0d8c0] rounded-full"
-                style={{ transform: `rotate(${Math.sin(bgFishTime * 2) * 20 - 20}deg)`, transformOrigin: "left center" }} />
-              {/* eyes */}
-              <div className="absolute -top-1.5 left-1 w-0.5 h-0.5 rounded-full bg-[#6a5a50]" />
-              <div className="absolute -top-1.5 left-2 w-0.5 h-0.5 rounded-full bg-[#6a5a50]" />
-            </div>
           </div>
 
           {/* clouds in scene */}
