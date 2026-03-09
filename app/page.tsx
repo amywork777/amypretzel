@@ -67,8 +67,8 @@ export default function Home() {
       </div>
 
       {/* === COMPUTER WINDOW === */}
-      <div className="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 md:p-8">
-        <div className="w-full max-w-2xl h-full max-h-[95vh] sm:max-h-[90vh] flex flex-col window-frame rounded-lg overflow-hidden animate-scale-in">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 md:p-8 pointer-events-none">
+        <div className="w-full max-w-2xl h-full max-h-[95vh] sm:max-h-[90vh] flex flex-col window-frame rounded-lg overflow-hidden animate-scale-in pointer-events-auto">
 
           {/* title bar */}
           <div className="window-titlebar shrink-0 flex items-center gap-2 px-3 py-1.5">
