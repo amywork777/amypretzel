@@ -616,7 +616,7 @@ export default function FishingGame() {
               ))}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/graphics/sleeping-cat.png" alt="sleeping cat" width={50} height={33}
+                src="/graphics/sleeping-cat.png" alt="sleeping cat" width={65} height={43}
                 className="animate-cat-breathe drop-shadow-sm"
               />
             </div>
