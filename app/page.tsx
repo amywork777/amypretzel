@@ -42,8 +42,8 @@ export default function Home() {
 
       </div>
 
-      {/* sea creatures — own layer at z-[15] so they're clickable above window (z-10) but below bubbles (z-20) */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-[15]">
+      {/* sea creatures — behind window (z-[5]) but above decorative bg (z-0), clickable */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
         <a href="/fishing" className="absolute bottom-[6%] left-[4%] pointer-events-auto cursor-pointer opacity-45 hover:opacity-70 transition-opacity animate-jelly">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/graphics/jellyfish.png" alt="go fishing!" width={75} height={75} />
