@@ -427,7 +427,17 @@ body {
   100% { opacity: 0; transform: translateY(-30px) translateX(10px) scale(0.7); }
 }
 
+@keyframes catPoke {
+  0% { transform: scaleY(0.85) scaleX(1.1); }
+  20% { transform: scaleY(1.1) scaleX(0.95) rotate(-5deg); }
+  40% { transform: scaleY(1) scaleX(1) rotate(5deg); }
+  60% { transform: scaleY(1.05) scaleX(0.98) rotate(-3deg); }
+  80% { transform: scaleY(1) scaleX(1) rotate(2deg); }
+  100% { transform: scaleY(1) scaleX(1) rotate(0deg); }
+}
+
 .animate-cat-breathe { animation: catBreathe 3s ease-in-out infinite; transform-origin: bottom center; }
+.animate-cat-poke { animation: catPoke 0.5s ease-out; transform-origin: bottom center; }
 .animate-zz { animation: zzFloat 2.5s ease-out forwards; }
 .animate-gentle-bob { animation: gentleBob 3s ease-in-out infinite; }
 .animate-note-float { animation: noteFloat 2.5s ease-out forwards; }

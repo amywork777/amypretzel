@@ -191,6 +191,29 @@ function playSound(type: "cast" | "catch" | "miss" | "legendary") {
   } catch {}
 }
 
+function playMeow() {
+  try {
+    const ctx = new AudioContext();
+    // Two-tone meow: slide up then down
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(500, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.1);
+    osc.frequency.linearRampToValueAtTime(700, ctx.currentTime + 0.25);
+    osc.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.45);
+  } catch {}
+}
+
+const CAT_MEOWS = ["mew!", "mrrp~", "nya~", "prr...", "meow!", "*purr*", "mrow?"];
+
 interface Sparkle {
   id: number;
   x: number;
@@ -216,6 +239,8 @@ export default function FishingGame() {
   const [bgFishTime, setBgFishTime] = useState(0);
   const [musicNotes, setMusicNotes] = useState<{ id: number; symbol: string; offset: number }[]>([]);
   const [sleepZs, setSleepZs] = useState<{ id: number; size: number }[]>([]);
+  const [catAwake, setCatAwake] = useState(false);
+  const [catMeow, setCatMeow] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const biteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const animRef = useRef<number>(0);
@@ -606,9 +631,26 @@ export default function FishingGame() {
             <div className="absolute top-[85%] left-[35%] text-[11px] text-[#e0c0d8]">&#10047;</div>
 
             {/* sleeping cat */}
-            <div className="absolute bottom-[15%] right-[10%] z-[6]">
-              {/* z's floating up */}
-              {sleepZs.map((z) => (
+            <div
+              className="absolute bottom-[15%] right-[10%] z-[6] cursor-pointer pointer-events-auto"
+              onClick={(e) => {
+                e.stopPropagation();
+                playMeow();
+                setCatAwake(true);
+                setCatMeow(pick(CAT_MEOWS));
+                setTimeout(() => { setCatAwake(false); setCatMeow(""); }, 1200);
+              }}
+            >
+              {/* meow speech bubble */}
+              {catMeow && (
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 animate-fade-up pointer-events-none">
+                  <div className="bg-white/90 rounded-lg px-1.5 py-0.5 font-pixel text-[8px] text-[#d8a080] border border-[#f0d8c8] whitespace-nowrap">
+                    {catMeow}
+                  </div>
+                </div>
+              )}
+              {/* z's floating up — hidden when awake */}
+              {!catAwake && sleepZs.map((z) => (
                 <div key={z.id} className="absolute -top-2 -right-1 animate-zz pointer-events-none font-pixel text-[#b090b8]"
                   style={{ fontSize: z.size }}>
                   z
@@ -617,7 +659,7 @@ export default function FishingGame() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/graphics/sleeping-cat.png" alt="sleeping cat" width={80} height={53}
-                className="animate-cat-breathe drop-shadow-sm"
+                className={`${catAwake ? "animate-cat-poke" : "animate-cat-breathe"} drop-shadow-sm`}
               />
             </div>
           </div>
