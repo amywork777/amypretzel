@@ -630,7 +630,7 @@ export default function FishingGame() {
           {/* bobber */}
           {state !== "idle" && state !== "casting" && (
             <div className="absolute z-10" style={{
-              left: "32%", top: "53%",
+              left: "48%", top: "53%",
               transform: `translateY(${bobberY}px)`,
               transition: state === "bite" ? "none" : "transform 0.1s",
             }}>
@@ -642,14 +642,14 @@ export default function FishingGame() {
 
           {/* splash */}
           {showSplash && (
-            <div className="absolute top-[51%] left-[30%] z-10">
+            <div className="absolute top-[51%] left-[46%] z-10">
               <div className="w-8 h-3 bg-white/40 rounded-full animate-ping" />
             </div>
           )}
 
           {/* fish on bite — swims up from below */}
           {(state === "bite" || state === "reeling") && currentFish && (
-            <div className="absolute left-[28%] z-10" style={{
+            <div className="absolute left-[44%] z-10" style={{
               top: `calc(55% + ${fishY}px)`,
               transform: state === "reeling" ? "scale(1.2) translateY(-10px)" : "scale(1)",
               transition: state === "reeling" ? "all 0.3s ease" : "none",
