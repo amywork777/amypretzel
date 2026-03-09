@@ -40,7 +40,10 @@ export default function Home() {
         <div className="absolute top-[18%] right-[25%] w-1.5 h-1.5 bg-white rounded-full animate-sparkle opacity-40" style={{ boxShadow: "0 0 8px 2px rgba(255,255,255,0.3)", animationDelay: "1.5s" }} />
         <div className="absolute top-[45%] left-[10%] w-2 h-2 bg-white rounded-full animate-sparkle opacity-35" style={{ boxShadow: "0 0 10px 3px rgba(255,255,255,0.3)", animationDelay: "0.7s" }} />
 
-        {/* sea creatures — click to go fishing! (animations on <a> so hit area moves with fish) */}
+      </div>
+
+      {/* sea creatures — own layer at z-[15] so they're clickable above window (z-10) but below bubbles (z-20) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-[15]">
         <a href="/fishing" className="absolute bottom-[6%] left-[4%] pointer-events-auto cursor-pointer opacity-45 hover:opacity-70 transition-opacity animate-jelly">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/graphics/jellyfish.png" alt="go fishing!" width={75} height={75} />
@@ -200,8 +203,8 @@ export default function Home() {
                 <Timeline />
               </div></FadeIn>
 
-              {/* fish tank — mobile-friendly link to fishing game */}
-              <FadeIn><a href="/fishing" className="block mb-6 group">
+              {/* fish tank — mobile only */}
+              <FadeIn><a href="/fishing" className="block mb-6 group sm:hidden">
                 <div className="relative overflow-hidden rounded-xl border-2 border-[#c8d8e8] bg-gradient-to-b from-[#c0ddf0] to-[#90b8d0] p-3 h-20">
                   {/* water shimmer */}
                   <div className="absolute top-[30%] left-[10%] w-[60%] h-[1px] bg-white/30 rounded-full" />
