@@ -689,7 +689,7 @@ export default function FishingGame() {
             className="absolute top-[6%] left-[55%] opacity-40 animate-drift" style={{ animationDelay: "8s" }} />
 
           {/* amy fishing */}
-          <div className="absolute z-[8]" style={{ right: "28%", top: "calc(48% - 90px)" }}>
+          <div className="absolute z-[8]" style={{ right: "25%", top: "calc(48% - 130px)" }}>
             {/* soft glow behind amy */}
             <div className="absolute -inset-4 rounded-full opacity-40" style={{
               background: "radial-gradient(ellipse at center, rgba(255,220,240,0.6) 0%, rgba(255,200,230,0.3) 40%, transparent 70%)",
@@ -697,7 +697,7 @@ export default function FishingGame() {
             }} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/graphics/amy-fishing.png" alt="amy fishing" width={90} height={119}
+              src="/graphics/amy-fishing.png" alt="amy fishing" width={120} height={159}
               className="relative drop-shadow-md animate-gentle-bob"
               style={{
                 transform: state === "bite" ? "translateY(-2px)" : undefined,
@@ -741,7 +741,7 @@ export default function FishingGame() {
           {/* bobber */}
           {state !== "idle" && state !== "casting" && (
             <div className="absolute z-10" style={{
-              left: "48%", top: "53%",
+              left: "42%", top: "53%",
               transform: `translateY(${bobberY}px)`,
               transition: state === "bite" ? "none" : "transform 0.1s",
             }}>
@@ -753,14 +753,14 @@ export default function FishingGame() {
 
           {/* splash */}
           {showSplash && (
-            <div className="absolute top-[51%] left-[46%] z-10">
+            <div className="absolute top-[51%] left-[40%] z-10">
               <div className="w-8 h-3 bg-white/40 rounded-full animate-ping" />
             </div>
           )}
 
           {/* fish on bite — swims up from below */}
           {(state === "bite" || state === "reeling") && currentFish && (
-            <div className="absolute left-[44%] z-10" style={{
+            <div className="absolute left-[38%] z-10" style={{
               top: `calc(55% + ${fishY}px)`,
               transform: state === "reeling" ? "scale(1.2) translateY(-10px)" : "scale(1)",
               transition: state === "reeling" ? "all 0.3s ease" : "none",
