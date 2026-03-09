@@ -373,9 +373,10 @@ export default function FishingGame() {
   const lilyBob2 = Math.sin(bgFishTime * 1.2 + 2) * 1.5;
 
   return (
-    <div className="bg-aero h-screen flex flex-col overflow-hidden relative">
+    <div className="min-h-screen flex flex-col relative">
+      <div className="bg-aero-fixed" />
       {/* decorative clouds */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/graphics/cloud1.png" alt="" width={200} height={118}
           className="absolute top-[2%] left-[0%] animate-drift opacity-80" />
@@ -415,7 +416,7 @@ export default function FishingGame() {
         </div>
       )}
 
-      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 pb-8 relative z-10">
         <h1 className="font-pixel text-lg text-[#7a5a8a] mb-4 animate-scale-in">fishing pond</h1>
 
         {/* pond scene */}
@@ -551,26 +552,34 @@ export default function FishingGame() {
           {speechBubble && (
             <div className="absolute z-[12] animate-fade-up"
               style={{ right: "22%", top: "calc(48% - 105px)" }}>
-              <div className="bg-white/90 rounded-lg px-2 py-0.5 font-pixel text-[9px] text-[#7a5a8a] border border-[#e8d0e0] whitespace-nowrap">
+              <div className="relative bg-white/90 rounded-lg px-2 py-0.5 font-pixel text-[9px] text-[#7a5a8a] border border-[#e8d0e0] whitespace-nowrap">
                 {speechBubble}
+                {/* speech triangle */}
+                <div className="absolute -bottom-1.5 left-4 w-0 h-0"
+                  style={{ borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "6px solid rgba(255,255,255,0.9)" }} />
+                <div className="absolute -bottom-[5px] left-[17px] w-0 h-0"
+                  style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderTop: "5px solid #e8d0e0" }} />
               </div>
             </div>
           )}
 
           {/* thought bubble (motivational quotes) — always visible */}
-          <div className="absolute z-[11]" style={{ right: "45%", top: "calc(48% - 130px)" }}>
-            {/* thought dots */}
-            <div className="absolute -bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-white/70" />
-            <div className="absolute -bottom-4 right-0 w-1 h-1 rounded-full bg-white/50" />
-            {/* bubble */}
+          <div className="absolute z-[11]" style={{ right: "45%", top: "calc(48% - 135px)" }}>
+            {/* thought dots — three descending circles */}
+            <div className="absolute -bottom-3 right-3 w-2.5 h-2.5 rounded-full bg-white/80 border border-[#e8d0e0]" />
+            <div className="absolute -bottom-6 right-1 w-1.5 h-1.5 rounded-full bg-white/70 border border-[#e8d0e0]" />
+            <div className="absolute -bottom-8 -right-0.5 w-1 h-1 rounded-full bg-white/50 border border-[#e8d0e0]" />
+            {/* cloud-shaped bubble */}
             <div
-              className="bg-white/80 backdrop-blur-sm rounded-2xl px-2.5 py-1.5 border border-[#e8d8e8]/60 max-w-[120px]"
+              className="bg-white/90 rounded-full px-3 py-1.5 border border-[#e8d0e0] max-w-[140px]"
               style={{
                 opacity: quoteFade ? 1 : 0,
                 transition: "opacity 0.5s ease",
+                borderRadius: "18px",
+                boxShadow: "inset 0 1px 2px rgba(255,255,255,0.5)",
               }}
             >
-              <p className="text-[8px] text-[#a090b0] leading-relaxed text-center italic">
+              <p className="font-pixel text-[8px] text-[#b090b8] leading-relaxed text-center italic">
                 {quote}
               </p>
             </div>
