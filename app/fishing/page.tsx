@@ -524,13 +524,18 @@ export default function FishingGame() {
               <div className="absolute top-[75%] left-[15%] w-[50%] h-[2px] bg-white/20 rounded-full" />
             </div>
             {/* water ripples */}
-            <div className="absolute top-[3%] left-[35%] w-6 h-2 rounded-full border border-white/20 animate-ripple" />
-            <div className="absolute top-[8%] left-[15%] w-5 h-1.5 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "1s" }} />
-            <div className="absolute top-[5%] left-[55%] w-4 h-1.5 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "2s" }} />
-            {/* seaweed — swaying */}
-            <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40 animate-sway" />
-            <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35 animate-sway" style={{ animationDelay: "0.5s" }} />
-            <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35 animate-sway" style={{ animationDelay: "1s" }} />
+            <div className="absolute top-[2%] left-[20%] w-8 h-2 rounded-full border border-white/20 animate-ripple" />
+            <div className="absolute top-[4%] left-[45%] w-6 h-1.5 rounded-full border border-white/18 animate-ripple" style={{ animationDelay: "0.5s" }} />
+            <div className="absolute top-[6%] left-[10%] w-5 h-1.5 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "1s" }} />
+            <div className="absolute top-[3%] left-[60%] w-7 h-2 rounded-full border border-white/20 animate-ripple" style={{ animationDelay: "1.5s" }} />
+            <div className="absolute top-[8%] left-[30%] w-5 h-1.5 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "2s" }} />
+            <div className="absolute top-[5%] left-[75%] w-6 h-1.5 rounded-full border border-white/18 animate-ripple" style={{ animationDelay: "2.5s" }} />
+            <div className="absolute top-[10%] left-[50%] w-7 h-2 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "0.8s" }} />
+            <div className="absolute top-[1%] left-[38%] w-5 h-1.5 rounded-full border border-white/20 animate-ripple" style={{ animationDelay: "1.8s" }} />
+            {/* seaweed */}
+            <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40" />
+            <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35" />
+            <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35" />
           </div>
 
           {/* background fish swimming lazily */}
@@ -562,10 +567,10 @@ export default function FishingGame() {
               borderTopLeftRadius: "40% 15%",
             }}
           >
-            <div className="absolute top-[8%] left-[15%] w-1.5 h-3 bg-[#98d098] rounded-full opacity-60 animate-sway" />
-            <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50 animate-sway" style={{ animationDelay: "0.3s" }} />
-            <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55 animate-sway" style={{ animationDelay: "0.7s" }} />
-            <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45 animate-sway" style={{ animationDelay: "1.1s" }} />
+            <div className="absolute top-[8%] left-[15%] w-1.5 h-3 bg-[#98d098] rounded-full opacity-60" />
+            <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50" />
+            <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55" />
+            <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45" />
             {/* flowers scattered across grass */}
             <div className="absolute top-[6%] left-[20%] text-[12px] text-[#f0a0b8]">&#10047;</div>
             <div className="absolute top-[14%] left-[45%] text-[10px] text-[#e8b0d0]">&#10047;</div>
