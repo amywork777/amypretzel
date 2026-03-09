@@ -192,12 +192,23 @@ export default function FishingGame() {
     setTimeout(() => setSparkles([]), 1500);
   }, []);
 
-  // Cycle motivational quotes every 6 seconds
+  // Shuffle and cycle motivational quotes
+  const shuffledQuotes = useRef<string[]>([]);
+  const quoteIndex = useRef(0);
   useEffect(() => {
+    // Fisher-Yates shuffle
+    shuffledQuotes.current = [...LIFE_QUOTES].sort(() => Math.random() - 0.5);
+    quoteIndex.current = 0;
+    setQuote(shuffledQuotes.current[0]);
+
     const interval = setInterval(() => {
       setQuoteFade(false);
       setTimeout(() => {
-        setQuote(pick(LIFE_QUOTES));
+        quoteIndex.current = (quoteIndex.current + 1) % shuffledQuotes.current.length;
+        if (quoteIndex.current === 0) {
+          shuffledQuotes.current = [...LIFE_QUOTES].sort(() => Math.random() - 0.5);
+        }
+        setQuote(shuffledQuotes.current[quoteIndex.current]);
         setQuoteFade(true);
       }, 500);
     }, 6000);
