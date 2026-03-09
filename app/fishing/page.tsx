@@ -39,26 +39,7 @@ const RARITY_COLORS: Record<string, string> = {
 const CATCH_REACTIONS = ["yay!", "nice!", "got it!", "wooo!", "hehe~"];
 const RARE_REACTIONS = ["ooh!", "wow!!", "no way!", "amazing!"];
 const MISS_REACTIONS = ["nooo...", "aw man", "so close!", "next time!"];
-const IDLE_REACTIONS = [
-  "be patient...",
-  "breathe in~",
-  "just be here",
-  "no rush",
-  "the water is nice",
-  "good things take time",
-  "u got this",
-  "enjoy the quiet",
-  "just keep going",
-  "stillness is ok",
-  "proud of u",
-  "one cast at a time",
-  "let it flow~",
-  "this is enough",
-  "rest is productive",
-  "trust the process",
-  "you belong here",
-  "small steps count",
-];
+const IDLE_REACTIONS = ["hmm...", "...", "~"];
 
 const ACHIEVEMENTS = [
   { count: 1, msg: "first catch!" },
@@ -81,6 +62,34 @@ function pickFish(): Fish {
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
+
+const LIFE_QUOTES = [
+  "everything you need is already within you",
+  "growth is not linear and that's okay",
+  "you don't have to have it all figured out",
+  "the best time to start is now",
+  "be gentle with yourself today",
+  "your pace is not behind, it's yours",
+  "rest is not giving up, it's recharging",
+  "you are more capable than you think",
+  "comparison is the thief of joy",
+  "it's okay to change direction",
+  "small consistent steps move mountains",
+  "you are allowed to take up space",
+  "not everything that weighs you down is yours to carry",
+  "progress looks different for everyone",
+  "your worth is not measured by your productivity",
+  "the things that make you different make you beautiful",
+  "it's okay to outgrow people, places, and things",
+  "you are exactly where you need to be",
+  "sometimes the bravest thing is asking for help",
+  "there is no wrong way to feel",
+  "you don't need permission to be yourself",
+  "every ending is also a beginning",
+  "the hard days make the good days better",
+  "you are someone's reason to smile",
+  "let go of what you can't control",
+];
 
 // Sound effects
 function playSound(type: "cast" | "catch" | "miss" | "legendary") {
@@ -148,6 +157,8 @@ export default function FishingGame() {
   const [speechBubble, setSpeechBubble] = useState("");
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [achievement, setAchievement] = useState("");
+  const [quote, setQuote] = useState(() => pick(LIFE_QUOTES));
+  const [quoteFade, setQuoteFade] = useState(true);
   const [bgFishTime, setBgFishTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const biteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -181,12 +192,24 @@ export default function FishingGame() {
     setTimeout(() => setSparkles([]), 1500);
   }, []);
 
+  // Cycle motivational quotes every 6 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteFade(false);
+      setTimeout(() => {
+        setQuote(pick(LIFE_QUOTES));
+        setQuoteFade(true);
+      }, 500);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Idle speech bubbles
   useEffect(() => {
     if (state === "waiting") {
       idleTimerRef.current = setInterval(() => {
-        if (Math.random() < 0.6) showSpeech(pick(IDLE_REACTIONS), 2000);
-      }, 2500);
+        if (Math.random() < 0.3) showSpeech(pick(IDLE_REACTIONS), 1200);
+      }, 3500);
       return () => clearInterval(idleTimerRef.current);
     }
   }, [state, showSpeech]);
@@ -605,6 +628,18 @@ export default function FishingGame() {
 
         {/* message */}
         <p className="font-pixel text-[11px] text-[#8a6080] mt-4 text-center min-h-[2em]">{message}</p>
+
+        {/* motivational quote */}
+        <p
+          className="text-[11px] text-[#b0a0b8] text-center mt-1 italic max-w-xs leading-relaxed"
+          style={{
+            opacity: quoteFade ? 0.8 : 0,
+            transition: "opacity 0.5s ease",
+            minHeight: "2em",
+          }}
+        >
+          &ldquo;{quote}&rdquo;
+        </p>
 
         {/* buttons */}
         <div className="flex gap-3 mt-3">
