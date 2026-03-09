@@ -39,7 +39,26 @@ const RARITY_COLORS: Record<string, string> = {
 const CATCH_REACTIONS = ["yay!", "nice!", "got it!", "wooo!", "hehe~"];
 const RARE_REACTIONS = ["ooh!", "wow!!", "no way!", "amazing!"];
 const MISS_REACTIONS = ["nooo...", "aw man", "so close!", "next time!"];
-const IDLE_REACTIONS = ["hmm...", "any fish?", "...", "la la la~"];
+const IDLE_REACTIONS = [
+  "be patient...",
+  "breathe in~",
+  "just be here",
+  "no rush",
+  "the water is nice",
+  "good things take time",
+  "u got this",
+  "enjoy the quiet",
+  "just keep going",
+  "stillness is ok",
+  "proud of u",
+  "one cast at a time",
+  "let it flow~",
+  "this is enough",
+  "rest is productive",
+  "trust the process",
+  "you belong here",
+  "small steps count",
+];
 
 const ACHIEVEMENTS = [
   { count: 1, msg: "first catch!" },
@@ -166,8 +185,8 @@ export default function FishingGame() {
   useEffect(() => {
     if (state === "waiting") {
       idleTimerRef.current = setInterval(() => {
-        if (Math.random() < 0.3) showSpeech(pick(IDLE_REACTIONS), 1200);
-      }, 3000);
+        if (Math.random() < 0.6) showSpeech(pick(IDLE_REACTIONS), 2000);
+      }, 2500);
       return () => clearInterval(idleTimerRef.current);
     }
   }, [state, showSpeech]);
