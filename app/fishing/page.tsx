@@ -214,6 +214,7 @@ export default function FishingGame() {
   const [quote, setQuote] = useState(() => pick(LIFE_QUOTES));
   const [quoteFade, setQuoteFade] = useState(true);
   const [bgFishTime, setBgFishTime] = useState(0);
+  const [musicNotes, setMusicNotes] = useState<{ id: number; symbol: string }[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const biteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const animRef = useRef<number>(0);
@@ -278,6 +279,17 @@ export default function FishingGame() {
       return () => clearInterval(idleTimerRef.current);
     }
   }, [state, showSpeech]);
+
+  // Music notes floating from headphones
+  useEffect(() => {
+    const NOTES = ["♪", "♫", "♩", "♬"];
+    const interval = setInterval(() => {
+      const note = { id: Date.now() + Math.random(), symbol: pick(NOTES) };
+      setMusicNotes((prev) => [...prev, note]);
+      setTimeout(() => setMusicNotes((prev) => prev.filter((n) => n.id !== note.id)), 2500);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Background fish animation
   useEffect(() => {
@@ -493,6 +505,13 @@ export default function FishingGame() {
             />
           </div>
 
+          {/* sky twinkles */}
+          <div className="absolute top-[8%] left-[25%] w-1.5 h-1.5 rounded-full bg-white/60 animate-twinkle" />
+          <div className="absolute top-[15%] left-[65%] w-1 h-1 rounded-full bg-white/50 animate-twinkle" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-[5%] left-[80%] w-1.5 h-1.5 rounded-full bg-white/40 animate-twinkle" style={{ animationDelay: "2s" }} />
+          <div className="absolute top-[20%] left-[15%] w-1 h-1 rounded-full bg-white/50 animate-twinkle" style={{ animationDelay: "1.5s" }} />
+          <div className="absolute top-[12%] left-[50%] w-1 h-1 rounded-full bg-white/45 animate-twinkle" style={{ animationDelay: "0.7s" }} />
+
           {/* water */}
           <div
             className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#a0d0e8] via-[#90c0d8] to-[#78a8c8]"
@@ -504,9 +523,14 @@ export default function FishingGame() {
               <div className="absolute top-[55%] left-[5%] w-[70%] h-[2px] bg-white/25 rounded-full" />
               <div className="absolute top-[75%] left-[15%] w-[50%] h-[2px] bg-white/20 rounded-full" />
             </div>
-            <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40" />
-            <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35" />
-            <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35" />
+            {/* water ripples */}
+            <div className="absolute top-[3%] left-[35%] w-6 h-2 rounded-full border border-white/20 animate-ripple" />
+            <div className="absolute top-[8%] left-[15%] w-5 h-1.5 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "1s" }} />
+            <div className="absolute top-[5%] left-[55%] w-4 h-1.5 rounded-full border border-white/15 animate-ripple" style={{ animationDelay: "2s" }} />
+            {/* seaweed — swaying */}
+            <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40 animate-sway" />
+            <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35 animate-sway" style={{ animationDelay: "0.5s" }} />
+            <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35 animate-sway" style={{ animationDelay: "1s" }} />
           </div>
 
           {/* background fish swimming lazily */}
@@ -538,10 +562,10 @@ export default function FishingGame() {
               borderTopLeftRadius: "40% 15%",
             }}
           >
-            <div className="absolute top-[8%] left-[15%] w-1.5 h-3 bg-[#98d098] rounded-full opacity-60" />
-            <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50" />
-            <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55" />
-            <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45" />
+            <div className="absolute top-[8%] left-[15%] w-1.5 h-3 bg-[#98d098] rounded-full opacity-60 animate-sway" />
+            <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50 animate-sway" style={{ animationDelay: "0.3s" }} />
+            <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55 animate-sway" style={{ animationDelay: "0.7s" }} />
+            <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45 animate-sway" style={{ animationDelay: "1.1s" }} />
             {/* flowers scattered across grass */}
             <div className="absolute top-[6%] left-[20%] text-[12px] text-[#f0a0b8]">&#10047;</div>
             <div className="absolute top-[14%] left-[45%] text-[10px] text-[#e8b0d0]">&#10047;</div>
@@ -591,16 +615,29 @@ export default function FishingGame() {
             className="absolute top-[6%] left-[55%] opacity-40 animate-drift" style={{ animationDelay: "8s" }} />
 
           {/* amy fishing */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/graphics/amy-fishing.png" alt="amy fishing" width={90} height={119}
-            className="absolute z-[8] drop-shadow-md"
-            style={{
-              right: "28%", top: "calc(48% - 90px)",
-              transform: state === "bite" ? "translateY(-2px)" : "translateY(0)",
-              transition: "transform 0.2s ease",
-            }}
-          />
+          <div className="absolute z-[8]" style={{ right: "28%", top: "calc(48% - 90px)" }}>
+            {/* soft glow behind amy */}
+            <div className="absolute -inset-4 rounded-full opacity-40" style={{
+              background: "radial-gradient(ellipse at center, rgba(255,220,240,0.6) 0%, rgba(255,200,230,0.3) 40%, transparent 70%)",
+              filter: "blur(8px)",
+            }} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/graphics/amy-fishing.png" alt="amy fishing" width={90} height={119}
+              className="relative drop-shadow-md animate-gentle-bob"
+              style={{
+                transform: state === "bite" ? "translateY(-2px)" : undefined,
+                transition: "transform 0.2s ease",
+              }}
+            />
+            {/* music notes floating from headphones */}
+            {musicNotes.map((note) => (
+              <div key={note.id} className="absolute animate-note-float pointer-events-none"
+                style={{ top: "5px", right: `${10 + Math.random() * 20}px`, fontSize: "12px", color: "#d8a0c8" }}>
+                {note.symbol}
+              </div>
+            ))}
+          </div>
 
           {/* speech bubble (reactions) */}
           {speechBubble && (
