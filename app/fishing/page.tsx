@@ -551,24 +551,24 @@ export default function FishingGame() {
           {/* speech bubble (reactions) */}
           {speechBubble && (
             <div className="absolute z-[12] animate-fade-up"
-              style={{ right: "22%", top: "calc(48% - 105px)" }}>
+              style={{ right: "20%", top: "calc(48% - 130px)" }}>
               <div className="relative bg-white/90 rounded-lg px-2 py-0.5 font-pixel text-[9px] text-[#7a5a8a] border border-[#e8d0e0] whitespace-nowrap">
                 {speechBubble}
-                {/* speech triangle */}
-                <div className="absolute -bottom-1.5 left-4 w-0 h-0"
+                {/* speech triangle pointing down-right toward her head */}
+                <div className="absolute -bottom-1.5 right-3 w-0 h-0"
                   style={{ borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "6px solid rgba(255,255,255,0.9)" }} />
-                <div className="absolute -bottom-[5px] left-[17px] w-0 h-0"
+                <div className="absolute -bottom-[5px] right-[13px] w-0 h-0"
                   style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderTop: "5px solid #e8d0e0" }} />
               </div>
             </div>
           )}
 
           {/* thought bubble (motivational quotes) — always visible */}
-          <div className="absolute z-[11]" style={{ right: "45%", top: "calc(48% - 135px)" }}>
-            {/* thought dots — three descending circles */}
-            <div className="absolute -bottom-3 right-3 w-2.5 h-2.5 rounded-full bg-white/80 border border-[#e8d0e0]" />
-            <div className="absolute -bottom-6 right-1 w-1.5 h-1.5 rounded-full bg-white/70 border border-[#e8d0e0]" />
-            <div className="absolute -bottom-8 -right-0.5 w-1 h-1 rounded-full bg-white/50 border border-[#e8d0e0]" />
+          <div className="absolute z-[11]" style={{ right: "38%", top: "calc(48% - 160px)" }}>
+            {/* thought dots — three descending circles trailing toward her head */}
+            <div className="absolute -bottom-3 -right-1 w-2.5 h-2.5 rounded-full bg-white/80 border border-[#e8d0e0]" />
+            <div className="absolute -bottom-7 -right-3 w-1.5 h-1.5 rounded-full bg-white/70 border border-[#e8d0e0]" />
+            <div className="absolute -bottom-10 -right-4 w-1 h-1 rounded-full bg-white/50 border border-[#e8d0e0]" />
             {/* cloud-shaped bubble */}
             <div
               className="bg-white/90 rounded-full px-3 py-1.5 border border-[#e8d0e0] max-w-[140px]"
