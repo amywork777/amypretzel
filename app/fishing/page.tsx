@@ -16,35 +16,35 @@ interface Fish {
 
 const FISH_TYPES: Fish[] = [
   // ── common (8) ──
-  { name: "wobbleblob", img: "/graphics/jellyfish.png", rarity: "common", points: 10, width: 50, height: 50, biteWindow: 2500 },
-  { name: "pond skipper", img: "/graphics/fish.png", rarity: "common", points: 15, width: 45, height: 45, biteWindow: 2500 },
-  { name: "blossom drifter", img: "/graphics/jellyfish.png", rarity: "common", points: 12, width: 50, height: 50, filter: "hue-rotate(280deg) saturate(1.3)", biteWindow: 2500 },
-  { name: "mossback minnow", img: "/graphics/fish.png", rarity: "common", points: 18, width: 45, height: 45, filter: "hue-rotate(90deg) saturate(1.2)", biteWindow: 2300 },
-  { name: "puddle puff", img: "/graphics/jellyfish.png", rarity: "common", points: 11, width: 50, height: 50, filter: "hue-rotate(120deg) saturate(1.1)", biteWindow: 2600 },
-  { name: "creek nibbler", img: "/graphics/fish.png", rarity: "common", points: 14, width: 45, height: 45, filter: "hue-rotate(200deg) saturate(1.2)", biteWindow: 2400 },
-  { name: "daydream guppy", img: "/graphics/fish.png", rarity: "common", points: 16, width: 45, height: 45, filter: "hue-rotate(300deg) saturate(1.1)", biteWindow: 2500 },
-  { name: "cotton candy jelly", img: "/graphics/jellyfish.png", rarity: "common", points: 13, width: 50, height: 50, filter: "hue-rotate(330deg) saturate(1.4) brightness(1.1)", biteWindow: 2400 },
+  { name: "wobbleblob", img: "/graphics/jellyfish.png", rarity: "common", points: 10, width: 30, height: 30, biteWindow: 2500 },
+  { name: "pond skipper", img: "/graphics/fish.png", rarity: "common", points: 15, width: 28, height: 28, biteWindow: 2500 },
+  { name: "blossom drifter", img: "/graphics/jellyfish.png", rarity: "common", points: 12, width: 30, height: 30, filter: "hue-rotate(280deg) saturate(1.3)", biteWindow: 2500 },
+  { name: "mossback minnow", img: "/graphics/fish.png", rarity: "common", points: 18, width: 28, height: 28, filter: "hue-rotate(90deg) saturate(1.2)", biteWindow: 2300 },
+  { name: "puddle puff", img: "/graphics/jellyfish.png", rarity: "common", points: 11, width: 30, height: 30, filter: "hue-rotate(120deg) saturate(1.1)", biteWindow: 2600 },
+  { name: "creek nibbler", img: "/graphics/fish.png", rarity: "common", points: 14, width: 28, height: 28, filter: "hue-rotate(200deg) saturate(1.2)", biteWindow: 2400 },
+  { name: "daydream guppy", img: "/graphics/fish.png", rarity: "common", points: 16, width: 28, height: 28, filter: "hue-rotate(300deg) saturate(1.1)", biteWindow: 2500 },
+  { name: "cotton candy jelly", img: "/graphics/jellyfish.png", rarity: "common", points: 13, width: 30, height: 30, filter: "hue-rotate(330deg) saturate(1.4) brightness(1.1)", biteWindow: 2400 },
   // ── uncommon (8) ──
-  { name: "marmalade koi", img: "/graphics/goldfish.png", rarity: "uncommon", points: 25, width: 45, height: 30, biteWindow: 1800 },
-  { name: "lemon dart", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 30, width: 50, height: 30, biteWindow: 1800 },
-  { name: "peach sorbet", img: "/graphics/goldfish.png", rarity: "uncommon", points: 28, width: 45, height: 30, filter: "hue-rotate(330deg) saturate(1.4)", biteWindow: 1700 },
-  { name: "lavender fin", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 35, width: 50, height: 30, filter: "hue-rotate(240deg) saturate(1.3)", biteWindow: 1600 },
-  { name: "mint splash", img: "/graphics/goldfish.png", rarity: "uncommon", points: 27, width: 45, height: 30, filter: "hue-rotate(130deg) saturate(1.3)", biteWindow: 1750 },
-  { name: "sunset swimmer", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 32, width: 50, height: 30, filter: "hue-rotate(340deg) saturate(1.5)", biteWindow: 1650 },
-  { name: "honeydew angel", img: "/graphics/angelfish.png", rarity: "uncommon", points: 33, width: 45, height: 35, filter: "hue-rotate(70deg) saturate(1.2)", biteWindow: 1700 },
-  { name: "bubblegum bass", img: "/graphics/fish.png", rarity: "uncommon", points: 26, width: 45, height: 45, filter: "hue-rotate(320deg) saturate(1.6) brightness(1.1)", biteWindow: 1800 },
+  { name: "marmalade koi", img: "/graphics/goldfish.png", rarity: "uncommon", points: 25, width: 28, height: 18, biteWindow: 1800 },
+  { name: "lemon dart", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 30, width: 30, height: 18, biteWindow: 1800 },
+  { name: "peach sorbet", img: "/graphics/goldfish.png", rarity: "uncommon", points: 28, width: 28, height: 18, filter: "hue-rotate(330deg) saturate(1.4)", biteWindow: 1700 },
+  { name: "lavender fin", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 35, width: 30, height: 18, filter: "hue-rotate(240deg) saturate(1.3)", biteWindow: 1600 },
+  { name: "mint splash", img: "/graphics/goldfish.png", rarity: "uncommon", points: 27, width: 28, height: 18, filter: "hue-rotate(130deg) saturate(1.3)", biteWindow: 1750 },
+  { name: "sunset swimmer", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 32, width: 30, height: 18, filter: "hue-rotate(340deg) saturate(1.5)", biteWindow: 1650 },
+  { name: "honeydew angel", img: "/graphics/angelfish.png", rarity: "uncommon", points: 33, width: 28, height: 22, filter: "hue-rotate(70deg) saturate(1.2)", biteWindow: 1700 },
+  { name: "bubblegum bass", img: "/graphics/fish.png", rarity: "uncommon", points: 26, width: 28, height: 28, filter: "hue-rotate(320deg) saturate(1.6) brightness(1.1)", biteWindow: 1800 },
   // ── rare (6) ──
-  { name: "moonstripe", img: "/graphics/angelfish.png", rarity: "rare", points: 50, width: 45, height: 35, biteWindow: 1200 },
-  { name: "ember veil", img: "/graphics/angelfish.png", rarity: "rare", points: 60, width: 45, height: 35, filter: "hue-rotate(30deg) saturate(1.5)", biteWindow: 1100 },
-  { name: "twilight darter", img: "/graphics/yellowtang.png", rarity: "rare", points: 55, width: 50, height: 30, filter: "hue-rotate(270deg) saturate(1.6) brightness(1.1)", biteWindow: 1150 },
-  { name: "rosegold koi", img: "/graphics/goldfish.png", rarity: "rare", points: 65, width: 45, height: 30, filter: "hue-rotate(10deg) saturate(1.8) brightness(1.15)", biteWindow: 1000 },
-  { name: "starlight jelly", img: "/graphics/jellyfish.png", rarity: "rare", points: 58, width: 50, height: 50, filter: "hue-rotate(200deg) saturate(1.7) brightness(1.2)", biteWindow: 1100 },
-  { name: "velvet whisker", img: "/graphics/fish.png", rarity: "rare", points: 52, width: 45, height: 45, filter: "hue-rotate(260deg) saturate(1.5) brightness(1.05)", biteWindow: 1250 },
+  { name: "moonstripe", img: "/graphics/angelfish.png", rarity: "rare", points: 50, width: 28, height: 22, biteWindow: 1200 },
+  { name: "ember veil", img: "/graphics/angelfish.png", rarity: "rare", points: 60, width: 28, height: 22, filter: "hue-rotate(30deg) saturate(1.5)", biteWindow: 1100 },
+  { name: "twilight darter", img: "/graphics/yellowtang.png", rarity: "rare", points: 55, width: 30, height: 18, filter: "hue-rotate(270deg) saturate(1.6) brightness(1.1)", biteWindow: 1150 },
+  { name: "rosegold koi", img: "/graphics/goldfish.png", rarity: "rare", points: 65, width: 28, height: 18, filter: "hue-rotate(10deg) saturate(1.8) brightness(1.15)", biteWindow: 1000 },
+  { name: "starlight jelly", img: "/graphics/jellyfish.png", rarity: "rare", points: 58, width: 30, height: 30, filter: "hue-rotate(200deg) saturate(1.7) brightness(1.2)", biteWindow: 1100 },
+  { name: "velvet whisker", img: "/graphics/fish.png", rarity: "rare", points: 52, width: 28, height: 28, filter: "hue-rotate(260deg) saturate(1.5) brightness(1.05)", biteWindow: 1250 },
   // ── legendary (4) ──
-  { name: "sun sovereign", img: "/graphics/jellyfish.png", rarity: "legendary", points: 100, width: 50, height: 50, filter: "hue-rotate(15deg) saturate(2) brightness(1.2)", biteWindow: 700 },
-  { name: "ghost phantom", img: "/graphics/angelfish.png", rarity: "legendary", points: 150, width: 45, height: 35, filter: "hue-rotate(160deg) saturate(1.8) brightness(1.15)", biteWindow: 600 },
-  { name: "aurora wyrm", img: "/graphics/yellowtang.png", rarity: "legendary", points: 120, width: 50, height: 30, filter: "hue-rotate(140deg) saturate(2) brightness(1.25)", biteWindow: 650 },
-  { name: "dreamweaver", img: "/graphics/goldfish.png", rarity: "legendary", points: 180, width: 45, height: 30, filter: "hue-rotate(280deg) saturate(2.2) brightness(1.3)", biteWindow: 550 },
+  { name: "sun sovereign", img: "/graphics/jellyfish.png", rarity: "legendary", points: 100, width: 32, height: 32, filter: "hue-rotate(15deg) saturate(2) brightness(1.2)", biteWindow: 700 },
+  { name: "ghost phantom", img: "/graphics/angelfish.png", rarity: "legendary", points: 150, width: 30, height: 24, filter: "hue-rotate(160deg) saturate(1.8) brightness(1.15)", biteWindow: 600 },
+  { name: "aurora wyrm", img: "/graphics/yellowtang.png", rarity: "legendary", points: 120, width: 32, height: 20, filter: "hue-rotate(140deg) saturate(2) brightness(1.25)", biteWindow: 650 },
+  { name: "dreamweaver", img: "/graphics/goldfish.png", rarity: "legendary", points: 180, width: 30, height: 20, filter: "hue-rotate(280deg) saturate(2.2) brightness(1.3)", biteWindow: 550 },
 ];
 
 const RARITY_COLORS: Record<string, string> = {
@@ -616,7 +616,7 @@ export default function FishingGame() {
               ))}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/graphics/sleeping-cat.png" alt="sleeping cat" width={65} height={43}
+                src="/graphics/sleeping-cat.png" alt="sleeping cat" width={80} height={53}
                 className="animate-cat-breathe drop-shadow-sm"
               />
             </div>
