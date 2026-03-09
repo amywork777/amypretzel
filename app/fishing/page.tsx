@@ -563,20 +563,31 @@ export default function FishingGame() {
             </div>
           )}
 
-          {/* thought bubble (motivational quotes) — always visible */}
-          <div className="absolute z-[11]" style={{ right: "33%", top: "calc(48% - 128px)" }}>
-            {/* thought dots — three descending circles trailing toward her head */}
-            <div className="absolute -bottom-2 -right-0.5 w-2 h-2 rounded-full bg-white/80 border border-[#e8d0e0]" />
-            <div className="absolute -bottom-5 -right-2 w-1.5 h-1.5 rounded-full bg-white/70 border border-[#e8d0e0]" />
-            <div className="absolute -bottom-7 -right-3 w-1 h-1 rounded-full bg-white/50 border border-[#e8d0e0]" />
-            {/* cloud-shaped bubble */}
-            <div
-              className="bg-white/90 rounded-full px-3 py-1.5 border border-[#e8d0e0] max-w-[140px]"
+          {/* thought bubble (motivational quotes) — cloud shape, no trailing dots */}
+          <div className="absolute z-[11]" style={{ right: "40%", top: "calc(48% - 120px)" }}>
+            <svg
+              className="absolute"
+              width="150" height="50" viewBox="0 0 150 50"
               style={{
                 opacity: quoteFade ? 1 : 0,
                 transition: "opacity 0.5s ease",
-                borderRadius: "18px",
-                boxShadow: "inset 0 1px 2px rgba(255,255,255,0.5)",
+                filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.05))",
+              }}
+            >
+              <path
+                d="M20,40 C8,40 2,34 2,26 C2,20 6,15 12,14 C10,10 12,4 20,3 C26,2 30,5 32,8 C36,3 44,0 52,2 C58,3 62,7 63,12 C68,8 78,6 86,9 C92,11 96,16 96,22 C102,18 112,17 120,20 C128,23 134,28 134,34 C134,38 130,42 124,43 C120,46 112,48 104,46 C98,48 88,48 80,46 C72,48 62,48 54,46 C46,48 36,47 28,44 C24,43 21,42 20,40 Z"
+                fill="rgba(255,255,255,0.9)"
+                stroke="#e8d0e0"
+                strokeWidth="1"
+              />
+            </svg>
+            <div
+              className="relative px-3 py-1 max-w-[140px]"
+              style={{
+                opacity: quoteFade ? 1 : 0,
+                transition: "opacity 0.5s ease",
+                top: "4px",
+                left: "5px",
               }}
             >
               <p className="font-pixel text-[8px] text-[#b090b8] leading-relaxed text-center italic">
