@@ -670,8 +670,6 @@ export default function FishingGame() {
             <div className="absolute top-0 left-[25%] w-[1px] h-full bg-[#c8a880] opacity-50" />
             <div className="absolute top-0 left-[50%] w-[1px] h-full bg-[#c8a880] opacity-50" />
             <div className="absolute top-0 left-[75%] w-[1px] h-full bg-[#c8a880] opacity-50" />
-            <div className="absolute -bottom-4 left-[5%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
-            <div className="absolute -bottom-4 left-[48%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
           </div>
 
           {/* clouds in scene */}
@@ -716,7 +714,7 @@ export default function FishingGame() {
           {/* speech bubble (reactions) */}
           {speechBubble && (
             <div className="absolute z-[12] animate-fade-up"
-              style={{ right: "24%", top: "calc(48% - 108px)" }}>
+              style={{ right: "16%", top: "calc(48% - 108px)" }}>
               <div className="bg-white/90 rounded-lg px-2 py-0.5 font-pixel text-[9px] text-[#7a5a8a] border border-[#e8d0e0] whitespace-nowrap">
                 {speechBubble}
               </div>
