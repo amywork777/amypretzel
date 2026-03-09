@@ -472,6 +472,15 @@ export default function FishingGame() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/graphics/cloud5.png" alt="" width={70} height={42}
             className="absolute top-[3%] right-[5%] opacity-50" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/cloud1.png" alt="" width={90} height={53}
+            className="absolute top-[8%] left-[3%] opacity-45 animate-drift" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/cloud3.png" alt="" width={60} height={36}
+            className="absolute top-[15%] left-[40%] opacity-35 animate-drift" style={{ animationDelay: "4s" }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/cloud4.png" alt="" width={55} height={23}
+            className="absolute top-[6%] left-[55%] opacity-40 animate-drift" style={{ animationDelay: "8s" }} />
 
           {/* amy fishing */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
