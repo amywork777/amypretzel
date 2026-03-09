@@ -225,15 +225,17 @@ export default function FishingGame() {
           <img src="/graphics/cloud2.png" alt="" width={60} height={25}
             className="absolute top-[6%] right-[8%] opacity-50" />
 
-          {/* amy fishing illustration */}
+          {/* amy fishing illustration — standing on shore at water line */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/graphics/amy-fishing.png"
             alt="amy fishing"
-            width={120}
-            height={159}
-            className="absolute bottom-[18%] right-[8%] z-10 drop-shadow-md"
+            width={110}
+            height={145}
+            className="absolute z-10 drop-shadow-md"
             style={{
+              right: "4%",
+              bottom: "56%",
               transform: state === "bite" ? "translateY(-2px)" : "translateY(0)",
               transition: "transform 0.2s ease",
             }}
