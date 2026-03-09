@@ -26,8 +26,8 @@ interface Particle {
 }
 
 function getBubbleCount() {
-  if (typeof window === "undefined") return 20;
-  return window.innerWidth < 640 ? 12 : 20;
+  if (typeof window === "undefined") return 10;
+  return window.innerWidth < 640 ? 6 : 10;
 }
 
 function getMinSize() {
@@ -50,7 +50,7 @@ function randomBubble(id: number, viewW: number, viewH: number): Bubble {
     speedY: 0.1 + Math.random() * 0.3,
     wobbleSpeed: 0.5 + Math.random() * 1.5,
     wobbleAmp: 5 + Math.random() * 15,
-    opacity: 0.3 + Math.random() * 0.45,
+    opacity: 0.25 + Math.random() * 0.35,
     popped: false,
   };
 }
@@ -59,6 +59,7 @@ export default function Bubbles() {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [popCount, setPopCount] = useState(0);
+  const [enabled, setEnabled] = useState(true);
   const frameRef = useRef<number>(0);
   const timeRef = useRef(0);
 
@@ -171,7 +172,18 @@ export default function Bubbles() {
 
   return (
     <div className="fixed inset-0 z-20 pointer-events-none">
-      {bubbles.map((b) => {
+      {/* Toggle button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setEnabled((v) => !v);
+        }}
+        className="fixed bottom-4 left-3 sm:bottom-3 pointer-events-auto font-pixel text-[10px] text-[#c0a0b8] bg-white/60 hover:bg-white/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-[#e8d0e0] transition-colors cursor-pointer"
+      >
+        bubbles {enabled ? "on" : "off"}
+      </button>
+
+      {enabled && bubbles.map((b) => {
         // Extra padding around small bubbles for easier tapping on mobile
         const pad = b.size < 30 ? 10 : 4;
         return (
@@ -214,7 +226,7 @@ export default function Bubbles() {
         );
       })}
 
-      {/* Pop particles */}
+      {/* Pop particles (show even when toggled off, so in-flight ones finish) */}
       {particles.map((p) => (
         <div
           key={p.id}
