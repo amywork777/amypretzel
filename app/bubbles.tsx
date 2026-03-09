@@ -49,6 +49,7 @@ function randomBubble(id: number, viewW: number, viewH: number): Bubble {
 export default function Bubbles() {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [popCount, setPopCount] = useState(0);
   const frameRef = useRef<number>(0);
   const timeRef = useRef(0);
 
@@ -123,6 +124,7 @@ export default function Bubbles() {
 
   const popBubble = (id: number, bx: number, by: number) => {
     playPop();
+    setPopCount((c) => c + 1);
 
     // Spawn burst particles
     const newParticles: Particle[] = Array.from({ length: 6 }, (_, i) => {
@@ -208,6 +210,15 @@ export default function Bubbles() {
           }}
         />
       ))}
+
+      {/* Pop counter */}
+      {popCount > 0 && (
+        <div className="fixed bottom-3 right-3 pointer-events-none">
+          <div className="font-pixel text-[10px] text-[#c0a0b8] bg-white/60 backdrop-blur-sm px-2.5 py-1 rounded-full border border-[#e8d0e0]">
+            {popCount} bubble{popCount !== 1 ? "s" : ""} popped
+          </div>
+        </div>
+      )}
     </div>
   );
 }
