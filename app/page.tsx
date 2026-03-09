@@ -203,27 +203,25 @@ export default function Home() {
                 <Timeline />
               </div></FadeIn>
 
-              {/* fish tank — mobile only */}
+              {/* fish porthole — mobile only */}
               <FadeIn><a href="/fishing" className="block mb-6 group sm:hidden">
-                <div className="relative overflow-hidden rounded-xl border-2 border-[#c8d8e8] bg-gradient-to-b from-[#c0ddf0] to-[#90b8d0] p-3 h-20">
-                  {/* water shimmer */}
-                  <div className="absolute top-[30%] left-[10%] w-[60%] h-[1px] bg-white/30 rounded-full" />
-                  <div className="absolute top-[60%] left-[25%] w-[40%] h-[1px] bg-white/25 rounded-full" />
+                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-[#b8c8d8] bg-gradient-to-b from-[#c0ddf0] via-[#a0c8e0] to-[#80a8c8]"
+                  style={{ boxShadow: "inset 0 2px 8px rgba(0,0,0,0.1), 0 4px 12px rgba(120,160,200,0.2)" }}>
                   {/* swimming fish */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/fish.png" alt="" width={30} height={30} className="absolute top-2 left-[10%] animate-fish-right opacity-50" />
+                  <img src="/graphics/fish.png" alt="" width={22} height={22} className="absolute top-4 left-[8%] animate-fish-right opacity-55" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/goldfish.png" alt="" width={28} height={19} className="absolute bottom-3 left-[55%] animate-fish-left opacity-45" style={{ animationDelay: "3s" }} />
+                  <img src="/graphics/goldfish.png" alt="" width={20} height={14} className="absolute bottom-6 left-[50%] animate-fish-left opacity-50" style={{ animationDelay: "3s" }} />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/jellyfish.png" alt="" width={25} height={25} className="absolute bottom-1 left-[25%] animate-jelly opacity-35" />
-                  {/* label */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-pixel text-[10px] text-white/80 group-hover:text-white transition-colors drop-shadow-md">tap to go fishing!</span>
-                  </div>
+                  <img src="/graphics/jellyfish.png" alt="" width={18} height={18} className="absolute bottom-3 left-[22%] animate-jelly opacity-40" />
                   {/* plants */}
-                  <div className="absolute bottom-0 left-[15%] w-1.5 h-4 bg-[#80b8a0] rounded-t-full opacity-40" />
-                  <div className="absolute bottom-0 right-[20%] w-1.5 h-5 bg-[#80b8a0] rounded-t-full opacity-35" />
+                  <div className="absolute bottom-0 left-[25%] w-1 h-3 bg-[#80b8a0] rounded-t-full opacity-40" />
+                  <div className="absolute bottom-0 right-[30%] w-1 h-4 bg-[#80b8a0] rounded-t-full opacity-35" />
+                  {/* glass highlight */}
+                  <div className="absolute top-1 left-2 w-6 h-3 bg-white/25 rounded-full rotate-[-20deg]" />
                 </div>
+                {/* label below porthole */}
+                <p className="font-pixel text-[9px] text-[#8a7a9a] text-center mt-2 group-hover:text-[#7a5a8a] transition-colors">tap to fish!</p>
               </a></FadeIn>
 
               {/* eslint-disable-next-line @next/next/no-img-element */}
