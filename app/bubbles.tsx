@@ -16,12 +16,20 @@ interface Bubble {
   popped: boolean;
 }
 
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+}
+
 const BUBBLE_COUNT = 20;
 
 function randomBubble(id: number, viewW: number, viewH: number): Bubble {
   const size = 12 + Math.random() * 38;
   const x = Math.random() * viewW;
-  // Mostly bottom half, some in middle
   const y = viewH * 0.4 + Math.random() * viewH * 0.6;
   return {
     id,
@@ -40,12 +48,10 @@ function randomBubble(id: number, viewW: number, viewH: number): Bubble {
 
 export default function Bubbles() {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
-  const mouseRef = useRef({ x: -1000, y: -1000 });
+  const [particles, setParticles] = useState<Particle[]>([]);
   const frameRef = useRef<number>(0);
   const timeRef = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Initialize bubbles
   useEffect(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -54,35 +60,19 @@ export default function Bubbles() {
     );
   }, []);
 
-  // Track mouse position
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    };
-    window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
-  }, []);
-
-  // Animation loop
   const animate = useCallback(() => {
     timeRef.current += 1 / 60;
     const t = timeRef.current;
-    const mouse = mouseRef.current;
     const w = window.innerWidth;
     const h = window.innerHeight;
 
     setBubbles((prev) =>
       prev.map((b) => {
         if (b.popped) return b;
-
-        // Rise slowly
         let newY = b.y - b.speedY;
-
-        // Wobble side to side
         const wobble = Math.sin(t * b.wobbleSpeed + b.id * 1.7) * b.wobbleAmp;
-        let newX = b.baseX + wobble;
+        const newX = b.baseX + wobble;
 
-        // Reset if floated off top
         if (newY < -b.size * 2) {
           const fresh = randomBubble(b.id, w, h);
           fresh.y = h + fresh.size;
@@ -94,6 +84,19 @@ export default function Bubbles() {
       })
     );
 
+    // Animate particles
+    setParticles((prev) =>
+      prev
+        .map((p) => ({
+          ...p,
+          x: p.x + p.vx,
+          y: p.y + p.vy,
+          vy: p.vy + 0.15,
+          life: p.life - 0.03,
+        }))
+        .filter((p) => p.life > 0)
+    );
+
     frameRef.current = requestAnimationFrame(animate);
   }, []);
 
@@ -102,7 +105,6 @@ export default function Bubbles() {
     return () => cancelAnimationFrame(frameRef.current);
   }, [animate]);
 
-  // Soft pop sound using Web Audio API
   const playPop = useCallback(() => {
     try {
       const ctx = new AudioContext();
@@ -119,13 +121,26 @@ export default function Bubbles() {
     } catch {}
   }, []);
 
-  // Pop bubble on click
-  const popBubble = (id: number) => {
+  const popBubble = (id: number, bx: number, by: number) => {
     playPop();
+
+    // Spawn burst particles
+    const newParticles: Particle[] = Array.from({ length: 6 }, (_, i) => {
+      const angle = (Math.PI * 2 * i) / 6 + Math.random() * 0.5;
+      return {
+        id: Date.now() + Math.random(),
+        x: bx,
+        y: by,
+        vx: Math.cos(angle) * (2 + Math.random() * 2),
+        vy: Math.sin(angle) * (2 + Math.random() * 2) - 1,
+        life: 1,
+      };
+    });
+    setParticles((prev) => [...prev, ...newParticles]);
+
     setBubbles((prev) =>
       prev.map((b) => (b.id === id ? { ...b, popped: true } : b))
     );
-    // Respawn after a short delay
     setTimeout(() => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -142,23 +157,26 @@ export default function Bubbles() {
   };
 
   return (
-    <div ref={containerRef} className="absolute inset-0 pointer-events-none">
+    <div className="fixed inset-0 z-20 pointer-events-none">
       {bubbles.map((b) => (
         <div
           key={b.id}
-          onClick={() => popBubble(b.id)}
-          className="absolute cursor-pointer pointer-events-auto transition-transform duration-100"
+          onClick={(e) => {
+            e.stopPropagation();
+            popBubble(b.id, b.x, b.y);
+          }}
+          className="absolute pointer-events-auto"
           style={{
             left: b.x - b.size / 2,
             top: b.y - b.size / 2,
             width: b.size,
             height: b.size,
             opacity: b.popped ? 0 : b.opacity,
-            transform: b.popped ? "scale(1.5)" : "scale(1)",
+            transform: b.popped ? "scale(1.8)" : "scale(1)",
             transition: b.popped
-              ? "opacity 0.3s, transform 0.3s"
-              : "opacity 0.1s",
-            willChange: "left, top",
+              ? "opacity 0.25s, transform 0.25s"
+              : "none",
+            cursor: "pointer",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -171,6 +189,24 @@ export default function Bubbles() {
             draggable={false}
           />
         </div>
+      ))}
+
+      {/* Pop particles */}
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            left: p.x - 3,
+            top: p.y - 3,
+            width: 6,
+            height: 6,
+            background: "#e0c0d8",
+            opacity: p.life,
+            transform: `scale(${p.life})`,
+            pointerEvents: "none",
+          }}
+        />
       ))}
     </div>
   );

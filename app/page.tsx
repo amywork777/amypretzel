@@ -8,6 +8,7 @@ export default function Home() {
   return (
     <div className="bg-aero h-screen flex flex-col overflow-hidden relative">
       <ClickHearts />
+      <Bubbles />
       {/* === DECORATIVE BG === */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         {/* clouds */}
@@ -30,8 +31,7 @@ export default function Home() {
         <img src="/graphics/cloud1.png" alt="" width={100} height={59}
           className="absolute top-[12%] right-[12%] animate-drift opacity-50" style={{ animationDelay: "11s" }} />
 
-        {/* interactive bubbles */}
-        <Bubbles />
+        {/* bubbles moved to fixed overlay for clickability */}
 
         {/* sparkles */}
         <div className="absolute top-[8%] left-[28%] w-3 h-3 bg-white rounded-full animate-sparkle opacity-70" style={{ boxShadow: "0 0 12px 4px rgba(255,255,255,0.6)" }} />
