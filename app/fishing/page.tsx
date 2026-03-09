@@ -11,24 +11,20 @@ interface Fish {
   width: number;
   height: number;
   filter?: string;
-  biteWindow: number; // ms to react before fish escapes
+  biteWindow: number;
 }
 
 const FISH_TYPES: Fish[] = [
-  // common — 2.5s to react
   { name: "wobbleblob", img: "/graphics/jellyfish.png", rarity: "common", points: 10, width: 50, height: 50, biteWindow: 2500 },
   { name: "pond skipper", img: "/graphics/fish.png", rarity: "common", points: 15, width: 45, height: 45, biteWindow: 2500 },
   { name: "blossom drifter", img: "/graphics/jellyfish.png", rarity: "common", points: 12, width: 50, height: 50, filter: "hue-rotate(280deg) saturate(1.3)", biteWindow: 2500 },
   { name: "mossback minnow", img: "/graphics/fish.png", rarity: "common", points: 18, width: 45, height: 45, filter: "hue-rotate(90deg) saturate(1.2)", biteWindow: 2300 },
-  // uncommon — 1.8s to react
   { name: "marmalade koi", img: "/graphics/goldfish.png", rarity: "uncommon", points: 25, width: 45, height: 30, biteWindow: 1800 },
   { name: "lemon dart", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 30, width: 50, height: 30, biteWindow: 1800 },
   { name: "peach sorbet", img: "/graphics/goldfish.png", rarity: "uncommon", points: 28, width: 45, height: 30, filter: "hue-rotate(330deg) saturate(1.4)", biteWindow: 1700 },
   { name: "lavender fin", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 35, width: 50, height: 30, filter: "hue-rotate(240deg) saturate(1.3)", biteWindow: 1600 },
-  // rare — 1.2s to react
   { name: "moonstripe", img: "/graphics/angelfish.png", rarity: "rare", points: 50, width: 45, height: 35, biteWindow: 1200 },
   { name: "ember veil", img: "/graphics/angelfish.png", rarity: "rare", points: 60, width: 45, height: 35, filter: "hue-rotate(30deg) saturate(1.5)", biteWindow: 1100 },
-  // legendary — 0.7s to react!
   { name: "sun sovereign", img: "/graphics/jellyfish.png", rarity: "legendary", points: 100, width: 50, height: 50, filter: "hue-rotate(15deg) saturate(2) brightness(1.2)", biteWindow: 700 },
   { name: "ghost phantom", img: "/graphics/angelfish.png", rarity: "legendary", points: 150, width: 45, height: 35, filter: "hue-rotate(160deg) saturate(1.8) brightness(1.15)", biteWindow: 600 },
 ];
@@ -40,14 +36,85 @@ const RARITY_COLORS: Record<string, string> = {
   legendary: "#f0d060",
 };
 
+const CATCH_REACTIONS = ["yay!", "nice!", "got it!", "wooo!", "hehe~"];
+const RARE_REACTIONS = ["ooh!", "wow!!", "no way!", "amazing!"];
+const MISS_REACTIONS = ["nooo...", "aw man", "so close!", "next time!"];
+const IDLE_REACTIONS = ["hmm...", "any fish?", "...", "la la la~"];
+
+const ACHIEVEMENTS = [
+  { count: 1, msg: "first catch!" },
+  { count: 5, msg: "5 fish! nice~" },
+  { count: 10, msg: "10 fish! pro angler" },
+  { count: 25, msg: "25 fish! obsessed" },
+  { count: 50, msg: "50 fish! legendary" },
+];
+
 type GameState = "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed";
 
 function pickFish(): Fish {
   const roll = Math.random();
-  if (roll < 0.05) return FISH_TYPES[10 + Math.floor(Math.random() * 2)]; // legendary (5%)
-  if (roll < 0.18) return FISH_TYPES[8 + Math.floor(Math.random() * 2)]; // rare (13%)
-  if (roll < 0.45) return FISH_TYPES[4 + Math.floor(Math.random() * 4)]; // uncommon (27%)
-  return FISH_TYPES[Math.floor(Math.random() * 4)]; // common (55%)
+  if (roll < 0.05) return FISH_TYPES[10 + Math.floor(Math.random() * 2)];
+  if (roll < 0.18) return FISH_TYPES[8 + Math.floor(Math.random() * 2)];
+  if (roll < 0.45) return FISH_TYPES[4 + Math.floor(Math.random() * 4)];
+  return FISH_TYPES[Math.floor(Math.random() * 4)];
+}
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Sound effects
+function playSound(type: "cast" | "catch" | "miss" | "legendary") {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === "cast") {
+      osc.frequency.setValueAtTime(400, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.2);
+    } else if (type === "catch") {
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } else if (type === "legendary") {
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.16);
+      osc.frequency.setValueAtTime(1047, ctx.currentTime + 0.24);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+    } else {
+      osc.frequency.setValueAtTime(300, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.25);
+    }
+  } catch {}
+}
+
+interface Sparkle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
 }
 
 export default function FishingGame() {
@@ -55,53 +122,102 @@ export default function FishingGame() {
   const [currentFish, setCurrentFish] = useState<Fish | null>(null);
   const [caught, setCaught] = useState<Fish[]>([]);
   const [score, setScore] = useState(0);
-  const [message, setMessage] = useState("click the pond to cast your line!");
+  const [message, setMessage] = useState("click the pond to cast!");
   const [bobberY, setBobberY] = useState(0);
   const [fishX, setFishX] = useState(-80);
   const [showSplash, setShowSplash] = useState(false);
+  const [speechBubble, setSpeechBubble] = useState("");
+  const [sparkles, setSparkles] = useState<Sparkle[]>([]);
+  const [achievement, setAchievement] = useState("");
+  const [bgFishTime, setBgFishTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const biteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const animRef = useRef<number>(0);
+  const speechTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const idleTimerRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
-  // Bobber animation
+  // Show speech bubble
+  const showSpeech = useCallback((text: string, duration = 1500) => {
+    clearTimeout(speechTimerRef.current);
+    setSpeechBubble(text);
+    speechTimerRef.current = setTimeout(() => setSpeechBubble(""), duration);
+  }, []);
+
+  // Show achievement toast
+  const showAchievement = useCallback((msg: string) => {
+    setAchievement(msg);
+    setTimeout(() => setAchievement(""), 2500);
+  }, []);
+
+  // Spawn sparkles for rare catches
+  const spawnSparkles = useCallback((count: number) => {
+    const newSparkles: Sparkle[] = Array.from({ length: count }, (_, i) => ({
+      id: Date.now() + i,
+      x: 30 + Math.random() * 40,
+      y: 20 + Math.random() * 40,
+      size: 6 + Math.random() * 10,
+      delay: Math.random() * 0.3,
+    }));
+    setSparkles(newSparkles);
+    setTimeout(() => setSparkles([]), 1500);
+  }, []);
+
+  // Idle speech bubbles
+  useEffect(() => {
+    if (state === "waiting") {
+      idleTimerRef.current = setInterval(() => {
+        if (Math.random() < 0.3) showSpeech(pick(IDLE_REACTIONS), 1200);
+      }, 3000);
+      return () => clearInterval(idleTimerRef.current);
+    }
+  }, [state, showSpeech]);
+
+  // Background fish animation
+  useEffect(() => {
+    let t = 0;
+    const animate = () => {
+      t += 0.01;
+      setBgFishTime(t);
+      animRef.current = requestAnimationFrame(animate);
+    };
+    animRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animRef.current);
+  }, []);
+
+  // Bobber animation (override animRef only when needed)
+  const bobberAnimRef = useRef<number>(0);
   useEffect(() => {
     if (state !== "waiting" && state !== "bite") return;
     let t = 0;
     const animate = () => {
       t += 0.05;
-      if (state === "bite") {
-        setBobberY(Math.sin(t * 8) * 6 + 4);
-      } else {
-        setBobberY(Math.sin(t * 2) * 2);
-      }
-      animRef.current = requestAnimationFrame(animate);
+      setBobberY(state === "bite" ? Math.sin(t * 8) * 6 + 4 : Math.sin(t * 2) * 2);
+      bobberAnimRef.current = requestAnimationFrame(animate);
     };
-    animRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animRef.current);
+    bobberAnimRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(bobberAnimRef.current);
   }, [state]);
 
   // Fish swimming in on bite
+  const fishAnimRef = useRef<number>(0);
   useEffect(() => {
-    if (state !== "bite" && state !== "reeling") {
-      setFishX(-80);
-      return;
-    }
+    if (state !== "bite" && state !== "reeling") { setFishX(-80); return; }
     if (state === "bite") {
       let x = -80;
       const swim = () => {
         x += 3;
         if (x > 20) x = 20;
         setFishX(x);
-        if (x < 20) animRef.current = requestAnimationFrame(swim);
+        if (x < 20) fishAnimRef.current = requestAnimationFrame(swim);
       };
-      animRef.current = requestAnimationFrame(swim);
-      return () => cancelAnimationFrame(animRef.current);
+      fishAnimRef.current = requestAnimationFrame(swim);
+      return () => cancelAnimationFrame(fishAnimRef.current);
     }
   }, [state]);
 
   const cast = useCallback(() => {
     if (state !== "idle" && state !== "caught" && state !== "missed") return;
-
+    playSound("cast");
     setState("casting");
     setMessage("casting...");
     setShowSplash(true);
@@ -116,53 +232,96 @@ export default function FishingGame() {
         const fish = pickFish();
         setCurrentFish(fish);
         setState("bite");
-        setMessage("!! a fish is biting! click reel!");
+        setMessage("!! reel it in!");
+        showSpeech("!", 800);
 
-        // Miss window — rarer fish escape faster
         biteTimerRef.current = setTimeout(() => {
           setState("missed");
-          setMessage("too slow... the " + fish.name + " got away!");
+          playSound("miss");
+          setMessage("the " + fish.name + " got away!");
+          showSpeech(pick(MISS_REACTIONS));
           setCurrentFish(null);
         }, fish.biteWindow);
       }, waitTime);
     }, 600);
-  }, [state]);
+  }, [state, showSpeech]);
 
   const reel = useCallback(() => {
     if (state !== "bite" || !currentFish) return;
     clearTimeout(biteTimerRef.current);
-
     setState("reeling");
-    setMessage(`reeling in...`);
+    setMessage("reeling in...");
 
     setTimeout(() => {
       setState("caught");
-      setCaught((prev) => [...prev, currentFish]);
+      const newCaught = [...caught, currentFish];
+      setCaught(newCaught);
       setScore((s) => s + currentFish.points);
-      setMessage(`you caught a ${currentFish.name}! +${currentFish.points} pts`);
-    }, 500);
-  }, [state, currentFish]);
+      setMessage(`${currentFish.name}! +${currentFish.points} pts`);
 
-  // Cleanup timers
+      if (currentFish.rarity === "legendary") {
+        playSound("legendary");
+        showSpeech(pick(RARE_REACTIONS), 2000);
+        spawnSparkles(16);
+      } else if (currentFish.rarity === "rare") {
+        playSound("catch");
+        showSpeech(pick(RARE_REACTIONS));
+        spawnSparkles(8);
+      } else {
+        playSound("catch");
+        showSpeech(pick(CATCH_REACTIONS));
+      }
+
+      // Check achievements
+      const total = newCaught.length;
+      const ach = ACHIEVEMENTS.find((a) => a.count === total);
+      if (ach) showAchievement(ach.msg);
+
+      // First legendary
+      if (currentFish.rarity === "legendary" && newCaught.filter((f) => f.rarity === "legendary").length === 1) {
+        setTimeout(() => showAchievement("first legendary catch!!"), 1500);
+      }
+    }, 500);
+  }, [state, currentFish, caught, showSpeech, spawnSparkles, showAchievement]);
+
   useEffect(() => {
     return () => {
       clearTimeout(timerRef.current);
       clearTimeout(biteTimerRef.current);
+      clearTimeout(speechTimerRef.current);
+      clearInterval(idleTimerRef.current);
     };
   }, []);
 
   const canCast = state === "idle" || state === "caught" || state === "missed";
   const canReel = state === "bite";
 
-  // Count unique fish caught
   const uniqueCaught = FISH_TYPES.map((ft) => ({
     ...ft,
     count: caught.filter((c) => c.name === ft.name).length,
   }));
 
+  // Background fish positions
+  const bgFish1X = (Math.sin(bgFishTime * 0.7) * 0.5 + 0.5) * 35 + 5;
+  const bgFish1Y = Math.sin(bgFishTime * 0.3) * 3 + 68;
+  const bgFish2X = (Math.sin(bgFishTime * 0.5 + 2) * 0.5 + 0.5) * 30 + 10;
+  const bgFish2Y = Math.sin(bgFishTime * 0.4 + 1) * 2 + 78;
+  const bgFish3X = (Math.sin(bgFishTime * 0.6 + 4) * 0.5 + 0.5) * 25 + 15;
+  const bgFish3Y = Math.sin(bgFishTime * 0.35 + 3) * 2 + 85;
+
+  // Butterfly positions
+  const bf1X = Math.sin(bgFishTime * 0.8) * 15 + 20;
+  const bf1Y = Math.sin(bgFishTime * 1.2) * 8 + 15;
+  const bf2X = Math.sin(bgFishTime * 0.6 + 3) * 12 + 55;
+  const bf2Y = Math.sin(bgFishTime * 0.9 + 1) * 6 + 10;
+
+  // Lily pad bob
+  const lilyBob1 = Math.sin(bgFishTime * 1.5) * 1.5;
+  const lilyBob2 = Math.sin(bgFishTime * 1.2 + 2) * 1.5;
+
   return (
     <div className="bg-aero h-screen flex flex-col overflow-hidden relative">
-      {/* decorative clouds — same as main site */}
+      {/* decorative clouds */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/graphics/cloud1.png" alt="" width={200} height={118}
@@ -176,8 +335,6 @@ export default function FishingGame() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/graphics/cloud4.png" alt="" width={140} height={60}
           className="absolute top-[5%] right-[22%] animate-drift opacity-60" style={{ animationDelay: "5s" }} />
-
-        {/* sparkles */}
         <div className="absolute top-[10%] left-[25%] w-2.5 h-2.5 bg-white rounded-full animate-sparkle opacity-60" style={{ boxShadow: "0 0 10px 3px rgba(255,255,255,0.5)" }} />
         <div className="absolute top-[20%] right-[15%] w-2 h-2 bg-white rounded-full animate-sparkle opacity-45" style={{ boxShadow: "0 0 8px 3px rgba(255,255,255,0.4)", animationDelay: "1.5s" }} />
       </div>
@@ -196,157 +353,239 @@ export default function FishingGame() {
         </div>
       </div>
 
+      {/* achievement toast */}
+      {achievement && (
+        <div className="fixed top-12 left-1/2 -translate-x-1/2 z-40 animate-fade-up">
+          <div className="font-pixel text-[11px] text-[#f0d060] bg-[#3a2a4a]/90 backdrop-blur-sm px-4 py-2 rounded-full border border-[#f0d060]/40 whitespace-nowrap">
+            {achievement}
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
-        {/* title */}
         <h1 className="font-pixel text-lg text-[#7a5a8a] mb-4 animate-scale-in">fishing pond</h1>
 
         {/* pond scene */}
         <div
           className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer window-frame"
-          onClick={() => {
-            if (canCast) cast();
-            else if (canReel) reel();
-          }}
+          onClick={() => { if (canCast) cast(); else if (canReel) reel(); }}
         >
           {/* sky */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#c8e0f8] via-[#d0d8f0] to-[#a8d0e8]" style={{ height: "55%" }} />
+
+          {/* sun with rays */}
+          <div className="absolute top-[4%] left-[6%] z-[1]">
+            <div
+              className="w-10 h-10 rounded-full"
+              style={{
+                background: "radial-gradient(circle, #fff8e0 30%, #f8e8a0 60%, transparent 70%)",
+                boxShadow: "0 0 20px 8px rgba(255,240,160,0.4), 0 0 40px 16px rgba(255,220,100,0.15)",
+                animation: "rayPulse 5s ease-in-out infinite alternate",
+              }}
+            />
+          </div>
+
+          {/* butterflies */}
+          <div
+            className="absolute z-[2] text-[10px]"
+            style={{
+              left: `${bf1X}%`, top: `${bf1Y}%`,
+              transition: "left 0.5s ease, top 0.5s ease",
+            }}
+          >
+            <span style={{ display: "inline-block", animation: "wiggle 0.5s ease-in-out infinite" }}>
+              <span className="text-[#e8a0c8]">&#x2767;</span>
+            </span>
+          </div>
+          <div
+            className="absolute z-[2] text-[8px]"
+            style={{
+              left: `${bf2X}%`, top: `${bf2Y}%`,
+              transition: "left 0.5s ease, top 0.5s ease",
+            }}
+          >
+            <span style={{ display: "inline-block", animation: "wiggle 0.6s ease-in-out infinite", animationDelay: "0.3s" }}>
+              <span className="text-[#c0b8e8]">&#x2767;</span>
+            </span>
+          </div>
 
           {/* water */}
           <div
             className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#a0d0e8] via-[#90c0d8] to-[#78a8c8]"
             style={{ height: "48%", top: "52%" }}
           >
-            {/* water shimmer */}
             <div className="absolute inset-0 opacity-20">
               <div className="absolute top-[10%] left-[10%] w-[80%] h-[2px] bg-white/40 rounded-full" />
               <div className="absolute top-[30%] left-[20%] w-[60%] h-[2px] bg-white/30 rounded-full" />
               <div className="absolute top-[55%] left-[5%] w-[70%] h-[2px] bg-white/25 rounded-full" />
               <div className="absolute top-[75%] left-[15%] w-[50%] h-[2px] bg-white/20 rounded-full" />
             </div>
-
-            {/* underwater plants */}
             <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40" />
             <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35" />
             <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35" />
           </div>
 
-          {/* grassy bank on right side */}
+          {/* lily pads */}
+          <div className="absolute z-[3]" style={{ left: "8%", top: `${53 + lilyBob1}%` }}>
+            <div className="w-8 h-5 rounded-full bg-[#70b878] opacity-50 border border-[#60a868]/30"
+              style={{ borderRadius: "50%", transform: "rotateX(60deg)" }} />
+            <div className="absolute top-[40%] left-[35%] w-1.5 h-1.5 rounded-full bg-[#f0a0b0] opacity-70" />
+          </div>
+          <div className="absolute z-[3]" style={{ left: "30%", top: `${55 + lilyBob2}%` }}>
+            <div className="w-6 h-4 rounded-full bg-[#78c080] opacity-45 border border-[#68b070]/30"
+              style={{ borderRadius: "50%", transform: "rotateX(60deg)" }} />
+          </div>
+
+          {/* background fish swimming lazily */}
+          <div className="absolute z-[2] opacity-25 pointer-events-none"
+            style={{ left: `${bgFish1X}%`, top: `${bgFish1Y}%`, transition: "left 1s ease, top 1s ease" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/graphics/goldfish.png" alt="" width={25} height={17}
+              style={{ transform: Math.sin(bgFishTime * 0.7) > 0 ? "scaleX(1)" : "scaleX(-1)" }} />
+          </div>
+          <div className="absolute z-[2] opacity-20 pointer-events-none"
+            style={{ left: `${bgFish2X}%`, top: `${bgFish2Y}%`, transition: "left 1s ease, top 1s ease" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/graphics/fish.png" alt="" width={20} height={20}
+              style={{ transform: Math.sin(bgFishTime * 0.5 + 2) > 0 ? "scaleX(1)" : "scaleX(-1)", filter: "hue-rotate(40deg)" }} />
+          </div>
+          <div className="absolute z-[2] opacity-15 pointer-events-none"
+            style={{ left: `${bgFish3X}%`, top: `${bgFish3Y}%`, transition: "left 1s ease, top 1s ease" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/graphics/yellowtang.png" alt="" width={22} height={14}
+              style={{ transform: Math.sin(bgFishTime * 0.6 + 4) > 0 ? "scaleX(1)" : "scaleX(-1)" }} />
+          </div>
+
+          {/* grassy bank */}
           <div
             className="absolute right-0 bottom-0 z-[5]"
             style={{
-              width: "40%",
-              height: "52%",
+              width: "40%", height: "52%",
               background: "linear-gradient(180deg, #a8d8a8 0%, #90c898 20%, #80b888 100%)",
               borderTopLeftRadius: "40% 15%",
             }}
           >
-            {/* grass texture dots */}
             <div className="absolute top-[8%] left-[15%] w-1.5 h-3 bg-[#98d098] rounded-full opacity-60" />
             <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50" />
             <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55" />
             <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45" />
+            {/* tiny flowers on grass */}
+            <div className="absolute top-[12%] left-[40%] w-2 h-2 text-[6px] text-[#f0b0c0]">&#10047;</div>
+            <div className="absolute top-[18%] left-[75%] w-2 h-2 text-[5px] text-[#e0a8d0]">&#10047;</div>
+            <div className="absolute top-[8%] left-[85%] w-2 h-2 text-[6px] text-[#f8d0a0]">&#10047;</div>
           </div>
 
-          {/* wooden dock extending over water */}
+          {/* dock */}
           <div className="absolute z-[6]" style={{ right: "10%", top: "48%", width: "35%", height: "6%" }}>
-            {/* dock planks */}
             <div className="absolute inset-0 bg-[#d4b896] rounded-l-sm border-t-2 border-l-2 border-[#e0c8a8] border-b-2 border-b-[#b89870]" />
-            {/* plank lines */}
             <div className="absolute top-0 left-[25%] w-[1px] h-full bg-[#c8a880] opacity-50" />
             <div className="absolute top-0 left-[50%] w-[1px] h-full bg-[#c8a880] opacity-50" />
             <div className="absolute top-0 left-[75%] w-[1px] h-full bg-[#c8a880] opacity-50" />
-            {/* dock posts */}
             <div className="absolute -bottom-4 left-[5%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
             <div className="absolute -bottom-4 left-[48%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
           </div>
 
-          {/* small clouds in scene */}
+          {/* little cat on dock */}
+          <div className="absolute z-[7]" style={{ right: "38%", top: "calc(48% - 14px)" }}>
+            <div className="relative">
+              {/* body */}
+              <div className="w-4 h-3 rounded-full bg-[#f0d8c0] border border-[#e0c0a0]/50" />
+              {/* head */}
+              <div className="absolute -top-2.5 left-0.5 w-3 h-2.5 rounded-full bg-[#f0d8c0] border border-[#e0c0a0]/50" />
+              {/* ears */}
+              <div className="absolute -top-3.5 left-0 w-0 h-0" style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderBottom: "4px solid #f0d8c0" }} />
+              <div className="absolute -top-3.5 left-1.5 w-0 h-0" style={{ borderLeft: "3px solid transparent", borderRight: "3px solid transparent", borderBottom: "4px solid #f0d8c0" }} />
+              {/* tail */}
+              <div className="absolute top-0 -right-2 w-3 h-1 bg-[#f0d8c0] rounded-full"
+                style={{ transform: `rotate(${Math.sin(bgFishTime * 2) * 20 - 20}deg)`, transformOrigin: "left center" }} />
+              {/* eyes */}
+              <div className="absolute -top-1.5 left-1 w-0.5 h-0.5 rounded-full bg-[#6a5a50]" />
+              <div className="absolute -top-1.5 left-2 w-0.5 h-0.5 rounded-full bg-[#6a5a50]" />
+            </div>
+          </div>
+
+          {/* clouds in scene */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/graphics/cloud5.png" alt="" width={70} height={42}
-            className="absolute top-[3%] left-[5%] opacity-60" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/cloud2.png" alt="" width={60} height={25}
-            className="absolute top-[8%] left-[35%] opacity-50" />
+            className="absolute top-[3%] right-[5%] opacity-50" />
 
-          {/* amy fishing — feet on dock (dock top is at 48%) */}
+          {/* amy fishing */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/graphics/amy-fishing.png"
-            alt="amy fishing"
-            width={90}
-            height={119}
+            src="/graphics/amy-fishing.png" alt="amy fishing" width={90} height={119}
             className="absolute z-[8] drop-shadow-md"
             style={{
-              right: "28%",
-              top: "calc(48% - 90px)",
+              right: "28%", top: "calc(48% - 90px)",
               transform: state === "bite" ? "translateY(-2px)" : "translateY(0)",
               transition: "transform 0.2s ease",
             }}
           />
 
-          {/* bobber in water */}
+          {/* speech bubble */}
+          {speechBubble && (
+            <div className="absolute z-[12] animate-fade-up"
+              style={{ right: "22%", top: "calc(48% - 105px)" }}>
+              <div className="bg-white/90 rounded-lg px-2 py-0.5 font-pixel text-[9px] text-[#7a5a8a] border border-[#e8d0e0] whitespace-nowrap">
+                {speechBubble}
+              </div>
+            </div>
+          )}
+
+          {/* bobber */}
           {state !== "idle" && state !== "casting" && (
-            <div
-              className="absolute z-10"
-              style={{
-                left: "25%",
-                top: "56%",
-                transform: `translateY(${bobberY}px)`,
-                transition: state === "bite" ? "none" : "transform 0.1s",
-              }}
-            >
-              <div
-                className="w-3 h-3 rounded-full bg-[#f08080] border border-white/60"
-                style={{
-                  boxShadow: state === "bite" ? "0 0 8px rgba(240,128,128,0.6)" : "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-              />
-              {/* ripple */}
+            <div className="absolute z-10" style={{
+              left: "25%", top: "56%",
+              transform: `translateY(${bobberY}px)`,
+              transition: state === "bite" ? "none" : "transform 0.1s",
+            }}>
+              <div className="w-3 h-3 rounded-full bg-[#f08080] border border-white/60"
+                style={{ boxShadow: state === "bite" ? "0 0 8px rgba(240,128,128,0.6)" : "0 2px 4px rgba(0,0,0,0.1)" }} />
               <div className="absolute -left-1 top-1/2 w-5 h-[2px] bg-white/30 rounded-full" />
             </div>
           )}
 
-          {/* splash effect */}
+          {/* splash */}
           {showSplash && (
             <div className="absolute top-[54%] left-[23%] z-10">
               <div className="w-8 h-3 bg-white/40 rounded-full animate-ping" />
             </div>
           )}
 
-          {/* fish approaching on bite */}
+          {/* fish on bite */}
           {(state === "bite" || state === "reeling") && currentFish && (
-            <div
-              className="absolute top-[62%] z-10 transition-transform"
-              style={{
-                left: `calc(20% + ${fishX}px)`,
-                transform: state === "reeling" ? "scale(1.2) translateY(-10px)" : "scale(1)",
-                transition: state === "reeling" ? "all 0.3s ease" : "none",
-              }}
-            >
+            <div className="absolute top-[62%] z-10" style={{
+              left: `calc(20% + ${fishX}px)`,
+              transform: state === "reeling" ? "scale(1.2) translateY(-10px)" : "scale(1)",
+              transition: state === "reeling" ? "all 0.3s ease" : "none",
+            }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={currentFish.img}
-                alt={currentFish.name}
-                width={currentFish.width}
-                height={currentFish.height}
-                style={{ filter: currentFish.filter }}
-              />
+              <img src={currentFish.img} alt={currentFish.name}
+                width={currentFish.width} height={currentFish.height}
+                style={{ filter: currentFish.filter }} />
             </div>
           )}
 
-          {/* caught fish display */}
+          {/* catch sparkles */}
+          {sparkles.map((s) => (
+            <div key={s.id} className="absolute z-[25] animate-sparkle pointer-events-none"
+              style={{ left: `${s.x}%`, top: `${s.y}%`, animationDelay: `${s.delay}s` }}>
+              <div style={{
+                width: s.size, height: s.size,
+                background: "white",
+                clipPath: "polygon(50% 0%, 58% 38%, 100% 50%, 58% 62%, 50% 100%, 42% 62%, 0% 50%, 42% 38%)",
+                filter: "drop-shadow(0 0 4px rgba(255,255,255,0.8))",
+              }} />
+            </div>
+          ))}
+
+          {/* caught overlay */}
           {state === "caught" && currentFish && (
             <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/10">
               <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 text-center animate-scale-in border-2 border-[#e8d0e0]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={currentFish.img}
-                  alt={currentFish.name}
-                  width={currentFish.width * 1.5}
-                  height={currentFish.height * 1.5}
-                  className="mx-auto mb-2"
-                  style={{ filter: currentFish.filter }}
-                />
+                <img src={currentFish.img} alt={currentFish.name}
+                  width={currentFish.width * 1.5} height={currentFish.height * 1.5}
+                  className="mx-auto mb-2" style={{ filter: currentFish.filter }} />
                 <p className="font-pixel text-[12px] text-[#7a5a8a]">{currentFish.name}!</p>
                 <p className="font-pixel text-[10px] mt-1" style={{ color: RARITY_COLORS[currentFish.rarity] }}>
                   {currentFish.rarity} &middot; +{currentFish.points} pts
@@ -373,30 +612,16 @@ export default function FishingGame() {
         </div>
 
         {/* message */}
-        <p className="font-pixel text-[11px] text-[#8a6080] mt-4 text-center min-h-[2em]">
-          {message}
-        </p>
+        <p className="font-pixel text-[11px] text-[#8a6080] mt-4 text-center min-h-[2em]">{message}</p>
 
-        {/* action buttons */}
+        {/* buttons */}
         <div className="flex gap-3 mt-3">
-          <button
-            onClick={cast}
-            disabled={!canCast}
-            className={`btn-glossy px-5 py-2 text-[11px] font-bold text-[#8a6080] tracking-wide ${
-              !canCast ? "opacity-40 cursor-not-allowed" : ""
-            }`}
-          >
+          <button onClick={cast} disabled={!canCast}
+            className={`btn-glossy px-5 py-2 text-[11px] font-bold text-[#8a6080] tracking-wide ${!canCast ? "opacity-40 cursor-not-allowed" : ""}`}>
             cast
           </button>
-          <button
-            onClick={reel}
-            disabled={!canReel}
-            className={`btn-glossy px-5 py-2 text-[11px] font-bold tracking-wide ${
-              canReel
-                ? "text-[#f08080] animate-pulse border-[#f0b0b0]"
-                : "text-[#8a6080] opacity-40 cursor-not-allowed"
-            }`}
-          >
+          <button onClick={reel} disabled={!canReel}
+            className={`btn-glossy px-5 py-2 text-[11px] font-bold tracking-wide ${canReel ? "text-[#f08080] animate-pulse border-[#f0b0b0]" : "text-[#8a6080] opacity-40 cursor-not-allowed"}`}>
             reel!
           </button>
         </div>
@@ -409,23 +634,14 @@ export default function FishingGame() {
             </h2>
             <div className="flex flex-wrap justify-center gap-2">
               {uniqueCaught.filter((f) => f.count > 0).map((f) => (
-                <div
-                  key={f.name}
-                  className="bg-white/60 backdrop-blur-sm rounded-lg p-2 border border-[#e8d0e0] text-center min-w-[70px]"
-                >
+                <div key={f.name}
+                  className="bg-white/60 backdrop-blur-sm rounded-lg p-2 border border-[#e8d0e0] text-center min-w-[70px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={f.img}
-                    alt={f.name}
-                    width={f.width * 0.7}
-                    height={f.height * 0.7}
-                    className="mx-auto mb-1"
-                    style={{ filter: f.filter }}
-                  />
+                  <img src={f.img} alt={f.name}
+                    width={f.width * 0.7} height={f.height * 0.7}
+                    className="mx-auto mb-1" style={{ filter: f.filter }} />
                   <p className="font-pixel text-[8px] text-[#8a6080]">{f.name}</p>
-                  <p className="font-pixel text-[8px]" style={{ color: RARITY_COLORS[f.rarity] }}>
-                    x{f.count}
-                  </p>
+                  <p className="font-pixel text-[8px]" style={{ color: RARITY_COLORS[f.rarity] }}>x{f.count}</p>
                 </div>
               ))}
             </div>
