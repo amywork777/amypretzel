@@ -215,6 +215,7 @@ export default function FishingGame() {
   const [quoteFade, setQuoteFade] = useState(true);
   const [bgFishTime, setBgFishTime] = useState(0);
   const [musicNotes, setMusicNotes] = useState<{ id: number; symbol: string; offset: number }[]>([]);
+  const [sleepZs, setSleepZs] = useState<{ id: number; size: number }[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const biteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const animRef = useRef<number>(0);
@@ -288,6 +289,16 @@ export default function FishingGame() {
       setMusicNotes((prev) => [...prev, note]);
       setTimeout(() => setMusicNotes((prev) => prev.filter((n) => n.id !== note.id)), 2500);
     }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Sleeping cat z's
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const z = { id: Date.now() + Math.random(), size: 8 + Math.random() * 4 };
+      setSleepZs((prev) => [...prev, z]);
+      setTimeout(() => setSleepZs((prev) => prev.filter((s) => s.id !== z.id)), 2500);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -593,6 +604,22 @@ export default function FishingGame() {
             <div className="absolute top-[75%] left-[50%] text-[12px] text-[#d0b8e0]">&#10047;</div>
             <div className="absolute top-[80%] left-[75%] text-[10px] text-[#f8b8a8]">&#10047;</div>
             <div className="absolute top-[85%] left-[35%] text-[11px] text-[#e0c0d8]">&#10047;</div>
+
+            {/* sleeping cat */}
+            <div className="absolute bottom-[15%] right-[10%] z-[6]">
+              {/* z's floating up */}
+              {sleepZs.map((z) => (
+                <div key={z.id} className="absolute -top-2 -right-1 animate-zz pointer-events-none font-pixel text-[#b090b8]"
+                  style={{ fontSize: z.size }}>
+                  z
+                </div>
+              ))}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/graphics/sleeping-cat.png" alt="sleeping cat" width={50} height={33}
+                className="animate-cat-breathe drop-shadow-sm"
+              />
+            </div>
           </div>
 
           {/* dock */}
