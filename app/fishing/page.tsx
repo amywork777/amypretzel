@@ -206,7 +206,7 @@ export default function FishingGame() {
   const [score, setScore] = useState(0);
   const [message, setMessage] = useState("click the pond to cast!");
   const [bobberY, setBobberY] = useState(0);
-  const [fishX, setFishX] = useState(-80);
+  const [fishY, setFishY] = useState(60);
   const [showSplash, setShowSplash] = useState(false);
   const [speechBubble, setSpeechBubble] = useState("");
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
@@ -305,17 +305,17 @@ export default function FishingGame() {
     return () => cancelAnimationFrame(bobberAnimRef.current);
   }, [state]);
 
-  // Fish swimming in on bite
+  // Fish swimming up on bite (bottom to top)
   const fishAnimRef = useRef<number>(0);
   useEffect(() => {
-    if (state !== "bite" && state !== "reeling") { setFishX(-80); return; }
+    if (state !== "bite" && state !== "reeling") { setFishY(60); return; }
     if (state === "bite") {
-      let x = -80;
+      let y = 60;
       const swim = () => {
-        x += 3;
-        if (x > 20) x = 20;
-        setFishX(x);
-        if (x < 20) fishAnimRef.current = requestAnimationFrame(swim);
+        y -= 2;
+        if (y < 0) y = 0;
+        setFishY(y);
+        if (y > 0) fishAnimRef.current = requestAnimationFrame(swim);
       };
       fishAnimRef.current = requestAnimationFrame(swim);
       return () => cancelAnimationFrame(fishAnimRef.current);
@@ -630,7 +630,7 @@ export default function FishingGame() {
           {/* bobber */}
           {state !== "idle" && state !== "casting" && (
             <div className="absolute z-10" style={{
-              left: "25%", top: "56%",
+              left: "32%", top: "53%",
               transform: `translateY(${bobberY}px)`,
               transition: state === "bite" ? "none" : "transform 0.1s",
             }}>
@@ -642,15 +642,15 @@ export default function FishingGame() {
 
           {/* splash */}
           {showSplash && (
-            <div className="absolute top-[54%] left-[23%] z-10">
+            <div className="absolute top-[51%] left-[30%] z-10">
               <div className="w-8 h-3 bg-white/40 rounded-full animate-ping" />
             </div>
           )}
 
-          {/* fish on bite */}
+          {/* fish on bite — swims up from below */}
           {(state === "bite" || state === "reeling") && currentFish && (
-            <div className="absolute top-[62%] z-10" style={{
-              left: `calc(20% + ${fishX}px)`,
+            <div className="absolute left-[28%] z-10" style={{
+              top: `calc(55% + ${fishY}px)`,
               transform: state === "reeling" ? "scale(1.2) translateY(-10px)" : "scale(1)",
               transition: state === "reeling" ? "all 0.3s ease" : "none",
             }}>
