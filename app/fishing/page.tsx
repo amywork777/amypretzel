@@ -214,7 +214,7 @@ export default function FishingGame() {
   const [quote, setQuote] = useState(() => pick(LIFE_QUOTES));
   const [quoteFade, setQuoteFade] = useState(true);
   const [bgFishTime, setBgFishTime] = useState(0);
-  const [musicNotes, setMusicNotes] = useState<{ id: number; symbol: string }[]>([]);
+  const [musicNotes, setMusicNotes] = useState<{ id: number; symbol: string; offset: number }[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const biteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const animRef = useRef<number>(0);
@@ -284,7 +284,7 @@ export default function FishingGame() {
   useEffect(() => {
     const NOTES = ["♪", "♫", "♩", "♬"];
     const interval = setInterval(() => {
-      const note = { id: Date.now() + Math.random(), symbol: pick(NOTES) };
+      const note = { id: Date.now() + Math.random(), symbol: pick(NOTES), offset: 10 + Math.random() * 20 };
       setMusicNotes((prev) => [...prev, note]);
       setTimeout(() => setMusicNotes((prev) => prev.filter((n) => n.id !== note.id)), 2500);
     }, 3000);
@@ -633,7 +633,7 @@ export default function FishingGame() {
             {/* music notes floating from headphones */}
             {musicNotes.map((note) => (
               <div key={note.id} className="absolute animate-note-float pointer-events-none"
-                style={{ top: "5px", right: `${10 + Math.random() * 20}px`, fontSize: "12px", color: "#d8a0c8" }}>
+                style={{ top: "5px", right: `${note.offset}px`, fontSize: "12px", color: "#d8a0c8" }}>
                 {note.symbol}
               </div>
             ))}
