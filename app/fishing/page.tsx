@@ -558,20 +558,24 @@ export default function FishingGame() {
             </div>
           )}
 
-          {/* thought bubble (motivational quotes) — clean rounded cloud */}
-          <div className="absolute z-[11]" style={{ right: "40%", top: "calc(48% - 120px)" }}>
-            <div
-              className="bg-white/90 px-3.5 py-2 border border-[#e8d0e0] max-w-[140px]"
-              style={{
-                opacity: quoteFade ? 1 : 0,
-                transition: "opacity 0.5s ease",
-                borderRadius: "50%",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-              }}
-            >
-              <p className="font-pixel text-[8px] text-[#b090b8] leading-relaxed text-center italic">
-                {quote}
-              </p>
+          {/* thought bubble (motivational quotes) — cloud shape */}
+          <div className="absolute z-[11]" style={{ right: "40%", top: "calc(48% - 125px)", opacity: quoteFade ? 1 : 0, transition: "opacity 0.5s ease" }}>
+            <div className="relative" style={{ width: 150, height: 60 }}>
+              <svg width="150" height="60" viewBox="0 0 150 60" className="absolute inset-0" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.04))" }}>
+                <ellipse cx="50" cy="38" rx="30" ry="18" fill="rgba(255,255,255,0.9)" stroke="#e8d0e0" strokeWidth="1" />
+                <ellipse cx="100" cy="38" rx="30" ry="18" fill="rgba(255,255,255,0.9)" stroke="#e8d0e0" strokeWidth="1" />
+                <ellipse cx="75" cy="22" rx="35" ry="20" fill="rgba(255,255,255,0.9)" stroke="#e8d0e0" strokeWidth="1" />
+                <ellipse cx="40" cy="26" rx="22" ry="16" fill="rgba(255,255,255,0.9)" stroke="#e8d0e0" strokeWidth="1" />
+                <ellipse cx="110" cy="26" rx="22" ry="16" fill="rgba(255,255,255,0.9)" stroke="#e8d0e0" strokeWidth="1" />
+                {/* fill center to hide internal strokes */}
+                <ellipse cx="75" cy="32" rx="42" ry="16" fill="rgba(255,255,255,0.9)" />
+                <ellipse cx="75" cy="28" rx="35" ry="14" fill="rgba(255,255,255,0.9)" />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center px-4">
+                <p className="font-pixel text-[8px] text-[#b090b8] leading-relaxed text-center italic">
+                  {quote}
+                </p>
+              </div>
             </div>
           </div>
 
