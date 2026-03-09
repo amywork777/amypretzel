@@ -434,7 +434,7 @@ export default function FishingGame() {
             <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50" />
             <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55" />
             <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45" />
-            {/* flowers on grass */}
+            {/* flowers scattered across grass */}
             <div className="absolute top-[6%] left-[20%] text-[12px] text-[#f0a0b8]">&#10047;</div>
             <div className="absolute top-[14%] left-[45%] text-[10px] text-[#e8b0d0]">&#10047;</div>
             <div className="absolute top-[4%] left-[70%] text-[14px] text-[#f8c8a8]">&#10047;</div>
@@ -443,6 +443,19 @@ export default function FishingGame() {
             <div className="absolute top-[22%] left-[30%] text-[13px] text-[#f0b8c8]">&#10047;</div>
             <div className="absolute top-[16%] left-[90%] text-[10px] text-[#d0c0f0]">&#10047;</div>
             <div className="absolute top-[28%] left-[60%] text-[8px] text-[#f0c0b0]">&#10047;</div>
+            <div className="absolute top-[35%] left-[25%] text-[11px] text-[#e8a0c0]">&#10047;</div>
+            <div className="absolute top-[42%] left-[70%] text-[13px] text-[#f0b8d0]">&#10047;</div>
+            <div className="absolute top-[38%] left-[50%] text-[9px] text-[#d8c0e8]">&#10047;</div>
+            <div className="absolute top-[50%] left-[35%] text-[12px] text-[#f8c0a8]">&#10047;</div>
+            <div className="absolute top-[48%] left-[85%] text-[10px] text-[#e0a8d0]">&#10047;</div>
+            <div className="absolute top-[56%] left-[60%] text-[14px] text-[#f0a8b8]">&#10047;</div>
+            <div className="absolute top-[62%] left-[40%] text-[10px] text-[#c8b8e8]">&#10047;</div>
+            <div className="absolute top-[58%] left-[80%] text-[11px] text-[#f0d0b0]">&#10047;</div>
+            <div className="absolute top-[70%] left-[25%] text-[13px] text-[#e8b0c8]">&#10047;</div>
+            <div className="absolute top-[68%] left-[65%] text-[9px] text-[#f0c8d0]">&#10047;</div>
+            <div className="absolute top-[75%] left-[50%] text-[12px] text-[#d0b8e0]">&#10047;</div>
+            <div className="absolute top-[80%] left-[75%] text-[10px] text-[#f8b8a8]">&#10047;</div>
+            <div className="absolute top-[85%] left-[35%] text-[11px] text-[#e0c0d8]">&#10047;</div>
           </div>
 
           {/* dock */}
