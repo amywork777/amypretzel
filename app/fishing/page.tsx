@@ -536,7 +536,7 @@ export default function FishingGame() {
             }}
           />
 
-          {/* speech bubble */}
+          {/* speech bubble (reactions) */}
           {speechBubble && (
             <div className="absolute z-[12] animate-fade-up"
               style={{ right: "22%", top: "calc(48% - 105px)" }}>
@@ -545,6 +545,25 @@ export default function FishingGame() {
               </div>
             </div>
           )}
+
+          {/* thought bubble (motivational quotes) — always visible */}
+          <div className="absolute z-[11]" style={{ right: "45%", top: "calc(48% - 130px)" }}>
+            {/* thought dots */}
+            <div className="absolute -bottom-2 right-2 w-1.5 h-1.5 rounded-full bg-white/70" />
+            <div className="absolute -bottom-4 right-0 w-1 h-1 rounded-full bg-white/50" />
+            {/* bubble */}
+            <div
+              className="bg-white/80 backdrop-blur-sm rounded-2xl px-2.5 py-1.5 border border-[#e8d8e8]/60 max-w-[120px]"
+              style={{
+                opacity: quoteFade ? 1 : 0,
+                transition: "opacity 0.5s ease",
+              }}
+            >
+              <p className="text-[8px] text-[#a090b0] leading-relaxed text-center italic">
+                {quote}
+              </p>
+            </div>
+          </div>
 
           {/* bobber */}
           {state !== "idle" && state !== "casting" && (
@@ -629,17 +648,6 @@ export default function FishingGame() {
         {/* message */}
         <p className="font-pixel text-[11px] text-[#8a6080] mt-4 text-center min-h-[2em]">{message}</p>
 
-        {/* motivational quote */}
-        <p
-          className="text-[11px] text-[#b0a0b8] text-center mt-1 italic max-w-xs leading-relaxed"
-          style={{
-            opacity: quoteFade ? 0.8 : 0,
-            transition: "opacity 0.5s ease",
-            minHeight: "2em",
-          }}
-        >
-          &ldquo;{quote}&rdquo;
-        </p>
 
         {/* buttons */}
         <div className="flex gap-3 mt-3">
