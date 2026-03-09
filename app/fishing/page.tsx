@@ -187,34 +187,62 @@ export default function FishingGame() {
 
         {/* pond scene */}
         <div
-          className="relative w-full max-w-sm aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer window-frame"
+          className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer window-frame"
           onClick={() => {
             if (canCast) cast();
             else if (canReel) reel();
           }}
         >
           {/* sky */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#c8e0f8] via-[#d0d8f0] to-[#a8d0e8]" style={{ height: "45%" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#c8e0f8] via-[#d0d8f0] to-[#a8d0e8]" style={{ height: "55%" }} />
 
           {/* water */}
           <div
             className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#a0d0e8] via-[#90c0d8] to-[#78a8c8]"
-            style={{ height: "60%", top: "40%" }}
+            style={{ height: "48%", top: "52%" }}
           >
             {/* water shimmer */}
             <div className="absolute inset-0 opacity-20">
               <div className="absolute top-[10%] left-[10%] w-[80%] h-[2px] bg-white/40 rounded-full" />
-              <div className="absolute top-[25%] left-[20%] w-[60%] h-[2px] bg-white/30 rounded-full" />
-              <div className="absolute top-[45%] left-[5%] w-[70%] h-[2px] bg-white/25 rounded-full" />
-              <div className="absolute top-[65%] left-[15%] w-[50%] h-[2px] bg-white/20 rounded-full" />
+              <div className="absolute top-[30%] left-[20%] w-[60%] h-[2px] bg-white/30 rounded-full" />
+              <div className="absolute top-[55%] left-[5%] w-[70%] h-[2px] bg-white/25 rounded-full" />
+              <div className="absolute top-[75%] left-[15%] w-[50%] h-[2px] bg-white/20 rounded-full" />
             </div>
 
             {/* underwater plants */}
             <div className="absolute bottom-0 left-[8%] w-3 h-12 bg-[#80b8a0] rounded-t-full opacity-40" />
             <div className="absolute bottom-0 left-[11%] w-2.5 h-10 bg-[#90c8a8] rounded-t-full opacity-35" />
-            <div className="absolute bottom-0 right-[12%] w-3 h-14 bg-[#80b8a0] rounded-t-full opacity-40" />
-            <div className="absolute bottom-0 right-[15%] w-2 h-9 bg-[#90c8a8] rounded-t-full opacity-30" />
             <div className="absolute bottom-0 left-[45%] w-2.5 h-11 bg-[#88c0a8] rounded-t-full opacity-35" />
+          </div>
+
+          {/* grassy bank on right side */}
+          <div
+            className="absolute right-0 bottom-0 z-[5]"
+            style={{
+              width: "40%",
+              height: "52%",
+              background: "linear-gradient(180deg, #a8d8a8 0%, #90c898 20%, #80b888 100%)",
+              borderTopLeftRadius: "40% 15%",
+            }}
+          >
+            {/* grass texture dots */}
+            <div className="absolute top-[8%] left-[15%] w-1.5 h-3 bg-[#98d098] rounded-full opacity-60" />
+            <div className="absolute top-[5%] left-[30%] w-1 h-2.5 bg-[#a0d8a0] rounded-full opacity-50" />
+            <div className="absolute top-[10%] left-[50%] w-1.5 h-2 bg-[#90c890] rounded-full opacity-55" />
+            <div className="absolute top-[3%] left-[70%] w-1 h-3 bg-[#98d098] rounded-full opacity-45" />
+          </div>
+
+          {/* wooden dock extending over water */}
+          <div className="absolute z-[6]" style={{ right: "10%", top: "48%", width: "35%", height: "6%" }}>
+            {/* dock planks */}
+            <div className="absolute inset-0 bg-[#d4b896] rounded-l-sm border-t-2 border-l-2 border-[#e0c8a8] border-b-2 border-b-[#b89870]" />
+            {/* plank lines */}
+            <div className="absolute top-0 left-[25%] w-[1px] h-full bg-[#c8a880] opacity-50" />
+            <div className="absolute top-0 left-[50%] w-[1px] h-full bg-[#c8a880] opacity-50" />
+            <div className="absolute top-0 left-[75%] w-[1px] h-full bg-[#c8a880] opacity-50" />
+            {/* dock posts */}
+            <div className="absolute -bottom-4 left-[5%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
+            <div className="absolute -bottom-4 left-[48%] w-2 h-6 bg-[#c8a070] rounded-b-sm" />
           </div>
 
           {/* small clouds in scene */}
@@ -223,19 +251,19 @@ export default function FishingGame() {
             className="absolute top-[3%] left-[5%] opacity-60" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/graphics/cloud2.png" alt="" width={60} height={25}
-            className="absolute top-[6%] right-[8%] opacity-50" />
+            className="absolute top-[8%] left-[35%] opacity-50" />
 
-          {/* amy fishing illustration — standing on shore at water line */}
+          {/* amy fishing — standing on dock */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/graphics/amy-fishing.png"
             alt="amy fishing"
-            width={110}
-            height={145}
-            className="absolute z-10 drop-shadow-md"
+            width={100}
+            height={132}
+            className="absolute z-[8] drop-shadow-md"
             style={{
-              right: "4%",
-              bottom: "56%",
+              right: "12%",
+              top: "14%",
               transform: state === "bite" ? "translateY(-2px)" : "translateY(0)",
               transition: "transform 0.2s ease",
             }}
@@ -246,8 +274,8 @@ export default function FishingGame() {
             <div
               className="absolute z-10"
               style={{
-                right: "38%",
-                top: "48%",
+                left: "25%",
+                top: "56%",
                 transform: `translateY(${bobberY}px)`,
                 transition: state === "bite" ? "none" : "transform 0.1s",
               }}
@@ -265,7 +293,7 @@ export default function FishingGame() {
 
           {/* splash effect */}
           {showSplash && (
-            <div className="absolute top-[46%] right-[36%] z-10">
+            <div className="absolute top-[54%] left-[23%] z-10">
               <div className="w-8 h-3 bg-white/40 rounded-full animate-ping" />
             </div>
           )}
@@ -273,9 +301,9 @@ export default function FishingGame() {
           {/* fish approaching on bite */}
           {(state === "bite" || state === "reeling") && currentFish && (
             <div
-              className="absolute top-[55%] z-10 transition-transform"
+              className="absolute top-[62%] z-10 transition-transform"
               style={{
-                right: `calc(35% + ${-fishX}px)`,
+                left: `calc(20% + ${fishX}px)`,
                 transform: state === "reeling" ? "scale(1.2) translateY(-10px)" : "scale(1)",
                 transition: state === "reeling" ? "all 0.3s ease" : "none",
               }}
@@ -321,7 +349,7 @@ export default function FishingGame() {
 
           {/* bite alert */}
           {state === "bite" && (
-            <div className="absolute top-[12%] right-[30%] z-20 animate-bounce">
+            <div className="absolute top-[10%] right-[35%] z-20 animate-bounce">
               <div className="font-pixel text-2xl text-[#f08080] drop-shadow-md">!</div>
             </div>
           )}
