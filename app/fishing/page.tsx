@@ -278,7 +278,7 @@ export default function FishingGame() {
             className="absolute z-[8] drop-shadow-md"
             style={{
               right: "28%",
-              top: "calc(48% - 105px)",
+              top: "calc(48% - 90px)",
               transform: state === "bite" ? "translateY(-2px)" : "translateY(0)",
               transition: "transform 0.2s ease",
             }}
