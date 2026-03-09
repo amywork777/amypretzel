@@ -568,7 +568,7 @@ export default function FishingGame() {
               maxWidth: "45%",
             }}
           >
-            <p className="font-pixel text-[9px] text-white/70 leading-relaxed text-center" style={{ textShadow: "0 1px 4px rgba(150,120,170,0.3)" }}>
+            <p className="font-pixel text-[9px] text-[#7a5a8a] leading-relaxed text-center" style={{ textShadow: "0 1px 3px rgba(255,255,255,0.6)" }}>
               {quote}
             </p>
           </div>
