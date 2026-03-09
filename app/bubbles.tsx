@@ -25,10 +25,19 @@ interface Particle {
   life: number;
 }
 
-const BUBBLE_COUNT = 20;
+function getBubbleCount() {
+  if (typeof window === "undefined") return 20;
+  return window.innerWidth < 640 ? 12 : 20;
+}
+
+function getMinSize() {
+  if (typeof window === "undefined") return 12;
+  return window.innerWidth < 640 ? 22 : 12;
+}
 
 function randomBubble(id: number, viewW: number, viewH: number): Bubble {
-  const size = 12 + Math.random() * 38;
+  const minSize = getMinSize();
+  const size = minSize + Math.random() * (50 - minSize);
   const x = Math.random() * viewW;
   const y = viewH * 0.4 + Math.random() * viewH * 0.6;
   return {
@@ -56,8 +65,9 @@ export default function Bubbles() {
   useEffect(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const count = getBubbleCount();
     setBubbles(
-      Array.from({ length: BUBBLE_COUNT }, (_, i) => randomBubble(i, w, h))
+      Array.from({ length: count }, (_, i) => randomBubble(i, w, h))
     );
   }, []);
 
@@ -126,9 +136,10 @@ export default function Bubbles() {
     playPop();
     setPopCount((c) => c + 1);
 
-    // Spawn burst particles
-    const newParticles: Particle[] = Array.from({ length: 6 }, (_, i) => {
-      const angle = (Math.PI * 2 * i) / 6 + Math.random() * 0.5;
+    // Spawn burst particles (fewer on mobile)
+    const particleCount = window.innerWidth < 640 ? 4 : 6;
+    const newParticles: Particle[] = Array.from({ length: particleCount }, (_, i) => {
+      const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
       return {
         id: Date.now() + Math.random(),
         x: bx,
@@ -160,38 +171,48 @@ export default function Bubbles() {
 
   return (
     <div className="fixed inset-0 z-20 pointer-events-none">
-      {bubbles.map((b) => (
-        <div
-          key={b.id}
-          onClick={(e) => {
-            e.stopPropagation();
-            popBubble(b.id, b.x, b.y);
-          }}
-          className="absolute pointer-events-auto"
-          style={{
-            left: b.x - b.size / 2,
-            top: b.y - b.size / 2,
-            width: b.size,
-            height: b.size,
-            opacity: b.popped ? 0 : b.opacity,
-            transform: b.popped ? "scale(1.8)" : "scale(1)",
-            transition: b.popped
-              ? "opacity 0.25s, transform 0.25s"
-              : "none",
-            cursor: "pointer",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/graphics/bubble-large.png"
-            alt=""
-            width={b.size}
-            height={b.size}
-            className="w-full h-full"
-            draggable={false}
-          />
-        </div>
-      ))}
+      {bubbles.map((b) => {
+        // Extra padding around small bubbles for easier tapping on mobile
+        const pad = b.size < 30 ? 10 : 4;
+        return (
+          <div
+            key={b.id}
+            onClick={(e) => {
+              e.stopPropagation();
+              popBubble(b.id, b.x, b.y);
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              popBubble(b.id, b.x, b.y);
+            }}
+            className="absolute pointer-events-auto"
+            style={{
+              left: b.x - b.size / 2 - pad,
+              top: b.y - b.size / 2 - pad,
+              width: b.size + pad * 2,
+              height: b.size + pad * 2,
+              padding: pad,
+              opacity: b.popped ? 0 : b.opacity,
+              transform: b.popped ? "scale(1.8)" : "scale(1)",
+              transition: b.popped
+                ? "opacity 0.25s, transform 0.25s"
+                : "none",
+              cursor: "pointer",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/graphics/bubble-large.png"
+              alt=""
+              width={b.size}
+              height={b.size}
+              className="w-full h-full"
+              draggable={false}
+            />
+          </div>
+        );
+      })}
 
       {/* Pop particles */}
       {particles.map((p) => (
@@ -213,7 +234,7 @@ export default function Bubbles() {
 
       {/* Pop counter */}
       {popCount > 0 && (
-        <div className="fixed bottom-3 right-3 pointer-events-none">
+        <div className="fixed bottom-4 right-3 sm:bottom-3 pointer-events-none">
           <div className="font-pixel text-[10px] text-[#c0a0b8] bg-white/60 backdrop-blur-sm px-2.5 py-1 rounded-full border border-[#e8d0e0]">
             {popCount} bubble{popCount !== 1 ? "s" : ""} popped
           </div>
