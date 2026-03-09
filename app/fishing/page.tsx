@@ -11,28 +11,26 @@ interface Fish {
   width: number;
   height: number;
   filter?: string;
+  biteWindow: number; // ms to react before fish escapes
 }
 
 const FISH_TYPES: Fish[] = [
-  // base fish (common)
-  { name: "jellyfish", img: "/graphics/jellyfish.png", rarity: "common", points: 10, width: 50, height: 50 },
-  { name: "blue fish", img: "/graphics/fish.png", rarity: "common", points: 15, width: 45, height: 45 },
-  // color variants (common)
-  { name: "pink jellyfish", img: "/graphics/jellyfish.png", rarity: "common", points: 12, width: 50, height: 50, filter: "hue-rotate(280deg) saturate(1.3)" },
-  { name: "green fish", img: "/graphics/fish.png", rarity: "common", points: 18, width: 45, height: 45, filter: "hue-rotate(90deg) saturate(1.2)" },
-  // base fish (uncommon)
-  { name: "goldfish", img: "/graphics/goldfish.png", rarity: "uncommon", points: 25, width: 45, height: 30 },
-  { name: "yellow tang", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 30, width: 50, height: 30 },
-  // color variants (uncommon)
-  { name: "rose goldfish", img: "/graphics/goldfish.png", rarity: "uncommon", points: 28, width: 45, height: 30, filter: "hue-rotate(330deg) saturate(1.4)" },
-  { name: "purple tang", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 35, width: 50, height: 30, filter: "hue-rotate(240deg) saturate(1.3)" },
-  // base fish (rare)
-  { name: "angelfish", img: "/graphics/angelfish.png", rarity: "rare", points: 50, width: 45, height: 35 },
-  // color variant (rare)
-  { name: "sunset angelfish", img: "/graphics/angelfish.png", rarity: "rare", points: 60, width: 45, height: 35, filter: "hue-rotate(30deg) saturate(1.5)" },
-  // legendary variants
-  { name: "golden jellyfish", img: "/graphics/jellyfish.png", rarity: "legendary", points: 100, width: 50, height: 50, filter: "hue-rotate(15deg) saturate(2) brightness(1.2)" },
-  { name: "crystal angelfish", img: "/graphics/angelfish.png", rarity: "legendary", points: 150, width: 45, height: 35, filter: "hue-rotate(160deg) saturate(1.8) brightness(1.15)" },
+  // common — 2.5s to react
+  { name: "wobbleblob", img: "/graphics/jellyfish.png", rarity: "common", points: 10, width: 50, height: 50, biteWindow: 2500 },
+  { name: "pond skipper", img: "/graphics/fish.png", rarity: "common", points: 15, width: 45, height: 45, biteWindow: 2500 },
+  { name: "blossom drifter", img: "/graphics/jellyfish.png", rarity: "common", points: 12, width: 50, height: 50, filter: "hue-rotate(280deg) saturate(1.3)", biteWindow: 2500 },
+  { name: "mossback minnow", img: "/graphics/fish.png", rarity: "common", points: 18, width: 45, height: 45, filter: "hue-rotate(90deg) saturate(1.2)", biteWindow: 2300 },
+  // uncommon — 1.8s to react
+  { name: "marmalade koi", img: "/graphics/goldfish.png", rarity: "uncommon", points: 25, width: 45, height: 30, biteWindow: 1800 },
+  { name: "lemon dart", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 30, width: 50, height: 30, biteWindow: 1800 },
+  { name: "peach sorbet", img: "/graphics/goldfish.png", rarity: "uncommon", points: 28, width: 45, height: 30, filter: "hue-rotate(330deg) saturate(1.4)", biteWindow: 1700 },
+  { name: "lavender fin", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 35, width: 50, height: 30, filter: "hue-rotate(240deg) saturate(1.3)", biteWindow: 1600 },
+  // rare — 1.2s to react
+  { name: "moonstripe", img: "/graphics/angelfish.png", rarity: "rare", points: 50, width: 45, height: 35, biteWindow: 1200 },
+  { name: "ember veil", img: "/graphics/angelfish.png", rarity: "rare", points: 60, width: 45, height: 35, filter: "hue-rotate(30deg) saturate(1.5)", biteWindow: 1100 },
+  // legendary — 0.7s to react!
+  { name: "sun sovereign", img: "/graphics/jellyfish.png", rarity: "legendary", points: 100, width: 50, height: 50, filter: "hue-rotate(15deg) saturate(2) brightness(1.2)", biteWindow: 700 },
+  { name: "ghost phantom", img: "/graphics/angelfish.png", rarity: "legendary", points: 150, width: 45, height: 35, filter: "hue-rotate(160deg) saturate(1.8) brightness(1.15)", biteWindow: 600 },
 ];
 
 const RARITY_COLORS: Record<string, string> = {
@@ -120,12 +118,12 @@ export default function FishingGame() {
         setState("bite");
         setMessage("!! a fish is biting! click reel!");
 
-        // Miss window
+        // Miss window — rarer fish escape faster
         biteTimerRef.current = setTimeout(() => {
           setState("missed");
-          setMessage("too slow... the fish got away!");
+          setMessage("too slow... the " + fish.name + " got away!");
           setCurrentFish(null);
-        }, 2000);
+        }, fish.biteWindow);
       }, waitTime);
     }, 600);
   }, [state]);
