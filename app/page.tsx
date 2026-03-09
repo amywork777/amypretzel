@@ -40,22 +40,32 @@ export default function Home() {
         <div className="absolute top-[18%] right-[25%] w-1.5 h-1.5 bg-white rounded-full animate-sparkle opacity-40" style={{ boxShadow: "0 0 8px 2px rgba(255,255,255,0.3)", animationDelay: "1.5s" }} />
         <div className="absolute top-[45%] left-[10%] w-2 h-2 bg-white rounded-full animate-sparkle opacity-35" style={{ boxShadow: "0 0 10px 3px rgba(255,255,255,0.3)", animationDelay: "0.7s" }} />
 
-        {/* sea creatures */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/jellyfish.png" alt="" width={75} height={75}
-          className="absolute bottom-[6%] left-[4%] animate-jelly opacity-45" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/fish.png" alt="" width={55} height={55}
-          className="absolute bottom-[14%] right-[6%] animate-fish-right opacity-40" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/goldfish.png" alt="" width={55} height={37}
-          className="absolute bottom-[10%] right-[25%] animate-fish-dart opacity-40" style={{ animationDelay: "5s" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/yellowtang.png" alt="" width={60} height={35}
-          className="absolute bottom-[18%] left-[30%] animate-fish-right opacity-40" style={{ animationDelay: "7s" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/angelfish.png" alt="" width={55} height={40}
-          className="absolute bottom-[4%] right-[12%] animate-fish-left opacity-38" style={{ animationDelay: "2s" }} />
+        {/* sea creatures — click to go fishing! */}
+        <a href="/fishing" className="absolute bottom-[6%] left-[4%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/jellyfish.png" alt="go fishing!" width={75} height={75}
+            className="animate-jelly opacity-45" />
+        </a>
+        <a href="/fishing" className="absolute bottom-[14%] right-[6%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/fish.png" alt="go fishing!" width={55} height={55}
+            className="animate-fish-right opacity-40" />
+        </a>
+        <a href="/fishing" className="absolute bottom-[10%] right-[25%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity" style={{ animationDelay: "5s" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/goldfish.png" alt="go fishing!" width={55} height={37}
+            className="animate-fish-dart opacity-40" />
+        </a>
+        <a href="/fishing" className="absolute bottom-[18%] left-[30%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity" style={{ animationDelay: "7s" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/yellowtang.png" alt="go fishing!" width={60} height={35}
+            className="animate-fish-right opacity-40" />
+        </a>
+        <a href="/fishing" className="absolute bottom-[4%] right-[12%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity" style={{ animationDelay: "2s" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/graphics/angelfish.png" alt="go fishing!" width={55} height={40}
+            className="animate-fish-left opacity-38" />
+        </a>
       </div>
 
       {/* === COMPUTER WINDOW === */}
