@@ -6,33 +6,50 @@ import Link from "next/link";
 interface Fish {
   name: string;
   img: string;
-  rarity: "common" | "uncommon" | "rare";
+  rarity: "common" | "uncommon" | "rare" | "legendary";
   points: number;
   width: number;
   height: number;
+  filter?: string;
 }
 
 const FISH_TYPES: Fish[] = [
+  // base fish (common)
   { name: "jellyfish", img: "/graphics/jellyfish.png", rarity: "common", points: 10, width: 50, height: 50 },
   { name: "blue fish", img: "/graphics/fish.png", rarity: "common", points: 15, width: 45, height: 45 },
+  // color variants (common)
+  { name: "pink jellyfish", img: "/graphics/jellyfish.png", rarity: "common", points: 12, width: 50, height: 50, filter: "hue-rotate(280deg) saturate(1.3)" },
+  { name: "green fish", img: "/graphics/fish.png", rarity: "common", points: 18, width: 45, height: 45, filter: "hue-rotate(90deg) saturate(1.2)" },
+  // base fish (uncommon)
   { name: "goldfish", img: "/graphics/goldfish.png", rarity: "uncommon", points: 25, width: 45, height: 30 },
   { name: "yellow tang", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 30, width: 50, height: 30 },
+  // color variants (uncommon)
+  { name: "rose goldfish", img: "/graphics/goldfish.png", rarity: "uncommon", points: 28, width: 45, height: 30, filter: "hue-rotate(330deg) saturate(1.4)" },
+  { name: "purple tang", img: "/graphics/yellowtang.png", rarity: "uncommon", points: 35, width: 50, height: 30, filter: "hue-rotate(240deg) saturate(1.3)" },
+  // base fish (rare)
   { name: "angelfish", img: "/graphics/angelfish.png", rarity: "rare", points: 50, width: 45, height: 35 },
+  // color variant (rare)
+  { name: "sunset angelfish", img: "/graphics/angelfish.png", rarity: "rare", points: 60, width: 45, height: 35, filter: "hue-rotate(30deg) saturate(1.5)" },
+  // legendary variants
+  { name: "golden jellyfish", img: "/graphics/jellyfish.png", rarity: "legendary", points: 100, width: 50, height: 50, filter: "hue-rotate(15deg) saturate(2) brightness(1.2)" },
+  { name: "crystal angelfish", img: "/graphics/angelfish.png", rarity: "legendary", points: 150, width: 45, height: 35, filter: "hue-rotate(160deg) saturate(1.8) brightness(1.15)" },
 ];
 
-const RARITY_COLORS = {
+const RARITY_COLORS: Record<string, string> = {
   common: "#a0c8b8",
   uncommon: "#c0a0d8",
   rare: "#f0b8c0",
+  legendary: "#f0d060",
 };
 
 type GameState = "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed";
 
 function pickFish(): Fish {
   const roll = Math.random();
-  if (roll < 0.15) return FISH_TYPES[4]; // angelfish — rare
-  if (roll < 0.40) return FISH_TYPES[2 + Math.floor(Math.random() * 2)]; // uncommon
-  return FISH_TYPES[Math.floor(Math.random() * 2)]; // common
+  if (roll < 0.05) return FISH_TYPES[10 + Math.floor(Math.random() * 2)]; // legendary (5%)
+  if (roll < 0.18) return FISH_TYPES[8 + Math.floor(Math.random() * 2)]; // rare (13%)
+  if (roll < 0.45) return FISH_TYPES[4 + Math.floor(Math.random() * 4)]; // uncommon (27%)
+  return FISH_TYPES[Math.floor(Math.random() * 4)]; // common (55%)
 }
 
 export default function FishingGame() {
@@ -314,6 +331,7 @@ export default function FishingGame() {
                 alt={currentFish.name}
                 width={currentFish.width}
                 height={currentFish.height}
+                style={{ filter: currentFish.filter }}
               />
             </div>
           )}
@@ -329,6 +347,7 @@ export default function FishingGame() {
                   width={currentFish.width * 1.5}
                   height={currentFish.height * 1.5}
                   className="mx-auto mb-2"
+                  style={{ filter: currentFish.filter }}
                 />
                 <p className="font-pixel text-[12px] text-[#7a5a8a]">{currentFish.name}!</p>
                 <p className="font-pixel text-[10px] mt-1" style={{ color: RARITY_COLORS[currentFish.rarity] }}>
@@ -403,6 +422,7 @@ export default function FishingGame() {
                     width={f.width * 0.7}
                     height={f.height * 0.7}
                     className="mx-auto mb-1"
+                    style={{ filter: f.filter }}
                   />
                   <p className="font-pixel text-[8px] text-[#8a6080]">{f.name}</p>
                   <p className="font-pixel text-[8px]" style={{ color: RARITY_COLORS[f.rarity] }}>

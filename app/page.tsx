@@ -40,31 +40,26 @@ export default function Home() {
         <div className="absolute top-[18%] right-[25%] w-1.5 h-1.5 bg-white rounded-full animate-sparkle opacity-40" style={{ boxShadow: "0 0 8px 2px rgba(255,255,255,0.3)", animationDelay: "1.5s" }} />
         <div className="absolute top-[45%] left-[10%] w-2 h-2 bg-white rounded-full animate-sparkle opacity-35" style={{ boxShadow: "0 0 10px 3px rgba(255,255,255,0.3)", animationDelay: "0.7s" }} />
 
-        {/* sea creatures — click to go fishing! */}
-        <a href="/fishing" className="absolute bottom-[6%] left-[4%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity">
+        {/* sea creatures — click to go fishing! (animations on <a> so hit area moves with fish) */}
+        <a href="/fishing" className="absolute bottom-[6%] left-[4%] pointer-events-auto cursor-pointer opacity-45 hover:opacity-70 transition-opacity animate-jelly">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/jellyfish.png" alt="go fishing!" width={75} height={75}
-            className="animate-jelly opacity-45" />
+          <img src="/graphics/jellyfish.png" alt="go fishing!" width={75} height={75} />
         </a>
-        <a href="/fishing" className="absolute bottom-[14%] right-[6%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity">
+        <a href="/fishing" className="absolute bottom-[14%] right-[6%] pointer-events-auto cursor-pointer opacity-40 hover:opacity-70 transition-opacity animate-fish-right">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/fish.png" alt="go fishing!" width={55} height={55}
-            className="animate-fish-right opacity-40" />
+          <img src="/graphics/fish.png" alt="go fishing!" width={55} height={55} />
         </a>
-        <a href="/fishing" className="absolute bottom-[10%] right-[25%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity" style={{ animationDelay: "5s" }}>
+        <a href="/fishing" className="absolute bottom-[10%] right-[25%] pointer-events-auto cursor-pointer opacity-40 hover:opacity-70 transition-opacity animate-fish-dart" style={{ animationDelay: "5s" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/goldfish.png" alt="go fishing!" width={55} height={37}
-            className="animate-fish-dart opacity-40" />
+          <img src="/graphics/goldfish.png" alt="go fishing!" width={55} height={37} />
         </a>
-        <a href="/fishing" className="absolute bottom-[18%] left-[30%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity" style={{ animationDelay: "7s" }}>
+        <a href="/fishing" className="absolute bottom-[18%] left-[30%] pointer-events-auto cursor-pointer opacity-40 hover:opacity-70 transition-opacity animate-fish-right" style={{ animationDelay: "7s" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/yellowtang.png" alt="go fishing!" width={60} height={35}
-            className="animate-fish-right opacity-40" />
+          <img src="/graphics/yellowtang.png" alt="go fishing!" width={60} height={35} />
         </a>
-        <a href="/fishing" className="absolute bottom-[4%] right-[12%] pointer-events-auto cursor-pointer hover:opacity-70 transition-opacity" style={{ animationDelay: "2s" }}>
+        <a href="/fishing" className="absolute bottom-[4%] right-[12%] pointer-events-auto cursor-pointer opacity-[0.38] hover:opacity-70 transition-opacity animate-fish-left" style={{ animationDelay: "2s" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/angelfish.png" alt="go fishing!" width={55} height={40}
-            className="animate-fish-left opacity-38" />
+          <img src="/graphics/angelfish.png" alt="go fishing!" width={55} height={40} />
         </a>
       </div>
 
@@ -204,6 +199,29 @@ export default function Home() {
               <FadeIn><div className="mb-8">
                 <Timeline />
               </div></FadeIn>
+
+              {/* fish tank — mobile-friendly link to fishing game */}
+              <FadeIn><a href="/fishing" className="block mb-6 group">
+                <div className="relative overflow-hidden rounded-xl border-2 border-[#c8d8e8] bg-gradient-to-b from-[#c0ddf0] to-[#90b8d0] p-3 h-20">
+                  {/* water shimmer */}
+                  <div className="absolute top-[30%] left-[10%] w-[60%] h-[1px] bg-white/30 rounded-full" />
+                  <div className="absolute top-[60%] left-[25%] w-[40%] h-[1px] bg-white/25 rounded-full" />
+                  {/* swimming fish */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/graphics/fish.png" alt="" width={30} height={30} className="absolute top-2 left-[10%] animate-fish-right opacity-50" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/graphics/goldfish.png" alt="" width={28} height={19} className="absolute bottom-3 left-[55%] animate-fish-left opacity-45" style={{ animationDelay: "3s" }} />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/graphics/jellyfish.png" alt="" width={25} height={25} className="absolute bottom-1 left-[25%] animate-jelly opacity-35" />
+                  {/* label */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="font-pixel text-[10px] text-white/80 group-hover:text-white transition-colors drop-shadow-md">tap to go fishing!</span>
+                  </div>
+                  {/* plants */}
+                  <div className="absolute bottom-0 left-[15%] w-1.5 h-4 bg-[#80b8a0] rounded-t-full opacity-40" />
+                  <div className="absolute bottom-0 right-[20%] w-1.5 h-5 bg-[#80b8a0] rounded-t-full opacity-35" />
+                </div>
+              </a></FadeIn>
 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/graphics/amy-crochet.png" alt="amy crocheting" width={100} height={80}
