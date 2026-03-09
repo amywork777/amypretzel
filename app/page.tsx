@@ -2,6 +2,7 @@ import Image from "next/image";
 import Bubbles from "./bubbles";
 import Timeline from "./timeline";
 import ClickHearts from "./click-hearts";
+import FadeIn from "./fade-in";
 
 export default function Home() {
   return (
@@ -106,7 +107,7 @@ export default function Home() {
               </div>
 
               {/* about me */}
-              <div id="about">
+              <FadeIn><div id="about">
                 <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">about me</h2>
                 <div className="text-[13px] leading-relaxed text-[#6a5a70] space-y-2.5 mb-8">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -119,7 +120,7 @@ export default function Home() {
                   <p>i live in san francisco and spend my time learning, building, and exploring new ideas. i care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
                   <p className="text-[#b8a0b0]">i always enjoy meeting new people and having good conversations, so feel free to reach out.</p>
                 </div>
-              </div>
+              </div></FadeIn>
 
               {/* divider */}
               <div className="flex items-center gap-3 mb-6">
@@ -129,7 +130,7 @@ export default function Home() {
               </div>
 
               {/* connect */}
-              <div id="connect" className="mb-8">
+              <FadeIn><div id="connect" className="mb-8">
                 <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">connect</h2>
                 <div className="space-y-1.5">
                   <a href="mailto:amzyst@gmail.com" className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
@@ -149,7 +150,7 @@ export default function Home() {
                     <span className="text-[11px] text-[#c0a8b8]">github.com/amywork777</span>
                   </a>
                 </div>
-              </div>
+              </div></FadeIn>
 
               {/* divider */}
               <div className="flex items-center gap-3 mb-6">
@@ -159,7 +160,7 @@ export default function Home() {
               </div>
 
               {/* links */}
-              <div id="links" className="mb-8">
+              <FadeIn><div id="links" className="mb-8">
                 <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-1">links &amp; stuff</h2>
                 <p className="text-[10px] text-[#c0a8b8] mb-3">things i find useful or cool</p>
                 <div className="space-y-1.5">
@@ -180,7 +181,7 @@ export default function Home() {
                     </a>
                   ))}
                 </div>
-              </div>
+              </div></FadeIn>
 
               {/* divider */}
               <div className="flex items-center gap-3 mb-6">
@@ -190,9 +191,9 @@ export default function Home() {
               </div>
 
               {/* timeline — collapsible */}
-              <div className="mb-8">
+              <FadeIn><div className="mb-8">
                 <Timeline />
-              </div>
+              </div></FadeIn>
 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/graphics/amy-crochet.png" alt="amy crocheting" width={100} height={80}

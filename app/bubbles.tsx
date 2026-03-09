@@ -82,17 +82,6 @@ export default function Bubbles() {
         const wobble = Math.sin(t * b.wobbleSpeed + b.id * 1.7) * b.wobbleAmp;
         let newX = b.baseX + wobble;
 
-        // React to mouse — push away if close
-        const dx = newX - mouse.x;
-        const dy = newY - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const repelRadius = 120 + b.size;
-        if (dist < repelRadius && dist > 0) {
-          const force = (1 - dist / repelRadius) * 3;
-          newX += (dx / dist) * force * 15;
-          newY += (dy / dist) * force * 10;
-        }
-
         // Reset if floated off top
         if (newY < -b.size * 2) {
           const fresh = randomBubble(b.id, w, h);
@@ -113,8 +102,26 @@ export default function Bubbles() {
     return () => cancelAnimationFrame(frameRef.current);
   }, [animate]);
 
+  // Soft pop sound using Web Audio API
+  const playPop = useCallback(() => {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.12);
+    } catch {}
+  }, []);
+
   // Pop bubble on click
   const popBubble = (id: number) => {
+    playPop();
     setBubbles((prev) =>
       prev.map((b) => (b.id === id ? { ...b, popped: true } : b))
     );

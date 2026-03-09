@@ -15,7 +15,18 @@ const silkscreen = Silkscreen({
 
 export const metadata: Metadata = {
   title: "amy zhou",
-  description: "physical design + engineering portfolio",
+  description: "engineer & designer — amypretzel.com",
+  openGraph: {
+    title: "amy zhou",
+    description: "engineer & designer — amypretzel.com",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "amy zhou",
+    description: "engineer & designer — amypretzel.com",
+    images: ["/og-image.png"],
+  },
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
