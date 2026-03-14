@@ -48,11 +48,11 @@ export default function PortfolioPage() {
 
           {/* iframe with cover bar */}
           <div className="relative flex-1 min-h-0">
-            <div className="absolute top-0 left-0 right-0 h-12 bg-white z-10" />
+            <div className="absolute top-0 left-0 right-0 h-12 bg-white z-10 pointer-events-none" />
             <iframe
               src="https://delightful-may-f04.notion.site/ebd/23bfc3fa1d2a801eaa57cf367b68b68d"
               className="absolute inset-0 w-full h-full border-0"
-              loading="lazy"
+              loading="eager"
               title="Amy Zhou Portfolio"
             />
           </div>
