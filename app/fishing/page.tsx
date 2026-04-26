@@ -649,7 +649,7 @@ export default function FishingGame() {
                   </div>
                 </div>
               )}
-              {/* z's floating up — hidden when awake */}
+              {/* z's floating up, hidden when awake */}
               {!catAwake && sleepZs.map((z) => (
                 <div key={z.id} className="absolute -top-2 -right-1 animate-zz pointer-events-none font-pixel text-[#b090b8]"
                   style={{ fontSize: z.size }}>
@@ -756,7 +756,7 @@ export default function FishingGame() {
             </div>
           )}
 
-          {/* fish on bite — swims up from below */}
+          {/* fish on bite, swims up from below */}
           {(state === "bite" || state === "reeling") && currentFish && (
             <div className="absolute left-[38%] z-10" style={{
               top: `calc(55% + ${fishY}px)`,

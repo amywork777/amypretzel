@@ -1,237 +1,222 @@
 import Image from "next/image";
-import Bubbles from "./bubbles";
-import Timeline from "./timeline";
-import ClickHearts from "./click-hearts";
-import FadeIn from "./fade-in";
+import Link from "next/link";
+import SiteNav from "./site-nav";
+import { projects } from "./portfolio/projects";
+import { getAllPosts, summary } from "./writing/posts";
 
-export default function Home() {
+const featured = projects.slice(0, 6);
+
+function formatDate(iso: string) {
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+}
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Amy Zhou",
+  alternateName: "amypretzel",
+  url: "https://amypretzel.com",
+  image: "https://amypretzel.com/amy-portrait.jpg",
+  description:
+    "Designer and engineer in San Francisco working on AI tools for industrial designers at Vizcom. Previously Apple, Stanford.",
+  worksFor: { "@type": "Organization", name: "Vizcom", url: "https://www.vizcom.ai" },
+  alumniOf: [
+    { "@type": "CollegeOrUniversity", name: "Stanford University", url: "https://www.stanford.edu" },
+  ],
+  knowsAbout: [
+    "Product design",
+    "Mechanical engineering",
+    "Industrial design",
+    "AI hardware",
+    "Wearables",
+    "Jewelry design",
+  ],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "San Francisco",
+    addressRegion: "CA",
+    addressCountry: "US",
+  },
+  sameAs: [
+    "https://x.com/amypretzel",
+    "https://linkedin.com/in/amy7",
+    "https://github.com/amywork777",
+  ],
+};
+
+export default async function Home() {
+  const recent = (await getAllPosts()).slice(0, 3);
+
   return (
-    <div className="bg-aero h-screen flex flex-col overflow-hidden relative">
-      <ClickHearts />
-      <Bubbles />
-      {/* === DECORATIVE BG === */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-        {/* clouds */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/cloud1.png" alt="" width={220} height={130}
-          className="absolute top-[2%] left-[0%] animate-drift opacity-90" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/cloud2.png" alt="" width={180} height={76}
-          className="absolute top-[1%] right-[3%] animate-drift opacity-85" style={{ animationDelay: "3s" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/cloud3.png" alt="" width={140} height={83}
-          className="absolute top-[8%] left-[32%] animate-drift opacity-65" style={{ animationDelay: "7s" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/cloud4.png" alt="" width={160} height={68}
-          className="absolute top-[5%] right-[25%] animate-drift opacity-70" style={{ animationDelay: "5s" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/cloud5.png" alt="" width={120} height={71}
-          className="absolute top-[14%] left-[15%] animate-drift opacity-55" style={{ animationDelay: "9s" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/graphics/cloud1.png" alt="" width={100} height={59}
-          className="absolute top-[12%] right-[12%] animate-drift opacity-50" style={{ animationDelay: "11s" }} />
+    <div className="min-h-screen flex flex-col bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <SiteNav />
 
-        {/* bubbles moved to fixed overlay for clickability */}
-
-        {/* sparkles */}
-        <div className="absolute top-[8%] left-[28%] w-3 h-3 bg-white rounded-full animate-sparkle opacity-70" style={{ boxShadow: "0 0 12px 4px rgba(255,255,255,0.6)" }} />
-        <div className="absolute top-[30%] right-[10%] w-2.5 h-2.5 bg-white rounded-full animate-sparkle opacity-50" style={{ boxShadow: "0 0 10px 3px rgba(255,255,255,0.5)", animationDelay: "1s" }} />
-        <div className="absolute bottom-[15%] left-[15%] w-2 h-2 bg-white rounded-full animate-sparkle opacity-45" style={{ boxShadow: "0 0 8px 3px rgba(255,255,255,0.4)", animationDelay: "2s" }} />
-        <div className="absolute top-[18%] right-[25%] w-1.5 h-1.5 bg-white rounded-full animate-sparkle opacity-40" style={{ boxShadow: "0 0 8px 2px rgba(255,255,255,0.3)", animationDelay: "1.5s" }} />
-        <div className="absolute top-[45%] left-[10%] w-2 h-2 bg-white rounded-full animate-sparkle opacity-35" style={{ boxShadow: "0 0 10px 3px rgba(255,255,255,0.3)", animationDelay: "0.7s" }} />
-
-      </div>
-
-      {/* sea creatures — behind window (z-[5]) but above decorative bg (z-0), clickable */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
-        <a href="/fishing" className="absolute bottom-[6%] left-[4%] pointer-events-auto cursor-pointer opacity-45 hover:opacity-70 transition-opacity animate-jelly">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/jellyfish.png" alt="go fishing!" width={75} height={75} />
-        </a>
-        <a href="/fishing" className="absolute bottom-[14%] right-[6%] pointer-events-auto cursor-pointer opacity-40 hover:opacity-70 transition-opacity animate-fish-right">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/fish.png" alt="go fishing!" width={55} height={55} />
-        </a>
-        <a href="/fishing" className="absolute bottom-[10%] right-[25%] pointer-events-auto cursor-pointer opacity-40 hover:opacity-70 transition-opacity animate-fish-dart" style={{ animationDelay: "5s" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/goldfish.png" alt="go fishing!" width={55} height={37} />
-        </a>
-        <a href="/fishing" className="absolute bottom-[18%] left-[30%] pointer-events-auto cursor-pointer opacity-40 hover:opacity-70 transition-opacity animate-fish-right" style={{ animationDelay: "7s" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/yellowtang.png" alt="go fishing!" width={60} height={35} />
-        </a>
-        <a href="/fishing" className="absolute bottom-[4%] right-[12%] pointer-events-auto cursor-pointer opacity-[0.38] hover:opacity-70 transition-opacity animate-fish-left" style={{ animationDelay: "2s" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/graphics/angelfish.png" alt="go fishing!" width={55} height={40} />
-        </a>
-      </div>
-
-      {/* === COMPUTER WINDOW === */}
-      <div className="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 md:p-8 pointer-events-none">
-        <div className="w-full max-w-2xl h-full max-h-[95vh] sm:max-h-[90vh] flex flex-col window-frame rounded-lg overflow-hidden animate-scale-in pointer-events-auto">
-
-          {/* title bar */}
-          <div className="window-titlebar shrink-0 flex items-center gap-2 px-3 py-1.5">
-            <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-full border border-white/40" style={{ background: "#f0b0b8" }} />
-              <div className="w-3 h-3 rounded-full border border-white/40" style={{ background: "#f0dca0" }} />
-              <div className="w-3 h-3 rounded-full border border-white/40" style={{ background: "#a8e0b8" }} />
-            </div>
-            <div className="flex-1 flex items-center justify-center gap-2">
-              <Image src="/pretzel.png" alt="pretzel" width={14} height={14} style={{ imageRendering: "pixelated" }} />
-              <span className="font-pixel text-[11px] font-bold text-[#8a6080] tracking-wider">amypretzel.com</span>
-            </div>
-            <div className="w-[42px]" />
-          </div>
-
-          {/* address bar */}
-          <div className="shrink-0 px-3 py-1.5 bg-[#f0e0ea] border-b-2 border-[#e0c0d0]">
-            <div className="px-2 py-1 border-2 border-[#e0c0d0] border-t-[#c8a0b8] border-l-[#c8a0b8] border-r-[#fff] border-b-[#fff] bg-white rounded">
-              <span className="font-pixel text-[10px] text-[#c0a0b0]">amypretzel.com</span>
-            </div>
-          </div>
-
-          {/* scrollable content area */}
-          <div className="flex-1 overflow-y-auto bg-[#faf5f8] window-content">
-            <div className="p-4 sm:p-5 md:p-7 max-w-lg mx-auto">
-
-              {/* hero */}
-              <div className="text-center mb-6">
-                <div className="inline-block mb-3">
-                  <Image src="/pretzel.png" alt="pretzel" width={48} height={48}
-                    className="drop-shadow-md hover:rotate-12 transition-transform cursor-pointer" style={{ imageRendering: "pixelated" }} />
-                </div>
-                <h1 className="font-pixel text-xl md:text-2xl font-bold tracking-wide text-[#7a5a8a] mb-1">
-                  amy zhou
-                </h1>
-              </div>
-
-              {/* nav */}
-              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
-                <a href="#about" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">about</a>
-                <a href="/portfolio" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">portfolio</a>
-                <a href="#links" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">links</a>
-                <a href="#connect" className="btn-glossy px-3 sm:px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide">connect</a>
-              </div>
-
-              {/* about me */}
-              <FadeIn><div id="about">
-                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">about me</h2>
-                <div className="text-[13px] leading-relaxed text-[#6a5a70] space-y-2.5 mb-8">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/amy-pretzel.png" alt="amy eating a pretzel" width={110} height={165}
-                    className="float-right ml-3 -mt-1 drop-shadow-sm" />
-                  <p>hi, i&apos;m amy zhou. i am an engineer and designer who loves taking ideas and turning them into real products.</p>
-                  <p>right now, i&apos;m a product design engineer at <strong className="text-[#7a5a8a]">vizcom</strong>, where i&apos;m building AI tools that help designers go from idea to reality faster. think concept sketches turning into production-ready visuals in seconds.</p>
-                  <p>before that, i built <strong className="text-[#7a5a8a]">taiyaki</strong>, an AI assisted concept to CAD system, <strong className="text-[#7a5a8a]">taya</strong>, a wearable AI journal designed as jewelry, a custom AI jewelry pipeline that turned sketches into physical pieces, and <strong className="text-[#7a5a8a]">mobius</strong>, a company focused on bringing more transparency and efficiency to materials trading and recycling.</p>
-                  <p>i studied product design and mechanical engineering at <strong className="text-[#7a5a8a]">stanford</strong>, with a minor in music. i also worked at <strong className="text-[#7a5a8a]">apple</strong> as a product design engineer, focusing on hardware that was useful, durable, and better for the environment.</p>
-                  <p>i live in san francisco and spend my time learning, building, and exploring new ideas. i care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
-                  <p className="text-[#b8a0b0]">i always enjoy meeting new people and having good conversations, so feel free to reach out.</p>
-                </div>
-              </div></FadeIn>
-
-              {/* divider */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex-1 border-t-2 border-[#e8d0e0] border-b border-b-white" />
-                <span className="font-pixel text-[10px] text-[#e0b8d0]">&hearts;</span>
-                <div className="flex-1 border-t-2 border-[#e8d0e0] border-b border-b-white" />
-              </div>
-
-              {/* connect */}
-              <FadeIn><div id="connect" className="mb-8">
-                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-3">connect</h2>
-                <div className="space-y-1.5">
-                  <a href="mailto:amzyst@gmail.com" className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
-                    <span className="text-[12px] font-bold text-[#b080a0] group-hover:text-[#8a5a7a] shrink-0">email</span>
-                    <span className="text-[11px] text-[#c0a8b8]">amzyst@gmail.com</span>
-                  </a>
-                  <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer" className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
-                    <span className="text-[12px] font-bold text-[#b080a0] group-hover:text-[#8a5a7a] shrink-0">x</span>
-                    <span className="text-[11px] text-[#c0a8b8]">@amypretzel</span>
-                  </a>
-                  <a href="https://linkedin.com/in/amy7" target="_blank" rel="noopener noreferrer" className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
-                    <span className="text-[12px] font-bold text-[#b080a0] group-hover:text-[#8a5a7a] shrink-0">linkedin</span>
-                    <span className="text-[11px] text-[#c0a8b8]">linkedin.com/in/amy7</span>
-                  </a>
-                  <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer" className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
-                    <span className="text-[12px] font-bold text-[#b080a0] group-hover:text-[#8a5a7a] shrink-0">github</span>
-                    <span className="text-[11px] text-[#c0a8b8]">github.com/amywork777</span>
-                  </a>
-                </div>
-              </div></FadeIn>
-
-              {/* divider */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex-1 border-t-2 border-[#e8d0e0] border-b border-b-white" />
-                <span className="font-pixel text-[10px] text-[#e0b8d0]">&hearts;</span>
-                <div className="flex-1 border-t-2 border-[#e8d0e0] border-b border-b-white" />
-              </div>
-
-              {/* links */}
-              <FadeIn><div id="links" className="mb-8">
-                <h2 className="font-pixel text-[13px] font-bold text-[#7a5a8a] mb-1">links &amp; stuff</h2>
-                <p className="text-[10px] text-[#c0a8b8] mb-3">things i find useful or cool</p>
-                <div className="space-y-1.5">
-                  {[
-                    { name: "makercase", url: "https://www.makercase.com/", desc: "quick box generator for laser cutting" },
-                    { name: "protolabs guide", url: "https://www.protolabs.com/", desc: "actually useful injection molding reference" },
-                    { name: "thingiverse", url: "https://www.thingiverse.com/", desc: "go-to for quick inspiration or parts" },
-                    { name: "jlcpcb cnc", url: "https://jlcpcb.com/", desc: "cheap, decent quality fast protos" },
-                    { name: "tinkercad", url: "https://www.tinkercad.com/", desc: "fast rough CAD without the overhead" },
-                    { name: "convert3d.org", url: "https://convert3d.org/", desc: "lifesaver for cursed file formats" },
-                    { name: "phosphor icons", url: "https://phosphoricons.com/", desc: "clean flexible icon set" },
-                    { name: "hugging face", url: "https://huggingface.co/", desc: "where the useful AI stuff lives" },
-                  ].map((l) => (
-                    <a key={l.name} href={l.url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-baseline gap-2 px-3 py-2 rounded-lg hover:bg-[#f0e0ea] transition-colors group">
-                      <span className="text-[12px] font-bold text-[#b080a0] group-hover:text-[#8a5a7a] shrink-0">{l.name}</span>
-                      <span className="text-[10px] text-[#d0b8c8] truncate">{l.desc}</span>
+      <main className="flex-1">
+        {/* === INTRO (portrait + bio) === */}
+        <section className="max-w-6xl mx-auto px-5 sm:px-8 pt-10 sm:pt-24 pb-12 sm:pb-20">
+          <div className="grid grid-cols-12 gap-7 md:gap-12 items-start animate-fade-up">
+            <div className="col-span-12 md:col-span-4">
+              <div className="max-w-[260px] mx-auto md:max-w-none md:mx-0">
+                <Image
+                  src="/amy-portrait.jpg"
+                  alt="Amy Zhou"
+                  width={800}
+                  height={800}
+                  className="w-full aspect-square object-cover rounded-full"
+                  priority
+                />
+                <ul className="mt-5 sm:mt-7 space-y-2 text-[13px]">
+                {[
+                  { label: "Email", value: "amzyst@gmail.com", href: "mailto:amzyst@gmail.com" },
+                  { label: "Twitter", value: "@amypretzel", href: "https://x.com/amypretzel" },
+                  { label: "LinkedIn", value: "linkedin.com/in/amy7", href: "https://linkedin.com/in/amy7" },
+                  { label: "GitHub", value: "amywork777", href: "https://github.com/amywork777" },
+                ].map((c) => (
+                  <li key={c.label}>
+                    <a
+                      href={c.href}
+                      target={c.href.startsWith("http") ? "_blank" : undefined}
+                      rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="group flex items-baseline gap-3"
+                    >
+                      <span className="meta text-ink-faint shrink-0 w-16">{c.label}</span>
+                      <span className="text-ink-soft truncate group-hover:text-accent transition-colors">
+                        {c.value} ↗
+                      </span>
                     </a>
-                  ))}
-                </div>
-              </div></FadeIn>
-
-              {/* divider */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex-1 border-t-2 border-[#e8d0e0] border-b border-b-white" />
-                <span className="font-pixel text-[10px] text-[#e0b8d0]">&hearts;</span>
-                <div className="flex-1 border-t-2 border-[#e8d0e0] border-b border-b-white" />
+                  </li>
+                ))}
+              </ul>
               </div>
-
-              {/* timeline — collapsible */}
-              <FadeIn><div className="mb-8">
-                <Timeline />
-              </div></FadeIn>
-
-              {/* fish porthole — mobile only */}
-              <FadeIn><a href="/fishing" className="block mb-6 group sm:hidden">
-                <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden border-[3px] border-[#b8c8d8] bg-gradient-to-b from-[#c0ddf0] via-[#a0c8e0] to-[#80a8c8]"
-                  style={{ boxShadow: "inset 0 2px 8px rgba(0,0,0,0.1), 0 4px 12px rgba(120,160,200,0.2)" }}>
-                  {/* swimming fish */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/fish.png" alt="" width={22} height={22} className="absolute top-4 left-[8%] animate-fish-right opacity-55" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/goldfish.png" alt="" width={20} height={14} className="absolute bottom-6 left-[50%] animate-fish-left opacity-50" style={{ animationDelay: "3s" }} />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/graphics/jellyfish.png" alt="" width={18} height={18} className="absolute bottom-3 left-[22%] animate-jelly opacity-40" />
-                  {/* plants */}
-                  <div className="absolute bottom-0 left-[25%] w-1 h-3 bg-[#80b8a0] rounded-t-full opacity-40" />
-                  <div className="absolute bottom-0 right-[30%] w-1 h-4 bg-[#80b8a0] rounded-t-full opacity-35" />
-                  {/* glass highlight */}
-                  <div className="absolute top-1 left-2 w-6 h-3 bg-white/25 rounded-full rotate-[-20deg]" />
-                </div>
-                {/* label below porthole */}
-                <p className="font-pixel text-[9px] text-[#8a7a9a] text-center mt-2 group-hover:text-[#7a5a8a] transition-colors">tap to fish!</p>
-              </a></FadeIn>
-
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/graphics/amy-crochet.png" alt="amy crocheting" width={100} height={80}
-                className="mx-auto drop-shadow-sm mb-3" />
-              <p className="text-center text-[9px] text-[#d0b8c8] mt-2 pb-2">&copy; 2026 amy zhou</p>
+            </div>
+            <div className="col-span-12 md:col-span-8 space-y-4 text-[16px] sm:text-[17px] leading-[1.65] text-ink-soft">
+              <p>
+                I&apos;m Amy. I make hardware, software, and the in-between. Currently
+                at <strong className="text-ink font-semibold">Vizcom</strong>, building
+                AI tools for industrial designers.
+              </p>
+              <p>
+                Before that, I built <strong className="text-ink font-semibold">Taiyaki</strong>,
+                an AI-assisted concept-to-CAD system; <strong className="text-ink font-semibold">Taya</strong>,
+                a wearable AI journal designed as jewelry; a custom AI jewelry pipeline
+                that turned sketches into physical pieces; and{" "}
+                <strong className="text-ink font-semibold">Mobius</strong>, a company
+                focused on bringing more transparency and efficiency to materials trading
+                and recycling.
+              </p>
+              <p>
+                I studied product design and mechanical engineering at{" "}
+                <strong className="text-ink font-semibold">Stanford</strong>, with a
+                minor in music. I also worked at{" "}
+                <strong className="text-ink font-semibold">Apple</strong> as a product
+                design engineer, focusing on hardware that was useful, durable, and
+                better for the environment.
+              </p>
+              <p>
+                I live in San Francisco and spend my time learning, building, and
+                exploring new ideas. I care about thoughtful design, clear engineering,
+                and making things that feel personal and meaningful.
+              </p>
+              <p>
+                I always enjoy meeting new people and having good conversations, so feel
+                free to reach out.
+              </p>
             </div>
           </div>
+        </section>
+
+        <div className="rule" />
+
+        {/* === 01 NOTES === */}
+        <section className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20">
+          <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
+            <h2 className="display text-[32px] sm:text-[44px] leading-none">Notes</h2>
+            <Link href="/writing" className="link meta">
+              All notes ↗
+            </Link>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-7 sm:gap-10">
+            {recent.map((p, i) => (
+              <Link
+                key={p.slug}
+                href={`/writing/${p.slug}`}
+                className="group block animate-fade-up"
+                style={{ animationDelay: `${Math.min(i * 80, 240)}ms` }}
+              >
+                <p className="meta mb-3">{formatDate(p.date)}</p>
+                {p.title && (
+                  <h3 className="font-display italic text-[22px] sm:text-[26px] leading-[1.1] text-ink mb-2 group-hover:text-accent transition-colors">
+                    {p.title}
+                  </h3>
+                )}
+                <p className="text-[15px] leading-[1.6] text-ink-soft line-clamp-4">
+                  {summary(p)}
+                </p>
+                <span className="meta mt-3 inline-block text-ink-faint group-hover:text-accent transition-colors">
+                  Read →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="rule" />
+
+        {/* === 02 SELECTED WORK === */}
+        <section className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20">
+          <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
+            <div className="flex items-baseline gap-3 sm:gap-4">
+              <span className="section-num">02</span>
+              <h2 className="display text-[32px] sm:text-[44px] leading-none">Selected work</h2>
+            </div>
+            <Link href="/portfolio" className="link meta">
+              All projects ↗
+            </Link>
+          </header>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
+            {featured.map((p, i) => (
+              <Link
+                key={p.slug}
+                href={`/portfolio/${p.slug}`}
+                className="tile group rounded-sm border border-rule animate-fade-up"
+                style={{ animationDelay: `${Math.min(i * 60, 360)}ms` }}
+              >
+                <div className="tile-img-wrap aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={p.cover}
+                    alt={p.title}
+                    width={800}
+                    height={600}
+                    className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                </div>
+                <div className="px-4 py-3.5 border-t border-rule bg-card">
+                  <h3 className="font-display italic text-[20px] leading-none text-ink truncate group-hover:text-accent transition-colors">
+                    {p.title}
+                  </h3>
+                  <p className="meta mt-1.5 truncate">{p.role}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-rule mt-auto">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4 meta">
+          <span>© 2026 Amy Zhou</span>
+          <Link href="/fishing" className="text-ink-faint hover:text-accent transition-colors" title="psst">
+            ⌥ ⌘ fishing
+          </Link>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

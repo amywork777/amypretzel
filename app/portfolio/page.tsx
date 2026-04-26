@@ -1,63 +1,84 @@
 import Image from "next/image";
 import Link from "next/link";
+import SiteNav from "../site-nav";
+import { projects } from "./projects";
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Work",
+  description:
+    "Selected projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design from Vizcom, Apple, and Stanford.",
+  alternates: { canonical: "/portfolio" },
+  openGraph: {
+    type: "website",
+    url: "/portfolio",
+    title: "Work, Amy Zhou",
+    description:
+      "Selected projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design from Vizcom, Apple, and Stanford.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Work, Amy Zhou",
+    description:
+      "Selected projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design.",
+  },
+};
 
 export default function PortfolioPage() {
   return (
-    <div className="bg-aero h-screen flex flex-col overflow-hidden">
-      {/* top bar */}
-      <div className="shrink-0 p-3 md:p-4">
-        <div className="window-frame rounded-lg px-4 py-2.5 flex items-center justify-between max-w-6xl mx-auto">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Image
-              src="/pretzel.png"
-              alt="pretzel"
-              width={20}
-              height={20}
-              className="group-hover:rotate-12 transition-transform duration-300 drop-shadow-sm"
-              style={{ imageRendering: "pixelated" }}
-            />
-            <span className="font-pixel text-[11px] font-bold text-[#7a5a8a] tracking-wider">
-              amy zhou
-            </span>
-          </Link>
-          <Link
-            href="/"
-            className="btn-glossy px-4 py-1.5 text-[10px] font-bold text-[#8a6080] tracking-wide"
-          >
-            back home
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col bg-paper">
+      <SiteNav active="portfolio" />
 
-      {/* iframe */}
-      <div className="flex-1 px-3 md:px-4 pb-3 md:pb-4 min-h-0">
-        <div className="window-frame rounded-lg overflow-hidden flex flex-col h-full max-w-6xl mx-auto">
-          {/* window chrome */}
-          <div className="window-titlebar shrink-0 flex items-center gap-3 px-4 py-2">
-            <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-full border border-white/40" style={{ background: "#f0b0b8" }} />
-              <div className="w-3 h-3 rounded-full border border-white/40" style={{ background: "#f0dca0" }} />
-              <div className="w-3 h-3 rounded-full border border-white/40" style={{ background: "#a8e0b8" }} />
-            </div>
-            <div className="flex-1 px-2 py-1 border-2 border-[#e0c0d0] border-t-[#c8a0b8] border-l-[#c8a0b8] border-r-[#fff] border-b-[#fff] bg-white rounded">
-              <span className="font-pixel text-[10px] text-[#c0a0b0]">
-                notion.site / portfolio
-              </span>
-            </div>
-          </div>
+      <main className="flex-1">
+        <section className="max-w-6xl mx-auto px-5 sm:px-8 pt-10 sm:pt-20 pb-10 sm:pb-12">
+          <p className="meta mb-4 sm:mb-5 animate-fade-up">Index, Selected Work</p>
+          <h1 className="display text-[13vw] sm:text-[80px] md:text-[104px] leading-[0.95] mb-5 sm:mb-6 animate-fade-up delay-100">
+            Things I&apos;ve <span className="text-accent">made</span>.
+          </h1>
+          <p className="text-[15px] sm:text-[18px] leading-[1.55] text-ink-soft max-w-2xl animate-fade-up delay-200">
+            Product design, mechanical engineering, jewelry, instruments, and the
+            occasional craft. Click any tile to see the full project.
+          </p>
+        </section>
 
-          {/* iframe with cover bar */}
-          <div className="relative flex-1 min-h-0">
-            <div className="absolute top-0 left-0 right-0 h-12 bg-white z-10 pointer-events-none" />
-            <iframe
-              src="https://delightful-may-f04.notion.site/ebd/23bfc3fa1d2a801eaa57cf367b68b68d"
-              className="absolute inset-0 w-full h-full border-0"
-              loading="eager"
-              title="Amy Zhou Portfolio"
-            />
+        <div className="rule" />
+
+        <section className="max-w-6xl mx-auto px-5 sm:px-8 py-10 sm:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
+            {projects.map((p, i) => (
+              <Link
+                key={p.slug}
+                href={`/portfolio/${p.slug}`}
+                className="tile group rounded-sm border border-rule animate-fade-up"
+                style={{ animationDelay: `${Math.min(i * 35, 360)}ms` }}
+              >
+                <div className="tile-img-wrap aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={p.cover}
+                    alt={p.title}
+                    width={800}
+                    height={600}
+                    className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                </div>
+                <div className="px-4 py-3.5 border-t border-rule bg-card">
+                  <h3 className="font-display italic text-[20px] leading-none text-ink truncate group-hover:text-accent transition-colors">
+                    {p.title}
+                  </h3>
+                  <p className="meta mt-1.5 truncate">{p.role}</p>
+                </div>
+              </Link>
+            ))}
           </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-rule mt-auto">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 meta">
+          <span>© 2026 Amy Zhou</span>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

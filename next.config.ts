@@ -1,18 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  async headers() {
-    return [
+  images: {
+    remotePatterns: [
       {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "Content-Security-Policy",
-            value: "frame-src 'self' https://*.notion.site;",
-          },
-        ],
+        protocol: "https",
+        hostname: "freight.cargo.site",
       },
-    ];
+    ],
   },
 };
 

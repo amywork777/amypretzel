@@ -1,0 +1,58 @@
+---
+title: "Fabric is harder than steel"
+date: "2026-04-15"
+description: "Why softgoods, the fabric and webbing engineered into everything we wear, is one of the most underrated material disciplines in hardware."
+originalUrl: "https://x.com/amypretzel/status/2046350294808736064"
+---
+
+When I tell people I worked on softgoods at Apple, most of them assume I was a designer who picked colors and textures. The reality is that softgoods is one of the most technically demanding disciplines in product engineering, and almost nobody outside the industry knows it exists.
+
+Softgoods means anything flexible: textiles, leather, foam, films, woven and knit composites, the laminated stacks inside your shoes, the fabric on your headphones, the case on your laptop sleeve. It's the part of the product that has to bend, stretch, breathe, drape, and hold its shape across years of human abuse.
+
+And it's much, much harder to engineer than rigid parts.
+
+## Why steel is easy
+
+A block of steel is isotropic. Pull on it in any direction and it behaves the same way. You can hand it to a CAD program, mesh it, simulate it, and the answer you get back is reasonably close to reality. You can specify the material with a single line on a drawing: "1018 steel, cold rolled." Done.
+
+Now take a piece of woven nylon.
+
+It has a warp (long axis) and a weft (cross axis), and the two have completely different mechanical properties. Pull on the bias (45° to both) and you get something else entirely, much higher elongation, much lower stiffness. The fabric is anisotropic, and there is no single Young's modulus you can put on a drawing.
+
+Knits are worse. They deform by loop geometry change before the yarn itself starts to load, which means they have a huge low-stiffness region followed by a sharp inflection. They creep under sustained load. They behave differently after the first wash.
+
+CAD doesn't model any of this well. The drape simulators that exist (CLO3D and similar) come from the apparel world, not the engineering world, and they're optimized for visual realism rather than predictive mechanics.
+
+## The lamination problem
+
+Most modern softgoods aren't a single material. They're a stack: a face fabric, an adhesive layer, a foam or film core, sometimes a backing fabric. The stack is what gives the part its hand-feel, its dimensional stability, its acoustic or thermal properties.
+
+The stack is also where everything goes wrong.
+
+If the modulus of your adhesive doesn't match the moduli of the layers it's bonding, you get shear stress concentrations at the interface. Over time and thermal cycling, the adhesive creeps, the bond degrades, and the layers delaminate. The product looks fine on day one and falls apart at month nine.
+
+Designing a lamination stack means thinking about:
+
+- Modulus matching across all layers
+- Coefficient of thermal expansion mismatch (a fabric and a film expand at very different rates)
+- Surface energy and chemical compatibility for the adhesive bond
+- Cure schedule and how it interacts with downstream assembly heat
+- Wash and abrasion durability if the part is exposed
+
+There is no software tool for this. It is tribal knowledge, learned by ruining a lot of parts.
+
+## The best of both worlds
+
+What I love about softgoods is that it sits at the intersection of two disciplines that almost never talk to each other: fashion and mechanical engineering.
+
+The fashion side gives you intuition about hand-feel, drape, color, how a material reads to a human. The engineering side gives you the language to predict failure, specify tolerances, and run a real supply chain. Both are essential. Most teams have one or the other.
+
+The brands that make great soft products, Patagonia, Arc'teryx, Nike, Apple's softgoods team, the high-end automotive interior shops, have figured out how to put both kinds of brain in the same room. That's harder than it sounds.
+
+## Why this matters now
+
+AI tooling for hard goods is exploding. Generative CAD, simulation, the whole stack is getting faster and smarter every quarter.
+
+Softgoods has barely been touched. The textile industry runs on PDFs, hand-drawn tech packs, and decades-old simulation tools that nobody outside apparel has heard of. There is enormous room for someone to build the equivalent of modern CAD for soft materials, and almost nobody is trying. Variant 3D is one of the few teams I've seen actually working on this; there should be ten more.
+
+If you're an engineer looking for a discipline that's technically deep, commercially significant, and basically empty of competition, look at softgoods.

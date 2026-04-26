@@ -1,31 +1,94 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito, Silkscreen } from "next/font/google";
+import { Instrument_Serif, Manrope, JetBrains_Mono, Silkscreen } from "next/font/google";
 import "./globals.css";
 
-const nunito = Nunito({
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-nunito",
+  variable: "--font-display",
 });
 
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
+
+// kept for the fishing easter-egg page only
 const silkscreen = Silkscreen({
   weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--font-pixel",
 });
 
+const SITE_URL = "https://amypretzel.com";
+const SITE_DESC =
+  "Amy Zhou, designer and engineer in San Francisco. Currently at Vizcom building AI tools for industrial designers; previously Apple and Stanford.";
+
 export const metadata: Metadata = {
-  title: "amy zhou",
-  description: "engineer & designer — amypretzel.com",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Amy Zhou",
+    template: "%s, Amy Zhou",
+  },
+  description: SITE_DESC,
+  applicationName: "Amy Zhou",
+  authors: [{ name: "Amy Zhou", url: SITE_URL }],
+  creator: "Amy Zhou",
+  publisher: "Amy Zhou",
+  keywords: [
+    "Amy Zhou",
+    "amypretzel",
+    "product design",
+    "mechanical engineering",
+    "industrial design",
+    "AI hardware",
+    "AI tools",
+    "Vizcom",
+    "Apple",
+    "Stanford",
+    "Taiyaki",
+    "Taya",
+    "Mobius",
+    "jewelry",
+    "wearables",
+    "San Francisco",
+  ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "amy zhou",
-    description: "engineer & designer — amypretzel.com",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+    siteName: "Amy Zhou",
+    url: SITE_URL,
+    locale: "en_US",
+    title: "Amy Zhou",
+    description: SITE_DESC,
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Amy Zhou" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "amy zhou",
-    description: "engineer & designer — amypretzel.com",
+    creator: "@amypretzel",
+    site: "@amypretzel",
+    title: "Amy Zhou",
+    description: SITE_DESC,
     images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   icons: {
     icon: [
@@ -37,7 +100,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f0e8f0",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
 };
@@ -48,10 +111,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${nunito.variable} ${silkscreen.variable}`}>
-      <body className="font-sans antialiased">
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${silkscreen.variable}`}
+    >
+      <body className="font-body antialiased text-ink bg-paper">{children}</body>
     </html>
   );
 }
