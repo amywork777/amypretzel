@@ -344,12 +344,12 @@ The build was a study in toolpath design as much as visual design. Acrylic is un
     slug: "injection-molded-fabric",
     title: "Injection-molded fabric",
     role: "Stanford, ME 325 Injection Molding",
-    cover: "/portfolio/tbd-gasket-plate.png",
+    cover: "/portfolio/injection-molded-fabric/bag-white.png",
     gallery: [
-      "/portfolio/tbd-gasket-plate.png",
+      "/portfolio/injection-molded-fabric/bag-white.png",
       "/portfolio/injection-molded-fabric/bag.png",
       "/portfolio/injection-molded-fabric/dress.png",
-      "/portfolio/injection-molded-fabric/bag-white.png",
+      "/portfolio/injection-molded-fabric/editorial.png",
       ...[1, 2, 3, 4, 5, 6, 7, 8].map((n, i) => {
         const ids = ["bbc2d7e7c8bbb009533c63c9b00de7ac1aeca430657b7ad9335cc2a68a0ce9c1", "c6cb8a27922c47341752cd4629429467ca263ca66b59924e2e9158c2623cb55f", "331f52e7b5e03d904ad3ce029a8b2ff9ff564d2e79ef6513a84de66849ba6fe7", "209d4d93e62430b2d68a6bc50be1ab1f97a3c894e833658ae46b657fabd10c3e", "94c4c345afc11450270b8b01368624149082b326f07c4013c0baa915c25b20a2", "ba92abe2376a09a380a7c641bf635e3b667a5c1f0a1f055c1071ded32cd94e57", "d803a043cf1fd22eb0e5ed624bca58a6f832b70606597311a57d63c8214902a7", "3722104a91ae8018fbcabb32abe9317a59da8e916b9c77fe6800b1a0ecb56982"];
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
@@ -371,7 +371,6 @@ The interesting outputs aren't really parts, they're samples: weave patterns vis
     cover: "/portfolio/patchwork-cardigan.png",
     gallery: [
       "/portfolio/patchwork-cardigan.png",
-      "/portfolio/crocheting/editorial.png",
       "/portfolio/crocheting/casual.png",
       "/portfolio/crocheting/photoshoot.png",
       "https://freight.cargo.site/w/900/q/94/i/4dd4f35271cfb627d5c1e2e110fd68297441a354f12ef0004f85c90922262591/image0-1.png",
