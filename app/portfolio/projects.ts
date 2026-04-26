@@ -241,11 +241,11 @@ Listed as one of 19 named inventors on the application, alongside the rest of th
     role: "Apple",
     cover: "/portfolio/ipad-smart-folio.png",
     gallery: ["/portfolio/ipad-smart-folio.png"],
-    body: `I worked on softgoods engineering for iPad accessories at Apple, designing and prototyping the fabric enclosures that wrap the device. The brief covered materials innovation, user experience, and durability across the full life of the part.
+    body: `I worked on softgoods engineering for iPad accessories at Apple, designing and prototyping the laminated fabric enclosures used across the accessory line. The scope ran from materials selection and composite stack qualification, through nonlinear FEA on anisotropic fabric models, to the durability protocols that validated abrasion resistance, fold fatigue, and dimensional stability across the full life of the part.
 
-Day-to-day, this meant FEA, materials testing, and iterative prototyping for new form factors, then sitting at the table with mechanical, materials, and manufacturing partners to push each design toward something a factory could actually build at scale. DFM is half of accessory engineering. The other half is making sure the user never has to think about any of it.
+Day-to-day this meant rapid iteration on new form factors, running materials and accelerated aging tests through many cycles, and working across mechanical, materials, and manufacturing teams to drive each design through DFM. Softgoods at this scale is a stack-up problem. The face fabric, adhesive, foam core, film, and backing layers all interact through modulus, CTE, and surface chemistry; getting a part that survives years of human use means controlling every one of those interactions at once.
 
-Specifics under NDA. The products are publicly available.`,
+Specifics under NDA. The products are publicly available; the engineering is the part most people never see.`,
     links: [
       { label: "iPad accessories, Apple", url: "https://www.apple.com/shop/ipad/accessories" },
     ],
