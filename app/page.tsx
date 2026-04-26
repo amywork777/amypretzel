@@ -168,13 +168,10 @@ export default async function Home() {
 
         <div className="rule" />
 
-        {/* === 02 SELECTED WORK === */}
+        {/* === SELECTED WORK === */}
         <section className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20">
           <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
-            <div className="flex items-baseline gap-3 sm:gap-4">
-              <span className="section-num">02</span>
-              <h2 className="display text-[32px] sm:text-[44px] leading-none">Selected work</h2>
-            </div>
+            <h2 className="display text-[32px] sm:text-[44px] leading-none">Selected work</h2>
             <Link href="/portfolio" className="link meta">
               All projects
             </Link>
