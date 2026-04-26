@@ -505,6 +505,7 @@ The form went through many iterations: clay studies for hand feel, FDM 3D prints
     cover: "/portfolio/tbd-panda-soap.png",
     gallery: [
       "/portfolio/tbd-panda-soap.png",
+      "/portfolio/raccoon-poker-chip/injection-sequence.png",
       ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n, i) => {
         const ids = ["42d9ef15076f62fab0abee3ee39819bf9d8bff9f697eb0ca533ad18559e22700", "3ec0e0a4adfe4b880ccec020c0edee1f99a7a33bb05943192da6964d5ea76d22", "d2e85ab8bd3ab98866787a2d016ca962ac8bc5f2230826b636b47f53d73a3ab1", "7defddb77c927a28b3ca5f4d8dd9fd9c37a871a5ede54496cb6b6f63e9dda139", "97bd01bbbfb5a12649185b9729cdd00b020184b435d8be8575a2911c332f0562", "d0f6d84e8a91ffeb248e0bf1859b05621ddf36c2491f940cdef7d3c22a141b75", "153d556c89ffeceafda7f223ea4758408ceaf7f62a6d0c9fe918fdbf2b163eb7", "567e91be77e07fbf3ec5b95c8e2600729c5b743c249c34475ee3cc7d6e55ba0e", "d17933e07abae064339eb04e8b63758367602a7424b7866fea572a76fee69e28", "6e90155278aa4a3765beca0dec98f90b047f5ed046fdae7f297001e26adbfb1e", "b503e5500fa7c67feacc258133b69b82f7890aa5ca647586e0e895e51bca71ef", "d1d7c4ed0c8186914b263e4f94686389cb65291d8e1ff199b7fde09aa2420afa"];
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
