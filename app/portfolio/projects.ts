@@ -261,7 +261,7 @@ Specifics under NDA. The products are publicly available; the engineering is the
 
 A pretzel is a satisfying object to design around. It's a topological knot drawn from a single line, simple enough to recognize at a glance and complex enough that hand-making one always feels a little like an accomplishment. The contrast between the three tight loops and the soft body is part of what makes the form so legible: there's nothing else it could be.
 
-The collection runs through the standard injection-molding pipeline: a steel mold tool with the pretzel cavity machined in, pigmented thermoplastic shot batch after batch in different colors. Pretzels show up in my work as a recurring signature: the chosen mascot, the photo prop, the pixel icon in the corner of every page on this site.`,
+The collection runs through the standard injection-molding pipeline: a metal mold tool with the pretzel cavity machined in, pigmented thermoplastic shot batch after batch in different colors. Pretzels show up in my work as a recurring signature: the chosen mascot, the photo prop, the pixel icon in the corner of every page on this site.`,
   },
 
   // ── Row 3 ─────────────────────────────────────────────
@@ -335,13 +335,13 @@ The body is a turned aluminum tube; the membrane is a thin polymer film stretche
       "https://freight.cargo.site/w/1500/q/75/i/9b5f2144522cf8f3bd0a846ae127c9b016483750599e558e5b59320662832d0f/7.png",
       "https://freight.cargo.site/w/1920/q/94/i/160a9501ed65260441702b42e39d24b5abd6bfe1fe8abbe725d597ccb5cfb76e/8.png",
     ],
-    body: `A small physical puzzle CNC-milled in clear cast acrylic. A grid of channels forms a spider-web pattern; a steel ball navigates the maze.
+    body: `A small physical puzzle made for a Stanford CNC class. A metal base carries CNC-milled channels in a spider-web pattern; a laser-cut clear acrylic top sheet sits over it as a window; a steel ball navigates the maze beneath the cover.
 
-Built for a Stanford CNC art class. The clear material was the design choice: it lets you see through the puzzle to the path you've taken, which makes the object feel less like a maze and more like a tiny instrument.
+The transparent top was the design choice: it lets you see through to the path you've taken, which makes the object feel less like a maze and more like a tiny instrument.
 
 The web pattern was generated to maximize dead ends without crossing the line into frustrating. The channel geometry, depth, width, and corner radius, was tuned to trap the ball gently rather than catastrophically: deep enough to keep it on the path, shallow enough to let it slide.
 
-The build was a study in toolpath design as much as visual design. Acrylic is unforgiving in CNC: too aggressive a chip-load and it cracks at the channel corners; too slow a feed and the chips re-melt and gum up the bit. A single-flute O-flute end mill at the right RPM and feed produces channel walls clear enough to read through, basically optical-grade off the spindle. A satisfying object to make and a satisfying object to play with.`,
+The build was a study in two pipelines at once. The metal base needed careful CNC strategy: end mill selection, feed rate, and step-down tuned to keep the channel walls clean and the floor flat enough that the ball rolls predictably. The acrylic top was laser-cut for a clean perimeter and a flush fit against the base. Two processes, one finished object.`,
   },
 
   // ── Row 4 ─────────────────────────────────────────────
@@ -361,13 +361,11 @@ The build was a study in toolpath design as much as visual design. Acrylic is un
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
       }),
     ],
-    body: `Experiments in overmolding thermoplastic onto and through woven fabric, made for Stanford's ME 325 Injection Molding course. The question was simple: what happens at the boundary between molten polymer and a textile?
+    body: `Experiments in injection-molding plastic structures that look and behave like textile, made for Stanford's ME 325 Injection Molding course. The pieces shown are pure plastic, no actual fabric anywhere; the woven appearance comes entirely from the cavity geometry.
 
-The mold is a small steel plate with multiple cavities, machined in the Stanford shop. Different fabrics get clamped into the cavities, the mold closes, and pigmented thermoplastic is shot in. The behavior at the interface depends entirely on the weave geometry and the resin chemistry.
+The mold is a small metal plate with multiple cavities, machined in the Stanford shop. Each cavity is carved with the geometry of a mesh, knit, or weave. Pigmented thermoplastic is shot into the tool, the plastic flows into the textile-like geometry, and what comes out is a part that drapes and reads like fabric while behaving mechanically as a polymer mesh.
 
-Tight cottons act as a barrier: the plastic flows around them and fuses cleanly at the parting line, producing a hybrid with a textile face and a plastic back. Open meshes let resin flow fully through the gaps between yarns and create a true co-continuous composite, plastic and fabric mechanically interlocked at every yarn intersection. Synthetic fibers (PP, PET) melt at the boundary and fuse molecularly with the resin if the polymer chemistries are compatible. Naturals char above their thermal degradation point if the melt is too hot.
-
-The interesting outputs aren't really parts, they're samples: weave patterns visible through translucent resin, or soft-shell composites with a textile face and a structural back. As much as anything, the project was a forcing function for thinking about tooling: parting-line strategy, gate placement, runner sizing, vent geometry, and how all four of those decisions show up in the part once the press cycles.`,
+The interesting outputs aren't really parts, they're material studies. They show that the perceived qualities of fabric, drape, openness, the rhythm of repeated yarn intersections, can be carried by a plastic geometry alone. As much as anything, the project was a forcing function for thinking about tooling: parting-line strategy, gate placement, runner sizing, vent geometry, and how all four of those decisions show up in the part once the press cycles.`,
   },
 
   {
@@ -507,7 +505,6 @@ The surprise was how much the fixture geometry mattered relative to the press it
     coverHover: "/portfolio/tampon-case/in-use.png",
     gallery: [
       "/portfolio/pearl-applicator.png",
-      "/portfolio/tampon-case/iteration.png",
       "/portfolio/tampon-case/in-use.png",
       ...[1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22].map((n) => {
         const ids = ["1a07f8182821b3622d40d01042331acfb4a89002e6e99d988701e118379ebdba", "e0057b94f3b051cf5482b18067e33adb7a2f3242a94df7c3ff12639789606246", "259160f7d050247b677776e54909868d2bdaaa8968456a769cea819f20ff5ae8", "ca2577bec0f6f89485e6973a6bc859abfca5af99408e8cd51079425a525a3b21", "75cabc4696d174f8838eb419f2f0e201d26555ba1a01d5b8b009f0130b215f58", "1f1f379e78c93928bc7efb1e3cae51d1ea4def609fe2092f88c635360ddb06c8", "1be3bebde9762f1bfe4ab5a8cfb8ad861f40376fd39394774993ba67c6445520", "23f4aae7caca3969f2561451c3910cb206826f72cf1b56e87164d4308000100e", "82f6a8ea147a4b530662ca3be55df73993802f00473c09e54c30ad18d5552dd2", "9b68bace6ba69ecdf44ab0227e8bdc92dcb3c5e8b41114276a4dcb20f9ff29cd", "84404c5ec9c8ccd49023a080c14af57f936cc0dcc84706e3dacda09dca7d9931", "867f5e40a45ae5a72c61a300aa45582f7dc4f931b5d96c24b4d607ee76ab4fba", "6de2f6e54b67da062fcd863412d7bb185a7ba7db3b82eeaa6e176b9b45b77308", "bdeb049993eeb6c29779a819b2cf62d093c516ae437fdaa2f0243c6c60cfed1f", "412f0de2feb5762e7fb93c667e7e88437b5534b6d0458786a82a5350197c491b", "eaf7d043e29a51cd0fc2024a244abd971d76d83a80dd4571d02b0d7def46854c", "11a3a166b404ed6207c661757065c4fda311126a87319aa03d04dea75579a92b", "59e1c5ead5af9a287e1ce0291c9dad057405530c353f7971c63f358f25d7af2d", "c4e1e80f51599a954c1a7dc80a3bbc20ff05e381ba9919be498a7541b812f3e2", "b6bf5b80bf3fe30515a638a53c81caa17b33d2bed331d227f68cdf2949064aca"];
@@ -519,7 +516,7 @@ The surprise was how much the fixture geometry mattered relative to the press it
 
 The constraints were practical and emotional. Practical: discreet in a bag, openable one-handed, washable, durable across thousands of cycles. Emotional: warm in the hand, satisfying to hold, free of the visual defensiveness that period products usually carry. The reference was a good lipstick case, an object that reads as "just nice" until you open it.
 
-The form went through many iterations: clay studies for hand feel, FDM 3D prints to validate the snap-closure mechanics, and silicone overmolds for grip. The version shown is a soft-touch capsule with a two-stage snap closure, sized to the smallest standard product and engineered so the haptic of the snap is decisive rather than fiddly. The geometry of the snap, undercut depth, lip radius, beam length, was tuned through prints until the close pressure landed where I wanted it.`,
+The form went through many iterations: FDM 3D prints to validate the snap-closure mechanics, and silicone overmolds for grip. The version shown is a soft-touch capsule with a two-stage snap closure, sized to the smallest standard product and engineered so the haptic of the snap is decisive rather than fiddly. The geometry of the snap, undercut depth, lip radius, beam length, was tuned through prints until the close pressure landed where I wanted it.`,
   },
 
   {
@@ -543,7 +540,7 @@ The work was end-to-end: CAD design of the chip and the cavity, parting-line str
 
 Once the tool was on the press, every shot is diagnostic. Short shots tell you the gate is undersized or the cycle pressure is too low. Flash on the parting line tells you the platen force is wrong or the parting surfaces aren't flat. Sink marks at thick sections tell you the part isn't packing out evenly during the hold phase. Burn marks tell you a vent is blocked. The iteration loop is: tighten the cycle, observe the part, adjust the tool or the parameters, run again.
 
-The chips themselves are pigmented styrene. They stack well, they have a satisfying weight, and they bear the marks of every decision made in the tool. As an exercise, injection molding teaches that the part you ship is downstream of the geometry you carve into steel.`,
+The chips themselves are pigmented LDPE. They stack well, they have a satisfying weight, and they bear the marks of every decision made in the tool. As an exercise, injection molding teaches that the part you ship is downstream of the geometry you carve into metal.`,
   },
 
   {
