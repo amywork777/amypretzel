@@ -28,8 +28,10 @@ export const projects: Project[] = [
     title: "Taya pendant",
     role: "AI wearable journal designed as jewelry",
     cover: "/portfolio/taya-pendant.png",
+    coverHover: "/portfolio/taya-pendant/worn.png",
     gallery: [
       "/portfolio/taya-pendant.png",
+      "/portfolio/taya-pendant/worn.png",
       "/portfolio/taya-pendant/hero.png",
     ],
     body: `**A wearable AI journal designed as jewelry.**
