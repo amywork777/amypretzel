@@ -88,11 +88,6 @@ export default async function WritingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-rule mt-auto">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 meta">
-          <span>© 2026 Amy Zhou</span>
-        </div>
-      </footer>
     </div>
   );
 }

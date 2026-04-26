@@ -84,7 +84,7 @@ export default async function Home() {
                       rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       className="group flex items-baseline gap-3"
                     >
-                      <span className="meta text-ink-faint shrink-0 w-16">{c.label}</span>
+                      <span className="meta text-ink-faint shrink-0 w-16 group-hover:text-accent transition-colors">{c.label}</span>
                       <span className="text-ink-soft truncate group-hover:text-accent transition-colors">
                         {c.value}
                       </span>
@@ -207,10 +207,10 @@ export default async function Home() {
                   )}
                 </div>
                 <div className="px-4 py-3.5 border-t border-rule bg-card">
-                  <h3 className="font-display italic text-[20px] leading-none text-ink truncate group-hover:text-accent transition-colors">
+                  <h3 className="font-display italic text-[20px] leading-[1.2] text-ink truncate pb-0.5 group-hover:text-accent transition-colors">
                     {p.title}
                   </h3>
-                  <p className="meta mt-1.5 truncate">{p.role}</p>
+                  <p className="meta mt-1 truncate">{p.role}</p>
                 </div>
               </Link>
             ))}
@@ -219,10 +219,24 @@ export default async function Home() {
       </main>
 
       <footer className="border-t border-rule mt-auto">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4 meta">
-          <span>© 2026 Amy Zhou</span>
-          <Link href="/fishing" className="text-ink-faint hover:text-accent transition-colors" title="psst">
-            ⌥ ⌘ fishing
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-end gap-4 meta">
+          <Link
+            href="/fishing"
+            className="text-ink-faint hover:text-accent transition-colors inline-flex items-center"
+            title="psst"
+            aria-label="Fishing"
+          >
+            <svg
+              viewBox="0 0 24 12"
+              aria-hidden="true"
+              className="h-4 w-auto"
+            >
+              <path
+                d="M8 1.5C13 1.5 18 3 22 6C18 9 13 10.5 8 10.5L4 8L1 10.5L2 6L1 1.5L4 4Z"
+                fill="currentColor"
+              />
+              <circle cx="18.5" cy="5" r="0.7" className="fill-paper" />
+            </svg>
           </Link>
         </div>
       </footer>

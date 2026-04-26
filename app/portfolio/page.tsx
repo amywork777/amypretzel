@@ -75,10 +75,10 @@ export default function PortfolioPage() {
                   )}
                 </div>
                 <div className="px-4 py-3.5 border-t border-rule bg-card">
-                  <h3 className="font-display italic text-[20px] leading-none text-ink truncate group-hover:text-accent transition-colors">
+                  <h3 className="font-display italic text-[20px] leading-[1.2] text-ink truncate pb-0.5 group-hover:text-accent transition-colors">
                     {p.title}
                   </h3>
-                  <p className="meta mt-1.5 truncate">{p.role}</p>
+                  <p className="meta mt-1 truncate">{p.role}</p>
                 </div>
               </Link>
             ))}
@@ -86,11 +86,6 @@ export default function PortfolioPage() {
         </section>
       </main>
 
-      <footer className="border-t border-rule mt-auto">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 meta">
-          <span>© 2026 Amy Zhou</span>
-        </div>
-      </footer>
     </div>
   );
 }
