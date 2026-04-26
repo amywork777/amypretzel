@@ -410,7 +410,7 @@ What I like about crochet is that it's textile mechanics by hand. Every stitch i
     title: "Sushi-eating accessory",
     role: "Personal project",
     cover: "/portfolio/sushi-accessory.png",
-    coverHover: "/portfolio/sushi-eating-accessory/material-variants.png",
+    coverHover: "/portfolio/sushi-eating-accessory/in-use.png",
     gallery: [
       "/portfolio/sushi-accessory.png",
       "/portfolio/sushi-eating-accessory/material-variants.png",
