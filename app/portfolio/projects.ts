@@ -270,6 +270,7 @@ The collection started as personal experiments: food-grade two-part RTV silicone
     cover: "/portfolio/metal-lyre.png",
     gallery: [
       "/portfolio/metal-lyre.png",
+      "/portfolio/harp-instrument/heart-holes.png",
       "https://freight.cargo.site/w/1500/q/75/i/5f316e3f1e9b700b78da49b45db204f30925010443616c3b327ba6e81214b2c1/1.png",
       "https://freight.cargo.site/w/1500/q/75/i/378ab89aba231e5c712248c7e47fcd07c854907d0c4f560dc8c5bdf9a4fde97b/2.png",
       "https://freight.cargo.site/w/1500/q/75/i/c5a69dd77edf8a1d345da17666dc3c29a9dcd6b3a635f107bd77c5c209e42be7/3.png",
@@ -320,6 +321,7 @@ The body is a turned aluminum tube; the membrane is a thin polymer film stretche
     cover: "/portfolio/cnc-spider-web.png",
     gallery: [
       "/portfolio/cnc-spider-web.png",
+      "/portfolio/lil-spider-maze/in-use.png",
       "https://freight.cargo.site/w/1500/q/75/i/73a3b5a10869285fd3c4bfaf056fd02f57e0ee0a3f143b3cc0727fa9ec4bad60/1.png",
       "https://freight.cargo.site/w/1500/q/75/i/01344e4367bc898402068538e34f9c91dd4a721d8d6c03680b1355b02824deef/3.png",
       "https://freight.cargo.site/w/1500/q/75/i/03057e1a72def3a1bc32e782aafc16e8db1e35ff7d29e4061ab5578099cf5841/4.png",
@@ -345,6 +347,9 @@ The build was a study in toolpath design as much as visual design. Acrylic is un
     cover: "/portfolio/tbd-gasket-plate.png",
     gallery: [
       "/portfolio/tbd-gasket-plate.png",
+      "/portfolio/injection-molded-fabric/bag.png",
+      "/portfolio/injection-molded-fabric/dress.png",
+      "/portfolio/injection-molded-fabric/bag-white.png",
       ...[1, 2, 3, 4, 5, 6, 7, 8].map((n, i) => {
         const ids = ["bbc2d7e7c8bbb009533c63c9b00de7ac1aeca430657b7ad9335cc2a68a0ce9c1", "c6cb8a27922c47341752cd4629429467ca263ca66b59924e2e9158c2623cb55f", "331f52e7b5e03d904ad3ce029a8b2ff9ff564d2e79ef6513a84de66849ba6fe7", "209d4d93e62430b2d68a6bc50be1ab1f97a3c894e833658ae46b657fabd10c3e", "94c4c345afc11450270b8b01368624149082b326f07c4013c0baa915c25b20a2", "ba92abe2376a09a380a7c641bf635e3b667a5c1f0a1f055c1071ded32cd94e57", "d803a043cf1fd22eb0e5ed624bca58a6f832b70606597311a57d63c8214902a7", "3722104a91ae8018fbcabb32abe9317a59da8e916b9c77fe6800b1a0ecb56982"];
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
@@ -366,6 +371,9 @@ The interesting outputs aren't really parts, they're samples: weave patterns vis
     cover: "/portfolio/patchwork-cardigan.png",
     gallery: [
       "/portfolio/patchwork-cardigan.png",
+      "/portfolio/crocheting/editorial.png",
+      "/portfolio/crocheting/casual.png",
+      "/portfolio/crocheting/photoshoot.png",
       "https://freight.cargo.site/w/900/q/94/i/4dd4f35271cfb627d5c1e2e110fd68297441a354f12ef0004f85c90922262591/image0-1.png",
       "https://freight.cargo.site/w/900/q/75/i/cec38d88db9d9cef0d50df34ecc406d69a720a980fa747ce0725cb5f16f1745a/IMG_1080.jpg",
       "https://freight.cargo.site/w/900/q/75/i/5fcaa14c224bd506079a9dc3ff463272297c3703922c09480683df2b20c1a88b/IMG_1075.jpg",
@@ -397,6 +405,7 @@ What I like about crochet is that it's textile mechanics by hand. Every stitch i
     cover: "/portfolio/sushi-accessory.png",
     gallery: [
       "/portfolio/sushi-accessory.png",
+      "/portfolio/sushi-eating-accessory/material-variants.png",
       "/portfolio/sushi-eating-accessory/image.png",
       "/portfolio/sushi-eating-accessory/image-1.png",
       "/portfolio/sushi-eating-accessory/image-2.png",
@@ -421,6 +430,7 @@ The studies explored ceramic and silicone variants. Ceramic gave the object weig
     cover: "/portfolio/clarinet-barrel.png",
     gallery: [
       "/portfolio/clarinet-barrel.png",
+      "/portfolio/clarinet-tuning-barrel/playing.png",
       ...[1, 2, 3, 4, 5, 6, 8, 9, 10, 11].map((n, i) => {
         const ids = ["7b6b6aa241421defcc385f8ef2503cee16679d8f66cf1cab46f5b94cf0a99fdd", "4875ff1015f289fd7d3e86256d9df3b24be804a67ada4da7962a7e98a7d086ca", "584426c84e46487ce0e4e6e1e9730f259ecfa07291ad97ee3eacbc2310329a05", "ec60be28d82f8edb1ad126fdb7c431a895c978e2f57892accfe7ae7a41fedd59", "886f7b56e699d04283760b3a39c7aeb4416840bd0ad5d582523f1ce0da666f8f", "d44c9ddb3ed6832f4335141f6cb18484d11d60a0ab71b8f14bc62548a34d3c9f", "05f0ba3ee6d3bdb8971c24f0d3bb068f24d18141de6de09baa0425c12f2da9e8", "69d5045ab8c92c539fda3352a8432b41aaaac904916f38c5e72153121a6087a8", "d5abec0d65713976ba041be43dad1a2a169838e34f6d70c6b6fdb7417a3cfe4c", "3989e6a9e07478842eccb055a992f0d156d36ec53ec54a0d117f9969f76d1b7f"];
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
@@ -442,6 +452,7 @@ Designing for a musician means thinking about the millimeters that affect intona
     cover: "/portfolio/dumpling-press.png",
     gallery: [
       "/portfolio/dumpling-press.png",
+      "/portfolio/dough-roller/dumplings.png",
       ...[1, 2, 3, 4, 5, 6].map((n, i) => {
         const ids = ["ee0c338cbbbf1f2d8f47d2a57698c9a0fb109832aad3d0444175e8752967804e", "333652cacf01770950ee855b2d0324d54b57e0897c5e206de04e102efeac6021", "63a65b873cfb99a101abbd231d8c8b3ca7241c9263e4940e46ef44d56f0d947e", "2e3eb93f0bcd7ca14f848fb74f08fa8fe68d30b620d4f621ecd967da277988f5", "f57cae728e99845bfb03901fbb3175e2545aa2f5da9b9449826ac65d70b2868a", "86cbb0839a699b11be24b101def4fcb03f61859080f744dbdeec6481bcc9a75f"];
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.png`;
@@ -485,6 +496,8 @@ The surprise was how much the fixture geometry mattered relative to the press it
     cover: "/portfolio/pearl-applicator.png",
     gallery: [
       "/portfolio/pearl-applicator.png",
+      "/portfolio/tampon-case/iteration.png",
+      "/portfolio/tampon-case/in-use.png",
       ...[1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22].map((n) => {
         const ids = ["1a07f8182821b3622d40d01042331acfb4a89002e6e99d988701e118379ebdba", "e0057b94f3b051cf5482b18067e33adb7a2f3242a94df7c3ff12639789606246", "259160f7d050247b677776e54909868d2bdaaa8968456a769cea819f20ff5ae8", "ca2577bec0f6f89485e6973a6bc859abfca5af99408e8cd51079425a525a3b21", "75cabc4696d174f8838eb419f2f0e201d26555ba1a01d5b8b009f0130b215f58", "1f1f379e78c93928bc7efb1e3cae51d1ea4def609fe2092f88c635360ddb06c8", "1be3bebde9762f1bfe4ab5a8cfb8ad861f40376fd39394774993ba67c6445520", "23f4aae7caca3969f2561451c3910cb206826f72cf1b56e87164d4308000100e", "82f6a8ea147a4b530662ca3be55df73993802f00473c09e54c30ad18d5552dd2", "9b68bace6ba69ecdf44ab0227e8bdc92dcb3c5e8b41114276a4dcb20f9ff29cd", "84404c5ec9c8ccd49023a080c14af57f936cc0dcc84706e3dacda09dca7d9931", "867f5e40a45ae5a72c61a300aa45582f7dc4f931b5d96c24b4d607ee76ab4fba", "6de2f6e54b67da062fcd863412d7bb185a7ba7db3b82eeaa6e176b9b45b77308", "bdeb049993eeb6c29779a819b2cf62d093c516ae437fdaa2f0243c6c60cfed1f", "412f0de2feb5762e7fb93c667e7e88437b5534b6d0458786a82a5350197c491b", "eaf7d043e29a51cd0fc2024a244abd971d76d83a80dd4571d02b0d7def46854c", "11a3a166b404ed6207c661757065c4fda311126a87319aa03d04dea75579a92b", "59e1c5ead5af9a287e1ce0291c9dad057405530c353f7971c63f358f25d7af2d", "c4e1e80f51599a954c1a7dc80a3bbc20ff05e381ba9919be498a7541b812f3e2", "b6bf5b80bf3fe30515a638a53c81caa17b33d2bed331d227f68cdf2949064aca"];
         const i = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22].indexOf(n);
@@ -505,6 +518,7 @@ The form went through many iterations: clay studies for hand feel, FDM 3D prints
     cover: "/portfolio/tbd-panda-soap.png",
     gallery: [
       "/portfolio/tbd-panda-soap.png",
+      "/portfolio/raccoon-poker-chip/hero-many-colors.png",
       "/portfolio/raccoon-poker-chip/injection-sequence.png",
       ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n, i) => {
         const ids = ["42d9ef15076f62fab0abee3ee39819bf9d8bff9f697eb0ca533ad18559e22700", "3ec0e0a4adfe4b880ccec020c0edee1f99a7a33bb05943192da6964d5ea76d22", "d2e85ab8bd3ab98866787a2d016ca962ac8bc5f2230826b636b47f53d73a3ab1", "7defddb77c927a28b3ca5f4d8dd9fd9c37a871a5ede54496cb6b6f63e9dda139", "97bd01bbbfb5a12649185b9729cdd00b020184b435d8be8575a2911c332f0562", "d0f6d84e8a91ffeb248e0bf1859b05621ddf36c2491f940cdef7d3c22a141b75", "153d556c89ffeceafda7f223ea4758408ceaf7f62a6d0c9fe918fdbf2b163eb7", "567e91be77e07fbf3ec5b95c8e2600729c5b743c249c34475ee3cc7d6e55ba0e", "d17933e07abae064339eb04e8b63758367602a7424b7866fea572a76fee69e28", "6e90155278aa4a3765beca0dec98f90b047f5ed046fdae7f297001e26adbfb1e", "b503e5500fa7c67feacc258133b69b82f7890aa5ca647586e0e895e51bca71ef", "d1d7c4ed0c8186914b263e4f94686389cb65291d8e1ff199b7fde09aa2420afa"];
