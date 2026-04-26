@@ -208,6 +208,7 @@ The goal was to evolve the system from "rough shape generator" to "the first 30%
     title: "iPhone FineWoven case",
     role: "Apple",
     cover: "/portfolio/iphone-finewoven.png",
+    coverHover: "/portfolio/iphone-finewoven/keynote-wall.png",
     gallery: ["/portfolio/iphone-finewoven.png"],
     pdfPreview: "/portfolio/iphone-finewoven/patent.pdf",
     body: `I led materials development and mechanical integration for the iPhone FineWoven case, work I'm now credited on as a co-inventor on the patent. FineWoven was Apple's first major move away from leather in its accessory line, a shift PETA recognized with their 2023 Company of the Year award.
