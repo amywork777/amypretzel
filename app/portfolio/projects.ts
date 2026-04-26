@@ -215,8 +215,15 @@ The goal was to evolve from generating rough shapes to producing geometry that f
 
 The technical scope sat at the intersection of textile engineering and structural mechanics. I engineered high-performance woven textiles and polymer composites for softgoods enclosures, then designed and ran the manufacturing test protocols that proved out durability and tactile response across the lifecycle of the part.
 
-Specifics under NDA. The broader story, replacing a material that had become a quiet environmental cost with something engineered to perform as well, is the part I'm most proud of.`,
+Specifics under NDA. The broader story, replacing a material that had become a quiet environmental cost with something engineered to perform as well, is the part I'm most proud of.
+
+## Patent
+
+**"Accessory Devices with Textile-Based Walls"**, published April 2025.
+
+Lots of tiny details, lots of learning.`,
     links: [
+      { label: "Patent announcement on X", url: "https://x.com/amypretzel/status/1909033061469274568" },
       { label: "PETA, Apple wins Company of the Year", url: "https://www.peta.org/media/news-releases/apple-wins-petas-company-of-the-year-award-for-industry-shifting-leadership-on-leather-use/" },
     ],
   },
