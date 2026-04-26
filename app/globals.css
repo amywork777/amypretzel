@@ -169,7 +169,9 @@ body {
   box-shadow: 0 14px 40px rgba(40, 30, 20, 0.10);
 }
 .tile-img-wrap {
-  background: var(--color-card-deep);
+  /* Always white so AI shots with white backgrounds don't show
+     visible white-on-dark edges in dark mode. */
+  background: #ffffff;
   overflow: hidden;
 }
 

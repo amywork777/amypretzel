@@ -176,7 +176,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {/* === LEAD IMAGE === */}
         {lead && (
           <section className="max-w-5xl mx-auto px-5 sm:px-8 mb-10 sm:mb-16 animate-fade-up delay-300">
-            <div className="bg-card border border-rule rounded-sm overflow-hidden">
+            <div className="bg-white border border-rule rounded-sm overflow-hidden">
               <Image
                 src={lead}
                 alt={project.title}
@@ -231,7 +231,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {/* === PDF VIEWER === */}
         {project.pdfPreview && (
           <section className="max-w-4xl mx-auto px-5 sm:px-8 pb-10 sm:pb-16 animate-fade-up">
-            <div className="bg-card border border-rule rounded-sm overflow-hidden">
+            <div className="bg-white border border-rule rounded-sm overflow-hidden">
               <iframe
                 src={project.pdfPreview}
                 title={`${project.title} document preview`}
@@ -255,7 +255,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 {rest.map((src, i) => (
                   <div
                     key={src}
-                    className="bg-card border border-rule rounded-sm overflow-hidden animate-fade-up"
+                    className="bg-white border border-rule rounded-sm overflow-hidden animate-fade-up"
                     style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
                   >
                     <Image
