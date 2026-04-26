@@ -272,7 +272,6 @@ The collection started as personal experiments: food-grade two-part RTV silicone
       "/portfolio/harp-instrument/white-bg.png",
       "/portfolio/harp-instrument/in-hands.png",
       "/portfolio/harp-instrument/heart-holes.png",
-      "/portfolio/metal-lyre.png",
       "https://freight.cargo.site/w/1500/q/75/i/5f316e3f1e9b700b78da49b45db204f30925010443616c3b327ba6e81214b2c1/1.png",
       "https://freight.cargo.site/w/1500/q/75/i/378ab89aba231e5c712248c7e47fcd07c854907d0c4f560dc8c5bdf9a4fde97b/2.png",
       "https://freight.cargo.site/w/1500/q/75/i/c5a69dd77edf8a1d345da17666dc3c29a9dcd6b3a635f107bd77c5c209e42be7/3.png",
