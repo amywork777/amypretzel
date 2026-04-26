@@ -86,7 +86,7 @@ export default async function Home() {
                     >
                       <span className="meta text-ink-faint shrink-0 w-16">{c.label}</span>
                       <span className="text-ink-soft truncate group-hover:text-accent transition-colors">
-                        {c.value} ↗
+                        {c.value}
                       </span>
                     </a>
                   </li>
@@ -137,7 +137,7 @@ export default async function Home() {
           <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
             <h2 className="display text-[32px] sm:text-[44px] leading-none">Notes</h2>
             <Link href="/writing" className="link meta">
-              All notes ↗
+              All notes
             </Link>
           </header>
 
@@ -159,7 +159,7 @@ export default async function Home() {
                   {summary(p)}
                 </p>
                 <span className="meta mt-3 inline-block text-ink-faint group-hover:text-accent transition-colors">
-                  Read →
+                  Read
                 </span>
               </Link>
             ))}
@@ -176,7 +176,7 @@ export default async function Home() {
               <h2 className="display text-[32px] sm:text-[44px] leading-none">Selected work</h2>
             </div>
             <Link href="/portfolio" className="link meta">
-              All projects ↗
+              All projects
             </Link>
           </header>
 

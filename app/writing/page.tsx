@@ -75,7 +75,7 @@ export default async function WritingPage() {
                         <div className="flex items-baseline gap-4 meta">
                           <span className="text-ink-faint">{readingTime(p.body)}</span>
                           <span className="text-ink-faint group-hover:text-accent transition-colors">
-                            Read →
+                            Read
                           </span>
                         </div>
                       </div>

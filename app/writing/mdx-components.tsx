@@ -1,4 +1,4 @@
-/* MDX → React component map for editorial article styling */
+/* MDX to React component map for editorial article styling */
 import type { MDXComponents } from "mdx/types";
 
 export const mdxComponents: MDXComponents = {

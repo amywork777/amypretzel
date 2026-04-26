@@ -21,7 +21,7 @@ import matter from "gray-matter";
                   auto-fallback often cuts mid-sentence.
      originalUrl: string, optional. Link to the original post (e.g. an X thread)
                   if the note was published elsewhere first. Renders as a small
-                  "Originally posted on X ↗" link in the header and is added
+                  "Originally posted on X" link in the header and is added
                   to JSON-LD `sameAs`.
 
    Body: standard MDX. Renderer is `app/writing/mdx-components.tsx`, which

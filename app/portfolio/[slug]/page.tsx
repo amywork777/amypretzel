@@ -45,10 +45,10 @@ export async function generateMetadata({
 }
 
 /* very lightweight markdown-ish renderer:
-   - lines starting with `## ` → h2
-   - lines starting with `### ` → h3
-   - lines starting with `- ` → list items (consecutive ones group)
-   - **bold** → <strong>
+   - lines starting with `## ` become h2
+   - lines starting with `### ` become h3
+   - lines starting with `- ` become list items (consecutive ones group)
+   - **bold** becomes <strong>
    - blank-line-separated paragraphs otherwise
 */
 function renderBody(body: string) {
@@ -160,7 +160,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {/* === HEADER === */}
         <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-8 sm:pt-16 pb-7 sm:pb-10">
           <Link href="/portfolio" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">
-            ← All projects
+            All projects
           </Link>
           <div className="flex items-baseline justify-between gap-4 sm:gap-6 flex-wrap mb-3">
             <h1 className="display text-[38px] sm:text-[64px] md:text-[88px] leading-[0.98] animate-fade-up delay-100">
@@ -218,7 +218,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                         rel="noopener noreferrer"
                         className="link text-[15px] text-ink-soft"
                       >
-                        {l.label} ↗
+                        {l.label}
                       </a>
                     </li>
                   ))}
@@ -260,13 +260,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <section className="max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
           <div className="grid grid-cols-2 gap-4 sm:gap-10">
             <Link href={`/portfolio/${prev.slug}`} className="group block">
-              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">← Prev</p>
+              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Prev</p>
               <p className="font-display italic text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
                 {prev.title}
               </p>
             </Link>
             <Link href={`/portfolio/${next.slug}`} className="group block text-right">
-              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Next →</p>
+              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Next</p>
               <p className="font-display italic text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
                 {next.title}
               </p>

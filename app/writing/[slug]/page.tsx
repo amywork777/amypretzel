@@ -87,7 +87,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
         {/* === HEADER === */}
         <section className="max-w-3xl mx-auto px-5 sm:px-8 pt-8 sm:pt-16 pb-7 sm:pb-10">
           <Link href="/writing" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">
-            ← All notes
+            All notes
           </Link>
           <p className="meta mb-3 sm:mb-4 animate-fade-up delay-100">{formatDate(post.date)}</p>
           {post.title && (
@@ -102,7 +102,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
               rel="noopener noreferrer"
               className="link-soft meta animate-fade-up delay-300"
             >
-              Originally posted on X ↗
+              Originally posted on X
             </a>
           )}
         </section>
@@ -122,7 +122,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
               <div className="grid grid-cols-2 gap-4 sm:gap-10">
                 {prev ? (
                   <Link href={`/writing/${prev.slug}`} className="group block">
-                    <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">← Newer</p>
+                    <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Newer</p>
                     <p className="font-display italic text-[20px] sm:text-[22px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
                       {prev.title ?? "Untitled"}
                     </p>
@@ -132,7 +132,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
                 )}
                 {next ? (
                   <Link href={`/writing/${next.slug}`} className="group block text-right">
-                    <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Older →</p>
+                    <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Older</p>
                     <p className="font-display italic text-[20px] sm:text-[22px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
                       {next.title ?? "Untitled"}
                     </p>
