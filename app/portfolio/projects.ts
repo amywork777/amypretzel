@@ -257,11 +257,11 @@ Specifics under NDA. The products are publicly available; the engineering is the
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.png`;
       }),
     ],
-    body: `The pretzel is the namesake of this site, a personal motif I keep coming back to. The shapes here are silicone-cast pretzels in a dozen colors: palm-sized, somewhere between a charm and a craft prop.
+    body: `The pretzel is the namesake of this site, a personal motif I keep coming back to. The shapes here are injection-molded pretzels in a dozen colors: palm-sized, somewhere between a charm and a craft prop.
 
 A pretzel is a satisfying object to design around. It's a topological knot drawn from a single line, simple enough to recognize at a glance and complex enough that hand-making one always feels a little like an accomplishment. The contrast between the three tight loops and the soft body is part of what makes the form so legible: there's nothing else it could be.
 
-The collection started as personal experiments: food-grade two-part RTV silicone molds cast against hand-shaped masters, then iterated through edible variants (chocolate, sourdough), decorative resin pours, and pigmented epoxies. Pretzels show up in my work as a recurring signature: the chosen mascot, the photo prop, the pixel icon in the corner of every page on this site.`,
+The collection runs through the standard injection-molding pipeline: a steel mold tool with the pretzel cavity machined in, pigmented thermoplastic shot batch after batch in different colors. Pretzels show up in my work as a recurring signature: the chosen mascot, the photo prop, the pixel icon in the corner of every page on this site.`,
   },
 
   // ── Row 3 ─────────────────────────────────────────────
