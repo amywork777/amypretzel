@@ -211,11 +211,11 @@ The goal was to evolve from generating rough shapes to producing geometry that f
     role: "Apple",
     cover: "/portfolio/iphone-finewoven.png",
     gallery: ["/portfolio/iphone-finewoven.png"],
-    body: `I worked on the iPhone FineWoven case colorways at Apple. FineWoven was Apple's first major move away from leather in its accessory line, a shift that PETA recognized with their Company of the Year award.
+    body: `I led materials development and mechanical integration for the iPhone FineWoven case, work that resulted in a granted patent. FineWoven was Apple's first major move away from leather in its accessory line, a shift PETA recognized with their 2023 Company of the Year award.
 
-The work spanned material qualification, color development, surface finish, and the long cycle of physical samples that closes the gap between an early swatch and a shipped product. Hardware that looks simple from the outside has a long tail of decisions about how it ages, how it feels in the first week vs. the third year, and how it survives drops without telegraphing every scuff.
+The technical scope sat at the intersection of textile engineering and structural mechanics. I engineered high-performance woven textiles and polymer composites for softgoods enclosures, then designed and ran the manufacturing test protocols that proved out durability and tactile response across the lifecycle of the part.
 
-Specifics under NDA, but the broader story, replacing a material that had become a quiet environmental cost, is the part I'm proud of.`,
+Specifics under NDA. The broader story, replacing a material that had become a quiet environmental cost with something engineered to perform as well, is the part I'm most proud of.`,
     links: [
       { label: "PETA, Apple wins Company of the Year", url: "https://www.peta.org/media/news-releases/apple-wins-petas-company-of-the-year-award-for-industry-shifting-leadership-on-leather-use/" },
     ],
@@ -227,11 +227,11 @@ Specifics under NDA, but the broader story, replacing a material that had become
     role: "Apple",
     cover: "/portfolio/ipad-smart-folio.png",
     gallery: ["/portfolio/ipad-smart-folio.png"],
-    body: `I worked on the iPad Pro Smart Folio. The Smart Folio looks like a single thoughtful gesture, fold it back, prop it up, magnetically snap it shut, but every one of those gestures is a different mechanical and material problem.
+    body: `I worked on softgoods engineering for iPad accessories at Apple, designing and prototyping the fabric enclosures that wrap the device. The brief covered materials innovation, user experience, and durability across the full life of the part.
 
-My work spanned hinge geometry that survives tens of thousands of fold cycles, magnet alignment that lands the same way every time, and fabric that drapes without bunching. The fun of accessory engineering is that the user never thinks about any of it. If they did, it would mean something had gone wrong.
+Day-to-day, this meant FEA, materials testing, and iterative prototyping for new form factors, then sitting at the table with mechanical, materials, and manufacturing partners to push each design toward something a factory could actually build at scale. DFM is half of accessory engineering. The other half is making sure the user never has to think about any of it.
 
-Specifics under NDA. The product is publicly available.`,
+Specifics under NDA. The products are publicly available.`,
     links: [
       { label: "iPad accessories, Apple", url: "https://www.apple.com/shop/ipad/accessories" },
     ],
