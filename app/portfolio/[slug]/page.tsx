@@ -228,6 +228,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
 
+        {/* === PDF VIEWER === */}
+        {project.pdfPreview && (
+          <section className="max-w-4xl mx-auto px-5 sm:px-8 pb-10 sm:pb-16 animate-fade-up">
+            <div className="bg-card border border-rule rounded-sm overflow-hidden">
+              <iframe
+                src={project.pdfPreview}
+                title={`${project.title} document preview`}
+                className="block w-full h-[70vh] sm:h-[85vh]"
+                loading="lazy"
+              />
+            </div>
+            <p className="meta mt-3 text-ink-faint">
+              If the viewer doesn&apos;t load on your device, open the PDF directly from the references above.
+            </p>
+          </section>
+        )}
+
         {/* === REMAINING GALLERY === */}
         {rest.length > 0 && (
           <>

@@ -15,6 +15,8 @@ export type Project = {
   links?: ProjectLink[];
   /** Twitter/X status ID, if set, the tweet (with any embedded video) renders inline near the top of the project page */
   tweetId?: string;
+  /** Path or URL to a PDF; if set, an inline PDF viewer renders below the body */
+  pdfPreview?: string;
 };
 
 export const projects: Project[] = [
@@ -215,6 +217,7 @@ The goal was to evolve from generating rough shapes to producing geometry that f
       "https://patentimages.storage.googleapis.com/c1/f3/f7/8235127f0da51e/US20250088581A1-20250313-D00000.png",
       "https://patentimages.storage.googleapis.com/00/a6/b0/9d727971a31a86/US20250088581A1-20250313-D00001.png",
     ],
+    pdfPreview: "/portfolio/iphone-finewoven/patent.pdf",
     body: `I led materials development and mechanical integration for the iPhone FineWoven case, work I'm now credited on as a co-inventor on the patent. FineWoven was Apple's first major move away from leather in its accessory line, a shift PETA recognized with their 2023 Company of the Year award.
 
 The technical scope sat at the intersection of textile engineering and structural mechanics. I engineered high-performance woven textiles and polymer composites for softgoods enclosures, then designed and ran the manufacturing test protocols that proved out durability and tactile response across the lifecycle of the part.
