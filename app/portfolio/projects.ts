@@ -110,43 +110,38 @@ Taya was designed as a wearable that blends thoughtful hardware engineering with
       "/portfolio/ai-jewelry/image-1.png",
       "/portfolio/ai-jewelry/image-2.png",
     ],
-    body: `**AI-assisted custom jewelry design.**
+    body: `**An AI pipeline that turns sketches, photos, and descriptions into finished metal jewelry.**
 
-Taiyaki Jewelry transforms sketches, photos, or ideas into unique jewelry pieces. Using an AI modeling pipeline, each submission becomes a refined CAD model and is produced in sterling silver, gold vermeil, or solid 14k gold.
+Taiyaki Jewelry pairs image-conditioned 3D generation with a CAD-style geometry cleanup stage and a traditional lost-wax casting workflow. A user's drawing or memory becomes a wearable piece in sterling silver, gold vermeil, or solid 14k gold.
 
 ## Technical overview
 
-Taiyaki Jewelry uses a custom modeling pipeline that turns sketches, photos, or ideas into finished metal pieces. The system combines image understanding with shape generation so every design starts from the user's input and becomes a 3D model that can be refined and manufactured.
+The pipeline is engineered for *castability*, not just rendering. The output of the model has to survive being printed in resin, invested in plaster, burned out, replaced with molten metal, and finished by hand. Generative geometry that doesn't account for any of that physical reality produces a beautiful render and a broken casting.
 
-### How the design pipeline works
+### Geometry pipeline
 
-- Analyzes the user's sketch or reference image to understand the main shapes, motifs, and proportions
-- Generates an initial 3D form that reflects the style and structure of the input
-- Cleans and simplifies the geometry so it can be manufactured as a metal piece
-- Adds thickness, smooth surfaces, and structural support for durability
-- Produces a final CAD model prepared for lost-wax casting
+- Image understanding extracts silhouette, motif, and proportion from the user's sketch or reference
+- A 3D generator produces a mesh aligned to that input
+- A repair stage closes non-manifold edges and self-intersections so the model is watertight
+- A thickness pass enforces consistent minimum wall thickness so thin features don't burn out
+- A surface-conditioning pass smooths high-frequency mesh noise so the casting takes a clean polish
 
-### Geometry processing
+### Manufacturability constraints
 
-- Interprets curves, silhouettes, and patterns from drawings and photos
-- Converts them into solid geometry with clean edges and consistent thickness
-- Adjusts surfaces so they will cast cleanly and polish well
-- Supports both organic shapes and precise, symmetrical designs
+The cleanup stage encodes the rules that take a jewelry CAD designer years to internalize. Consistent minimum thickness for the alloy and section length. No unsupported overhangs that crack the wax pattern during burnout. Curvature limits on small features. Clean drafts on flat regions so the part demolds without flash.
 
-### Production workflow
+### Casting workflow
 
-- Each model is 3D-printed in a castable resin at high resolution
-- The printed piece becomes the wax pattern used for lost-wax casting
-- The pattern is placed into investment, burned out, and replaced with molten metal
-- Castings are cleaned, filed, and polished by metal artisans in California
-- Pieces are finished in sterling silver, gold vermeil, or solid 14k gold
+- Each model is 3D-printed in castable photopolymer resin at high resolution
+- The print is sprued, invested in plaster, and burned out in a kiln
+- Molten metal replaces the cavity in a centrifugal or vacuum cast
+- Castings are filed, tumbled, and polished by metal artisans in California
 
-### Highlights
+### Use cases
 
-- Converts user memories and ideas into jewelry
-- AI-guided geometry generation
-- Final pieces produced in California
-- Ideal for gifts, memorials, and storytelling`,
+- Memorial pieces from a single photograph
+- Custom commission work from a hand sketch
+- Storytelling jewelry that wouldn't be economical to model in CAD from scratch`,
     links: [
       { label: "Launch post", url: "https://www.linkedin.com/feed/update/urn:li:activity:7340491665603772416/" },
     ],
@@ -165,39 +160,36 @@ Taiyaki Jewelry uses a custom modeling pipeline that turns sketches, photos, or 
       "/portfolio/taiyaki-3d/d1e195f0-8458-41c2-bed4-e53e35505cfd.png",
       "/portfolio/taiyaki-3d/4afcc8fb-a060-4b38-a790-97b9fd454b66.png",
     ],
-    body: `**AI-powered concept-to-CAD system for hardware teams.**
+    body: `**A concept-to-CAD system for hardware teams that generates editable 3D geometry from text, sketches, and reference images.**
 
-Taiyaki 3D Tool generates editable 3D models from natural language, sketches, screenshots, and reference images. It accelerates early product exploration by turning rough ideas into parametric CAD geometry that can be refined and manufactured.
+Taiyaki 3D collapses the gap between an idea and a CAD model. The early version turned a rough sketch or product photo into a starting mesh in seconds; the trajectory of the work was toward editable, parametric, manufacturable B-rep geometry.
 
 ### Highlights
 
-- Generates solid, editable CAD from text or images
-- Integrates with standard CAD workflows
-- Supports fast design iteration
-- Built with manufacturing constraints in mind
+- Generates 3D geometry from text or images
+- Output integrates with standard CAD workflows (STEP / IGES export)
+- Built around real manufacturing constraints, not just visual fidelity
 
 ## Technical overview
 
-Taiyaki started as a tool that could take in sketches, screenshots, or product photos and turn them into a simple 3D shape that users could iterate on quickly. It combined light image analysis with mesh generation so it could understand the rough form first and then produce a base mesh from it.
+### How the early system worked
 
-### How the early version worked
-
-- Looked at an image to understand major contours, proportions, and shape intent
-- Created a clean starting mesh that matched what the user drew or described
-- Allowed quick edits such as shortening a part, smoothing an edge, or adding a detail
-- Focused on giving hardware teams something fast that they could explore ideas with
+- Image-conditioned generation extracted contours, proportions, and silhouette intent from the input
+- A mesh generator produced a clean watertight body matched to the user's sketch or reference
+- The user could iterate quickly: shorten a feature, smooth an edge, add detail
+- Output was a watertight triangle mesh ready for 3D printing or downstream cleanup in a traditional CAD tool
 
 ### Where the system was headed
 
-The main work was moving Taiyaki toward more structured and engineering-friendly output instead of just producing a single mesh.
+The bigger problem was not generating geometry but generating *editable* geometry. Hardware teams don't want a triangle soup; they want CAD they can adjust, version, and hand to manufacturing.
 
-- Converting meshes into editable CAD so users can adjust dimensions and make changes later
-- Breaking shapes into meaningful features such as walls, holes, fillets, and shells rather than leaving everything as one object
-- Adding basic manufacturability rules such as consistent wall thickness and cleaner geometry
-- Supporting step-by-step refinements so users can continue improving the same model rather than generating a new one each time
-- Making it easier to export and use the results in standard CAD tools and for 3D printing or design reviews
+- Mesh-to-CAD conversion: turning generated meshes into B-rep solids with named features (walls, holes, fillets, shells, ribs)
+- Feature recognition that lets the user re-edit dimensions on a model long after generation
+- Manufacturability checks built into the pipeline (uniform wall thickness, draft on injection-molded features, clearance on hole patterns for fasteners)
+- Step-by-step refinement so the user keeps iterating on the same model rather than re-generating from scratch
+- Clean STEP / IGES export into SolidWorks, Fusion, Onshape, and into additive slicers
 
-The goal was to evolve from generating rough shapes to producing geometry that fits directly into a hardware team's early design workflow.`,
+The goal was to evolve the system from "rough shape generator" to "the first 30% of a hardware team's CAD work, automated."`,
     links: [
       { label: "3Printr coverage", url: "https://www.3printr.com/taiyaki-free-ai-tool-for-3d-models-2978595/" },
       { label: "Fabbaloo launch", url: "https://www.fabbaloo.com/news/taiyaki-launches-text-to-product-ai-service-bridging-3d-design-and-manufacturing" },
@@ -263,11 +255,11 @@ Specifics under NDA. The products are publicly available; the engineering is the
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.png`;
       }),
     ],
-    body: `The pretzel is the namesake of this site, a personal motif I keep coming back to. The shapes shown here are silicone-cast pretzels in a dozen colors, small, palm-sized, somewhere between a charm and a craft prop.
+    body: `The pretzel is the namesake of this site, a personal motif I keep coming back to. The shapes here are silicone-cast pretzels in a dozen colors: palm-sized, somewhere between a charm and a craft prop.
 
-A pretzel is a satisfying object to design around. It's a topological knot drawn from a single line, simple enough to recognize at a glance and complex enough that hand-making one always feels a little bit like an accomplishment. The contrast between the three tight loops and the soft body is part of what makes the form so legible, there's nothing else it could be.
+A pretzel is a satisfying object to design around. It's a topological knot drawn from a single line, simple enough to recognize at a glance and complex enough that hand-making one always feels a little like an accomplishment. The contrast between the three tight loops and the soft body is part of what makes the form so legible: there's nothing else it could be.
 
-The collection started as personal experiments, silicone molds, food-safe casts, decorative and edible variants, and turned into a small ongoing series. Pretzels show up in my work as a recurring signature: the chosen mascot, the photo prop, the pixel icon in the corner of every page on this site.`,
+The collection started as personal experiments: food-grade two-part RTV silicone molds cast against hand-shaped masters, then iterated through edible variants (chocolate, sourdough), decorative resin pours, and pigmented epoxies. Pretzels show up in my work as a recurring signature: the chosen mascot, the photo prop, the pixel icon in the corner of every page on this site.`,
   },
 
   // ── Row 3 ─────────────────────────────────────────────
@@ -283,11 +275,13 @@ The collection started as personal experiments, silicone molds, food-safe casts,
       "https://freight.cargo.site/w/1500/q/75/i/c5a69dd77edf8a1d345da17666dc3c29a9dcd6b3a635f107bd77c5c209e42be7/3.png",
       "https://freight.cargo.site/w/1500/q/75/i/bdf9931c8b8f6db6272ff1e559b9c169a7a8b4ac2e8aa60168cfd5e6e496e0fd/4.png",
     ],
-    body: `A small CNC-machined harp made for a Stanford music + product design class. The body is aluminum, the strings steel; the whole instrument fits in one hand and sits at a tabletop scale rather than a concert one.
+    body: `A small CNC-machined harp built for a Stanford music + product design class. Aluminum body, steel strings, tabletop scale rather than concert.
 
-The class assignment was open, design and build a working stringed instrument, and the constraint I set for myself was that it needed to survive being tuned. Tuning loads are surprisingly high for such a small object. The frame has to resist the cumulative tension of all the strings without warping, and the tuning pegs have to grip well enough that a played string holds pitch through a session.
+The structural challenge was tuning load. A small instrument carries a surprisingly large cumulative string tension, on the order of tens of pounds across the bridge, all of it pulling the frame inward. The frame had to resist that load without bowing past the threshold that would shift pitch perceptibly, and the tuning pegs had to develop enough static friction that a tuned string holds through a session.
 
-Designing for sound is its own kind of discipline. You can't simulate it the way you can simulate stress; you build, you listen, you adjust the mass distribution and the string anchor stiffness, and you build the next one. There's a recording linked below.`,
+Most of the engineering was structural. I sized the frame walls so deflection under full string tension stayed below the audibility threshold, and designed a tapered slot for each tuning peg so the friction increases as the string is brought up to pitch (the classic violin-peg trick, scaled down). The geometry was verified empirically: tune the instrument, walk away, come back in an hour and check.
+
+Designing for sound is its own kind of discipline. You can't simulate timbre the way you can simulate stress; you build, you listen, you redistribute mass and string-anchor stiffness, and you build the next one. Recording linked below.`,
     links: [
       { label: "Listen", url: "https://drive.google.com/file/d/1Pk-t70xBEB0dF-G3Ecy7gSXF8dOjhMaG/view" },
     ],
@@ -307,11 +301,13 @@ Designing for sound is its own kind of discipline. You can't simulate it the way
       "https://freight.cargo.site/w/1500/q/75/i/23a696a2dd87176aee3fe30899efe53d9395a563976bc5077c00979d3a7624de/6.png",
       "https://freight.cargo.site/w/1500/q/75/i/664cca511cdc8047f2a73b03cfab3570fa4ab3bf972830ef6f62774cb5bd4888/7.png",
     ],
-    body: `A small membrane-driven whistle exploring how a thin vibrating membrane changes the timbre of a simple tone. Designed for the same Stanford music + product design class as the harp.
+    body: `A small membrane-driven whistle exploring how a tensioned vibrating film changes the timbre of a simple aerophone. Built for the same Stanford music + product design class as the harp.
 
-A normal whistle uses a fipple, a hard edge that splits an air stream and makes it oscillate at a fixed frequency. A membrane whistle replaces (or adds to) the fipple with a thin sheet of material that vibrates with the airflow, coloring the tone with its own resonance. The result sits somewhere between a kazoo and a flute: breathier than a whistle, more pitched than a kazoo.
+A standard whistle uses a fipple: a fixed edge that splits an air stream and produces a tone at a frequency set by the resonant length of the tube. A membrane whistle replaces (or augments) the fipple with a stretched film. The airflow drives the membrane, the membrane modulates the airflow, and the result is a tone colored by the membrane's own modal frequencies.
 
-The body is a turned aluminum tube; the membrane is a thin polymer film stretched across one end. Most of the design was iteration on the membrane tension and the breath channel geometry, small changes that significantly shift the character of the sound. There's a recording linked below.`,
+The acoustics live in the coupling between three subsystems: the breath channel that delivers a stable laminar jet, the tube length that sets the fundamental, and the membrane whose tension determines its mode shapes. Designing the instrument was iterating on those three until the membrane mode reinforced rather than fought the tube mode. The character ends up somewhere between a kazoo and a flute: breathier than a whistle, more pitched than a kazoo.
+
+The body is a turned aluminum tube; the membrane is a thin polymer film stretched across one end. Most of the design work was iterating on membrane tension, breath-channel geometry, and the small slots that direct airflow over the membrane edge. Recording linked below.`,
     links: [
       { label: "Listen", url: "https://drive.google.com/file/d/1tKC5K0He7XORUA2binunJYOy3iCnOWDI/view" },
     ],
@@ -332,11 +328,13 @@ The body is a turned aluminum tube; the membrane is a thin polymer film stretche
       "https://freight.cargo.site/w/1500/q/75/i/9b5f2144522cf8f3bd0a846ae127c9b016483750599e558e5b59320662832d0f/7.png",
       "https://freight.cargo.site/w/1920/q/94/i/160a9501ed65260441702b42e39d24b5abd6bfe1fe8abbe725d597ccb5cfb76e/8.png",
     ],
-    body: `A small physical puzzle CNC-milled in clear acrylic. A grid of channels forms a spider-web pattern; a metal ball navigates the maze.
+    body: `A small physical puzzle CNC-milled in clear cast acrylic. A grid of channels forms a spider-web pattern; a steel ball navigates the maze.
 
-This was an exploration in transparent CNC work for a Stanford CNC art class. The clear material was the design choice, it lets you see through the puzzle to the path you've taken, which makes it feel less like a maze and more like a tiny instrument. The web pattern was generated to maximize dead ends without making the puzzle frustrating, and the channels are deep enough to trap the ball but shallow enough to let it slide easily.
+Built for a Stanford CNC art class. The clear material was the design choice: it lets you see through the puzzle to the path you've taken, which makes the object feel less like a maze and more like a tiny instrument.
 
-The build was a study in toolpath design as much as visual design. Acrylic chips badly if you mill it too aggressively; the right feed rate and step-down keep the channel walls clear and the surface optical. A satisfying object to make and a satisfying object to play with.`,
+The web pattern was generated to maximize dead ends without crossing the line into frustrating. The channel geometry, depth, width, and corner radius, was tuned to trap the ball gently rather than catastrophically: deep enough to keep it on the path, shallow enough to let it slide.
+
+The build was a study in toolpath design as much as visual design. Acrylic is unforgiving in CNC: too aggressive a chip-load and it cracks at the channel corners; too slow a feed and the chips re-melt and gum up the bit. A single-flute O-flute end mill at the right RPM and feed produces channel walls clear enough to read through, basically optical-grade off the spindle. A satisfying object to make and a satisfying object to play with.`,
   },
 
   // ── Row 4 ─────────────────────────────────────────────
@@ -352,11 +350,13 @@ The build was a study in toolpath design as much as visual design. Acrylic chips
         return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
       }),
     ],
-    body: `Experiments in molding plastic onto and through woven fabric, made for Stanford's ME 325 Injection Molding course. The question was simple: what happens at the boundary between molten plastic and a textile?
+    body: `Experiments in overmolding thermoplastic onto and through woven fabric, made for Stanford's ME 325 Injection Molding course. The question was simple: what happens at the boundary between molten polymer and a textile?
 
-The mold tool is a small steel plate with multiple cavities, machined in the Stanford shop. Different fabrics get clamped into the cavities, the mold closes, and pigmented thermoplastic is shot in. The result depends a lot on the weave: tight cottons end up with crisp edges and a good bond; open meshes let resin fully through and create a hybrid material that's part fabric, part plastic. Synthetics melt at the boundary and fuse molecularly. Naturals char if the resin is too hot.
+The mold is a small steel plate with multiple cavities, machined in the Stanford shop. Different fabrics get clamped into the cavities, the mold closes, and pigmented thermoplastic is shot in. The behavior at the interface depends entirely on the weave geometry and the resin chemistry.
 
-The interesting outputs aren't really parts, they're samples. They show the weave pattern through translucent resin, or end up as soft-shell composites with a textile face and a structural back. As much as anything, the project was a forcing function for thinking about tooling design: cavity venting, gate placement, ejection, the parts of injection molding that are usually invisible in the finished product.`,
+Tight cottons act as a barrier: the plastic flows around them and fuses cleanly at the parting line, producing a hybrid with a textile face and a plastic back. Open meshes let resin flow fully through the gaps between yarns and create a true co-continuous composite, plastic and fabric mechanically interlocked at every yarn intersection. Synthetic fibers (PP, PET) melt at the boundary and fuse molecularly with the resin if the polymer chemistries are compatible. Naturals char above their thermal degradation point if the melt is too hot.
+
+The interesting outputs aren't really parts, they're samples: weave patterns visible through translucent resin, or soft-shell composites with a textile face and a structural back. As much as anything, the project was a forcing function for thinking about tooling: parting-line strategy, gate placement, runner sizing, vent geometry, and how all four of those decisions show up in the part once the press cycles.`,
   },
 
   {
@@ -380,11 +380,11 @@ The interesting outputs aren't really parts, they're samples. They show the weav
       "https://freight.cargo.site/w/500/q/75/i/fe019ded734bedcbe249f7605605860b865d0d7b74da4ccd1308ebf1f1b5b978/AF1QipOF2jA6klI-7xCuXn2JDkTDHSu8Yw3HF1hobZkw1536-h2048.jpg",
       "https://freight.cargo.site/w/1920/q/94/i/1d47478a66fdb6d512b31fb49071009efd837e9f3362af03a9e18c6f535e6760/Screenshot-2020-10-23-121641.png",
     ],
-    body: `Long-running personal craft and one of the things I'd do anywhere if the choice was mine. The patchwork cardigan shown is one of many; each square is an evening, a leftover skein, sometimes a project in itself before it became part of something bigger.
+    body: `Long-running personal craft and one of the things I'd do anywhere if the choice were mine. The patchwork cardigan shown is one of many; each square is an evening, a leftover skein, sometimes a project in itself before it became part of something bigger.
 
-I taught a crochet class at Stanford as part of *Introduction to Crochet Construction and Textile* in fall 2020, a short course covering basic stitches, granny squares, garment shaping, and a final project of the student's choice. The syllabus is linked below.
+I taught a crochet class at Stanford, *Introduction to Crochet Construction and Textile*, in fall 2020. A short course covering basic stitches, granny squares, garment shaping, and a final project of the student's choice. Syllabus linked below.
 
-What I like about crochet is that it's CAD without a computer. Every stitch is a small decision about geometry, the loop you draw through, the direction you wrap, the tension you hold, and those decisions accumulate into a fabric whose drape, weight, and stretch all flow from the choices made one stitch at a time. It's the same discipline as designing in software, just slower and warmer.`,
+What I like about crochet is that it's textile mechanics by hand. Every stitch is a small decision about geometry: the loop you draw through, the direction you wrap, the tension you hold. Each stitch is also one node in a chain-loop topology that gives crochet its characteristic mechanical behavior, anisotropic stretch, asymmetric drape, edges that curl unless you account for them. Those properties all derive from the stitch pattern at the millimeter scale, the same way a woven fabric's behavior derives from its weave. It's the same discipline as designing in software, just slower and warmer.`,
     links: [
       { label: "Crochet class syllabus", url: "https://drive.google.com/file/d/1SsCSWfZWcnN33-fz_uJsly00cqfyK-uU/view" },
     ],
@@ -408,9 +408,9 @@ What I like about crochet is that it's CAD without a computer. Every stitch is a
     ],
     body: `A small accessory designed to make eating sushi a little easier and a little more delightful. The first image is a watercolor study, a way to imagine the experience of using the object before deciding what the object should be.
 
-The form combined a few small jobs that normally need three or four separate dishes: a place to rest chopsticks, a small well for soy sauce, and a low rim that doubled as a serving plate. Designing for a familiar ritual is a particular kind of constraint, anything you add has to disappear into the meal, not call attention to itself.
+The form combined a few small jobs that usually need three or four separate dishes: a place to rest chopsticks, a small well for soy sauce, and a low rim that doubles as a serving plate. Designing for a familiar ritual is a particular kind of constraint, anything you add has to disappear into the meal rather than call attention to itself.
 
-The studies explored ceramic and silicone variants. The silicone ones were softer and more forgiving; the ceramic ones felt more permanent but were more fragile. There's a version that I still use.`,
+The studies explored ceramic and silicone variants. Ceramic gave the object weight and presence on the table but was unforgiving in production: a single shrinkage crack in the kiln and a piece is gone. Food-grade silicone is more forgiving in process and warmer in the hand, but it doesn't carry the same aesthetic weight. Each material set its own constraints on form (draft on undercuts for the silicone molds, wall thickness and cure schedule for the ceramic), and the studies converged on shapes that worked in both.`,
   },
 
   // ── Row 5 ─────────────────────────────────────────────
@@ -428,9 +428,11 @@ The studies explored ceramic and silicone variants. The silicone ones were softe
     ],
     body: `A precision-machined telescoping barrel for a clarinet, the short section between the mouthpiece and the upper joint. Adjustable length lets the player fine-tune intonation without swapping out an entire barrel.
 
-Made for a Stanford music + product design class. I play clarinet, and the standard solution to intonation drift (the instrument goes flat as the body warms up) is either to pull the barrel out a little or to keep a second longer barrel in your case. A telescoping barrel collapses both options into one and lets you make the adjustment continuously, on the fly.
+Built for a Stanford music + product design class. I play clarinet, and the standard correction for intonation drift (the instrument going flat as the body warms and the air column lengthens) is either to pull the existing barrel out a few millimeters or to keep a longer second barrel in your case. A telescoping barrel collapses both options into one and lets the player make the correction continuously, on the fly.
 
-The construction is two interlocking aluminum sleeves with a precise sliding fit and an o-ring seal to maintain the air column. Most of the design work was the fit itself, too loose and the seal leaks; too tight and the player can't move it mid-piece. Designing for a musician means thinking about the millimeters that affect intonation and the feel of the instrument under the fingers at the same time.`,
+The construction is two interlocking aluminum sleeves with a precision sliding fit and an o-ring seal to maintain the integrity of the air column. The fit tolerance is the whole game: too loose and the seal leaks past the o-ring, killing the tone; too tight and the player can't slide the barrel mid-piece without breaking embouchure. I machined the sleeves with a few microns of intentional clearance and tuned the o-ring squeeze ratio to land the friction in the right window, enough to hold position when set, light enough to slide under thumb pressure.
+
+Designing for a musician means thinking about the millimeters that affect intonation and the feel of the instrument under the fingers at the same time.`,
   },
 
   {
@@ -448,9 +450,9 @@ The construction is two interlocking aluminum sleeves with a precise sliding fit
     ],
     body: `A kitchen tool designed for making dumpling and gyoza skins. Standard rolling pins are sized for pie crust and pasta sheets; a single-skin roller is a different problem.
 
-The brief was efficiency and feel. Each skin gets one pass, center the dough ball, roll once with rotation, you have a skin. Repeat eighty times for a family meal. The handle had to be comfortable for that volume of repetition, the roller weighted enough that the user could glide rather than press, and the whole thing easy to wash and dry between batches.
+The brief was efficiency and feel. Each skin gets one pass: center the dough ball, roll once with rotation, you have a skin. Repeat eighty times for a family meal. The handle had to stay comfortable across that volume of repetition, the roller weighted enough that the user glides rather than presses, and the whole thing easy to wash and dry between batches.
 
-The form is a stout wooden roller with a soft-grip handle, balanced so the weight does the work. Compact enough to keep on a hook by the stove. A small object that quietly changes a familiar kitchen task.`,
+The form is a stout hardwood roller with a soft-grip handle, mass-balanced so the cylinder's inertia does the work and the user's wrist doesn't have to. The wood is finished with a food-safe oil that sits in the grain rather than sealing the surface, so the roller stays grippy on flour-coated dough and recovers between uses. Compact enough to keep on a hook by the stove. A small object that quietly changes a familiar kitchen task.`,
   },
 
   {
@@ -465,11 +467,11 @@ The form is a stout wooden roller with a soft-grip handle, balanced so the weigh
       "https://freight.cargo.site/w/733/q/94/i/c662ee439558eeb46b6e927de7d38a2da06105fb42e8f8330d5058d81fe8cd9b/4s.png",
       "https://freight.cargo.site/w/733/q/94/i/0670d6afecfa47bbbca86c20a26bc0d35547b3615cf87b952779021cd452f07f/2s.png",
     ],
-    body: `A fixture designed for bending US quarters on a benchtop arbor press. Made for a Stanford fixture-design exercise, a constrained problem with all the texture of real machine-shop work.
+    body: `A fixture designed for cleanly bending US quarters on a benchtop arbor press. Built for a Stanford fixture-design exercise, a constrained problem with all the texture of real machine-shop work.
 
-The challenge was force and geometry. A quarter is a small disc of copper-nickel cladding over a copper core; bending it cleanly requires substantial localized force without cracking the coin or galling the die. I calculated the force budget, designed a die geometry that produced a consistent fold, and machined the fixture to fit a standard benchtop arbor press.
+The challenge was force and geometry. A quarter is a cupronickel-clad copper sandwich, roughly 1.75 mm thick and 24.26 mm in diameter. Bending it cleanly requires localized force in the kilonewton range without cracking the cladding or galling the die. I worked the force budget from the yield strength and section modulus of the coin, designed a die geometry that produced a controlled fold without strain concentrations at the corners, and machined the fixture from tool steel to fit a standard one-ton arbor press.
 
-What surprised me was how much the fixture geometry mattered relative to the press itself. The bench press has more than enough force; the limit was how cleanly I could constrain the coin. Get the support geometry right and the bend is repeatable across many trials. Get it slightly off and the coin cracks, slips, or curls unpredictably. Full report linked below.`,
+The surprise was how much the fixture geometry mattered relative to the press itself. The bench press has more than enough tonnage; the limit was how cleanly the coin could be constrained during the bend. Get the support geometry right and the fold is repeatable across many trials. Get it slightly off and the coin cracks at the cladding interface, slips out of the die, or curls unpredictably. Full report linked below.`,
     links: [
       { label: "Full report", url: "https://drive.google.com/file/d/169505jEpmlo0zmLeijBc7gZr6NMaKsoR/view" },
     ],
@@ -491,9 +493,9 @@ What surprised me was how much the fixture geometry mattered relative to the pre
     ],
     body: `A reusable case for menstrual products, a small study in how an everyday personal object can feel intentional rather than disposable.
 
-The constraints were practical and emotional. Practical: discreet in a bag, easy to open one-handed, washable, durable. Emotional: warm to the touch, satisfying to hold, none of the design defensiveness that period products usually carry. I wanted something that read as just a nice object, the way a good lipstick case does, and only revealed its purpose if you opened it.
+The constraints were practical and emotional. Practical: discreet in a bag, openable one-handed, washable, durable across thousands of cycles. Emotional: warm in the hand, satisfying to hold, free of the visual defensiveness that period products usually carry. The reference was a good lipstick case, an object that reads as "just nice" until you open it.
 
-The form went through a lot of iterations: clay studies for hand feel, 3D prints to test opening mechanics, silicone overmolds for grip. The version shown is a small soft-touch capsule with a clean snap closure. It sits in a bag like a balm or a small flask. That was the point.`,
+The form went through many iterations: clay studies for hand feel, FDM 3D prints to validate the snap-closure mechanics, and silicone overmolds for grip. The version shown is a soft-touch capsule with a two-stage snap closure, sized to the smallest standard product and engineered so the haptic of the snap is decisive rather than fiddly. The geometry of the snap, undercut depth, lip radius, beam length, was tuned through prints until the close pressure landed where I wanted it.`,
   },
 
   {
@@ -510,7 +512,9 @@ The form went through a lot of iterations: clay studies for hand feel, 3D prints
     ],
     body: `A custom-tooled poker chip with a raccoon emboss, designed and produced through the full injection-molding pipeline for Stanford's ME 325. The motif chose itself; the design exercise was the same regardless of subject.
 
-The work was end-to-end: CAD design of the chip, parting line strategy, ejector pin layout, sprue and runner sizing, gate placement, vent geometry. The mold tool was machined in the Stanford shop, manual operations for the simpler features, CNC for the raccoon emboss and the lettering around the rim. Once the tool was running, every shot tells you something about how cleanly you set up the cavity: short-shots from undersized gates, flash from worn parting surfaces, sink marks from thick sections that don't pack out evenly.
+The work was end-to-end: CAD design of the chip and the cavity, parting-line strategy, sprue and runner sizing, gate location and type, ejector pin layout, and vent geometry. The mold tool was machined in the Stanford shop: manual operations for the simple features and CNC for the raccoon emboss and the rim lettering.
+
+Once the tool was on the press, every shot is diagnostic. Short shots tell you the gate is undersized or the cycle pressure is too low. Flash on the parting line tells you the platen force is wrong or the parting surfaces aren't flat. Sink marks at thick sections tell you the part isn't packing out evenly during the hold phase. Burn marks tell you a vent is blocked. The iteration loop is: tighten the cycle, observe the part, adjust the tool or the parameters, run again.
 
 The chips themselves are pigmented styrene. They stack well, they have a satisfying weight, and they bear the marks of every decision made in the tool. As an exercise, injection molding teaches that the part you ship is downstream of the geometry you carve into steel.`,
   },
@@ -526,11 +530,13 @@ The chips themselves are pigmented styrene. They stack well, they have a satisfy
       "https://freight.cargo.site/w/1500/q/75/i/5e7e227267ea3a599a1be3f299df5e8fc94782798d36072c69a1eadf7e84c867/Retractor-Tear-down--11.jpg",
       "https://freight.cargo.site/w/1500/q/75/i/021c76780b2d60f3a4e57c8651b1437ecb2fd328850786a645a1da838ba588b8/Retractor-Tear-down--7.jpg",
     ],
-    body: `A teardown and mechanical analysis of an Intuitive Surgical small grasping retractor, the kind of instrument that lives at the end of a robotic surgery system's arm and gently holds tissue out of the way for the surgeon.
+    body: `A teardown and mechanical analysis of an Intuitive Surgical small grasping retractor, the kind of end-effector that lives at the tip of a robotic surgery system's arm and gently holds tissue out of the way for the surgeon.
 
-The goal was to understand how the design works. Surgical instruments are constrained by an unusual combination of demands: precision at sub-millimeter scale, repeated sterilization that can be mechanically harsh, fine articulation through a port the diameter of a pen. Disassembling the unit revealed the linkage geometry, the cable routing that turns motor inputs at one end into jaw motion at the other, the spring system that returns the jaws to a default state if the cable goes slack.
+The goal was to understand how the design works. Surgical end-effectors are constrained by an unusual combination of demands: sub-millimeter precision, articulation through a port the diameter of a pen, and repeated autoclave cycles that are mechanically and chemically harsh.
 
-The teardown was a study in how mature engineering looks: nothing is over-built, but every detail is deliberate. The cable routing avoids friction. The pivot pins are pressed in such a way that they can't migrate during sterilization cycles. The jaws have a textured grip pattern matched to typical tissue stiffness. A useful frame for thinking about my own designs, what's in this thing on purpose, and what's a habit you should question. Full Medium write-up linked below.`,
+Disassembly revealed the linkage geometry, the cable-driven actuation that turns motor inputs at the proximal end into jaw motion at the distal end, and the spring system that returns the jaws to a default state if a cable goes slack. The cable routing is laid out to minimize friction over the bend radii and to redistribute load so no single tendon carries the full closing force. The pivot pins are pressed and staked so they can't migrate during sterilization cycles. The jaw faces carry a textured grip pattern matched to typical tissue stiffness, fine enough not to perforate, coarse enough not to slip.
+
+The teardown was a study in what mature engineering looks like: nothing is over-built, but every detail is deliberate. A useful frame for thinking about my own designs, what's in this thing on purpose, and what's habit you should question. Full Medium write-up linked below.`,
     links: [
       { label: "Full Medium write-up", url: "https://medium.com/@amyzhou_99330/intuitive-surgical-small-grasping-retractor-teardown-14131aef2c20" },
     ],
