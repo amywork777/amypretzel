@@ -7,6 +7,8 @@ export type Project = {
   year?: string;
   /** Tile image used on the index */
   cover: string;
+  /** Optional second image that cross-fades in on tile hover (showing a "second look" — usually a lifestyle / in-context shot) */
+  coverHover?: string;
   /** All images for the dedicated project page, in display order. Cover may or may not be the first item. */
   gallery: string[];
   /** Long-form description, rendered as markdown-lite (paragraphs separated by blank lines, headings as ###/##) */
@@ -268,6 +270,7 @@ The collection started as personal experiments: food-grade two-part RTV silicone
     title: "Harp instrument",
     role: "Stanford, music + design",
     cover: "/portfolio/harp-instrument/white-bg.png",
+    coverHover: "/portfolio/harp-instrument/in-hands.png",
     gallery: [
       "/portfolio/harp-instrument/white-bg.png",
       "/portfolio/harp-instrument/in-hands.png",
@@ -320,6 +323,7 @@ The body is a turned aluminum tube; the membrane is a thin polymer film stretche
     title: "Lil spider maze",
     role: "Stanford, CNC art project",
     cover: "/portfolio/cnc-spider-web.png",
+    coverHover: "/portfolio/lil-spider-maze/in-use.png",
     gallery: [
       "/portfolio/cnc-spider-web.png",
       "/portfolio/lil-spider-maze/in-use.png",
@@ -346,6 +350,7 @@ The build was a study in toolpath design as much as visual design. Acrylic is un
     title: "Injection-molded fabric",
     role: "Stanford, ME 325 Injection Molding",
     cover: "/portfolio/injection-molded-fabric/bag-white.png",
+    coverHover: "/portfolio/injection-molded-fabric/dress.png",
     gallery: [
       "/portfolio/injection-molded-fabric/bag-white.png",
       "/portfolio/injection-molded-fabric/bag.png",
@@ -370,6 +375,7 @@ The interesting outputs aren't really parts, they're samples: weave patterns vis
     title: "Crocheting",
     role: "Personal craft + class instructor",
     cover: "/portfolio/patchwork-cardigan.png",
+    coverHover: "/portfolio/crocheting/photoshoot.png",
     gallery: [
       "/portfolio/patchwork-cardigan.png",
       "/portfolio/crocheting/casual.png",
@@ -404,6 +410,7 @@ What I like about crochet is that it's textile mechanics by hand. Every stitch i
     title: "Sushi-eating accessory",
     role: "Personal project",
     cover: "/portfolio/sushi-accessory.png",
+    coverHover: "/portfolio/sushi-eating-accessory/material-variants.png",
     gallery: [
       "/portfolio/sushi-accessory.png",
       "/portfolio/sushi-eating-accessory/material-variants.png",
@@ -429,6 +436,7 @@ The studies explored ceramic and silicone variants. Ceramic gave the object weig
     title: "Clarinet tuning barrel",
     role: "Stanford, music + design",
     cover: "/portfolio/clarinet-barrel.png",
+    coverHover: "/portfolio/clarinet-tuning-barrel/playing.png",
     gallery: [
       "/portfolio/clarinet-barrel.png",
       "/portfolio/clarinet-tuning-barrel/playing.png",
@@ -451,6 +459,7 @@ Designing for a musician means thinking about the millimeters that affect intona
     title: "Dough roller",
     role: "Kitchen tool study",
     cover: "/portfolio/dumpling-press.png",
+    coverHover: "/portfolio/dough-roller/dumplings.png",
     gallery: [
       "/portfolio/dumpling-press.png",
       "/portfolio/dough-roller/dumplings.png",
@@ -495,6 +504,7 @@ The surprise was how much the fixture geometry mattered relative to the press it
     title: "Tampon case",
     role: "Personal project",
     cover: "/portfolio/pearl-applicator.png",
+    coverHover: "/portfolio/tampon-case/in-use.png",
     gallery: [
       "/portfolio/pearl-applicator.png",
       "/portfolio/tampon-case/iteration.png",
@@ -517,6 +527,7 @@ The form went through many iterations: clay studies for hand feel, FDM 3D prints
     title: "Raccoon poker chip",
     role: "Stanford, ME 325 Injection Molding",
     cover: "/portfolio/tbd-panda-soap.png",
+    coverHover: "/portfolio/raccoon-poker-chip/hero-many-colors.png",
     gallery: [
       "/portfolio/tbd-panda-soap.png",
       "/portfolio/raccoon-poker-chip/hero-many-colors.png",

@@ -188,14 +188,26 @@ export default async function Home() {
                 className="tile group rounded-sm border border-rule animate-fade-up"
                 style={{ animationDelay: `${Math.min(i * 60, 360)}ms` }}
               >
-                <div className="tile-img-wrap aspect-[4/3] overflow-hidden">
+                <div className="tile-img-wrap aspect-[4/3] overflow-hidden relative">
                   <Image
                     src={p.cover}
                     alt={p.title}
                     width={800}
                     height={600}
-                    className="w-full h-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.03]"
+                    className={`absolute inset-0 w-full h-full object-contain p-5 transition-all duration-500 ease-out group-hover:scale-[1.03] ${
+                      p.coverHover ? "group-hover:opacity-0" : ""
+                    }`}
                   />
+                  {p.coverHover && (
+                    <Image
+                      src={p.coverHover}
+                      alt=""
+                      aria-hidden="true"
+                      width={800}
+                      height={600}
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-[1.03]"
+                    />
+                  )}
                 </div>
                 <div className="px-4 py-3.5 border-t border-rule bg-card">
                   <h3 className="font-display italic text-[20px] leading-none text-ink truncate group-hover:text-accent transition-colors">
