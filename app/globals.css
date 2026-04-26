@@ -23,6 +23,29 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  color-scheme: light;
+}
+
+/* === DARK THEME OVERRIDES ===
+   Triggered by setting data-theme="dark" on <html>. Uses warm dark
+   palette to keep the editorial feel (no pure black/white). */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #15130f;
+  --color-card: #1d1a16;
+  --color-card-deep: #1d1a16;
+  --color-ink: #ede7d8;
+  --color-ink-soft: #c4bdaf;
+  --color-ink-muted: #8a8278;
+  --color-ink-faint: #5a554c;
+  --color-rule: #2c2820;
+  --color-accent: #d68a9e;        /* warmer rose for dark-mode legibility */
+  --color-accent-hover: #e6a4b6;
+}
+
+html[data-theme="dark"] ::selection {
+  background-color: rgba(214, 138, 158, 0.22);
+  color: var(--color-ink);
 }
 
 body {

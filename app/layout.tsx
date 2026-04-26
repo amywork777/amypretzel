@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Manrope, JetBrains_Mono, Silkscreen } from "next/font/google";
 import "./globals.css";
+import { ThemeFlashScript } from "./theme-toggle";
 
 const instrumentSerif = Instrument_Serif({
   weight: "400",
@@ -100,7 +101,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#15130f" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
@@ -114,7 +118,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${silkscreen.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <ThemeFlashScript />
+      </head>
       <body className="font-body antialiased text-ink bg-paper">{children}</body>
     </html>
   );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "./theme-toggle";
 
 type Props = {
   /** which top-level route is active, if any */
@@ -55,6 +56,7 @@ export default function SiteNav({ active = null }: Props) {
           >
             Work
           </Link>
+          <ThemeToggle />
         </nav>
       </div>
     </header>
