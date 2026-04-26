@@ -212,11 +212,7 @@ The goal was to evolve from generating rough shapes to producing geometry that f
     title: "iPhone FineWoven case",
     role: "Apple",
     cover: "/portfolio/iphone-finewoven.png",
-    gallery: [
-      "/portfolio/iphone-finewoven.png",
-      "https://patentimages.storage.googleapis.com/c1/f3/f7/8235127f0da51e/US20250088581A1-20250313-D00000.png",
-      "https://patentimages.storage.googleapis.com/00/a6/b0/9d727971a31a86/US20250088581A1-20250313-D00001.png",
-    ],
+    gallery: ["/portfolio/iphone-finewoven.png"],
     pdfPreview: "/portfolio/iphone-finewoven/patent.pdf",
     body: `I led materials development and mechanical integration for the iPhone FineWoven case, work I'm now credited on as a co-inventor on the patent. FineWoven was Apple's first major move away from leather in its accessory line, a shift PETA recognized with their 2023 Company of the Year award.
 
@@ -230,7 +226,7 @@ Specifics under NDA. The broader story, replacing a material that had become a q
 
 From the abstract: "An accessory device includes multiple walls and textile layers covering the walls. The textile layers may be of the same materials. However, one of the textile layers may include a film that provides protection against stains and fraying."
 
-Listed as one of 19 named inventors on the application, alongside the rest of the Apple softgoods accessory team. Two of the published figures appear in the gallery below; the full filing is linked under references.`,
+Listed as one of 19 named inventors on the application, alongside the rest of the Apple softgoods accessory team. The full filing is embedded below; the PDF and Google Patents page are also linked under references.`,
     links: [
       { label: "View on Google Patents", url: "https://patents.google.com/patent/US20250088581A1/en" },
       { label: "Patent PDF", url: "/portfolio/iphone-finewoven/patent.pdf" },
