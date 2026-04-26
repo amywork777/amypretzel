@@ -223,7 +223,7 @@ Specifics under NDA. The broader story, replacing a material that had become a q
 
   {
     slug: "ipad-smart-folio",
-    title: "iPad Pro Smart Folio",
+    title: "iPad accessories",
     role: "Apple",
     cover: "/portfolio/ipad-smart-folio.png",
     gallery: ["/portfolio/ipad-smart-folio.png"],
