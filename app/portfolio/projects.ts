@@ -210,8 +210,12 @@ The goal was to evolve from generating rough shapes to producing geometry that f
     title: "iPhone FineWoven case",
     role: "Apple",
     cover: "/portfolio/iphone-finewoven.png",
-    gallery: ["/portfolio/iphone-finewoven.png"],
-    body: `I led materials development and mechanical integration for the iPhone FineWoven case, work that resulted in a granted patent. FineWoven was Apple's first major move away from leather in its accessory line, a shift PETA recognized with their 2023 Company of the Year award.
+    gallery: [
+      "/portfolio/iphone-finewoven.png",
+      "https://patentimages.storage.googleapis.com/c1/f3/f7/8235127f0da51e/US20250088581A1-20250313-D00000.png",
+      "https://patentimages.storage.googleapis.com/00/a6/b0/9d727971a31a86/US20250088581A1-20250313-D00001.png",
+    ],
+    body: `I led materials development and mechanical integration for the iPhone FineWoven case, work I'm now credited on as a co-inventor on the patent. FineWoven was Apple's first major move away from leather in its accessory line, a shift PETA recognized with their 2023 Company of the Year award.
 
 The technical scope sat at the intersection of textile engineering and structural mechanics. I engineered high-performance woven textiles and polymer composites for softgoods enclosures, then designed and ran the manufacturing test protocols that proved out durability and tactile response across the lifecycle of the part.
 
@@ -219,10 +223,14 @@ Specifics under NDA. The broader story, replacing a material that had become a q
 
 ## Patent
 
-**"Accessory Devices with Textile-Based Walls"**, published April 2025.
+**"Accessory devices with textile-based walls"** — US20250088581A1, published by the USPTO on March 13, 2025. Filed June 20, 2024, with a priority date of September 11, 2023.
 
-Lots of tiny details, lots of learning.`,
+From the abstract: "An accessory device includes multiple walls and textile layers covering the walls. The textile layers may be of the same materials. However, one of the textile layers may include a film that provides protection against stains and fraying."
+
+Listed as one of 19 named inventors on the application, alongside the rest of the Apple softgoods accessory team. Two of the published figures appear in the gallery below; the full filing is linked under references.`,
     links: [
+      { label: "View on Google Patents", url: "https://patents.google.com/patent/US20250088581A1/en" },
+      { label: "Patent PDF", url: "/portfolio/iphone-finewoven/patent.pdf" },
       { label: "Patent announcement on X", url: "https://x.com/amypretzel/status/1909033061469274568" },
       { label: "PETA, Apple wins Company of the Year", url: "https://www.peta.org/media/news-releases/apple-wins-petas-company-of-the-year-award-for-industry-shifting-leadership-on-leather-use/" },
     ],
