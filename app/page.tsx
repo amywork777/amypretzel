@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
+import { FishIcon } from "./fish-icon";
 import { projects } from "./portfolio/projects";
 import { getAllPosts, summary } from "./writing/posts";
 
@@ -226,17 +227,7 @@ export default async function Home() {
             title="psst"
             aria-label="Fishing"
           >
-            <svg
-              viewBox="0 0 24 12"
-              aria-hidden="true"
-              className="h-4 w-auto"
-            >
-              <path
-                d="M8 1.5C13 1.5 18 3 22 6C18 9 13 10.5 8 10.5L4 8L1 10.5L2 6L1 1.5L4 4Z"
-                fill="currentColor"
-              />
-              <circle cx="18.5" cy="5" r="0.7" className="fill-paper" />
-            </svg>
+            <FishIcon className="h-6 w-auto" />
           </Link>
         </div>
       </footer>
