@@ -3,7 +3,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 type Props = {
   /** which top-level route is active, if any */
-  active?: "portfolio" | "software" | "writing" | null;
+  active?: "portfolio" | "software" | null;
 };
 
 export default function SiteNav({ active = null }: Props) {
@@ -55,16 +55,6 @@ export default function SiteNav({ active = null }: Props) {
             }
           >
             Objects
-          </Link>
-          <Link
-            href="/writing"
-            className={
-              active === "writing"
-                ? "text-accent"
-                : "text-ink-muted hover:text-accent transition-colors"
-            }
-          >
-            Writing
           </Link>
           {/* plain <a>: fragment navigation fires hashchange for the book
               overlay; Next's Link pushState never would */}

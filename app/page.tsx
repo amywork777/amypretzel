@@ -7,6 +7,10 @@ import { FishIcon } from "./fish-icon";
 import { projects } from "./portfolio/projects";
 import { softwareSections } from "./software/projects";
 
+const vizcomProjects =
+  softwareSections.find((s) => s.title === "Vizcom")?.projects ?? [];
+const featuredObjects = projects.slice(0, 6);
+
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -133,44 +137,61 @@ export default async function Home() {
             <h2 className="display text-[32px] sm:text-[44px] leading-none">Software</h2>
           </header>
 
-          <div className="space-y-10">
-            {softwareSections.map((section) => (
-              <div key={section.title}>
-                <p className="meta mb-3">{section.title}</p>
-                <div className="border-t border-rule">
-                  {section.projects.map((p) => (
-                    <Link
-                      key={p.slug}
-                      href={`/software/${p.slug}`}
-                      className="group grid grid-cols-1 sm:grid-cols-[minmax(200px,260px)_1fr_auto] items-baseline gap-1 sm:gap-6 border-b border-rule py-4"
-                    >
-                      <span className="font-display italic text-[22px] sm:text-[26px] leading-[1.05] text-ink group-hover:text-accent transition-colors">
-                        {p.title}
-                      </span>
-                      <span className="text-[14px] sm:text-[15px] leading-[1.5] text-ink-soft">
-                        {p.summary}
-                      </span>
-                      <span className="hidden sm:block meta text-ink-faint self-center group-hover:text-accent transition-colors">
-                        {p.meta}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+          <p className="meta mb-3">At Vizcom</p>
+          <div className="border-t border-rule mb-10">
+            {vizcomProjects.map((p) => (
+              <Link
+                key={p.slug}
+                href={`/software/${p.slug}`}
+                className="group grid grid-cols-1 sm:grid-cols-[minmax(200px,260px)_1fr_auto] items-baseline gap-1 sm:gap-6 border-b border-rule py-4"
+              >
+                <span className="font-display italic text-[22px] sm:text-[26px] leading-[1.05] text-ink group-hover:text-accent transition-colors">
+                  {p.title}
+                </span>
+                <span className="text-[14px] sm:text-[15px] leading-[1.5] text-ink-soft">
+                  {p.summary}
+                </span>
+                <span className="hidden sm:block meta text-ink-faint self-center group-hover:text-accent transition-colors">
+                  {p.meta}
+                </span>
+              </Link>
             ))}
           </div>
+
+          <p className="max-w-2xl text-[16px] sm:text-[17px] leading-[1.75] text-ink-soft">
+            Off hours I build my own tools.{" "}
+            <Link href="/software/taiyaki-3d" className="link">Taiyaki 3D</Link> turned
+            sketches into editable CAD,{" "}
+            <Link href="/software/taiyaki-jewelry" className="link">Taiyaki Jewelry</Link>{" "}
+            turned them into cast metal,{" "}
+            <Link href="/software/tech-pack" className="link">Tech Pack</Link> writes
+            factory specs from a render,{" "}
+            <Link href="/software/kerf" className="link">Kerf</Link> is a solid-modeling
+            kernel in Rust, and{" "}
+            <Link href="/software/cad-steps" className="link">CAD-Steps</Link> is a
+            dataset of how geometry actually gets built. Smaller things:{" "}
+            <Link href="/software/sf-rats" className="link">SF Rats</Link> maps free
+            events around the Bay,{" "}
+            <Link href="/software/cute-ghostty" className="link">Cute Ghostty</Link>{" "}
+            makes terminals pastel, and{" "}
+            <Link href="/software/screenie" className="link">Screenie</Link> records
+            your screen and edits itself.
+          </p>
         </section>
 
         <div className="rule" />
 
         {/* === OBJECTS === */}
         <section id="objects" className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20 scroll-mt-16">
-          <header className="mb-8 sm:mb-12">
+          <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
             <h2 className="display text-[32px] sm:text-[44px] leading-none">Objects</h2>
+            <Link href="/portfolio" className="link meta">
+              All objects
+            </Link>
           </header>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
-            {projects.map((p, i) => (
+            {featuredObjects.map((p, i) => (
               <Link
                 key={p.slug}
                 href={`/portfolio/${p.slug}`}
@@ -213,9 +234,6 @@ export default async function Home() {
       <footer className="border-t border-rule mt-auto">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4 meta">
           <div className="flex items-center gap-5">
-            <Link href="/writing" className="text-ink-faint hover:text-accent transition-colors">
-              Writing
-            </Link>
             <ReadTheBookLink className="text-ink-faint hover:text-accent transition-colors meta" />
           </div>
           <Link
