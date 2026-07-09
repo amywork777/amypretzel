@@ -66,12 +66,15 @@ export default function SiteNav({ active = null }: Props) {
           >
             Writing
           </Link>
-          <Link
+          {/* plain <a>: fragment navigation fires hashchange for the book
+              overlay; Next's Link pushState never would */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a
             href="/#book"
             className="text-ink-muted hover:text-accent transition-colors"
           >
             Book
-          </Link>
+          </a>
           <ThemeToggle />
         </nav>
       </div>

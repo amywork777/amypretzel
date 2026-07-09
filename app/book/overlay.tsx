@@ -8,13 +8,35 @@ const StoryBook = dynamic(() => import("./book"), { ssr: false });
 const SEEN_KEY = "amypretzel:book-seen";
 export const OPEN_BOOK_EVENT = "amypretzel:open-book";
 
+// localStorage throws in some privacy modes; a visitor with blocked
+// storage should just see the book each visit, never a crash
+function readSeen() {
+  try {
+    return window.localStorage.getItem(SEEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeSeen() {
+  try {
+    window.localStorage.setItem(SEEN_KEY, "1");
+  } catch {
+    // ignore
+  }
+}
+
 export default function BookOverlay() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 620px)").matches;
-    const seen = window.localStorage.getItem(SEEN_KEY);
-    if (window.location.hash === "#book" || (desktop && !seen)) {
+    const hash = window.location.hash;
+    // don't hijack deep links to other anchors (/#software etc.)
+    const autoOpen = desktop && !readSeen() && (hash === "" || hash === "#book");
+    if (hash === "#book" || autoOpen) {
+      // the open decision must run after hydration; the server renders null
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpen(true);
     }
 
@@ -31,9 +53,13 @@ export default function BookOverlay() {
   }, []);
 
   const close = useCallback(() => {
-    window.localStorage.setItem(SEEN_KEY, "1");
+    writeSeen();
     if (window.location.hash === "#book") {
-      history.replaceState(null, "", window.location.pathname);
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search
+      );
     }
     setOpen(false);
   }, []);

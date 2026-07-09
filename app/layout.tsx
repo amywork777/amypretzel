@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope, JetBrains_Mono, Gaegu, Silkscreen } from "next/font/google";
+import { Instrument_Serif, Manrope, JetBrains_Mono, Gaegu, Silkscreen, Caveat } from "next/font/google";
 import "./globals.css";
 import { ThemeFlashScript } from "./theme-toggle";
 
@@ -24,6 +24,13 @@ const gaegu = Gaegu({
   weight: ["300", "400", "700"],
   subsets: ["latin"],
   variable: "--font-hand",
+});
+
+// real-handwriting script used for the story book's page textures
+const caveat = Caveat({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  variable: "--font-script",
 });
 
 // kept for the fishing easter-egg page only
@@ -123,7 +130,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${gaegu.variable} ${silkscreen.variable}`}
+      className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${gaegu.variable} ${silkscreen.variable} ${caveat.variable}`}
       suppressHydrationWarning
     >
       <head>
