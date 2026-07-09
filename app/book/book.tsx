@@ -28,16 +28,8 @@ import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
 
 type StoryPage = {
-  chapter: BookChapter;
-  title: string;
   text: string;
   pageNumber: number;
-};
-
-type BookSpread = {
-  chapter: BookChapter;
-  left?: StoryPage;
-  right?: StoryPage;
 };
 
 type TexturePage =
@@ -55,7 +47,7 @@ const TEXTURE_WIDTH = 900;
 const TEXTURE_HEIGHT = 1200;
 const PAGE_WIDTH = 1.34;
 const PAGE_HEIGHT = 1.9;
-const PAGE_DEPTH = 0.004;
+const PAGE_DEPTH = 0.0055; // slight chunk per sheet; thickness comes from the fan
 const PAGE_SEGMENTS = 30;
 
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS;
@@ -109,52 +101,12 @@ pageGeometry.translate(PAGE_WIDTH / 2, 0, 0);
   );
 }
 
-function drawWrappedText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number,
-  maxLines: number
-) {
-  const words = text.split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  let line = "";
-
-  words.forEach((word) => {
-    const testLine = line ? `${line} ${word}` : word;
-    if (ctx.measureText(testLine).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-      return;
-    }
-    line = testLine;
-  });
-
-  if (line) lines.push(line);
-
-  lines.slice(0, maxLines).forEach((item, index) => {
-    const suffix = index === maxLines - 1 && lines.length > maxLines ? "..." : "";
-    ctx.fillText(`${item}${suffix}`, x, y + index * lineHeight);
-  });
-
-  return y + Math.min(lines.length, maxLines) * lineHeight;
-}
-
 function cssFontFamily(varName: string, fallback: string) {
   if (typeof window === "undefined") return fallback;
   const value = getComputedStyle(document.documentElement)
     .getPropertyValue(varName)
     .trim();
   return value || fallback;
-}
-
-function handFont(size: number, weight: 300 | 400 | 700 = 400) {
-  return `${weight} ${size}px ${cssFontFamily(
-    "--font-hand",
-    "'Gaegu', 'Comic Sans MS', cursive"
-  )}`;
 }
 
 function drawPaper(ctx: CanvasRenderingContext2D) {
@@ -191,38 +143,132 @@ function seededJitter(seed: number) {
   return x - Math.floor(x);
 }
 
+// the same pixel pretzel the site nav uses, tinted cream for the cover
+const pretzelImage =
+  typeof window === "undefined"
+    ? null
+    : (() => {
+        const image = new window.Image();
+        image.src = "/pretzel.png";
+        return image;
+      })();
+
+function drawPretzel(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+) {
+  if (
+    !pretzelImage ||
+    !pretzelImage.complete ||
+    pretzelImage.naturalWidth === 0
+  ) {
+    return;
+  }
+  const off = document.createElement("canvas");
+  off.width = pretzelImage.naturalWidth;
+  off.height = pretzelImage.naturalHeight;
+  const offCtx = off.getContext("2d");
+  if (!offCtx) return;
+  offCtx.drawImage(pretzelImage, 0, 0);
+  offCtx.globalCompositeOperation = "source-in";
+  offCtx.fillStyle = "#f7dfb8";
+  offCtx.fillRect(0, 0, off.width, off.height);
+
+  const height = size * (off.height / off.width);
+  ctx.imageSmoothingEnabled = false; // keep the pixel-art edges crisp
+  ctx.drawImage(off, cx - size / 2, cy - height / 2, size, height);
+  ctx.imageSmoothingEnabled = true;
+}
+
+function drawHeart(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  s: number,
+  color: string
+) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, s * 0.35);
+  ctx.bezierCurveTo(-s, -s * 0.35, -s * 0.4, -s, 0, -s * 0.3);
+  ctx.bezierCurveTo(s * 0.4, -s, s, -s * 0.35, 0, s * 0.35);
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawCover(ctx: CanvasRenderingContext2D, back = false) {
-  ctx.fillStyle = back ? "#35131e" : "#6b2438";
+  ctx.fillStyle = back ? "#5d2136" : "#6b2438";
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-  ctx.fillStyle = "rgba(255, 250, 241, 0.08)";
-  for (let y = 0; y < TEXTURE_HEIGHT; y += 12) {
-    ctx.fillRect(0, y, TEXTURE_WIDTH, 1);
+  // soft vignette so the cover feels rounded, not flat
+  const glow = ctx.createRadialGradient(
+    TEXTURE_WIDTH / 2,
+    TEXTURE_HEIGHT * 0.42,
+    120,
+    TEXTURE_WIDTH / 2,
+    TEXTURE_HEIGHT * 0.5,
+    TEXTURE_HEIGHT * 0.75
+  );
+  glow.addColorStop(0, "rgba(255, 226, 200, 0.14)");
+  glow.addColorStop(1, "rgba(30, 8, 16, 0.28)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+  // hand-stitched border: little dashes, slightly wobbly
+  ctx.strokeStyle = "rgba(247, 223, 184, 0.75)";
+  ctx.lineWidth = 5;
+  ctx.lineCap = "round";
+  ctx.setLineDash([26, 20]);
+  ctx.save();
+  ctx.translate(TEXTURE_WIDTH / 2, TEXTURE_HEIGHT / 2);
+  ctx.rotate(0.004);
+  ctx.strokeRect(
+    -TEXTURE_WIDTH / 2 + 58,
+    -TEXTURE_HEIGHT / 2 + 58,
+    TEXTURE_WIDTH - 116,
+    TEXTURE_HEIGHT - 116
+  );
+  ctx.restore();
+  ctx.setLineDash([]);
+
+  ctx.textAlign = "center";
+  if (back) {
+    drawHeart(ctx, TEXTURE_WIDTH / 2, 430, 60, "#f7dfb8");
+    ctx.fillStyle = "#fff6e6";
+    ctx.font = scriptFont(96, 600);
+    ctx.fillText("the end", TEXTURE_WIDTH / 2, 620);
+    ctx.font = scriptFont(46);
+    ctx.fillStyle = "rgba(255, 246, 230, 0.78)";
+    ctx.fillText("amypretzel.com", TEXTURE_WIDTH / 2, 720);
+  } else {
+    ctx.fillStyle = "#fff6e6";
+    ctx.save();
+    ctx.translate(TEXTURE_WIDTH / 2, 340);
+    ctx.rotate(-0.03);
+    ctx.font = scriptFont(110, 600);
+    ctx.fillText("amy's little book", 0, 0);
+    ctx.restore();
+
+    ctx.font = scriptFont(48);
+    ctx.fillStyle = "rgba(255, 246, 230, 0.8)";
+    ctx.fillText("a short story about making things", TEXTURE_WIDTH / 2, 440);
+
+    drawPretzel(ctx, TEXTURE_WIDTH / 2, 740, 320);
+
+    drawHeart(ctx, 190, 560, 26, "rgba(247, 223, 184, 0.85)");
+    drawHeart(ctx, 716, 590, 20, "rgba(247, 223, 184, 0.7)");
+    drawHeart(ctx, 244, 936, 18, "rgba(247, 223, 184, 0.65)");
+    drawHeart(ctx, 680, 960, 26, "rgba(247, 223, 184, 0.85)");
+
+    ctx.font = scriptFont(44);
+    ctx.fillStyle = "rgba(255, 246, 230, 0.7)";
+    ctx.fillText("(flip me open)", TEXTURE_WIDTH / 2, 1050);
   }
-
-  ctx.strokeStyle = "rgba(255, 250, 241, 0.28)";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(70, 70, TEXTURE_WIDTH - 140, TEXTURE_HEIGHT - 140);
-
-  ctx.fillStyle = "#fffaf1";
-  ctx.font = handFont(76, 700);
-  drawWrappedText(
-    ctx,
-    back ? "back to the website" : "Amy's making diary",
-    104,
-    430,
-    TEXTURE_WIDTH - 208,
-    86,
-    4
-  );
-
-  ctx.font = "22px ui-monospace, SFMono-Regular, Menlo, monospace";
-  ctx.fillStyle = "rgba(255, 250, 241, 0.72)";
-  ctx.fillText(
-    back ? "AMYPRETZEL.COM" : "ROOTS / STANFORD / APPLE / BUILDING / NOW",
-    104,
-    780
-  );
+  ctx.textAlign = "left";
 }
 
 function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
@@ -296,6 +342,19 @@ function createPageCanvasTexture(content: TexturePage) {
     drawPaper(ctx);
   }
 
+  // the covers show the pixel pretzel; redraw once its PNG arrives
+  if (
+    (content.kind === "cover" || content.kind === "back-cover") &&
+    pretzelImage &&
+    !pretzelImage.complete
+  ) {
+    pretzelImage.addEventListener(
+      "load",
+      () => refreshPageTexture(texture, content),
+      { once: true }
+    );
+  }
+
   texture.needsUpdate = true;
   return texture;
 }
@@ -323,14 +382,12 @@ function usePageTexture(content: TexturePage) {
   useEffect(() => {
     let cancelled = false;
     if ("fonts" in document) {
-      const family = cssFontFamily("--font-hand", "'Gaegu', 'Comic Sans MS', cursive");
       const script = cssFontFamily("--font-script", "'Caveat', 'Comic Sans MS', cursive");
       const fontLoads = [
         document.fonts.ready,
-        document.fonts.load(`400 38px ${family}`),
-        document.fonts.load(`700 72px ${family}`),
         document.fonts.load(`400 52px ${script}`),
         document.fonts.load(`600 52px ${script}`),
+        document.fonts.load(`600 110px ${script}`),
       ];
 
       void Promise.allSettled(fontLoads).then(() => {
@@ -462,7 +519,7 @@ function AnimatedPage({
       turning = Math.sin(progress * Math.PI);
     }
     if (!bookClosed) {
-      targetRotation += MathUtils.degToRad(number * 0.8);
+      targetRotation += MathUtils.degToRad(number * 1.15);
     }
 
     const bones = mesh.skeleton.bones;
@@ -602,12 +659,27 @@ function BookStack({
     return () => clearTimeout(timeout);
   }, [page]);
 
+  const groupRef = useRef<Group>(null);
+  const scale = mobile ? 0.86 : 1.08;
+
+  useFrame((_, delta) => {
+    const group = groupRef.current;
+    if (!group) return;
+    // the model anchors at the spine, so a closed book hangs to one side;
+    // slide it over so the lone cover reads centered
+    const shift = (PAGE_WIDTH / 2) * scale;
+    const targetX =
+      delayedPage === 0 ? -shift : delayedPage === sheets.length ? shift : 0;
+    easing.damp(group.position, "x", targetX, 0.5, delta);
+  });
+
   return (
     <group
+      ref={groupRef}
       rotation-x={-Math.PI / 5.5}
       rotation-y={-Math.PI / 2}
       position-y={mobile ? 0.96 : 0.22}
-      scale={mobile ? 0.86 : 1.08}
+      scale={scale}
     >
       {sheets.map((sheet, index) => (
         <AnimatedPage
@@ -618,9 +690,9 @@ function BookStack({
           opened={delayedPage > index}
           bookClosed={delayedPage === 0 || delayedPage === sheets.length}
           onTurnTo={(nextPage) => {
-            // sheets.length (one past the last spread) means the reader
-            // flipped the final page — StoryBook treats that as an exit
-            const clamped = Math.min(Math.max(nextPage, 1), sheets.length);
+            // 0 closes back to the front cover; sheets.length closes onto
+            // the back cover
+            const clamped = Math.min(Math.max(nextPage, 0), sheets.length);
             onPageChange(clamped);
           }}
           onDraggingChange={onDraggingChange}
@@ -766,127 +838,70 @@ function makeBookModel(chapters: BookChapter[]) {
   const pages: StoryPage[] = chapters.flatMap((chapter) =>
     chapter.pages.map((page) => {
       pageNumber += 1;
-      return { chapter, title: page.title, text: page.text, pageNumber };
+      return { text: page.text, pageNumber };
     })
   );
 
-  const spreads: BookSpread[] = [];
-  chapters.forEach((chapter) => {
-    const chapterPages = pages.filter((page) => page.chapter.id === chapter.id);
-    for (let index = 0; index < chapterPages.length; index += 2) {
-      spreads.push({
-        chapter,
-        left: chapterPages[index],
-        right: chapterPages[index + 1],
-      });
-    }
-  });
-
+  // pages flow two-up continuously — no chapter breaks, no blank fillers.
+  // sheet 0 is cover/p1, sheet k is p2k/p2k+1, the final back is the cover.
   const sheets: BookSheet[] = [
     {
       front: { kind: "cover" },
-      back: spreads[0]?.left ? { kind: "story", page: spreads[0].left } : { kind: "blank" },
+      back: pages[0] ? { kind: "story", page: pages[0] } : { kind: "blank" },
     },
   ];
+  for (let i = 1; i < pages.length; i += 2) {
+    sheets.push({
+      front: { kind: "story", page: pages[i] },
+      back: pages[i + 1]
+        ? { kind: "story", page: pages[i + 1] }
+        : { kind: "back-cover" },
+    });
+  }
+  if (pages.length % 2 === 1) {
+    // odd page count: the last story page sits on a sheet back, so the
+    // back cover needs a final sheet of its own
+    sheets.push({ front: { kind: "blank" }, back: { kind: "back-cover" } });
+  }
 
-  spreads.forEach((spread, index) => {
-    const nextLeftPage = spreads[index + 1]?.left;
-    sheets[index + 1] = {
-      front: spread.right ? { kind: "story", page: spread.right } : { kind: "blank" },
-      back:
-        index === spreads.length - 1
-          ? { kind: "back-cover" }
-          : nextLeftPage
-            ? { kind: "story", page: nextLeftPage }
-            : { kind: "blank" },
-    };
-  });
-
-  return { spreads, sheets, pages };
+  return { sheets, spreadCount: Math.ceil(pages.length / 2) };
 }
 
 export default function StoryBook({ onExit }: { onExit?: () => void }) {
-  const { spreads, sheets, pages } = useMemo(() => makeBookModel(bookChapters), []);
-  const [spread, setSpread] = useState(0);
-  const maxSpread = Math.max(0, spreads.length - 1);
-  const currentSpread = spreads[Math.min(spread, maxSpread)];
-  const activeChapter = currentSpread?.chapter ?? bookChapters[0];
-  const left = currentSpread?.left;
-  const right = currentSpread?.right;
-  const atEnd = spread === maxSpread;
+  const { sheets } = useMemo(() => makeBookModel(bookChapters), []);
+  // page = sheets flipped: 0 is the closed front cover, sheets.length is
+  // the closed back cover
+  const [page, setPageState] = useState(0);
+  const lastPage = sheets.length;
+  const atBackCover = page === lastPage;
 
   function setPage(nextPage: number) {
-    if (nextPage - 1 > maxSpread) {
-      // turned past the back cover
+    if (atBackCover) {
+      // any click on the closed back cover leaves for the site
       onExit?.();
       return;
     }
-    setSpread(Math.min(Math.max(nextPage - 1, 0), maxSpread));
-  }
-
-  function goToSpread(nextSpread: number) {
-    setSpread(Math.min(Math.max(nextSpread, 0), maxSpread));
-  }
-
-  function goToChapter(chapterId: string) {
-    const firstSpread = spreads.findIndex((item) => item.chapter.id === chapterId);
-    if (firstSpread >= 0) goToSpread(firstSpread);
+    setPageState(Math.min(Math.max(nextPage, 0), lastPage));
   }
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "ArrowRight") {
-        setSpread((current) => Math.min(current + 1, maxSpread));
+        setPageState((current) => Math.min(current + 1, lastPage));
       } else if (event.key === "ArrowLeft") {
-        setSpread((current) => Math.max(current - 1, 0));
+        setPageState((current) => Math.max(current - 1, 0));
       } else if (event.key === "Escape") {
         onExit?.();
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [maxSpread, onExit]);
+  }, [lastPage, onExit]);
 
   return (
     <div className="storybook">
       <div className="storybook-canvas">
-        <BookCanvas sheets={sheets} page={spread + 1} onPageChange={setPage} />
-      </div>
-
-      <div className="book-controls">
-        <button
-          type="button"
-          onClick={() => goToSpread(spread - 1)}
-          disabled={spread === 0}
-          className="book-control-button"
-        >
-          Previous
-        </button>
-        <p className="meta">
-          Pages {left?.pageNumber ?? 1}
-          {right ? `-${right.pageNumber}` : ""} of {pages.length}
-        </p>
-        <button
-          type="button"
-          onClick={() => (atEnd ? onExit?.() : goToSpread(spread + 1))}
-          className="book-control-button"
-        >
-          {atEnd ? "Enter site" : "Next"}
-        </button>
-      </div>
-
-      <div className="book-edge-tabs" aria-hidden="true">
-        {bookChapters.map((chapter) => (
-          <button
-            key={chapter.id}
-            type="button"
-            onClick={() => goToChapter(chapter.id)}
-            className={chapter.id === activeChapter.id ? "book-edge-tab-active" : ""}
-            tabIndex={-1}
-          >
-            {chapter.kicker.replace("Chapter ", "")}
-          </button>
-        ))}
+        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} />
       </div>
     </div>
   );
