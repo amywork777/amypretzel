@@ -6,22 +6,22 @@ import { projects } from "./projects";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "Objects",
   description:
-    "Selected projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design from Vizcom, Apple, and Stanford.",
+    "Physical projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design from Apple, Stanford, and personal work.",
   alternates: { canonical: "/portfolio" },
   openGraph: {
     type: "website",
     url: "/portfolio",
-    title: "Work, Amy Zhou",
+    title: "Objects, Amy Zhou",
     description:
-      "Selected projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design from Vizcom, Apple, and Stanford.",
+      "Physical projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design from Apple, Stanford, and personal work.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Work, Amy Zhou",
+    title: "Objects, Amy Zhou",
     description:
-      "Selected projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design.",
+      "Physical projects by Amy Zhou: AI hardware, wearables, jewelry, mechanical engineering, and product design.",
   },
 };
 
@@ -32,13 +32,17 @@ export default function PortfolioPage() {
 
       <main className="flex-1">
         <section className="max-w-6xl mx-auto px-5 sm:px-8 pt-10 sm:pt-20 pb-10 sm:pb-12">
-          <p className="meta mb-4 sm:mb-5 animate-fade-up">Index, Selected Work</p>
+          <p className="meta mb-4 sm:mb-5 animate-fade-up">Index, Objects</p>
           <h1 className="display text-[13vw] sm:text-[80px] md:text-[104px] leading-[0.95] mb-5 sm:mb-6 animate-fade-up delay-100">
-            Things I&apos;ve <span className="text-accent">made</span>.
+            Physical things I&apos;ve <span className="text-accent">made</span>.
           </h1>
           <p className="text-[15px] sm:text-[18px] leading-[1.55] text-ink-soft max-w-2xl animate-fade-up delay-200">
             Product design, mechanical engineering, jewelry, instruments, and the
-            occasional craft. Click any tile to see the full project.
+            occasional craft. For software systems and AI tools, see the{" "}
+            <Link href="/software" className="link">
+              software index
+            </Link>
+            .
           </p>
         </section>
 

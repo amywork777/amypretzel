@@ -3,14 +3,10 @@ import Link from "next/link";
 import SiteNav from "./site-nav";
 import { FishIcon } from "./fish-icon";
 import { projects } from "./portfolio/projects";
-import { getAllPosts, summary } from "./writing/posts";
+import { featuredSoftwareProjects } from "./software/projects";
 
 const featured = projects.slice(0, 6);
-
-function formatDate(iso: string) {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-}
+const softwareHighlights = featuredSoftwareProjects.slice(0, 3);
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -47,8 +43,6 @@ const personJsonLd = {
 };
 
 export default async function Home() {
-  const recent = (await getAllPosts()).slice(0, 3);
-
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <script
@@ -133,34 +127,32 @@ export default async function Home() {
 
         <div className="rule" />
 
-        {/* === 01 NOTES === */}
+        {/* === SOFTWARE === */}
         <section className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20">
           <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
-            <h2 className="display text-[32px] sm:text-[44px] leading-none">Notes</h2>
-            <Link href="/writing" className="link meta">
-              All notes
+            <h2 className="display text-[32px] sm:text-[44px] leading-none">Software</h2>
+            <Link href="/software" className="link meta">
+              All software
             </Link>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-7 sm:gap-10">
-            {recent.map((p, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-7">
+            {softwareHighlights.map((p, i) => (
               <Link
-                key={p.slug}
-                href={`/writing/${p.slug}`}
-                className="group block animate-fade-up"
-                style={{ animationDelay: `${Math.min(i * 80, 240)}ms` }}
+                key={p.title}
+                href="/software"
+                className="group block border border-rule rounded-sm bg-card p-5 sm:p-6 animate-fade-up"
+                style={{ animationDelay: `${Math.min(i * 70, 280)}ms` }}
               >
-                <p className="meta mb-3">{formatDate(p.date)}</p>
-                {p.title && (
-                  <h3 className="font-display italic text-[22px] sm:text-[26px] leading-[1.1] text-ink mb-2 group-hover:text-accent transition-colors">
-                    {p.title}
-                  </h3>
-                )}
-                <p className="text-[15px] leading-[1.6] text-ink-soft line-clamp-4">
-                  {summary(p)}
+                <p className="meta mb-4">{p.section}, {p.meta}</p>
+                <h3 className="font-display italic text-[24px] sm:text-[30px] leading-[1.05] text-ink mb-3 group-hover:text-accent transition-colors">
+                  {p.title}
+                </h3>
+                <p className="text-[15px] leading-[1.6] text-ink-soft line-clamp-5">
+                  {p.summary}
                 </p>
-                <span className="meta mt-3 inline-block text-ink-faint group-hover:text-accent transition-colors">
-                  Read
+                <span className="meta mt-4 inline-block text-ink-faint group-hover:text-accent transition-colors">
+                  View
                 </span>
               </Link>
             ))}
@@ -169,12 +161,12 @@ export default async function Home() {
 
         <div className="rule" />
 
-        {/* === SELECTED WORK === */}
+        {/* === SELECTED OBJECTS === */}
         <section className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20">
           <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
-            <h2 className="display text-[32px] sm:text-[44px] leading-none">Selected work</h2>
+            <h2 className="display text-[32px] sm:text-[44px] leading-none">Selected objects</h2>
             <Link href="/portfolio" className="link meta">
-              All projects
+              All objects
             </Link>
           </header>
 

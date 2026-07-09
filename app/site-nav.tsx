@@ -3,13 +3,13 @@ import { ThemeToggle } from "./theme-toggle";
 
 type Props = {
   /** which top-level route is active, if any */
-  active?: "portfolio" | "writing" | null;
+  active?: "portfolio" | "software" | "work" | null;
 };
 
 export default function SiteNav({ active = null }: Props) {
   return (
     <header className="border-b border-rule bg-paper">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between gap-4 sm:gap-6">
         <Link
           href="/"
           className="flex items-center gap-3 group shrink-0"
@@ -30,21 +30,31 @@ export default function SiteNav({ active = null }: Props) {
               imageRendering: "pixelated",
             }}
           />
-          <span className="font-display text-[19px] sm:text-[21px] leading-none text-ink" style={{ fontStyle: "italic" }}>
+          <span className="hidden sm:inline font-display text-[19px] sm:text-[21px] leading-none text-ink" style={{ fontStyle: "italic" }}>
             Amy Zhou
           </span>
         </Link>
 
-        <nav className="flex items-center gap-5 sm:gap-7 meta">
+        <nav className="flex items-center gap-4 sm:gap-7 meta">
           <Link
-            href="/writing"
+            href="/work"
             className={
-              active === "writing"
+              active === "work"
                 ? "text-accent"
                 : "text-ink-muted hover:text-accent transition-colors"
             }
           >
-            Notes
+            Work
+          </Link>
+          <Link
+            href="/software"
+            className={
+              active === "software"
+                ? "text-accent"
+                : "text-ink-muted hover:text-accent transition-colors"
+            }
+          >
+            Software
           </Link>
           <Link
             href="/portfolio"
@@ -54,8 +64,16 @@ export default function SiteNav({ active = null }: Props) {
                 : "text-ink-muted hover:text-accent transition-colors"
             }
           >
-            Work
+            Objects
           </Link>
+          <a
+            href="https://x.com/amypretzel/articles"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink-muted hover:text-accent transition-colors"
+          >
+            Articles
+          </a>
           <ThemeToggle />
         </nav>
       </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope, JetBrains_Mono, Silkscreen } from "next/font/google";
+import { Instrument_Serif, Manrope, JetBrains_Mono, Gaegu, Silkscreen } from "next/font/google";
 import "./globals.css";
 import { ThemeFlashScript } from "./theme-toggle";
 
@@ -18,6 +18,12 @@ const manrope = Manrope({
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+});
+
+const gaegu = Gaegu({
+  weight: ["300", "400", "700"],
+  subsets: ["latin"],
+  variable: "--font-hand",
 });
 
 // kept for the fishing easter-egg page only
@@ -117,7 +123,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${silkscreen.variable}`}
+      className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${gaegu.variable} ${silkscreen.variable}`}
       suppressHydrationWarning
     >
       <head>
