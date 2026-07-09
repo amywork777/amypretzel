@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Tweet } from "react-tweet";
+import { SafeTweet } from "../../lib/safe-tweet";
 import { renderBody } from "../../lib/render-body";
 import SiteNav from "../../site-nav";
 import { projects } from "../projects";
@@ -123,7 +123,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <section className="max-w-2xl mx-auto px-5 sm:px-8 mb-12 sm:mb-16">
             <p className="meta mb-4">Launch demo</p>
             <div data-theme="light" className="tweet-host">
-              <Tweet id={project.tweetId} />
+              <SafeTweet id={project.tweetId} />
             </div>
           </section>
         )}
