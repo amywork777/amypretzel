@@ -160,10 +160,6 @@ export default async function Home() {
 
           <p className="max-w-2xl text-[16px] sm:text-[17px] leading-[1.75] text-ink-soft">
             Off hours I build my own tools.{" "}
-            <Link href="/software/taiyaki-3d" className="link">Taiyaki 3D</Link> turned
-            sketches into editable CAD,{" "}
-            <Link href="/software/taiyaki-jewelry" className="link">Taiyaki Jewelry</Link>{" "}
-            turned them into cast metal,{" "}
             <Link href="/software/tech-pack" className="link">Tech Pack</Link> writes
             factory specs from a render,{" "}
             <Link href="/software/kerf" className="link">Kerf</Link> is a solid-modeling
