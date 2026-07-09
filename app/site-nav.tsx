@@ -3,7 +3,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 type Props = {
   /** which top-level route is active, if any */
-  active?: "portfolio" | "software" | "work" | null;
+  active?: "portfolio" | "software" | "writing" | null;
 };
 
 export default function SiteNav({ active = null }: Props) {
@@ -37,17 +37,7 @@ export default function SiteNav({ active = null }: Props) {
 
         <nav className="flex items-center gap-4 sm:gap-7 meta">
           <Link
-            href="/work"
-            className={
-              active === "work"
-                ? "text-accent"
-                : "text-ink-muted hover:text-accent transition-colors"
-            }
-          >
-            Work
-          </Link>
-          <Link
-            href="/software"
+            href="/#software"
             className={
               active === "software"
                 ? "text-accent"
@@ -57,7 +47,7 @@ export default function SiteNav({ active = null }: Props) {
             Software
           </Link>
           <Link
-            href="/portfolio"
+            href="/#objects"
             className={
               active === "portfolio"
                 ? "text-accent"
@@ -66,14 +56,22 @@ export default function SiteNav({ active = null }: Props) {
           >
             Objects
           </Link>
-          <a
-            href="https://x.com/amypretzel/articles"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/writing"
+            className={
+              active === "writing"
+                ? "text-accent"
+                : "text-ink-muted hover:text-accent transition-colors"
+            }
+          >
+            Writing
+          </Link>
+          <Link
+            href="/#book"
             className="text-ink-muted hover:text-accent transition-colors"
           >
-            Articles
-          </a>
+            Book
+          </Link>
           <ThemeToggle />
         </nav>
       </div>

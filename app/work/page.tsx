@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <div className="work-book-page min-h-screen bg-paper">
-      <SiteNav active="work" />
+      <SiteNav />
 
       <main className="work-book-main">
         <h1 className="sr-only">Amy Zhou work diary</h1>
