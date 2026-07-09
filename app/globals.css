@@ -1083,6 +1083,67 @@ html[data-theme="dark"] .book-plate-placeholder {
   }
 }
 
+/* full-screen story book overlay */
+.book-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--color-paper);
+  overflow: hidden;
+}
+
+.book-overlay-enter {
+  position: absolute;
+  top: 20px;
+  right: 26px;
+  z-index: 5;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.book-overlay-enter:hover {
+  color: var(--color-accent);
+}
+
+.storybook {
+  position: relative;
+  width: min(1100px, 96vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.storybook-canvas {
+  position: relative;
+  width: 100%;
+  height: min(76vh, 760px);
+}
+
+.storybook .book-edge-tabs {
+  position: absolute;
+  right: -10px;
+  top: 18%;
+}
+
+@media (max-width: 620px) {
+  .storybook-canvas {
+    height: min(64vh, 560px);
+  }
+  .storybook .book-edge-tabs {
+    display: none;
+  }
+}
+
 /*
   ============================================================
   EVERYTHING BELOW, for /fishing easter-egg page only.
