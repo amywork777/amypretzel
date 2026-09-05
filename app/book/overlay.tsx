@@ -4,8 +4,6 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadBook } from "./load-book";
 import BookPoster from "./poster";
-import MobileReader from "./mobile-reader";
-import { useCompactBook } from "./use-compact-book";
 
 const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Opening the book…</p> });
 
@@ -32,10 +30,6 @@ function writeSeen() {
 
 export default function BookOverlay() {
   const [open, setOpen] = useState(false);
-  const compact = useCompactBook();
-  const [tableRequested, setTableRequested] = useState(false);
-  const [readerPage, setReaderPage] = useState(0);
-  const showTable = !compact || tableRequested;
   const [sceneReady, setSceneReady] = useState(false);
   const handleReady = useCallback(() => setSceneReady(true), []);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -74,7 +68,6 @@ export default function BookOverlay() {
     }
     setOpen(false);
     setSceneReady(false);
-    setTableRequested(false);
   }, []);
 
   useEffect(() => {
@@ -99,25 +92,21 @@ export default function BookOverlay() {
     };
   }, [open, close]);
 
-  // Mode switches unmount their trigger. Keep keyboard focus inside the dialog,
-  // while the focus-trap effect retains the original page trigger for closing.
+  // Focus the dialog on opening; the trap restores the page trigger on closing.
   useEffect(() => {
     if (open) dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
-  }, [open, showTable]);
+  }, [open]);
 
   if (!open) return null;
 
   return (
-    <div ref={dialogRef} className="book-overlay" data-ready={!showTable || sceneReady} data-view={showTable ? "table" : "reader"} role="dialog" aria-modal="true" aria-label="Amy's making diary">
-      {showTable && <BookPoster hidden={sceneReady} />}
+    <div ref={dialogRef} className="book-overlay" data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="Amy's making diary">
+      <BookPoster hidden={sceneReady} />
       <div className="book-overlay-heading">Amy Zhou<span>A little book of making</span></div>
       <button type="button" className="book-overlay-enter" onClick={close}>
         Enter site
       </button>
-      {showTable ? <>
-        {compact && <button type="button" className="book-back-to-reading" onClick={() => { setTableRequested(false); setSceneReady(false); }}>Read book</button>}
-        <StoryBook onExit={close} onReady={handleReady} />
-      </> : <MobileReader page={readerPage} onPageChange={setReaderPage} onExplore={() => setTableRequested(true)} />}
+      <StoryBook onExit={close} onReady={handleReady} />
     </div>
   );
 }

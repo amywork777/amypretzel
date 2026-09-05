@@ -25,7 +25,6 @@ import assert from 'node:assert/strict';
             });
             await p.goto(`${process.env.BOOK_PREVIEW_URL || 'http://localhost:3001'}/#book`, { waitUntil: 'networkidle' });
             await p.locator('.book-overlay').waitFor();
-            if (await p.locator('.mobile-book-explore').count()) await p.locator('.mobile-book-explore').click();
             await p.locator('.book-overlay[data-view="table"][data-ready="true"]').waitFor();
             await p.waitForTimeout(2000);
             return p;

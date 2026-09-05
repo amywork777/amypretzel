@@ -1,4 +1,4 @@
-// Verify phone reading without WebGL, then the optional table and desktop navigation.
+// Verify deferred phone WebGL, direct book opening, and table navigation.
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -21,6 +21,7 @@ import assert from 'node:assert/strict';
             await p.goto(`${process.env.BOOK_PREVIEW_URL || 'http://localhost:3001'}/`, { waitUntil: 'networkidle' });
             assert.equal(await p.locator('canvas').count(), 0);
             assert.equal(requested.some(u => u.includes('.woff')), false);
+            assert.equal(requested.some(u => u.includes('coffee-cup.glb')), false);
             assert.equal(await p.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
             assert.doesNotMatch(await p.locator('body').innerText(), /[\u2190-\u21ff\u2794]/);
             assert.equal(await p.locator('.software-row p').first().evaluate(e => getComputedStyle(e).fontSize), '14px');
@@ -28,25 +29,18 @@ import assert from 'node:assert/strict';
             await p.locator('#software').scrollIntoViewIfNeeded();
             await p.screenshot({ path: join(artifacts, `software-${width}.png`) });
             await p.getByRole('link', { name: 'Book', exact: true }).tap();
-            await p.locator('.mobile-book-page').waitFor();
-            assert.equal(await p.locator('canvas').count(), 0);
-            assert.equal(requested.some(u => u.includes('coffee-cup.glb')), false);
-            assert.equal(await p.locator('.mobile-book-copy').evaluate(e => getComputedStyle(e).fontSize), '18px');
-            assert.equal(await p.locator('.mobile-book-page').evaluate(e => e.scrollWidth > e.clientWidth), false);
-            await p.screenshot({ path: join(artifacts, `reader-${width}.png`) });
-            for (let i = 0; i < 7; i++)
-                await p.getByRole('button', { name: 'Next page', exact: true }).tap();
-            assert.equal(await p.locator('#mobile-page-title').innerText(), 'say hi');
-            assert.equal(await p.getByRole('button', { name: 'Next page', exact: true }).isDisabled(), true);
+            await p.locator('.book-overlay[data-view="table"][data-ready="true"]').waitFor();
+            assert.equal(await p.locator('.mobile-book-reader, .book-back-to-reading').count(), 0);
+            await p.waitForTimeout(1800);
+            const dimensions = await p.locator('canvas').evaluate(c => ({ width: c.width, height: c.height }));
+            assert.deepEqual(dimensions, { width, height });
+            await p.screenshot({ path: join(artifacts, `table-${width}.png`) });
+            await p.getByRole('button', { name: 'Next page', exact: true }).tap();
+            await p.waitForTimeout(1500);
+            assert.equal(await p.locator('.storybook-pagination span').innerText(), '01 — 02');
             await p.getByRole('button', { name: 'Previous page', exact: true }).tap();
-            assert.equal(await p.locator('#mobile-page-title').innerText(), 'now');
+            await p.waitForTimeout(1500);
             if (width === 390) {
-                await p.getByRole('button', { name: 'Explore the table', exact: true }).tap();
-                await p.locator('.book-overlay[data-view="table"][data-ready="true"]').waitFor();
-                await p.waitForTimeout(1800);
-                const dimensions = await p.locator('canvas').evaluate(c => ({ width: c.width, height: c.height }));
-                assert.deepEqual(dimensions, { width: 390, height: 844 });
-                await p.screenshot({ path: join(artifacts, 'table.png') });
                 await p.touchscreen.tap(336, 316);
                 await p.waitForTimeout(1500);
                 assert.match(await p.locator('.table-status').textContent(), /^Coffee spilled/);
@@ -56,14 +50,11 @@ import assert from 'node:assert/strict';
                 await p.getByRole('button', { name: 'Next page', exact: true }).tap();
                 await p.waitForTimeout(1500);
                 await p.screenshot({ path: join(artifacts, 'table-open.png') });
-                await p.getByRole('button', { name: 'Read book', exact: true }).tap();
-                assert.equal(await p.locator('#mobile-page-title').innerText(), 'now');
-                assert.equal(await p.locator('canvas').count(), 0);
-                passed.push('lower-resolution table; direct coffee/flower touch; page turn; reading position retained');
+                passed.push('direct coffee/flower touch; page turn');
             }
             await p.getByRole('button', { name: 'Enter site', exact: true }).tap();
             assert.equal(await p.locator('.book-overlay').count(), 0);
-            passed.push(`${width}px: no font requests, no overflow, larger text, immediate reader, all 8 pages`);
+            passed.push(`${width}px: no font requests, no overflow, larger text, direct lower-resolution table, page navigation`);
             await p.close();
         }
         const d = await b.newPage({ viewport: { width: 1440, height: 1000 } });

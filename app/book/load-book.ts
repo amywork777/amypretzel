@@ -6,7 +6,7 @@ export function loadBook() {
 }
 
 export function preloadBook() {
-  // Phone readers do not need WebGL until they explicitly explore the table.
+  // Wait until a phone visitor opens the book before downloading WebGL.
   if (window.matchMedia("(max-width: 700px)").matches) return;
   void loadBook().catch(() => { /* Opening the book can retry a failed preload. */ });
 }
