@@ -62,7 +62,7 @@ export default async function SoftwareProjectPage({
 
       <main id="main-content" className="flex-1 project-detail">
         <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-8 sm:pt-16 pb-7 sm:pb-10">
-          <Link href="/#software" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">
+          <Link href="/software" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">
             All software
           </Link>
           <div className="flex items-baseline justify-between gap-4 sm:gap-6 flex-wrap mb-3">

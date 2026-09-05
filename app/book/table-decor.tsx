@@ -1,6 +1,6 @@
 "use client";
 
-import { Environment, Lightformer, MeshTransmissionMaterial } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
 import {
@@ -102,7 +102,7 @@ function Flowers() {
           {Array.from({ length: 6 }, (_, j) => (
             <group key={j} rotation-y={j * Math.PI / 3} scale={j % 2 ? .95 : 1}>
               <mesh geometry={petal} castShadow receiveShadow>
-                <meshPhysicalMaterial color={flower.color} roughness={.53} side={DoubleSide} vertexColors sheen={.8} sheenColor="#ffe4d4" thickness={.008} transmission={.06} />
+                <meshPhysicalMaterial color={flower.color} roughness={.53} side={DoubleSide} vertexColors sheen={.8} sheenColor="#ffe4d4" metalness={0} />
               </mesh>
             </group>
           ))}
@@ -129,7 +129,7 @@ function FlowerVase() {
     </mesh>
     <mesh>
       <latheGeometry args={[vaseProfile, 96]} />
-      <MeshTransmissionMaterial resolution={512} samples={4} thickness={.024} transmission={1} roughness={.045} ior={1.46} chromaticAberration={.015} color="#f1f8f4" />
+      <meshPhysicalMaterial thickness={.04} transmission={1} roughness={.045} ior={1.46} color="#f1f8f4" envMapIntensity={1.2} />
     </mesh>
     <mesh position={[0, .606, 0]} rotation-x={Math.PI / 2}>
       <torusGeometry args={[.141, .006, 8, 80]} />

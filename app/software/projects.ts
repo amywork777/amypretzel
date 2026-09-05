@@ -242,3 +242,16 @@ Website and source below.`,
 export const softwareProjects = softwareSections.flatMap((section) =>
   section.projects.map((project) => ({ ...project, section: section.title }))
 );
+
+// Genuine project screenshots, not invented product interfaces.
+const softwareCovers: Record<string, string> = {
+  "taiyaki-3d": "/portfolio/taiyaki-3d/image.png",
+  "tech-pack": "/software/tech-pack.webp",
+  "sf-rats": "/software/sf-rats.webp",
+  "cute-ghostty": "/software/cute-ghostty.webp",
+};
+
+export const selectedSoftware = Object.entries(softwareCovers).flatMap(([slug, cover]) => {
+  const project = softwareProjects.find(project => project.slug === slug);
+  return project ? [{ ...project, cover }] : [];
+});

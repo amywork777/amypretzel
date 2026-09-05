@@ -2,8 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { loadBook } from "./load-book";
+import BookPoster from "./poster";
 
-const StoryBook = dynamic(() => import("./book"), { ssr: false, loading: () => <p className="book-loading" role="status">Opening the book…</p> });
+const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Opening the book…</p> });
 
 const SEEN_KEY = "amypretzel:book-seen";
 export const OPEN_BOOK_EVENT = "amypretzel:open-book";
@@ -28,6 +30,8 @@ function writeSeen() {
 
 export default function BookOverlay() {
   const [open, setOpen] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+  const handleReady = useCallback(() => setSceneReady(true), []);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +67,7 @@ export default function BookOverlay() {
       );
     }
     setOpen(false);
+    setSceneReady(false);
   }, []);
 
   useEffect(() => {
@@ -91,12 +96,13 @@ export default function BookOverlay() {
   if (!open) return null;
 
   return (
-    <div ref={dialogRef} className="book-overlay" role="dialog" aria-modal="true" aria-label="Amy's making diary">
+    <div ref={dialogRef} className="book-overlay" data-ready={sceneReady} role="dialog" aria-modal="true" aria-label="Amy's making diary">
+      <BookPoster hidden={sceneReady} />
       <div className="book-overlay-heading">Amy Zhou<span>A little book of making</span></div>
       <button type="button" className="book-overlay-enter" onClick={close}>
         Enter site ↗
       </button>
-      <StoryBook onExit={close} />
+      <StoryBook onExit={close} onReady={handleReady} />
     </div>
   );
 }

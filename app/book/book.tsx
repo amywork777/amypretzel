@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ContactShadows,
   OrbitControls,
   PerspectiveCamera,
   RoundedBox,
@@ -20,6 +19,7 @@ import {
   MathUtils,
   RepeatWrapping,
   MeshStandardMaterial,
+  MeshPhysicalMaterial,
   Skeleton,
   SkinnedMesh,
   SRGBColorSpace,
@@ -52,8 +52,8 @@ const TEXTURE_WIDTH = 900;
 const TEXTURE_HEIGHT = 1200;
 const PAGE_WIDTH = 1.34;
 const PAGE_HEIGHT = 1.9;
-const PAGE_DEPTH = 0.009;
-const COVER_DEPTH = 0.027;
+const PAGE_DEPTH = 0.018;
+const COVER_DEPTH = 0.035;
 const PAGE_SEGMENTS = 30;
 
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS;
@@ -106,14 +106,6 @@ pageGeometry.translate(PAGE_WIDTH / 2, 0, 0);
   );
 }
 
-function cssFontFamily(varName: string, fallback: string) {
-  if (typeof window === "undefined") return fallback;
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue(varName)
-    .trim();
-  return value || fallback;
-}
-
 function seededJitter(seed: number) {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
@@ -125,7 +117,13 @@ function printFont(size: number, family = "--font-body") {
     : `400 ${size}px Helvetica, Arial, sans-serif`;
 }
 
-function drawPaper(ctx: CanvasRenderingContext2D) {
+let paperBase: HTMLCanvasElement | undefined;
+function drawPaper(target: CanvasRenderingContext2D) {
+  if (paperBase) { target.drawImage(paperBase, 0, 0); return; }
+  paperBase = document.createElement("canvas");
+  paperBase.width = TEXTURE_WIDTH;
+  paperBase.height = TEXTURE_HEIGHT;
+  const ctx = paperBase.getContext("2d")!;
   ctx.fillStyle = "#f5f1e7";
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   for (let i = 0; i < 24000; i++) {
@@ -133,12 +131,13 @@ function drawPaper(ctx: CanvasRenderingContext2D) {
     ctx.fillRect(seededJitter(i) * TEXTURE_WIDTH, seededJitter(i + 1) * TEXTURE_HEIGHT, 1, 1);
   }
   const gutter = ctx.createLinearGradient(0, 0, TEXTURE_WIDTH, 0);
-  gutter.addColorStop(0, "rgba(58,45,25,.16)");
+  gutter.addColorStop(0, "rgba(58,45,25,.23)");
   gutter.addColorStop(.08, "rgba(58,45,25,.02)");
   gutter.addColorStop(.85, "rgba(58,45,25,0)");
   gutter.addColorStop(1, "rgba(58,45,25,.06)");
   ctx.fillStyle = gutter;
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+  target.drawImage(paperBase, 0, 0);
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, back = false) {
@@ -153,14 +152,14 @@ function drawCover(ctx: CanvasRenderingContext2D, back = false) {
     ctx.fillStyle = `rgba(10,5,3,${.06 + seededJitter(y + 1) * .08})`;
     ctx.fillRect(0, y, TEXTURE_WIDTH, 1);
   }
-  const hinge = ctx.createLinearGradient(0, 0, 95, 0);
+  const hinge = ctx.createLinearGradient(back ? TEXTURE_WIDTH : 0, 0, back ? TEXTURE_WIDTH - 95 : 95, 0);
   hinge.addColorStop(0, "rgba(0,0,0,.3)");
   hinge.addColorStop(.45, "rgba(0,0,0,.05)");
   hinge.addColorStop(.6, "rgba(0,0,0,.24)");
   hinge.addColorStop(.7, "rgba(255,240,210,.08)");
   hinge.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = hinge;
-  ctx.fillRect(0, 0, 95, TEXTURE_HEIGHT);
+  ctx.fillRect(back ? TEXTURE_WIDTH - 95 : 0, 0, 95, TEXTURE_HEIGHT);
   ctx.textAlign = "left";
   ctx.fillStyle = "#d8c8a6";
   if (back) {
@@ -228,13 +227,14 @@ function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
 
 function createPageCanvasTexture(content: TexturePage) {
   const canvas = document.createElement("canvas");
-  canvas.width = TEXTURE_WIDTH;
-  canvas.height = TEXTURE_HEIGHT;
+  canvas.width = 768;
+  canvas.height = 1024;
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     throw new Error("Could not create page texture context");
   }
 
+  ctx.scale(768 / TEXTURE_WIDTH, 1024 / TEXTURE_HEIGHT);
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
   texture.anisotropy = 4;
@@ -252,80 +252,59 @@ function createPageCanvasTexture(content: TexturePage) {
   return texture;
 }
 
-function refreshPageTexture(texture: CanvasTexture, content: TexturePage) {
-  const canvas = texture.image as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-
-  if (content.kind === "cover") {
-    drawCover(ctx);
-  } else if (content.kind === "back-cover") {
-    drawCover(ctx, true);
-  } else if (content.kind === "story") {
-    drawStoryPage(ctx, content.page);
-  } else {
-    drawPaper(ctx);
-  }
-  texture.needsUpdate = true;
+function usePageTexture(content: TexturePage) {
+  // These pages use installed system fonts. Redrawing after fonts.ready only
+  // repeated all of the canvas work and uploaded every texture a second time.
+  const texture = useMemo(() => createPageCanvasTexture(content), [content]);
+  useEffect(() => () => texture.dispose(), [texture]);
+  return texture;
 }
 
-function usePageTexture(content: TexturePage) {
-  const texture = useMemo(() => createPageCanvasTexture(content), [content]);
-
-  useEffect(() => {
-    let cancelled = false;
-    if ("fonts" in document) {
-      const display = cssFontFamily("--font-display", "Georgia, serif");
-      const body = cssFontFamily("--font-body", "sans-serif");
-      const fontLoads = [
-        document.fonts.ready,
-        document.fonts.load(`400 120px ${display}`),
-        document.fonts.load(`400 32px ${body}`),
-      ];
-
-      void Promise.allSettled(fontLoads).then(() => {
-        if (cancelled) return;
-        refreshPageTexture(texture, content);
-      });
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [content, texture]);
-
-  useEffect(() => {
-    return () => {
-      texture.dispose();
-    };
-  }, [texture]);
-
+function createEdgeTexture(vertical: boolean) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 64;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "#e9e1ce";
+  ctx.fillRect(0, 0, 64, 64);
+  for (let i = 0; i < 64; i += 8) {
+    ctx.fillStyle = `rgba(98,82,57,${.1 + seededJitter(i) * .14})`;
+    ctx.fillRect(vertical ? i : 0, vertical ? 0 : i, vertical ? 1 : 64, vertical ? 64 : 1);
+  }
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
   return texture;
 }
 
 function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontCover: boolean, backCover: boolean) {
   const white = new Color(frontCover || backCover ? "#493333" : "#e8e0cd");
-  const pageEdge = white;
+  const edgeMaps = frontCover || backCover ? [null, null] : [createEdgeTexture(true), createEdgeTexture(false)];
   const hoverEmissive = new Color("#c98a5a");
 
   return [
-    new MeshStandardMaterial({ color: white, roughness: 0.82 }),
-    new MeshStandardMaterial({ color: pageEdge, roughness: 0.88 }),
-    new MeshStandardMaterial({ color: white, roughness: 0.82 }),
-    new MeshStandardMaterial({ color: pageEdge, roughness: 0.88 }),
-    new MeshStandardMaterial({
+    new MeshStandardMaterial({ color: white, map: edgeMaps[0], roughness: 0.88 }),
+    new MeshStandardMaterial({ color: white, roughness: 0.88 }),
+    new MeshStandardMaterial({ color: white, map: edgeMaps[1], roughness: 0.88 }),
+    new MeshStandardMaterial({ color: white, map: edgeMaps[1], roughness: 0.88 }),
+    new MeshPhysicalMaterial({
       color: "#ffffff",
       map: frontTexture,
       bumpMap: frontCover ? frontTexture : null,
-      bumpScale: frontCover ? 0.012 : 0,
+      bumpScale: frontCover ? 0.002 : 0,
+      sheen: frontCover ? 0.45 : 0,
+      sheenColor: new Color("#ad8d81"),
+      sheenRoughness: 0.85,
       roughness: 0.94,
       emissive: hoverEmissive,
       emissiveIntensity: 0,
     }),
-    new MeshStandardMaterial({
+    new MeshPhysicalMaterial({
       color: "#ffffff",
       map: backTexture,
       bumpMap: backCover ? backTexture : null,
-      bumpScale: backCover ? 0.012 : 0,
+      bumpScale: backCover ? 0.002 : 0,
+      sheen: backCover ? 0.45 : 0,
+      sheenColor: new Color("#ad8d81"),
+      sheenRoughness: 0.85,
       roughness: 0.94,
       emissive: hoverEmissive,
       emissiveIntensity: 0,
@@ -356,6 +335,7 @@ function AnimatedPage({
   onTurnTo: (page: number) => void;
   onDraggingChange: (dragging: boolean) => void;
 }) {
+  const invalidate = useThree(state => state.invalidate);
   const isCover = sheet.front.kind === "cover" || sheet.back.kind === "back-cover";
   const frontTexture = usePageTexture(sheet.front);
   const backTexture = usePageTexture(sheet.back);
@@ -364,8 +344,10 @@ function AnimatedPage({
   const turnedAt = useRef(0);
   const lastOpened = useRef(opened);
   const drag = useRef<PageDrag | null>(null);
+  const dragCleanup = useRef<(() => void) | null>(null);
   const [highlighted, setHighlighted] = useState(false);
   useCursor(highlighted);
+  useEffect(() => () => dragCleanup.current?.(), []);
 
   const manualSkinnedMesh = useMemo(() => {
     const bones: Bone[] = [];
@@ -391,20 +373,25 @@ function AnimatedPage({
   }, [frontTexture, backTexture, sheet, isCover]);
 
   useEffect(() => () => {
-    (manualSkinnedMesh.material as MeshStandardMaterial[]).forEach(material => material.dispose());
+    const materials = manualSkinnedMesh.material as MeshStandardMaterial[];
+    materials[0].map?.dispose();
+    materials[2].map?.dispose();
+    materials.forEach(material => material.dispose());
     manualSkinnedMesh.skeleton.dispose();
     if (manualSkinnedMesh.geometry !== pageGeometry) manualSkinnedMesh.geometry.dispose();
   }, [manualSkinnedMesh]);
 
   useFrame((_, delta) => {
+    delta = Math.min(delta, 0.05);
+    let moving = false;
     const mesh = skinnedMeshRef.current;
     const group = groupRef.current;
     if (!mesh || !group) return;
 
     const materials = mesh.material as MeshStandardMaterial[];
     const targetEmissive = highlighted && !drag.current ? 0.035 : 0;
-    materials[4].emissiveIntensity = materials[5].emissiveIntensity =
-      MathUtils.lerp(materials[4].emissiveIntensity, targetEmissive, 0.1);
+    moving = easing.damp(materials[4], "emissiveIntensity", targetEmissive, 0.12, delta) || moving;
+    materials[5].emissiveIntensity = materials[4].emissiveIntensity;
 
     if (lastOpened.current !== opened) {
       turnedAt.current = Date.now();
@@ -425,7 +412,7 @@ function AnimatedPage({
       (arch * Math.PI / PAGE_WIDTH) * Math.cos(Math.PI * segment / PAGE_SEGMENTS)
     );
     if (reducedMotion?.matches) group.position.z = stackHeight;
-    else easing.damp(group.position, "z", stackHeight, 0.3, delta);
+    else moving = easing.damp(group.position, "z", stackHeight, 0.3, delta) || moving;
 
     for (let i = 0; i < mesh.skeleton.bones.length; i++) {
       const target = i === 0 ? group : mesh.skeleton.bones[i];
@@ -434,16 +421,19 @@ function AnimatedPage({
         target.rotation.y = rotation;
         target.rotation.x = 0;
       } else {
-        easing.damp(target.rotation, "y", rotation, drag.current ? 0.12 : easingFactor, delta);
-        easing.dampAngle(target.rotation, "x", 0, easingFactorFold, delta);
+        moving = easing.damp(target.rotation, "y", rotation, drag.current ? 0.12 : easingFactor, delta) || moving;
+        moving = easing.dampAngle(target.rotation, "x", 0, easingFactorFold, delta) || moving;
       }
     }
+    if (moving || turningTime > 0.001 || drag.current) invalidate();
   });
 
   const beginDrag = useCallback(
     (clientX: number) => {
+      dragCleanup.current?.();
       drag.current = { startX: clientX, progress: 0, moved: false };
       onDraggingChange(true);
+      invalidate();
 
       const handleMove = (event: PointerEvent) => {
         const state = drag.current;
@@ -454,25 +444,35 @@ function AnimatedPage({
         const direction = opened ? 1 : -1;
         state.progress = MathUtils.clamp((dx * direction) / 240, 0, 1);
         if (Math.abs(dx) > 6) state.moved = true;
+        invalidate();
       };
 
-      const handleUp = () => {
-        window.removeEventListener("pointermove", handleMove);
-        window.removeEventListener("pointerup", handleUp);
+      const finishDrag = (cancelled = false) => {
+        dragCleanup.current?.();
         const state = drag.current;
         drag.current = null;
         onDraggingChange(false);
+        invalidate();
         if (!state) return;
-        if (!state.moved || state.progress > 0.35) {
+        if (!cancelled && (!state.moved || state.progress > 0.35)) {
           onTurnTo(opened ? number : number + 1);
         }
         // otherwise the frame loop eases the page back to its resting pose
       };
+      const handleUp = () => finishDrag();
+      const handleCancel = () => finishDrag(true);
 
       window.addEventListener("pointermove", handleMove);
       window.addEventListener("pointerup", handleUp);
+      window.addEventListener("pointercancel", handleCancel);
+      dragCleanup.current = () => {
+        window.removeEventListener("pointermove", handleMove);
+        window.removeEventListener("pointerup", handleUp);
+        window.removeEventListener("pointercancel", handleCancel);
+        dragCleanup.current = null;
+      };
     },
-    [number, onDraggingChange, onTurnTo, opened]
+    [number, onDraggingChange, onTurnTo, opened, invalidate]
   );
 
   return (
@@ -512,6 +512,7 @@ function BookStack({
   onDraggingChange: (dragging: boolean) => void;
 }) {
   const [delayedPage, setDelayedPage] = useState(page);
+  const invalidate = useThree(state => state.invalidate);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -534,6 +535,7 @@ function BookStack({
   const groupRef = useRef<Group>(null);
   const scale = 1;
   const thicknesses = sheets.map(sheet => sheet.front.kind === "cover" || sheet.back.kind === "back-cover" ? COVER_DEPTH : PAGE_DEPTH);
+  const spineRadius = thicknesses.reduce((sum, depth) => sum + depth, 0) / 2;
 
   useFrame((_, delta) => {
     const group = groupRef.current;
@@ -544,15 +546,19 @@ function BookStack({
     const targetX =
       delayedPage === 0 ? -shift : delayedPage === sheets.length ? shift : 0;
     if (reducedMotion?.matches) group.position.x = targetX;
-    else easing.damp(group.position, "x", targetX, 0.5, delta);
+    else if (easing.damp(group.position, "x", targetX, 0.5, Math.min(delta, .05))) invalidate();
   });
 
   return (
     <group
       ref={groupRef}
-
+      position-x={-PAGE_WIDTH / 2}
       scale={scale}
     >
+      <mesh position={[0, 0, spineRadius]} rotation-y={delayedPage === sheets.length ? Math.PI : 0} visible={delayedPage === 0 || delayedPage === sheets.length} castShadow receiveShadow>
+        <cylinderGeometry args={[spineRadius, spineRadius, PAGE_HEIGHT * 1.028, 24, 1, false, Math.PI, Math.PI]} />
+        <meshPhysicalMaterial color="#493333" roughness={.9} sheen={.45} sheenColor="#ad8d81" />
+      </mesh>
       {sheets.map((sheet, index) => (
         <AnimatedPage
           key={index}
@@ -589,20 +595,20 @@ function Tabletop() {
     const canvas = document.createElement("canvas");
     canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext("2d")!;
-    ctx.fillStyle = "#c9bda6";
+    ctx.fillStyle = "#c3b096";
     ctx.fillRect(0, 0, 1024, 1024);
-    for (let i = 0; i < 3000; i++) {
-      const y = seededJitter(i) * 1024;
+    for (let i = 0; i < 1800; i++) {
+      const y = i / 1800 * 1024;
       ctx.strokeStyle = `rgba(97,77,48,${0.015 + seededJitter(i + 9) * 0.04})`;
       ctx.lineWidth = 0.5 + seededJitter(i + 3);
       ctx.beginPath(); ctx.moveTo(0, y);
-      ctx.bezierCurveTo(300, y + Math.sin(i) * 10, 750, y - Math.cos(i) * 8, 1024, y);
+      ctx.bezierCurveTo(300, y + Math.sin(i * .008) * 65, 750, y - Math.cos(i * .007) * 48, 1024, y);
       ctx.stroke();
     }
     const texture = new CanvasTexture(canvas);
     texture.colorSpace = SRGBColorSpace;
     texture.wrapS = texture.wrapT = RepeatWrapping;
-    texture.repeat.set(3, 3);
+    texture.repeat.set(2, 2);
     texture.anisotropy = 8;
     return texture;
   }, []);
@@ -666,29 +672,30 @@ function BookScene({
       <CanvasSizer />
       <ResponsiveCamera />
       <color attach="background" args={["#ded8cc"]} />
-      <ambientLight intensity={0.65} />
-      <hemisphereLight args={["#fff6e3", "#9b8b73", 0.8]} />
+      <ambientLight intensity={0.3} />
+      <hemisphereLight args={["#f7f5ef", "#847561", 0.65]} />
       <directionalLight
-        position={[-3, 6, -2]}
-        color="#fff2d9"
-        intensity={3.2}
+        position={[-3, 6, -3]}
+        color="#fff7ed"
+        intensity={2.8}
         castShadow
-        shadow-mapSize-width={4096}
-        shadow-mapSize-height={4096}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         shadow-camera-left={-4}
         shadow-camera-right={4}
         shadow-camera-top={4}
         shadow-camera-bottom={-4}
-        shadow-normalBias={0.008}
+        shadow-normalBias={0.004}
+        shadow-radius={5}
+        shadow-blurSamples={8}
         shadow-bias={-0.0001}
       />
-      <directionalLight position={[4, 3, 4]} intensity={0.5} color="#e8efff" />
+      <directionalLight position={[4, 3, 4]} intensity={0.25} color="#e8efff" />
       <Tabletop />
       <TableDecor />
       <group position-y={0.003} rotation-x={-Math.PI / 2}>
         <BookStack sheets={sheets} page={page} onPageChange={onPageChange} onDraggingChange={handleDraggingChange} />
       </group>
-      <ContactShadows position={[0, 0.001, 0]} scale={7} blur={1.4} far={0.5} opacity={0.45} frames={Infinity} />
       <OrbitControls
         ref={controlsRef}
         enablePan={false}
@@ -710,24 +717,42 @@ function BookCanvas({
   sheets,
   page,
   onPageChange,
+  onReady,
 }: {
   sheets: BookSheet[];
   page: number;
   onPageChange: (page: number) => void;
+  onReady?: () => void;
 }) {
   return (
     <div className="book-three-frame">
       <Canvas
         className="book-three-canvas"
-        shadows
+        shadows="variance"
+        frameloop="demand"
         camera={{ position: [0.82, 3.36, 2.25], fov: 42 }}
-        dpr={[1, 2]}
-        gl={{ alpha: true, antialias: true }}
+        dpr={[1, 1.5]}
+        gl={{ alpha: false, antialias: true, powerPreference: "high-performance" }}
       >
         <BookScene sheets={sheets} page={page} onPageChange={onPageChange} />
+        <SceneReady onReady={onReady} />
       </Canvas>
     </div>
   );
+}
+
+function SceneReady({ onReady }: { onReady?: () => void }) {
+  const frame = useRef<number | null>(null);
+  useEffect(() => () => { if (frame.current !== null) cancelAnimationFrame(frame.current); }, []);
+  useFrame(() => {
+    if (frame.current !== null) return;
+    // Notify after the first completed WebGL frame, not just canvas creation.
+    frame.current = requestAnimationFrame(() => {
+      performance.mark("book-ready");
+      onReady?.();
+    });
+  });
+  return null;
 }
 
 function makeBookModel(chapters: BookChapter[]) {
@@ -764,7 +789,7 @@ function makeBookModel(chapters: BookChapter[]) {
   return { sheets, spreadCount: Math.ceil(pages.length / 2) };
 }
 
-export default function StoryBook({ onExit }: { onExit?: () => void }) {
+export default function StoryBook({ onExit, onReady }: { onExit?: () => void; onReady?: () => void }) {
   const { sheets } = useMemo(() => makeBookModel(bookChapters), []);
   // page = sheets flipped: 0 is the closed front cover, sheets.length is
   // the closed back cover
@@ -798,7 +823,7 @@ export default function StoryBook({ onExit }: { onExit?: () => void }) {
   return (
     <div className="storybook">
       <div className="storybook-canvas" aria-hidden="true">
-        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} />
+        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} onReady={onReady} />
       </div>
       <div className="storybook-controls">
         <div className="storybook-pagination">

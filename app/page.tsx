@@ -5,7 +5,8 @@ import BookOverlay from "./book/overlay";
 import ReadTheBookLink from "./book/read-the-book-link";
 import { FishIcon } from "./fish-icon";
 import { projects } from "./portfolio/projects";
-import { softwareSections } from "./software/projects";
+import { selectedSoftware } from "./software/projects";
+import ProjectGrid from "./project-grid";
 
 const selectedSlugs = ["taya-pendant", "harp-instrument", "injection-molded-fabric", "pretzels-favorite-food"];
 const selectedObjects = selectedSlugs.flatMap(slug => projects.find(p => p.slug === slug) ?? []);
@@ -74,43 +75,22 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="objects" className="home-section" aria-labelledby="objects-title">
-          <header className="section-heading">
-            <h2 id="objects-title">Selected objects</h2>
-            <Link href="/portfolio" className="quiet-link">All objects <span aria-hidden="true">↗</span></Link>
-          </header>
-          <div className="selected-grid">
-            {selectedObjects.map((p, i) => (
-              <Link key={p.slug} href={`/portfolio/${p.slug}`} className="selected-project">
-                <div className="selected-image">
-                  <Image src={p.cover} alt={p.title} fill sizes="(max-width: 540px) 45vw, 400px" priority={i === 0} />
-                </div>
-                <div className="project-caption">
-                  <div><h3>{p.title}</h3><p>{p.role}</p></div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section id="software" className="home-section software-section" aria-labelledby="software-title">
-          <header className="section-heading"><h2 id="software-title">Software</h2><span className="section-note">Tools for making things.</span></header>
-          {softwareSections.filter(s => s.title !== "AI and CAD").map(section => (
-            <div className="software-group" key={section.title}>
-              <h3>{section.title === "Vizcom" ? "At Vizcom" : section.title}</h3>
-              <div>{section.projects.map(p => (
-                <Link key={p.slug} href={`/software/${p.slug}`} className="software-row">
-                  <h4>{p.title}</h4><p>{p.summary}</p><span aria-hidden="true">↗</span>
-                </Link>
-              ))}</div>
-            </div>
-          ))}
-          <div className="software-group"><h3>Independent</h3><div>
-            {softwareSections.find(s => s.title === "AI and CAD")?.projects.filter(p => !p.slug.startsWith("taiyaki")).map(p => (
-              <Link key={p.slug} href={`/software/${p.slug}`} className="software-row"><h4>{p.title}</h4><p>{p.summary}</p><span aria-hidden="true">↗</span></Link>
-            ))}
-          </div></div>
-        </section>
+        <div className="project-sections">
+          <section id="objects" className="home-section" aria-labelledby="objects-title">
+            <header className="section-heading">
+              <h2 id="objects-title">Objects</h2>
+              <Link href="/portfolio" className="quiet-link">All objects <span aria-hidden="true">↗</span></Link>
+            </header>
+            <ProjectGrid projects={selectedObjects.map(p => ({ title: p.title, caption: p.role, cover: p.cover, href: `/portfolio/${p.slug}` }))} />
+          </section>
+          <section id="software" className="home-section" aria-labelledby="software-title">
+            <header className="section-heading">
+              <h2 id="software-title">Software</h2>
+              <Link href="/software" className="quiet-link">All software <span aria-hidden="true">↗</span></Link>
+            </header>
+            <ProjectGrid kind="software" projects={selectedSoftware.map(p => ({ title: p.title, caption: p.meta, cover: p.cover, href: `/software/${p.slug}` }))} />
+          </section>
+        </div>
 
         <footer className="home-footer">
           <div className="footer-bottom"><span>Amy Zhou</span>

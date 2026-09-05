@@ -311,6 +311,8 @@ button:disabled { cursor: default; }
 .selected-image { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #f0efeb; }
 .selected-image img { object-fit: contain; padding: 7%; mix-blend-mode: multiply; transition: transform .2s; }
 .selected-project:hover .selected-image img { transform: scale(1.025); }
+.project-sections { display: grid; gap: 35px; padding-bottom: 35px; }
+.software-image img { mix-blend-mode: normal; padding: 5%; }
 .project-caption { padding-top: 10px; }
 .project-caption h3, .project-caption h2 { font-size: 13px; font-weight: 500; }
 .project-caption p { margin-top: 4px; font-size: 11px; line-height: 1.4; color: var(--color-ink-muted); }
@@ -399,6 +401,11 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
 }
 
 .book-loading { position: absolute; inset: 50% 0 auto; text-align: center; color: #817b72; font-size: 12px; }
+.book-poster { position: absolute; inset: 0; pointer-events: none; z-index: 1; transition: opacity .18s; }
+.book-poster img { width: 100%; height: 100%; object-fit: cover; }
+.book-poster-hidden { opacity: 0; }
+.book-overlay[data-ready="false"] .book-three-frame { opacity: 0; }
+.book-overlay .book-loading { inset: auto 0 50px; z-index: 2; }
 
 .personal-intro { display: grid; grid-template-columns: 145px 1fr; gap: 30px; margin-top: 23px; }
 .personal-portrait { width: 145px; height: 145px; object-fit: cover; }
