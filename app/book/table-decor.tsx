@@ -1,6 +1,6 @@
 "use client";
 
-import { Environment, Lightformer } from "@react-three/drei";
+import { Environment, Lightformer, useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
 import {
@@ -12,6 +12,8 @@ import {
   Float32BufferAttribute,
   Vector2,
   Vector3,
+  Mesh,
+  MeshPhysicalMaterial,
 } from "three";
 
 const vaseProfile = [
@@ -19,17 +21,6 @@ const vaseProfile = [
   [.20, .36], [.15, .49], [.145, .59], [.148, .61],
   [.134, .61], [.131, .585], [.137, .49], [.187, .36],
   [.214, .22], [.211, .09], [.187, .035], [0, .035],
-].map(([x, y]) => new Vector2(x, y));
-
-const cupProfile = [
-  [0, .04], [.15, .04], [.185, .06], [.225, .13], [.255, .26],
-  [.26, .31], [.248, .322], [.235, .312], [.232, .27],
-  [.208, .15], [.167, .082], [0, .082],
-].map(([x, y]) => new Vector2(x, y));
-
-const saucerProfile = [
-  [0, .004], [.20, .004], [.30, .014], [.40, .035], [.415, .048],
-  [.411, .06], [.39, .066], [.30, .04], [.19, .03], [0, .03],
 ].map(([x, y]) => new Vector2(x, y));
 
 // Curved, tapered surfaces give the flowers thin overlapping petals and leaves.
@@ -139,6 +130,7 @@ function FlowerVase() {
 }
 
 function Coffee() {
+  const { scene: cupModel } = useGLTF("/book/coffee-cup.glb");
   const coffee = useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = 512;
@@ -160,28 +152,29 @@ function Coffee() {
     texture.colorSpace = SRGBColorSpace;
     return texture;
   }, []);
-  useEffect(() => () => coffee.dispose(), [coffee]);
-  return <group name="coffee-cup-and-saucer">
-    <mesh castShadow receiveShadow>
-      <latheGeometry args={[saucerProfile, 96]} />
-      <meshPhysicalMaterial color="#e4e0d4" roughness={.23} clearcoat={.65} clearcoatRoughness={.12} />
-    </mesh>
-    <group position-y={-.01} rotation-y={-.4}>
-      <mesh castShadow receiveShadow>
-        <latheGeometry args={[cupProfile, 96]} />
-        <meshPhysicalMaterial color="#e7e3d8" roughness={.21} clearcoat={.7} clearcoatRoughness={.12} />
-      </mesh>
-      <mesh position={[.275, .197, 0]} scale={[.8, 1, 1]} castShadow receiveShadow>
-        <torusGeometry args={[.105, .026, 16, 56]} />
-        <meshPhysicalMaterial color="#e7e3d8" roughness={.21} clearcoat={.7} clearcoatRoughness={.12} />
-      </mesh>
-      <mesh position={[0, .284, 0]} rotation-x={-Math.PI / 2}>
-        <circleGeometry args={[.236, 96]} />
-        <meshPhysicalMaterial map={coffee} roughness={.12} clearcoat={1} clearcoatRoughness={.05} />
-      </mesh>
-    </group>
+  const { scene, glaze, liquid } = useMemo(() => {
+    const scene = cupModel.clone(true);
+    const glaze = new MeshPhysicalMaterial({ color: "#e7e3d8", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
+    const liquid = new MeshPhysicalMaterial({ map: coffee, roughness: .12, clearcoat: 1, clearcoatRoughness: .05 });
+    scene.traverse(object => {
+      if (!(object instanceof Mesh)) return;
+      const isCoffee = object.name === "coffee_surface";
+      object.material = isCoffee ? liquid : glaze;
+      object.castShadow = !isCoffee;
+      object.receiveShadow = true;
+    });
+    return { scene, glaze, liquid };
+  }, [cupModel, coffee]);
+  useEffect(() => () => { coffee.dispose(); glaze.dispose(); liquid.dispose(); }, [coffee, glaze, liquid]);
+
+  // Original cup and handle are one joined mesh. The fitted liquid follows its
+  // inner wall, with headroom below the rim; source dimensions are in meters.
+  return <group name="coffee-cup-and-saucer" scale={5.58} position-y={.0038} rotation-y={-Math.PI / 2 - .4}>
+    <primitive object={scene} dispose={null} />
   </group>;
 }
+
+useGLTF.preload("/book/coffee-cup.glb");
 
 function Pen() {
   return <group name="green-and-brass-pen" rotation={[Math.PI / 2, 0, -.28]}>

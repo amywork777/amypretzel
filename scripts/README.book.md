@@ -12,3 +12,5 @@ Software previews are genuine screenshots, captured September 4, 2026:
 - Taiyaki uses the existing `public/portfolio/taiyaki-3d/image.png`.
 
 Homepage images use the same grid component for objects and software; keep both categories' frame sizes, headings, captions and index links equivalent.
+
+The coffee cup and saucer use `public/book/coffee-cup.glb`, adapted from the CC0 Poly Haven / Eric Chadwick teacup in the Khronos sample collection. Source and modification details are in `public/book/coffee-cup.LICENSE.md`. Its handle is joined to the cup body, and its coffee surface is fitted to the interior rather than laid over the rim.
