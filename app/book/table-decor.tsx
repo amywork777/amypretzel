@@ -19,6 +19,7 @@ import {
   MeshPhysicalMaterial,
 } from "three";
 
+import { useCompactBook } from "./use-compact-book";
 import { usePropGesture, type TableState, type DraggingChange } from "./table-interactions";
 
 type InteractionProps = { table: TableState; onDraggingChange: DraggingChange };
@@ -163,6 +164,7 @@ function Flowers({ table, onDraggingChange, narrow }: InteractionProps & { narro
 }
 
 function FlowerVase(props: InteractionProps & { narrow: boolean }) {
+  const lowDetail = useCompactBook();
   return <group name="glass-vase-and-tulips">
     <Flowers {...props} />
     <mesh position={[0, .18, 0]}>
@@ -174,12 +176,12 @@ function FlowerVase(props: InteractionProps & { narrow: boolean }) {
       <meshPhysicalMaterial color="#dce9e3" transparent opacity={.2} roughness={.08} metalness={.15} side={DoubleSide} depthWrite={false} />
     </mesh>
     <mesh>
-      <latheGeometry args={[vaseProfile, 96]} />
-      <meshPhysicalMaterial thickness={.04} transmission={1} roughness={.045} ior={1.46} color="#f1f8f4" envMapIntensity={1.2} />
+      <latheGeometry args={[vaseProfile, lowDetail ? 32 : 96]} />
+      <meshPhysicalMaterial transparent={lowDetail} opacity={lowDetail ? .22 : 1} thickness={.04} transmission={lowDetail ? 0 : 1} roughness={.045} ior={1.46} color="#f1f8f4" envMapIntensity={1.2} />
     </mesh>
     <mesh position={[0, .606, 0]} rotation-x={Math.PI / 2}>
       <torusGeometry args={[.141, .006, 8, 80]} />
-      <meshPhysicalMaterial color="#e4f0ea" transmission={.94} thickness={.01} roughness={.07} ior={1.46} />
+      <meshPhysicalMaterial color="#e4f0ea" transparent={lowDetail} opacity={lowDetail ? .5 : 1} transmission={lowDetail ? 0 : .94} thickness={.01} roughness={.07} ior={1.46} />
     </mesh>
   </group>;
 }
@@ -336,11 +338,12 @@ function Pen() {
 }
 
 export default function TableDecor({ table, onDraggingChange }: InteractionProps) {
+  const lowDetail = useCompactBook();
   const { size } = useThree();
   const narrow = size.width / size.height < .9;
   return <>
     {/* Reflection cards live only in the environment, outside the visible scene. */}
-    <Environment resolution={128} frames={1} environmentIntensity={.45}>
+    <Environment resolution={lowDetail ? 64 : 128} frames={1} environmentIntensity={.45}>
       <Lightformer form="rect" intensity={3} position={[-3, 4, 2]} scale={[3, 4, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={2} position={[-1, 3, -3]} scale={[3, 2, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />

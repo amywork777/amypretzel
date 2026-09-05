@@ -1,25 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Gaegu, Silkscreen } from "next/font/google";
 import "./globals.css";
 import { ThemeFlashScript } from "./theme-toggle";
-
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
-
-const gaegu = Gaegu({
-  weight: ["300", "400", "700"],
-  subsets: ["latin"],
-  variable: "--font-hand",
-});
-
-// kept for the fishing easter-egg page only
-const silkscreen = Silkscreen({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-pixel",
-});
 
 const SITE_URL = "https://amypretzel.com";
 const SITE_DESC =
@@ -111,7 +92,6 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${mono.variable} ${gaegu.variable} ${silkscreen.variable}`}
       suppressHydrationWarning
     >
       <head>

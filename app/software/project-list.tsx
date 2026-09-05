@@ -9,7 +9,6 @@ export default function SoftwareProjectList() {
         <Link key={project.slug} href={`/software/${project.slug}`} className="software-row">
           <h4>{project.title}</h4>
           <p>{project.summary}</p>
-          <span aria-hidden="true">↗</span>
         </Link>
       ))}</div>
     </div>

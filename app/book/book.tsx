@@ -29,6 +29,7 @@ import {
 import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
 import TableDecor from "./table-decor";
+import { useCompactBook } from "./use-compact-book";
 import { TableActions, useTableState, type TableState } from "./table-interactions";
 
 type StoryPage = {
@@ -226,16 +227,16 @@ function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
   ctx.textAlign = "left";
 }
 
-function createPageCanvasTexture(content: TexturePage) {
+function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
   const canvas = document.createElement("canvas");
-  canvas.width = 768;
-  canvas.height = 1024;
+  canvas.width = lowDetail ? 384 : 768;
+  canvas.height = lowDetail ? 512 : 1024;
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     throw new Error("Could not create page texture context");
   }
 
-  ctx.scale(768 / TEXTURE_WIDTH, 1024 / TEXTURE_HEIGHT);
+  ctx.scale(canvas.width / TEXTURE_WIDTH, canvas.height / TEXTURE_HEIGHT);
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
   texture.anisotropy = 4;
@@ -254,9 +255,10 @@ function createPageCanvasTexture(content: TexturePage) {
 }
 
 function usePageTexture(content: TexturePage) {
+  const lowDetail = useCompactBook();
   // These pages use installed system fonts. Redrawing after fonts.ready only
   // repeated all of the canvas work and uploaded every texture a second time.
-  const texture = useMemo(() => createPageCanvasTexture(content), [content]);
+  const texture = useMemo(() => createPageCanvasTexture(content, lowDetail), [content, lowDetail]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }
@@ -663,6 +665,7 @@ function BookScene({
   table: TableState;
 }) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+  const lowDetail = useCompactBook();
 
   const handleDraggingChange = useCallback((dragging: boolean) => {
     if (controlsRef.current) {
@@ -682,16 +685,16 @@ function BookScene({
         color="#fff7ed"
         intensity={2.8}
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={lowDetail ? 512 : 2048}
+        shadow-mapSize-height={lowDetail ? 512 : 2048}
         shadow-camera-left={-4}
         shadow-camera-right={4}
         shadow-camera-top={4}
         shadow-camera-bottom={-4}
-        shadow-normalBias={0.004}
+        shadow-normalBias={lowDetail ? 0.012 : 0.004}
         shadow-radius={5}
-        shadow-blurSamples={8}
-        shadow-bias={-0.0001}
+        shadow-blurSamples={lowDetail ? 4 : 8}
+        shadow-bias={lowDetail ? -0.0003 : -0.0001}
       />
       <directionalLight position={[4, 3, 4]} intensity={0.25} color="#e8efff" />
       <Tabletop />
@@ -729,6 +732,7 @@ function BookCanvas({
   table: TableState;
   onReady?: () => void;
 }) {
+  const lowDetail = useCompactBook();
   return (
     <div className="book-three-frame">
       <Canvas
@@ -736,8 +740,8 @@ function BookCanvas({
         shadows="variance"
         frameloop="demand"
         camera={{ position: [0.82, 3.36, 2.25], fov: 42 }}
-        dpr={[1, 1.5]}
-        gl={{ alpha: false, antialias: true, powerPreference: "high-performance" }}
+        dpr={lowDetail ? 1 : [1, 1.5]}
+        gl={{ alpha: false, antialias: !lowDetail, powerPreference: "high-performance" }}
       >
         <BookScene sheets={sheets} page={page} onPageChange={onPageChange} table={table} />
         <SceneReady onReady={onReady} />
@@ -833,9 +837,9 @@ export default function StoryBook({ onExit, onReady }: { onExit?: () => void; on
       </div>
       <div className="storybook-controls">
         <div className="storybook-pagination">
-          <button type="button" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>←</button>
+          <button type="button" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
           <span aria-live="polite">{page === 0 ? "A little book of making" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
-          <button type="button" aria-label={atBackCover ? "Enter site" : "Next page"} onClick={() => setPage(page + 1)}>→</button>
+          <button type="button" aria-label={atBackCover ? "Enter site" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Enter site" : "Next"}</button>
         </div>
         <p className="storybook-hint">Turn a page · Tip the cup · Pick a flower</p>
       </div>

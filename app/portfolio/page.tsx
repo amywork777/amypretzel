@@ -41,11 +41,11 @@ export default function PortfolioPage() {
               <div className="selected-image object-study">
                 <Image src={p.cover} alt={p.title} fill sizes="(max-width: 700px) 100vw, 50vw" priority={i < 2} />
               </div>
-              <div className="project-caption"><div><h2>{p.title}</h2><p>{p.role}</p></div><span aria-hidden="true">↗</span></div>
+              <div className="project-caption"><div><h2>{p.title}</h2><p>{p.role}</p></div></div>
             </Link>
           ))}
         </section>
-        <footer className="index-footer"><Link href="/" className="quiet-link">← Back home</Link><a href="mailto:amzyst@gmail.com" className="quiet-link">Say hello ↗</a></footer>
+        <footer className="index-footer"><Link href="/" className="quiet-link">Back home</Link><a href="mailto:amzyst@gmail.com" className="quiet-link">Say hello</a></footer>
       </main>
     </div>
   );

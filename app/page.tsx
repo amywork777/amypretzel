@@ -79,14 +79,14 @@ export default function Home() {
           <section id="objects" className="home-section" aria-labelledby="objects-title">
             <header className="section-heading">
               <h2 id="objects-title">Objects</h2>
-              <Link href="/portfolio" className="quiet-link">All objects <span aria-hidden="true">↗</span></Link>
+              <Link href="/portfolio" className="quiet-link">All objects</Link>
             </header>
             <ProjectGrid projects={selectedObjects.map(p => ({ title: p.title, caption: p.role, cover: p.cover, href: `/portfolio/${p.slug}` }))} />
           </section>
           <section id="software" className="home-section" aria-labelledby="software-title">
             <header className="section-heading">
               <h2 id="software-title">Software</h2>
-              <Link href="/software" className="quiet-link">All software <span aria-hidden="true">↗</span></Link>
+              <Link href="/software" className="quiet-link">All software</Link>
             </header>
             <SoftwareProjectList />
           </section>

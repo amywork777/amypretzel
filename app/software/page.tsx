@@ -18,7 +18,7 @@ export default function SoftwarePage() {
         <header className="section-heading"><h2 id="all-software-title">All software</h2></header>
         <SoftwareProjectList />
       </section>
-      <footer className="index-footer"><Link href="/" className="quiet-link">← Back home</Link><a href="mailto:amzyst@gmail.com" className="quiet-link">Say hello ↗</a></footer>
+      <footer className="index-footer"><Link href="/" className="quiet-link">Back home</Link><a href="mailto:amzyst@gmail.com" className="quiet-link">Say hello</a></footer>
     </main>
   </div>;
 }
