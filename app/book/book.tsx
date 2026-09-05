@@ -29,6 +29,7 @@ import {
 import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
 import TableDecor from "./table-decor";
+import { TableActions, useTableState, type TableState } from "./table-interactions";
 
 type StoryPage = {
   text: string;
@@ -585,8 +586,8 @@ function BookStack({
 function ResponsiveCamera() {
   const { size } = useThree();
   const aspect = size.width / size.height;
-  // Fit an open spread with a little table around it, including portrait phones.
-  const distance = Math.max(4.9, 4.8 / aspect);
+  // Fit the whole interaction area, including laid-down flowers and tipped coffee.
+  const distance = Math.max(4.9, (aspect < .9 ? 4.8 : 7) / aspect);
   return <PerspectiveCamera makeDefault position={[distance * 0.2, distance * 0.82, distance * 0.55]} fov={42} />;
 }
 
@@ -654,10 +655,12 @@ function BookScene({
   sheets,
   page,
   onPageChange,
+  table,
 }: {
   sheets: BookSheet[];
   page: number;
   onPageChange: (page: number) => void;
+  table: TableState;
 }) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
 
@@ -692,7 +695,7 @@ function BookScene({
       />
       <directionalLight position={[4, 3, 4]} intensity={0.25} color="#e8efff" />
       <Tabletop />
-      <TableDecor />
+      <TableDecor table={table} onDraggingChange={handleDraggingChange} />
       <group position-y={0.003} rotation-x={-Math.PI / 2}>
         <BookStack sheets={sheets} page={page} onPageChange={onPageChange} onDraggingChange={handleDraggingChange} />
       </group>
@@ -717,11 +720,13 @@ function BookCanvas({
   sheets,
   page,
   onPageChange,
+  table,
   onReady,
 }: {
   sheets: BookSheet[];
   page: number;
   onPageChange: (page: number) => void;
+  table: TableState;
   onReady?: () => void;
 }) {
   return (
@@ -734,7 +739,7 @@ function BookCanvas({
         dpr={[1, 1.5]}
         gl={{ alpha: false, antialias: true, powerPreference: "high-performance" }}
       >
-        <BookScene sheets={sheets} page={page} onPageChange={onPageChange} />
+        <BookScene sheets={sheets} page={page} onPageChange={onPageChange} table={table} />
         <SceneReady onReady={onReady} />
       </Canvas>
     </div>
@@ -791,6 +796,7 @@ function makeBookModel(chapters: BookChapter[]) {
 
 export default function StoryBook({ onExit, onReady }: { onExit?: () => void; onReady?: () => void }) {
   const { sheets } = useMemo(() => makeBookModel(bookChapters), []);
+  const table = useTableState();
   // page = sheets flipped: 0 is the closed front cover, sheets.length is
   // the closed back cover
   const [page, setPageState] = useState(0);
@@ -823,7 +829,7 @@ export default function StoryBook({ onExit, onReady }: { onExit?: () => void; on
   return (
     <div className="storybook">
       <div className="storybook-canvas" aria-hidden="true">
-        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} onReady={onReady} />
+        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} onReady={onReady} table={table} />
       </div>
       <div className="storybook-controls">
         <div className="storybook-pagination">
@@ -831,8 +837,9 @@ export default function StoryBook({ onExit, onReady }: { onExit?: () => void; on
           <span aria-live="polite">{page === 0 ? "A little book of making" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
           <button type="button" aria-label={atBackCover ? "Enter site" : "Next page"} onClick={() => setPage(page + 1)}>→</button>
         </div>
-        <p className="storybook-hint">Click a page to turn · Drag to look around · ← → to read</p>
+        <p className="storybook-hint">Turn a page · Tip the cup · Pick a flower</p>
       </div>
+      <TableActions table={table} />
       <details className="book-reading"><summary>Read as text</summary>
         {bookChapters.map(chapter => <section key={chapter.id}><h2>{chapter.title}</h2>{chapter.pages.map(p => <p key={p.title}>{p.text}</p>)}</section>)}
       </details>

@@ -418,3 +418,18 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
   .personal-intro { grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
   .personal-portrait { width: 100px; height: 100px; }
 }
+
+.table-actions { position: absolute; left: 36px; bottom: 40px; z-index: 4; font-size: 11px; }
+.table-actions > summary { cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.table-actions-panel { position: absolute; bottom: 30px; left: 0; width: 260px; padding: 18px; background: #faf9f6f5; box-shadow: 0 8px 35px #302d2912; }
+.table-actions-panel p { font-size: 11px; line-height: 1.6; margin-bottom: 12px; color: #746d63; }
+.table-actions-panel button { min-height: 38px; padding: 7px 10px; border: 1px solid #d8d3c9; background: transparent; color: #403a32; font-size: 11px; }
+.table-actions-panel button:hover, .flower-actions button[aria-pressed="true"] { background: #eae5dc; }
+.flower-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 12px 0; }
+.flower-actions button { padding-inline: 4px; }
+.table-actions-panel .table-status { margin-bottom: 6px; }
+.table-actions-panel .table-reset { padding-left: 0; border: 0; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 700px) {
+  .table-actions { left: 20px; bottom: 25px; }
+  .table-actions-panel { width: min(260px, calc(100vw - 40px)); }
+}
