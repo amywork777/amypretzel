@@ -5,6 +5,7 @@ import {
   OrbitControls,
   PerspectiveCamera,
   RoundedBox,
+  SoftShadows,
   useCursor,
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -28,6 +29,7 @@ import {
 } from "three";
 import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
+import TableDecor from "./table-decor";
 
 type StoryPage = {
   text: string;
@@ -664,6 +666,7 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
+      <SoftShadows size={18} samples={12} />
       <color attach="background" args={["#ded8cc"]} />
       <ambientLight intensity={0.65} />
       <hemisphereLight args={["#fff6e3", "#9b8b73", 0.8]} />
@@ -683,6 +686,7 @@ function BookScene({
       />
       <directionalLight position={[4, 3, 4]} intensity={0.5} color="#e8efff" />
       <Tabletop />
+      <TableDecor />
       <group position-y={0.003} rotation-x={-Math.PI / 2}>
         <BookStack sheets={sheets} page={page} onPageChange={onPageChange} onDraggingChange={handleDraggingChange} />
       </group>

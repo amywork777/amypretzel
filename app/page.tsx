@@ -50,16 +50,26 @@ export default function Home() {
       <BookOverlay />
       <SiteNav />
       <main id="main-content" className="site-width">
-        <section className="home-intro" aria-labelledby="intro-title">
+        <section id="about" className="home-intro" aria-labelledby="intro-title">
           <div className="intro-title-row">
             <h1 id="intro-title">Amy Zhou</h1>
-            <p className="intro-location">Designer & engineer<span className="location-divider"> · </span><br />San Francisco, CA</p>
+            <p className="intro-location">Designer & engineer<br />San Francisco, CA</p>
           </div>
-          <div className="intro-bottom">
-            <p className="intro-statement">I make hardware, software, and the in-between.</p>
-            <div className="intro-aside">
-              <p>Currently building AI tools for industrial designers at Vizcom. Previously Apple and Stanford.</p>
-              <a href="#about" className="quiet-link">A little about me <span aria-hidden="true">↗</span></a>
+          <div className="personal-intro">
+            <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="(max-width: 540px) 100px, 145px" priority />
+            <div className="personal-copy">
+              <p className="intro-statement">I make hardware, software, and the in-between.</p>
+              <p>Currently building AI tools for industrial designers at Vizcom.</p>
+              <p>I studied product design and mechanical engineering at Stanford, with a minor in music. I also worked at Apple as a product design engineer, focusing on hardware that was useful, durable, and better for the environment.</p>
+              <p>Since then: Taiyaki, an AI-assisted concept-to-CAD system; Taya, a wearable AI journal designed as jewelry; a custom AI jewelry pipeline; and Mobius, a company focused on materials trading and recycling.</p>
+              <p>I live in San Francisco and spend my time learning, building, and exploring new ideas. I care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
+              <nav className="personal-links" aria-label="Contact Amy">
+                <a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a>
+                <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
+                <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://linkedin.com/in/amy7" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <ReadTheBookLink className="quiet-link" />
+              </nav>
             </div>
           </div>
         </section>
@@ -102,24 +112,10 @@ export default function Home() {
           </div></div>
         </section>
 
-        <section id="about" className="home-section about-section" aria-labelledby="about-title">
-          <div className="about-portrait"><Image src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="(max-width: 700px) 70vw, 30vw" /><span>Amy, usually making something.</span></div>
-          <div className="about-copy">
-            <h2 id="about-title">A little about me.</h2>
-            <p>I studied product design and mechanical engineering at Stanford, with a minor in music. I also worked at Apple as a product design engineer, focusing on hardware that was useful, durable, and better for the environment.</p>
-            <p>Since then: Taiyaki, an AI-assisted concept-to-CAD system; Taya, a wearable AI journal designed as jewelry; a custom AI jewelry pipeline; and Mobius, a company focused on materials trading and recycling.</p>
-            <p>I live in San Francisco and spend my time learning, building, and exploring new ideas. I care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
-            <ReadTheBookLink className="quiet-link about-book-link" />
-          </div>
-        </section>
         <footer className="home-footer">
-          <div className="footer-invitation"><a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a></div>
-          <div className="footer-bottom"><span>Amy Zhou</span><div className="footer-links">
-            <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
-            <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://linkedin.com/in/amy7" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <div className="footer-bottom"><span>Amy Zhou</span>
             <Link href="/fishing" aria-label="Fishing" className="footer-fish"><FishIcon className="h-5 w-auto" /></Link>
-          </div></div>
+          </div>
         </footer>
       </main>
     </div>
