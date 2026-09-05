@@ -59,7 +59,8 @@ import assert from 'node:assert/strict';
         }
         const d = await b.newPage({ viewport: { width: 1440, height: 1000 } });
         d.on('pageerror', e => errors.push(e.message));
-        await d.goto(`${process.env.BOOK_PREVIEW_URL || 'http://localhost:3001'}/#book`, { waitUntil: 'networkidle' });
+        await d.addInitScript(() => localStorage.setItem('amypretzel:book-seen', '1'));
+        await d.goto(`${process.env.BOOK_PREVIEW_URL || 'http://localhost:3001'}/`, { waitUntil: 'networkidle' });
         await d.locator('.book-overlay[data-view="table"][data-ready="true"]').waitFor();
         await d.waitForTimeout(1500);
         await d.screenshot({ path: join(artifacts, 'desktop-table.png') });
@@ -67,8 +68,14 @@ import assert from 'node:assert/strict';
         await d.getByRole('button', { name: 'Next page', exact: true }).click();
         await d.waitForTimeout(1500);
         assert.equal(await d.locator('.storybook-pagination span').innerText(), '01 — 02');
-        passed.push('desktop table preserved; word pagination');
+        passed.push('desktop opens with book even for returning visitors; word pagination');
         await d.keyboard.press('Escape');
+        await d.reload({ waitUntil: 'networkidle' });
+        await d.locator('.book-overlay').waitFor();
+        await d.keyboard.press('Escape');
+        await d.goto(`${process.env.BOOK_PREVIEW_URL || 'http://localhost:3001'}/#software`, { waitUntil: 'networkidle' });
+        assert.equal(await d.locator('.book-overlay').count(), 0);
+        passed.push('desktop reload opens book; section deep links stay on site');
         for (const route of ['/software', '/portfolio']) {
             await d.goto(`${process.env.BOOK_PREVIEW_URL || 'http://localhost:3001'}${route}`, { waitUntil: 'networkidle' });
             assert.doesNotMatch(await d.locator('body').innerText(), /[\u2190-\u21ff\u2794]/);

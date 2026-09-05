@@ -12,7 +12,9 @@ Table props respond to direct taps and drags. The cup and saucer remain separate
 
 Run `node scripts/verify-table-interactions.mjs` against the production server on port 3001 to check desktop drags, mobile taps, individual flower state, cancellation, reset, page turning, reduced motion, browser errors, and zero idle draw calls. Screenshots go to the system temporary directory (`BOOK_QA_DIR` overrides it). Inspect the open-book and phone screenshots as well as the assertions: a prop's final position can clip outside the camera even when its interaction passes.
 
-On phones (700px and below), opening the book loads the interactive 3D table directly. Avoid preloading WebGL on phone link focus or pointer entry. Phone rendering uses DPR 1, 384×512 page textures, 512px shadows, a 64px environment, and simple transparent glass. Desktop quality stays at its existing settings.
+Phones (700px and below) start on the normal website; desktop homepage visits start with the book, including return visits. Explicit section links keep their destination, and the Book link or `/#book` opens the book on either device.
+
+On phones, opening the book loads the interactive 3D table directly. Avoid preloading WebGL on phone link focus or pointer entry. Phone rendering uses DPR 1, 384×512 page textures, 512px shadows, a 64px environment, and simple transparent glass. Desktop quality stays at its existing settings.
 
 The main site uses system fonts. Keep the fishing page's Silkscreen font scoped to its own layout; the old root font declarations caused a throttled mobile visit to request about 1.27 MB of unused fonts. Use word labels for navigation, with no arrow glyphs.
 

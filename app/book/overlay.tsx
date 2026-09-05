@@ -7,26 +7,7 @@ import BookPoster from "./poster";
 
 const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Opening the book…</p> });
 
-const SEEN_KEY = "amypretzel:book-seen";
 export const OPEN_BOOK_EVENT = "amypretzel:open-book";
-
-// localStorage throws in some privacy modes; a visitor with blocked
-// storage should just see the book each visit, never a crash
-function readSeen() {
-  try {
-    return window.localStorage.getItem(SEEN_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function writeSeen() {
-  try {
-    window.localStorage.setItem(SEEN_KEY, "1");
-  } catch {
-    // ignore
-  }
-}
 
 export default function BookOverlay() {
   const [open, setOpen] = useState(false);
@@ -38,7 +19,7 @@ export default function BookOverlay() {
     const desktop = window.matchMedia("(min-width: 701px)").matches;
     const hash = window.location.hash;
     // don't hijack deep links to other anchors (/#software etc.)
-    const autoOpen = desktop && !readSeen() && (hash === "" || hash === "#book");
+    const autoOpen = desktop && hash === "";
     if (hash === "#book" || autoOpen) {
       // the open decision must run after hydration; the server renders null
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -58,7 +39,6 @@ export default function BookOverlay() {
   }, []);
 
   const close = useCallback(() => {
-    writeSeen();
     if (window.location.hash === "#book") {
       history.replaceState(
         null,
