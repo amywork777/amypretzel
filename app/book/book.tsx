@@ -5,7 +5,6 @@ import {
   OrbitControls,
   PerspectiveCamera,
   RoundedBox,
-  SoftShadows,
   useCursor,
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -666,7 +665,6 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
-      <SoftShadows size={18} samples={12} />
       <color attach="background" args={["#ded8cc"]} />
       <ambientLight intensity={0.65} />
       <hemisphereLight args={["#fff6e3", "#9b8b73", 0.8]} />
