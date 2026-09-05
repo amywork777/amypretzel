@@ -4,6 +4,7 @@ import {
   ContactShadows,
   OrbitControls,
   PerspectiveCamera,
+  RoundedBox,
   useCursor,
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -17,6 +18,7 @@ import {
   Color,
   Float32BufferAttribute,
   MathUtils,
+  RepeatWrapping,
   MeshStandardMaterial,
   Skeleton,
   SkinnedMesh,
@@ -49,7 +51,8 @@ const TEXTURE_WIDTH = 900;
 const TEXTURE_HEIGHT = 1200;
 const PAGE_WIDTH = 1.34;
 const PAGE_HEIGHT = 1.9;
-const PAGE_DEPTH = 0.022; // slight chunk per sheet; thickness comes from the fan
+const PAGE_DEPTH = 0.009;
+const COVER_DEPTH = 0.027;
 const PAGE_SEGMENTS = 30;
 
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS;
@@ -58,9 +61,7 @@ const reducedMotion = typeof window === "undefined" ? null : window.matchMedia("
 // page-turn animation feel (after Wawa Sensei's book-slider technique)
 const easingFactor = 0.5;
 const easingFactorFold = 0.3;
-const insideCurveStrength = 0.11;
-const outsideCurveStrength = 0.035;
-const turningCurveStrength = 0.09;
+
 
 const pageGeometry = new BoxGeometry(
   PAGE_WIDTH,
@@ -118,7 +119,9 @@ function seededJitter(seed: number) {
 }
 
 function printFont(size: number, family = "--font-body") {
-  return `400 ${size}px ${cssFontFamily(family, "Georgia, serif")}`;
+  return family === "--font-display"
+    ? `400 ${size}px Georgia, serif`
+    : `400 ${size}px Helvetica, Arial, sans-serif`;
 }
 
 function drawPaper(ctx: CanvasRenderingContext2D) {
@@ -299,8 +302,8 @@ function usePageTexture(content: TexturePage) {
 }
 
 function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontCover: boolean, backCover: boolean) {
-  const white = new Color("#fffdf7");
-  const pageEdge = new Color("#d9cfbd");
+  const white = new Color(frontCover || backCover ? "#493333" : "#e8e0cd");
+  const pageEdge = white;
   const hoverEmissive = new Color("#c98a5a");
 
   return [
@@ -338,20 +341,21 @@ type PageDrag = {
 function AnimatedPage({
   sheet,
   number,
-  page,
   opened,
   bookClosed,
   onTurnTo,
   onDraggingChange,
+  stackHeight,
 }: {
   sheet: BookSheet;
   number: number;
-  page: number;
   opened: boolean;
   bookClosed: boolean;
+  stackHeight: number;
   onTurnTo: (page: number) => void;
   onDraggingChange: (dragging: boolean) => void;
 }) {
+  const isCover = sheet.front.kind === "cover" || sheet.back.kind === "back-cover";
   const frontTexture = usePageTexture(sheet.front);
   const backTexture = usePageTexture(sheet.back);
   const groupRef = useRef<Group>(null);
@@ -374,18 +378,21 @@ function AnimatedPage({
     }
     const skeleton = new Skeleton(bones);
     const materials = createPageMaterials(frontTexture, backTexture, sheet.front.kind === "cover", sheet.back.kind === "back-cover");
-    const mesh = new SkinnedMesh(pageGeometry, materials);
+    const geometry = isCover ? pageGeometry.clone() : pageGeometry;
+    if (isCover) geometry.scale(1.018, 1.028, COVER_DEPTH / PAGE_DEPTH);
+    const mesh = new SkinnedMesh(geometry, materials);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
     mesh.add(skeleton.bones[0]);
     mesh.bind(skeleton);
     return mesh;
-  }, [frontTexture, backTexture, sheet]);
+  }, [frontTexture, backTexture, sheet, isCover]);
 
   useEffect(() => () => {
     (manualSkinnedMesh.material as MeshStandardMaterial[]).forEach(material => material.dispose());
     manualSkinnedMesh.skeleton.dispose();
+    if (manualSkinnedMesh.geometry !== pageGeometry) manualSkinnedMesh.geometry.dispose();
   }, [manualSkinnedMesh]);
 
   useFrame((_, delta) => {
@@ -406,66 +413,29 @@ function AnimatedPage({
     let turningTime = Math.min(420, Date.now() - turnedAt.current) / 420;
     turningTime = Math.sin(turningTime * Math.PI);
 
-    let targetRotation = opened ? -Math.PI / 2 : Math.PI / 2;
-    let turning = turningTime;
-
+    // The hinge rotates above the table; the leaves settle in two physical stacks.
+    let targetRotation = opened ? -Math.PI : 0;
     if (drag.current) {
-      // page follows the pointer between its resting pose and the flipped pose
-      const from = opened ? -Math.PI / 2 : Math.PI / 2;
-      const progress = drag.current.progress;
-      targetRotation = from - Math.sign(from) * Math.PI * progress;
-      turning = Math.sin(progress * Math.PI);
+      targetRotation += (opened ? 1 : -1) * Math.PI * drag.current.progress;
     }
-    if (!bookClosed) {
-      targetRotation += MathUtils.degToRad(number * 1.15);
-    }
+    const arch = isCover || bookClosed ? 0 : 0.025 + 0.11 * turningTime;
+    const bendSign = opened ? 1 : -1;
+    const tangent = (segment: number) => bendSign * Math.atan(
+      (arch * Math.PI / PAGE_WIDTH) * Math.cos(Math.PI * segment / PAGE_SEGMENTS)
+    );
+    if (reducedMotion?.matches) group.position.z = stackHeight;
+    else easing.damp(group.position, "z", stackHeight, 0.3, delta);
 
-    const bones = mesh.skeleton.bones;
-    for (let i = 0; i < bones.length; i++) {
-      const target = i === 0 ? group : bones[i];
-
-      const insideCurveIntensity = i < 8 ? Math.sin(i * 0.2 + 0.25) : 0;
-      const outsideCurveIntensity = i >= 8 ? Math.cos(i * 0.3 + 0.09) : 0;
-      const turningIntensity =
-        Math.sin(i * Math.PI * (1 / bones.length)) * turning;
-      let rotationAngle =
-        insideCurveStrength * insideCurveIntensity * targetRotation -
-        outsideCurveStrength * outsideCurveIntensity * targetRotation +
-        turningCurveStrength * turningIntensity * targetRotation;
-      let foldRotationAngle = MathUtils.degToRad(Math.sign(targetRotation) * 2);
-      if (bookClosed || sheet.front.kind === "cover" || sheet.back.kind === "back-cover") {
-        if (i === 0) {
-          rotationAngle = targetRotation;
-          foldRotationAngle = 0;
-        } else {
-          rotationAngle = 0;
-          foldRotationAngle = 0;
-        }
-      }
+    for (let i = 0; i < mesh.skeleton.bones.length; i++) {
+      const target = i === 0 ? group : mesh.skeleton.bones[i];
+      const rotation = i === 0 ? targetRotation + tangent(0) : tangent(i) - tangent(i - 1);
       if (reducedMotion?.matches) {
-        target.rotation.y = rotationAngle;
+        target.rotation.y = rotation;
         target.rotation.x = 0;
-        continue;
+      } else {
+        easing.damp(target.rotation, "y", rotation, drag.current ? 0.12 : easingFactor, delta);
+        easing.dampAngle(target.rotation, "x", 0, easingFactorFold, delta);
       }
-      easing.dampAngle(
-        target.rotation,
-        "y",
-        rotationAngle,
-        drag.current ? 0.14 : easingFactor,
-        delta
-      );
-
-      const foldIntensity =
-        i > 8
-          ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turning
-          : 0;
-      easing.dampAngle(
-        target.rotation,
-        "x",
-        foldRotationAngle * foldIntensity,
-        easingFactorFold,
-        delta
-      );
     }
   });
 
@@ -523,7 +493,7 @@ function AnimatedPage({
       <primitive
         object={manualSkinnedMesh}
         ref={skinnedMeshRef}
-        position-z={-number * PAGE_DEPTH + page * PAGE_DEPTH}
+
       />
     </group>
   );
@@ -540,8 +510,6 @@ function BookStack({
   onPageChange: (page: number) => void;
   onDraggingChange: (dragging: boolean) => void;
 }) {
-  const { size } = useThree();
-  const mobile = size.width < 620;
   const [delayedPage, setDelayedPage] = useState(page);
 
   useEffect(() => {
@@ -563,7 +531,8 @@ function BookStack({
   }, [page]);
 
   const groupRef = useRef<Group>(null);
-  const scale = mobile ? 0.92 : 1.08;
+  const scale = 1;
+  const thicknesses = sheets.map(sheet => sheet.front.kind === "cover" || sheet.back.kind === "back-cover" ? COVER_DEPTH : PAGE_DEPTH);
 
   useFrame((_, delta) => {
     const group = groupRef.current;
@@ -580,10 +549,7 @@ function BookStack({
   return (
     <group
       ref={groupRef}
-      rotation-x={-Math.PI / 9}
-      rotation-z={-0.055}
-      rotation-y={-Math.PI / 2 - 0.2}
-      position-y={0.05}
+
       scale={scale}
     >
       {sheets.map((sheet, index) => (
@@ -591,7 +557,9 @@ function BookStack({
           key={index}
           sheet={sheet}
           number={index}
-          page={delayedPage}
+          stackHeight={thicknesses[index] / 2 + (delayedPage > index
+            ? thicknesses.slice(0, index).reduce((sum, depth) => sum + depth, 0)
+            : thicknesses.slice(index + 1).reduce((sum, depth) => sum + depth, 0))}
           opened={delayedPage > index}
           bookClosed={delayedPage === 0 || delayedPage === sheets.length}
           onTurnTo={(nextPage) => {
@@ -609,15 +577,38 @@ function BookStack({
 
 function ResponsiveCamera() {
   const { size } = useThree();
-  const mobile = size.width < 620;
+  const aspect = size.width / size.height;
+  // Fit an open spread with a little table around it, including portrait phones.
+  const distance = Math.max(4.9, 4.8 / aspect);
+  return <PerspectiveCamera makeDefault position={[distance * 0.2, distance * 0.82, distance * 0.55]} fov={42} />;
+}
 
-  return (
-    <PerspectiveCamera
-      makeDefault
-      position={[0, 0.12, mobile ? Math.max(5.5, 4.9 / (size.width / size.height)) : 4.55]}
-      fov={mobile ? 36 : 34}
-    />
-  );
+function Tabletop() {
+  const grain = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1024; canvas.height = 1024;
+    const ctx = canvas.getContext("2d")!;
+    ctx.fillStyle = "#c9bda6";
+    ctx.fillRect(0, 0, 1024, 1024);
+    for (let i = 0; i < 3000; i++) {
+      const y = seededJitter(i) * 1024;
+      ctx.strokeStyle = `rgba(97,77,48,${0.015 + seededJitter(i + 9) * 0.04})`;
+      ctx.lineWidth = 0.5 + seededJitter(i + 3);
+      ctx.beginPath(); ctx.moveTo(0, y);
+      ctx.bezierCurveTo(300, y + Math.sin(i) * 10, 750, y - Math.cos(i) * 8, 1024, y);
+      ctx.stroke();
+    }
+    const texture = new CanvasTexture(canvas);
+    texture.colorSpace = SRGBColorSpace;
+    texture.wrapS = texture.wrapT = RepeatWrapping;
+    texture.repeat.set(3, 3);
+    texture.anisotropy = 8;
+    return texture;
+  }, []);
+  useEffect(() => () => grain.dispose(), [grain]);
+  return <RoundedBox args={[18, 0.18, 14]} radius={0.035} smoothness={3} position={[0, -0.09, 0]} receiveShadow>
+    <meshStandardMaterial map={grain} roughness={0.88} bumpMap={grain} bumpScale={0.009} />
+  </RoundedBox>;
 }
 
 function CanvasSizer() {
@@ -673,42 +664,41 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
-      <ambientLight intensity={1.6} />
+      <color attach="background" args={["#ded8cc"]} />
+      <ambientLight intensity={0.65} />
+      <hemisphereLight args={["#fff6e3", "#9b8b73", 0.8]} />
       <directionalLight
-        position={[2, 5, 2]}
-        intensity={2.3}
+        position={[-3, 6, -2]}
+        color="#fff2d9"
+        intensity={3.2}
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={4096}
+        shadow-mapSize-height={4096}
+        shadow-camera-left={-4}
+        shadow-camera-right={4}
+        shadow-camera-top={4}
+        shadow-camera-bottom={-4}
+        shadow-normalBias={0.008}
         shadow-bias={-0.0001}
       />
-      <directionalLight position={[-3, 2, -4]} intensity={0.3} />
-      <BookStack
-        sheets={sheets}
-        page={page}
-        onPageChange={onPageChange}
-        onDraggingChange={handleDraggingChange}
-      />
-      <ContactShadows
-        position={[0, -1.25, 0]}
-        scale={7}
-        blur={2.6}
-        far={2.4}
-        opacity={0.24}
-        frames={Infinity}
-      />
+      <directionalLight position={[4, 3, 4]} intensity={0.5} color="#e8efff" />
+      <Tabletop />
+      <group position-y={0.003} rotation-x={-Math.PI / 2}>
+        <BookStack sheets={sheets} page={page} onPageChange={onPageChange} onDraggingChange={handleDraggingChange} />
+      </group>
+      <ContactShadows position={[0, 0.001, 0]} scale={7} blur={1.4} far={0.5} opacity={0.45} frames={Infinity} />
       <OrbitControls
         ref={controlsRef}
         enablePan={false}
         enableZoom={false}
         minDistance={2.4}
-        maxDistance={9}
-        minPolarAngle={1.05}
-        maxPolarAngle={1.9}
+        maxDistance={20}
+        minPolarAngle={0.25}
+        maxPolarAngle={0.95}
         rotateSpeed={0.7}
         enableDamping
         dampingFactor={0.08}
-        target={[0, 0.05, 0]}
+        target={[0, 0.04, 0]}
       />
     </>
   );
@@ -728,7 +718,7 @@ function BookCanvas({
       <Canvas
         className="book-three-canvas"
         shadows
-        camera={{ position: [0, 0.12, 4.55], fov: 34 }}
+        camera={{ position: [0.82, 3.36, 2.25], fov: 42 }}
         dpr={[1, 2]}
         gl={{ alpha: true, antialias: true }}
       >
@@ -782,7 +772,7 @@ export default function StoryBook({ onExit }: { onExit?: () => void }) {
 
   function setPage(nextPage: number) {
     if (atBackCover && nextPage > lastPage) {
-      // any click on the closed back cover leaves for the site
+      // The forward control leaves the book; previous still opens it again.
       onExit?.();
       return;
     }

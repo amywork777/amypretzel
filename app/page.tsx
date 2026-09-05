@@ -9,11 +9,6 @@ import { softwareSections } from "./software/projects";
 
 const selectedSlugs = ["taya-pendant", "harp-instrument", "injection-molded-fabric", "pretzels-favorite-food"];
 const selectedObjects = selectedSlugs.flatMap(slug => projects.find(p => p.slug === slug) ?? []);
-const imageOverrides: Record<string, string> = {
-  "taya-pendant": "/portfolio/taya-pendant/hero.png",
-  "harp-instrument": "/portfolio/harp-instrument/in-hands.webp",
-};
-
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -57,11 +52,11 @@ export default function Home() {
       <main id="main-content" className="site-width">
         <section className="home-intro" aria-labelledby="intro-title">
           <div className="intro-title-row">
-            <h1 id="intro-title">Amy Zhou<span className="intro-period">.</span></h1>
+            <h1 id="intro-title">Amy Zhou</h1>
             <p className="intro-location">Designer & engineer<span className="location-divider"> · </span><br />San Francisco, CA</p>
           </div>
           <div className="intro-bottom">
-            <p className="intro-statement">I make hardware, software,<br className="desktop-break" /> and the in-between.</p>
+            <p className="intro-statement">I make hardware, software, and the in-between.</p>
             <div className="intro-aside">
               <p>Currently building AI tools for industrial designers at Vizcom. Previously Apple and Stanford.</p>
               <a href="#about" className="quiet-link">A little about me <span aria-hidden="true">↗</span></a>
@@ -76,13 +71,12 @@ export default function Home() {
           </header>
           <div className="selected-grid">
             {selectedObjects.map((p, i) => (
-              <Link key={p.slug} href={`/portfolio/${p.slug}`} className={`selected-project selected-project-${i + 1}`}>
-                <div className={`selected-image ${p.slug === "harp-instrument" ? "photograph" : "object-study"}`}>
-                  <Image src={imageOverrides[p.slug] ?? p.cover} alt={p.title} fill sizes="(max-width: 700px) 100vw, 55vw" priority={i === 0} />
+              <Link key={p.slug} href={`/portfolio/${p.slug}`} className="selected-project">
+                <div className="selected-image">
+                  <Image src={p.cover} alt={p.title} fill sizes="(max-width: 540px) 45vw, 400px" priority={i === 0} />
                 </div>
                 <div className="project-caption">
                   <div><h3>{p.title}</h3><p>{p.role}</p></div>
-                  <span className="project-arrow" aria-hidden="true">↗</span>
                 </div>
               </Link>
             ))}
@@ -119,7 +113,7 @@ export default function Home() {
           </div>
         </section>
         <footer className="home-footer">
-          <div className="footer-invitation"><p>Good things start with a conversation.</p><a href="mailto:amzyst@gmail.com">Say hello <span aria-hidden="true">↗</span></a></div>
+          <div className="footer-invitation"><a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a></div>
           <div className="footer-bottom"><span>Amy Zhou</span><div className="footer-links">
             <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
             <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer">GitHub</a>

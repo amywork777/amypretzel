@@ -1,19 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Manrope, JetBrains_Mono, Gaegu, Silkscreen } from "next/font/google";
+import { JetBrains_Mono, Gaegu, Silkscreen } from "next/font/google";
 import "./globals.css";
 import { ThemeFlashScript } from "./theme-toggle";
-
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-body",
-});
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
@@ -123,7 +111,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${manrope.variable} ${mono.variable} ${gaegu.variable} ${silkscreen.variable}`}
+      className={`${mono.variable} ${gaegu.variable} ${silkscreen.variable}`}
       suppressHydrationWarning
     >
       <head>
