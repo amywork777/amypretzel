@@ -29,6 +29,8 @@ import { bookChapters, type BookChapter } from "./chapters";
 
 type StoryPage = {
   text: string;
+  title: string;
+  chapter: string;
   pageNumber: number;
 };
 
@@ -47,16 +49,17 @@ const TEXTURE_WIDTH = 900;
 const TEXTURE_HEIGHT = 1200;
 const PAGE_WIDTH = 1.34;
 const PAGE_HEIGHT = 1.9;
-const PAGE_DEPTH = 0.0055; // slight chunk per sheet; thickness comes from the fan
+const PAGE_DEPTH = 0.022; // slight chunk per sheet; thickness comes from the fan
 const PAGE_SEGMENTS = 30;
 
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS;
+const reducedMotion = typeof window === "undefined" ? null : window.matchMedia("(prefers-reduced-motion: reduce)");
 
 // page-turn animation feel (after Wawa Sensei's book-slider technique)
 const easingFactor = 0.5;
 const easingFactorFold = 0.3;
-const insideCurveStrength = 0.18;
-const outsideCurveStrength = 0.05;
+const insideCurveStrength = 0.11;
+const outsideCurveStrength = 0.035;
 const turningCurveStrength = 0.09;
 
 const pageGeometry = new BoxGeometry(
@@ -109,214 +112,114 @@ function cssFontFamily(varName: string, fallback: string) {
   return value || fallback;
 }
 
-function drawPaper(ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = "#fffef8";
-  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
-  ctx.fillStyle = "rgba(126, 72, 97, 0.18)";
-  ctx.fillRect(118, 0, 2, TEXTURE_HEIGHT);
-
-  ctx.fillStyle = "rgba(62, 50, 38, 0.06)";
-  for (let y = 150; y < TEXTURE_HEIGHT - 80; y += 58) {
-    ctx.fillRect(80, y, TEXTURE_WIDTH - 150, 2);
-  }
-
-  const edgeShade = ctx.createLinearGradient(0, 0, TEXTURE_WIDTH, 0);
-  edgeShade.addColorStop(0, "rgba(54, 42, 28, 0.08)");
-  edgeShade.addColorStop(0.16, "rgba(54, 42, 28, 0)");
-  edgeShade.addColorStop(0.84, "rgba(54, 42, 28, 0)");
-  edgeShade.addColorStop(1, "rgba(54, 42, 28, 0.08)");
-  ctx.fillStyle = edgeShade;
-  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-}
-
-function scriptFont(size: number, weight: 400 | 600 = 400) {
-  return `${weight} ${size}px ${cssFontFamily(
-    "--font-script",
-    "'Caveat', 'Comic Sans MS', cursive"
-  )}`;
-}
-
-// deterministic per-line wobble so redraws don't reshuffle the handwriting
 function seededJitter(seed: number) {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
 }
 
-// the same pixel pretzel the site nav uses, tinted cream for the cover
-const pretzelImage =
-  typeof window === "undefined"
-    ? null
-    : (() => {
-        const image = new window.Image();
-        image.src = "/pretzel.png";
-        return image;
-      })();
-
-function drawPretzel(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  size: number
-) {
-  if (
-    !pretzelImage ||
-    !pretzelImage.complete ||
-    pretzelImage.naturalWidth === 0
-  ) {
-    return;
-  }
-  const off = document.createElement("canvas");
-  off.width = pretzelImage.naturalWidth;
-  off.height = pretzelImage.naturalHeight;
-  const offCtx = off.getContext("2d");
-  if (!offCtx) return;
-  offCtx.drawImage(pretzelImage, 0, 0);
-  offCtx.globalCompositeOperation = "source-in";
-  offCtx.fillStyle = "#f7dfb8";
-  offCtx.fillRect(0, 0, off.width, off.height);
-
-  const height = size * (off.height / off.width);
-  ctx.imageSmoothingEnabled = false; // keep the pixel-art edges crisp
-  ctx.drawImage(off, cx - size / 2, cy - height / 2, size, height);
-  ctx.imageSmoothingEnabled = true;
+function printFont(size: number, family = "--font-body") {
+  return `400 ${size}px ${cssFontFamily(family, "Georgia, serif")}`;
 }
 
-function drawHeart(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  s: number,
-  color: string
-) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.moveTo(0, s * 0.35);
-  ctx.bezierCurveTo(-s, -s * 0.35, -s * 0.4, -s, 0, -s * 0.3);
-  ctx.bezierCurveTo(s * 0.4, -s, s, -s * 0.35, 0, s * 0.35);
-  ctx.fill();
-  ctx.restore();
+function drawPaper(ctx: CanvasRenderingContext2D) {
+  ctx.fillStyle = "#f5f1e7";
+  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+  for (let i = 0; i < 24000; i++) {
+    ctx.fillStyle = `rgba(85,70,45,${seededJitter(i + 2) * .035})`;
+    ctx.fillRect(seededJitter(i) * TEXTURE_WIDTH, seededJitter(i + 1) * TEXTURE_HEIGHT, 1, 1);
+  }
+  const gutter = ctx.createLinearGradient(0, 0, TEXTURE_WIDTH, 0);
+  gutter.addColorStop(0, "rgba(58,45,25,.16)");
+  gutter.addColorStop(.08, "rgba(58,45,25,.02)");
+  gutter.addColorStop(.85, "rgba(58,45,25,0)");
+  gutter.addColorStop(1, "rgba(58,45,25,.06)");
+  ctx.fillStyle = gutter;
+  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, back = false) {
-  ctx.fillStyle = back ? "#5d2136" : "#6b2438";
+  ctx.fillStyle = "#493333";
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
-  // soft vignette so the cover feels rounded, not flat
-  const glow = ctx.createRadialGradient(
-    TEXTURE_WIDTH / 2,
-    TEXTURE_HEIGHT * 0.42,
-    120,
-    TEXTURE_WIDTH / 2,
-    TEXTURE_HEIGHT * 0.5,
-    TEXTURE_HEIGHT * 0.75
-  );
-  glow.addColorStop(0, "rgba(255, 226, 200, 0.14)");
-  glow.addColorStop(1, "rgba(30, 8, 16, 0.28)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
-  // hand-stitched border: little dashes, slightly wobbly
-  ctx.strokeStyle = "rgba(247, 223, 184, 0.75)";
-  ctx.lineWidth = 5;
-  ctx.lineCap = "round";
-  ctx.setLineDash([26, 20]);
-  ctx.save();
-  ctx.translate(TEXTURE_WIDTH / 2, TEXTURE_HEIGHT / 2);
-  ctx.rotate(0.004);
-  ctx.strokeRect(
-    -TEXTURE_WIDTH / 2 + 58,
-    -TEXTURE_HEIGHT / 2 + 58,
-    TEXTURE_WIDTH - 116,
-    TEXTURE_HEIGHT - 116
-  );
-  ctx.restore();
-  ctx.setLineDash([]);
-
-  ctx.textAlign = "center";
-  if (back) {
-    drawHeart(ctx, TEXTURE_WIDTH / 2, 430, 60, "#f7dfb8");
-    ctx.fillStyle = "#fff6e6";
-    ctx.font = scriptFont(96, 600);
-    ctx.fillText("the end", TEXTURE_WIDTH / 2, 620);
-    ctx.font = scriptFont(46);
-    ctx.fillStyle = "rgba(255, 246, 230, 0.78)";
-    ctx.fillText("amypretzel.com", TEXTURE_WIDTH / 2, 720);
-  } else {
-    ctx.fillStyle = "#fff6e6";
-    ctx.save();
-    ctx.translate(TEXTURE_WIDTH / 2, 340);
-    ctx.rotate(-0.03);
-    ctx.font = scriptFont(110, 600);
-    ctx.fillText("amy's little book", 0, 0);
-    ctx.restore();
-
-    ctx.font = scriptFont(48);
-    ctx.fillStyle = "rgba(255, 246, 230, 0.8)";
-    ctx.fillText("a short story about making things", TEXTURE_WIDTH / 2, 440);
-
-    drawPretzel(ctx, TEXTURE_WIDTH / 2, 740, 320);
-
-    drawHeart(ctx, 190, 560, 26, "rgba(247, 223, 184, 0.85)");
-    drawHeart(ctx, 716, 590, 20, "rgba(247, 223, 184, 0.7)");
-    drawHeart(ctx, 244, 936, 18, "rgba(247, 223, 184, 0.65)");
-    drawHeart(ctx, 680, 960, 26, "rgba(247, 223, 184, 0.85)");
-
-    ctx.font = scriptFont(44);
-    ctx.fillStyle = "rgba(255, 246, 230, 0.7)";
-    ctx.fillText("(flip me open)", TEXTURE_WIDTH / 2, 1050);
+  // Fine crossing threads, also used by the material as shallow relief.
+  for (let x = 0; x < TEXTURE_WIDTH; x += 3) {
+    ctx.fillStyle = `rgba(230,205,175,${.025 + seededJitter(x) * .05})`;
+    ctx.fillRect(x, 0, 1, TEXTURE_HEIGHT);
   }
+  for (let y = 0; y < TEXTURE_HEIGHT; y += 3) {
+    ctx.fillStyle = `rgba(10,5,3,${.06 + seededJitter(y + 1) * .08})`;
+    ctx.fillRect(0, y, TEXTURE_WIDTH, 1);
+  }
+  const hinge = ctx.createLinearGradient(0, 0, 95, 0);
+  hinge.addColorStop(0, "rgba(0,0,0,.3)");
+  hinge.addColorStop(.45, "rgba(0,0,0,.05)");
+  hinge.addColorStop(.6, "rgba(0,0,0,.24)");
+  hinge.addColorStop(.7, "rgba(255,240,210,.08)");
+  hinge.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = hinge;
+  ctx.fillRect(0, 0, 95, TEXTURE_HEIGHT);
   ctx.textAlign = "left";
+  ctx.fillStyle = "#d8c8a6";
+  if (back) {
+    ctx.font = printFont(32, "--font-display");
+    ctx.fillText("To be continued.", 125, 910);
+    ctx.font = printFont(19);
+    ctx.fillText("amypretzel.com", 125, 1050);
+  } else {
+    ctx.font = printFont(24);
+    ctx.fillText("AMY ZHOU", 125, 160);
+    ctx.font = printFont(120, "--font-display");
+    ctx.fillText("A little", 120, 380);
+    ctx.fillText("book of", 120, 503);
+    ctx.fillText("making.", 120, 626);
+    ctx.fillStyle = "rgba(216,200,166,.75)";
+    ctx.font = printFont(23);
+    ctx.fillText("Hardware, software, and the in-between.", 125, 965);
+    ctx.fillRect(125, 1010, 45, 1);
+    ctx.font = printFont(18);
+    ctx.fillText("A PERSONAL HISTORY", 125, 1060);
+  }
 }
 
 function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
   drawPaper(ctx);
-
-  // just the prose, written on the ruled lines like a real diary entry —
-  // no borders, kickers, titles, or page furniture
-  const marginLeft = 150;
-  // right inset: the page curls toward the spine and eats the outer texture
-  const maxWidth = TEXTURE_WIDTH - marginLeft - 160;
-  const ruleHeight = 58; // matches drawPaper's rules (y = 150 + n * 58)
-
-  ctx.fillStyle = "#3f3a33";
-  ctx.font = scriptFont(52);
-
-  const words = page.text.split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
+  const margin = 116;
+  const maxWidth = TEXTURE_WIDTH - margin * 2;
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#807a6e";
+  ctx.font = printFont(18);
+  ctx.fillText(page.chapter.toUpperCase(), margin, 104);
+  ctx.fillStyle = "#d4ccbc";
+  ctx.fillRect(margin, 130, maxWidth, 1);
+  ctx.fillStyle = "#38352f";
+  ctx.font = printFont(70, "--font-display");
+  const titleWords = page.title.split(" ");
+  let titleLine = "";
+  let y = 280;
+  for (const word of titleWords) {
+    const test = titleLine ? `${titleLine} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && titleLine) {
+      ctx.fillText(titleLine, margin, y);
+      titleLine = word; y += 78;
+    } else titleLine = test;
+  }
+  ctx.fillText(titleLine, margin, y);
+  y += 98;
+  ctx.font = printFont(32);
+  const words = page.text.split(/\s+/);
   let line = "";
-  words.forEach((word) => {
+  for (const word of words) {
     const test = line ? `${line} ${word}` : word;
     if (ctx.measureText(test).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-      return;
-    }
-    line = test;
-  });
-  if (line) lines.push(line);
-
-  // vertically settle the entry in the upper-middle of the page, snapped
-  // to the rule grid so every baseline sits on a printed line
-  const blockHeight = lines.length * ruleHeight;
-  const idealTop = Math.max(266, (TEXTURE_HEIGHT - blockHeight) / 2 - 60);
-  let ruleY = 150 + Math.round((idealTop - 150) / ruleHeight) * ruleHeight;
-
-  lines.forEach((item, index) => {
-    const seed = page.pageNumber * 31 + index;
-    const dx = (seededJitter(seed) - 0.5) * 16;
-    const tilt = (seededJitter(seed + 57) - 0.5) * 0.014;
-    ctx.save();
-    ctx.translate(marginLeft + dx, ruleY - 12);
-    ctx.rotate(tilt);
-    ctx.globalAlpha = 0.84 + seededJitter(seed + 91) * 0.16;
-    ctx.fillText(item, 0, 0);
-    ctx.restore();
-    ruleY += ruleHeight;
-  });
-  ctx.globalAlpha = 1;
+      ctx.fillText(line, margin, y); line = word; y += 53;
+    } else line = test;
+  }
+  if (line) ctx.fillText(line, margin, y);
+  ctx.fillStyle = "#807a6e";
+  ctx.font = printFont(18);
+  ctx.fillText("AMY ZHOU", margin, 1090);
+  ctx.textAlign = "right";
+  ctx.fillText(String(page.pageNumber).padStart(2, "0"), TEXTURE_WIDTH - margin, 1090);
+  ctx.textAlign = "left";
 }
 
 function createPageCanvasTexture(content: TexturePage) {
@@ -342,20 +245,6 @@ function createPageCanvasTexture(content: TexturePage) {
     drawPaper(ctx);
   }
 
-  // the covers show the pixel pretzel; redraw once its PNG arrives
-  if (
-    (content.kind === "cover" || content.kind === "back-cover") &&
-    pretzelImage &&
-    !pretzelImage.complete
-  ) {
-    pretzelImage.addEventListener(
-      "load",
-      () => refreshPageTexture(texture, content),
-      { once: true }
-    );
-  }
-
-  texture.needsUpdate = true;
   return texture;
 }
 
@@ -382,12 +271,12 @@ function usePageTexture(content: TexturePage) {
   useEffect(() => {
     let cancelled = false;
     if ("fonts" in document) {
-      const script = cssFontFamily("--font-script", "'Caveat', 'Comic Sans MS', cursive");
+      const display = cssFontFamily("--font-display", "Georgia, serif");
+      const body = cssFontFamily("--font-body", "sans-serif");
       const fontLoads = [
         document.fonts.ready,
-        document.fonts.load(`400 52px ${script}`),
-        document.fonts.load(`600 52px ${script}`),
-        document.fonts.load(`600 110px ${script}`),
+        document.fonts.load(`400 120px ${display}`),
+        document.fonts.load(`400 32px ${body}`),
       ];
 
       void Promise.allSettled(fontLoads).then(() => {
@@ -409,7 +298,7 @@ function usePageTexture(content: TexturePage) {
   return texture;
 }
 
-function createPageMaterials(frontTexture: Texture, backTexture: Texture) {
+function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontCover: boolean, backCover: boolean) {
   const white = new Color("#fffdf7");
   const pageEdge = new Color("#d9cfbd");
   const hoverEmissive = new Color("#c98a5a");
@@ -422,14 +311,18 @@ function createPageMaterials(frontTexture: Texture, backTexture: Texture) {
     new MeshStandardMaterial({
       color: "#ffffff",
       map: frontTexture,
-      roughness: 0.92,
+      bumpMap: frontCover ? frontTexture : null,
+      bumpScale: frontCover ? 0.012 : 0,
+      roughness: 0.94,
       emissive: hoverEmissive,
       emissiveIntensity: 0,
     }),
     new MeshStandardMaterial({
       color: "#ffffff",
       map: backTexture,
-      roughness: 0.92,
+      bumpMap: backCover ? backTexture : null,
+      bumpScale: backCover ? 0.012 : 0,
+      roughness: 0.94,
       emissive: hoverEmissive,
       emissiveIntensity: 0,
     }),
@@ -480,7 +373,7 @@ function AnimatedPage({
       }
     }
     const skeleton = new Skeleton(bones);
-    const materials = createPageMaterials(frontTexture, backTexture);
+    const materials = createPageMaterials(frontTexture, backTexture, sheet.front.kind === "cover", sheet.back.kind === "back-cover");
     const mesh = new SkinnedMesh(pageGeometry, materials);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -488,7 +381,12 @@ function AnimatedPage({
     mesh.add(skeleton.bones[0]);
     mesh.bind(skeleton);
     return mesh;
-  }, [frontTexture, backTexture]);
+  }, [frontTexture, backTexture, sheet]);
+
+  useEffect(() => () => {
+    (manualSkinnedMesh.material as MeshStandardMaterial[]).forEach(material => material.dispose());
+    manualSkinnedMesh.skeleton.dispose();
+  }, [manualSkinnedMesh]);
 
   useFrame((_, delta) => {
     const mesh = skinnedMeshRef.current;
@@ -496,7 +394,7 @@ function AnimatedPage({
     if (!mesh || !group) return;
 
     const materials = mesh.material as MeshStandardMaterial[];
-    const targetEmissive = highlighted && !drag.current ? 0.16 : 0;
+    const targetEmissive = highlighted && !drag.current ? 0.035 : 0;
     materials[4].emissiveIntensity = materials[5].emissiveIntensity =
       MathUtils.lerp(materials[4].emissiveIntensity, targetEmissive, 0.1);
 
@@ -535,7 +433,7 @@ function AnimatedPage({
         outsideCurveStrength * outsideCurveIntensity * targetRotation +
         turningCurveStrength * turningIntensity * targetRotation;
       let foldRotationAngle = MathUtils.degToRad(Math.sign(targetRotation) * 2);
-      if (bookClosed) {
+      if (bookClosed || sheet.front.kind === "cover" || sheet.back.kind === "back-cover") {
         if (i === 0) {
           rotationAngle = targetRotation;
           foldRotationAngle = 0;
@@ -543,6 +441,11 @@ function AnimatedPage({
           rotationAngle = 0;
           foldRotationAngle = 0;
         }
+      }
+      if (reducedMotion?.matches) {
+        target.rotation.y = rotationAngle;
+        target.rotation.x = 0;
+        continue;
       }
       easing.dampAngle(
         target.rotation,
@@ -660,7 +563,7 @@ function BookStack({
   }, [page]);
 
   const groupRef = useRef<Group>(null);
-  const scale = mobile ? 0.86 : 1.08;
+  const scale = mobile ? 0.92 : 1.08;
 
   useFrame((_, delta) => {
     const group = groupRef.current;
@@ -670,15 +573,17 @@ function BookStack({
     const shift = (PAGE_WIDTH / 2) * scale;
     const targetX =
       delayedPage === 0 ? -shift : delayedPage === sheets.length ? shift : 0;
-    easing.damp(group.position, "x", targetX, 0.5, delta);
+    if (reducedMotion?.matches) group.position.x = targetX;
+    else easing.damp(group.position, "x", targetX, 0.5, delta);
   });
 
   return (
     <group
       ref={groupRef}
-      rotation-x={-Math.PI / 5.5}
-      rotation-y={-Math.PI / 2}
-      position-y={mobile ? 0.96 : 0.22}
+      rotation-x={-Math.PI / 9}
+      rotation-z={-0.055}
+      rotation-y={-Math.PI / 2 - 0.2}
+      position-y={0.05}
       scale={scale}
     >
       {sheets.map((sheet, index) => (
@@ -709,7 +614,7 @@ function ResponsiveCamera() {
   return (
     <PerspectiveCamera
       makeDefault
-      position={[0, mobile ? 0.24 : 0.12, mobile ? 8.5 : 4.55]}
+      position={[0, 0.12, mobile ? Math.max(5.5, 4.9 / (size.width / size.height)) : 4.55]}
       fov={mobile ? 36 : 34}
     />
   );
@@ -768,10 +673,10 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
-      <ambientLight intensity={0.75} />
+      <ambientLight intensity={1.6} />
       <directionalLight
         position={[2, 5, 2]}
-        intensity={1.15}
+        intensity={2.3}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
@@ -789,17 +694,17 @@ function BookScene({
         scale={7}
         blur={2.6}
         far={2.4}
-        opacity={0.38}
+        opacity={0.24}
         frames={Infinity}
       />
       <OrbitControls
         ref={controlsRef}
         enablePan={false}
-        enableZoom
+        enableZoom={false}
         minDistance={2.4}
         maxDistance={9}
-        minPolarAngle={0.35}
-        maxPolarAngle={Math.PI - 0.55}
+        minPolarAngle={1.05}
+        maxPolarAngle={1.9}
         rotateSpeed={0.7}
         enableDamping
         dampingFactor={0.08}
@@ -825,7 +730,7 @@ function BookCanvas({
         shadows
         camera={{ position: [0, 0.12, 4.55], fov: 34 }}
         dpr={[1, 2]}
-        gl={{ preserveDrawingBuffer: true, alpha: true, antialias: true }}
+        gl={{ alpha: true, antialias: true }}
       >
         <BookScene sheets={sheets} page={page} onPageChange={onPageChange} />
       </Canvas>
@@ -838,7 +743,7 @@ function makeBookModel(chapters: BookChapter[]) {
   const pages: StoryPage[] = chapters.flatMap((chapter) =>
     chapter.pages.map((page) => {
       pageNumber += 1;
-      return { text: page.text, pageNumber };
+      return { text: page.text, title: page.title, chapter: chapter.kicker, pageNumber };
     })
   );
 
@@ -876,7 +781,7 @@ export default function StoryBook({ onExit }: { onExit?: () => void }) {
   const atBackCover = page === lastPage;
 
   function setPage(nextPage: number) {
-    if (atBackCover) {
+    if (atBackCover && nextPage > lastPage) {
       // any click on the closed back cover leaves for the site
       onExit?.();
       return;
@@ -900,9 +805,20 @@ export default function StoryBook({ onExit }: { onExit?: () => void }) {
 
   return (
     <div className="storybook">
-      <div className="storybook-canvas">
+      <div className="storybook-canvas" aria-hidden="true">
         <BookCanvas sheets={sheets} page={page} onPageChange={setPage} />
       </div>
+      <div className="storybook-controls">
+        <div className="storybook-pagination">
+          <button type="button" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>←</button>
+          <span aria-live="polite">{page === 0 ? "A little book of making" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
+          <button type="button" aria-label={atBackCover ? "Enter site" : "Next page"} onClick={() => setPage(page + 1)}>→</button>
+        </div>
+        <p className="storybook-hint">Click a page to turn · Drag to look around · ← → to read</p>
+      </div>
+      <details className="book-reading"><summary>Read as text</summary>
+        {bookChapters.map(chapter => <section key={chapter.id}><h2>{chapter.title}</h2>{chapter.pages.map(p => <p key={p.title}>{p.text}</p>)}</section>)}
+      </details>
     </div>
   );
 }

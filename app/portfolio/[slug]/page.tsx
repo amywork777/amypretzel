@@ -85,7 +85,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       />
       <SiteNav active="portfolio" />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1 project-detail">
         {/* === HEADER === */}
         <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-8 sm:pt-16 pb-7 sm:pb-10">
           <Link href="/portfolio" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">

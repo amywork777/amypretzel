@@ -7,9 +7,12 @@ import { FishIcon } from "./fish-icon";
 import { projects } from "./portfolio/projects";
 import { softwareSections } from "./software/projects";
 
-const vizcomProjects =
-  softwareSections.find((s) => s.title === "Vizcom")?.projects ?? [];
-const featuredObjects = projects.slice(0, 6);
+const selectedSlugs = ["taya-pendant", "harp-instrument", "injection-molded-fabric", "pretzels-favorite-food"];
+const selectedObjects = selectedSlugs.flatMap(slug => projects.find(p => p.slug === slug) ?? []);
+const imageOverrides: Record<string, string> = {
+  "taya-pendant": "/portfolio/taya-pendant/hero.png",
+  "harp-instrument": "/portfolio/harp-instrument/in-hands.webp",
+};
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -45,203 +48,86 @@ const personJsonLd = {
   ],
 };
 
-export default async function Home() {
+export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-paper">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-      />
+    <div className="home-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <BookOverlay />
       <SiteNav />
-
-      <main className="flex-1">
-        {/* === INTRO (portrait + bio) === */}
-        <section className="max-w-6xl mx-auto px-5 sm:px-8 pt-10 sm:pt-24 pb-12 sm:pb-20">
-          <div className="grid grid-cols-12 gap-7 md:gap-12 items-start animate-fade-up">
-            <div className="col-span-12 md:col-span-4">
-              <div className="max-w-[260px] mx-auto md:max-w-none md:mx-0">
-                <Image
-                  src="/amy-portrait.jpg"
-                  alt="Amy Zhou"
-                  width={800}
-                  height={800}
-                  className="w-full aspect-square object-cover rounded-full"
-                  priority
-                />
-                <ul className="mt-5 sm:mt-7 space-y-2 text-[13px]">
-                {[
-                  { label: "Email", value: "amzyst@gmail.com", href: "mailto:amzyst@gmail.com" },
-                  { label: "Twitter", value: "@amypretzel", href: "https://x.com/amypretzel" },
-                  { label: "LinkedIn", value: "linkedin.com/in/amy7", href: "https://linkedin.com/in/amy7" },
-                  { label: "GitHub", value: "amywork777", href: "https://github.com/amywork777" },
-                ].map((c) => (
-                  <li key={c.label}>
-                    <a
-                      href={c.href}
-                      target={c.href.startsWith("http") ? "_blank" : undefined}
-                      rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="group flex items-baseline gap-3"
-                    >
-                      <span className="meta text-ink-faint shrink-0 w-16 group-hover:text-accent transition-colors">{c.label}</span>
-                      <span className="text-ink-soft truncate group-hover:text-accent transition-colors">
-                        {c.value}
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              </div>
-            </div>
-            <div className="col-span-12 md:col-span-8 space-y-4 text-[16px] sm:text-[17px] leading-[1.65] text-ink-soft">
-              <p>
-                I&apos;m Amy. I make hardware, software, and the in-between. Currently
-                at <strong className="text-ink font-semibold">Vizcom</strong>, building
-                AI tools for industrial designers.
-              </p>
-              <p>
-                Before that, I built <strong className="text-ink font-semibold">Taiyaki</strong>,
-                an AI-assisted concept-to-CAD system; <strong className="text-ink font-semibold">Taya</strong>,
-                a wearable AI journal designed as jewelry; a custom AI jewelry pipeline
-                that turned sketches into physical pieces; and{" "}
-                <strong className="text-ink font-semibold">Mobius</strong>, a company
-                focused on bringing more transparency and efficiency to materials trading
-                and recycling.
-              </p>
-              <p>
-                I studied product design and mechanical engineering at{" "}
-                <strong className="text-ink font-semibold">Stanford</strong>, with a
-                minor in music. I also worked at{" "}
-                <strong className="text-ink font-semibold">Apple</strong> as a product
-                design engineer, focusing on hardware that was useful, durable, and
-                better for the environment.
-              </p>
-              <p>
-                I live in San Francisco and spend my time learning, building, and
-                exploring new ideas. I care about thoughtful design, clear engineering,
-                and making things that feel personal and meaningful.
-              </p>
-              <p>
-                I always enjoy meeting new people and having good conversations, so feel
-                free to reach out.
-              </p>
+      <main id="main-content" className="site-width">
+        <section className="home-intro" aria-labelledby="intro-title">
+          <div className="intro-title-row">
+            <h1 id="intro-title">Amy Zhou<span className="intro-period">.</span></h1>
+            <p className="intro-location">Designer & engineer<span className="location-divider"> · </span><br />San Francisco, CA</p>
+          </div>
+          <div className="intro-bottom">
+            <p className="intro-statement">I make hardware, software,<br className="desktop-break" /> and the in-between.</p>
+            <div className="intro-aside">
+              <p>Currently building AI tools for industrial designers at Vizcom. Previously Apple and Stanford.</p>
+              <a href="#about" className="quiet-link">A little about me <span aria-hidden="true">↗</span></a>
             </div>
           </div>
         </section>
 
-        <div className="rule" />
-
-        {/* === SOFTWARE === */}
-        <section id="software" className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20 scroll-mt-16">
-          <header className="mb-8 sm:mb-12">
-            <h2 className="display text-[32px] sm:text-[44px] leading-none">Software</h2>
+        <section id="objects" className="home-section" aria-labelledby="objects-title">
+          <header className="section-heading">
+            <h2 id="objects-title">Selected objects</h2>
+            <Link href="/portfolio" className="quiet-link">All objects <span aria-hidden="true">↗</span></Link>
           </header>
-
-          <p className="meta mb-3">At Vizcom</p>
-          <div className="border-t border-rule mb-10">
-            {vizcomProjects.map((p) => (
-              <Link
-                key={p.slug}
-                href={`/software/${p.slug}`}
-                className="group grid grid-cols-1 sm:grid-cols-[minmax(200px,260px)_1fr_auto] items-baseline gap-1 sm:gap-6 border-b border-rule py-4"
-              >
-                <span className="font-display italic text-[22px] sm:text-[26px] leading-[1.05] text-ink group-hover:text-accent transition-colors">
-                  {p.title}
-                </span>
-                <span className="text-[14px] sm:text-[15px] leading-[1.5] text-ink-soft">
-                  {p.summary}
-                </span>
-                <span className="hidden sm:block meta text-ink-faint self-center group-hover:text-accent transition-colors">
-                  {p.meta}
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          <p className="max-w-2xl text-[16px] sm:text-[17px] leading-[1.75] text-ink-soft">
-            Off hours I build my own tools.{" "}
-            <Link href="/software/tech-pack" className="link">Tech Pack</Link> writes
-            factory specs from a render,{" "}
-            <Link href="/software/kerf" className="link">Kerf</Link> is a solid-modeling
-            kernel in Rust, and{" "}
-            <Link href="/software/cad-steps" className="link">CAD-Steps</Link> is a
-            dataset of how geometry actually gets built. Smaller things:{" "}
-            <Link href="/software/sf-rats" className="link">SF Rats</Link> maps free
-            events around the Bay,{" "}
-            <Link href="/software/cute-ghostty" className="link">Cute Ghostty</Link>{" "}
-            makes terminals pastel, and{" "}
-            <Link href="/software/screenie" className="link">Screenie</Link> records
-            your screen and edits itself.
-          </p>
-        </section>
-
-        <div className="rule" />
-
-        {/* === OBJECTS === */}
-        <section id="objects" className="max-w-6xl mx-auto px-5 sm:px-8 py-12 sm:py-20 scroll-mt-16">
-          <header className="flex items-baseline justify-between mb-8 sm:mb-12 gap-4 flex-wrap">
-            <h2 className="display text-[32px] sm:text-[44px] leading-none">Objects</h2>
-            <Link href="/portfolio" className="link meta">
-              All objects
-            </Link>
-          </header>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
-            {featuredObjects.map((p, i) => (
-              <Link
-                key={p.slug}
-                href={`/portfolio/${p.slug}`}
-                className="tile group rounded-sm border border-rule animate-fade-up"
-                style={{ animationDelay: `${Math.min(i * 60, 360)}ms` }}
-              >
-                <div className="tile-img-wrap aspect-[4/3] overflow-hidden relative">
-                  <Image
-                    src={p.cover}
-                    alt={p.title}
-                    width={800}
-                    height={600}
-                    className={`absolute inset-0 w-full h-full object-contain p-5 transition-all duration-500 ease-out group-hover:scale-[1.03] ${
-                      p.coverHover ? "group-hover:opacity-0" : ""
-                    }`}
-                  />
-                  {p.coverHover && (
-                    <Image
-                      src={p.coverHover}
-                      alt=""
-                      aria-hidden="true"
-                      width={800}
-                      height={600}
-                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-[1.03]"
-                    />
-                  )}
+          <div className="selected-grid">
+            {selectedObjects.map((p, i) => (
+              <Link key={p.slug} href={`/portfolio/${p.slug}`} className={`selected-project selected-project-${i + 1}`}>
+                <div className={`selected-image ${p.slug === "harp-instrument" ? "photograph" : "object-study"}`}>
+                  <Image src={imageOverrides[p.slug] ?? p.cover} alt={p.title} fill sizes="(max-width: 700px) 100vw, 55vw" priority={i === 0} />
                 </div>
-                <div className="px-4 py-3.5 border-t border-rule bg-card">
-                  <h3 className="font-display italic text-[20px] leading-[1.2] text-ink truncate pb-0.5 group-hover:text-accent transition-colors">
-                    {p.title}
-                  </h3>
-                  <p className="meta mt-1 truncate">{p.role}</p>
+                <div className="project-caption">
+                  <div><h3>{p.title}</h3><p>{p.role}</p></div>
+                  <span className="project-arrow" aria-hidden="true">↗</span>
                 </div>
               </Link>
             ))}
           </div>
         </section>
+
+        <section id="software" className="home-section software-section" aria-labelledby="software-title">
+          <header className="section-heading"><h2 id="software-title">Software</h2><span className="section-note">Tools for making things.</span></header>
+          {softwareSections.filter(s => s.title !== "AI and CAD").map(section => (
+            <div className="software-group" key={section.title}>
+              <h3>{section.title === "Vizcom" ? "At Vizcom" : section.title}</h3>
+              <div>{section.projects.map(p => (
+                <Link key={p.slug} href={`/software/${p.slug}`} className="software-row">
+                  <h4>{p.title}</h4><p>{p.summary}</p><span aria-hidden="true">↗</span>
+                </Link>
+              ))}</div>
+            </div>
+          ))}
+          <div className="software-group"><h3>Independent</h3><div>
+            {softwareSections.find(s => s.title === "AI and CAD")?.projects.filter(p => !p.slug.startsWith("taiyaki")).map(p => (
+              <Link key={p.slug} href={`/software/${p.slug}`} className="software-row"><h4>{p.title}</h4><p>{p.summary}</p><span aria-hidden="true">↗</span></Link>
+            ))}
+          </div></div>
+        </section>
+
+        <section id="about" className="home-section about-section" aria-labelledby="about-title">
+          <div className="about-portrait"><Image src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="(max-width: 700px) 70vw, 30vw" /><span>Amy, usually making something.</span></div>
+          <div className="about-copy">
+            <h2 id="about-title">A little about me.</h2>
+            <p>I studied product design and mechanical engineering at Stanford, with a minor in music. I also worked at Apple as a product design engineer, focusing on hardware that was useful, durable, and better for the environment.</p>
+            <p>Since then: Taiyaki, an AI-assisted concept-to-CAD system; Taya, a wearable AI journal designed as jewelry; a custom AI jewelry pipeline; and Mobius, a company focused on materials trading and recycling.</p>
+            <p>I live in San Francisco and spend my time learning, building, and exploring new ideas. I care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
+            <ReadTheBookLink className="quiet-link about-book-link" />
+          </div>
+        </section>
+        <footer className="home-footer">
+          <div className="footer-invitation"><p>Good things start with a conversation.</p><a href="mailto:amzyst@gmail.com">Say hello <span aria-hidden="true">↗</span></a></div>
+          <div className="footer-bottom"><span>Amy Zhou</span><div className="footer-links">
+            <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://linkedin.com/in/amy7" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <Link href="/fishing" aria-label="Fishing" className="footer-fish"><FishIcon className="h-5 w-auto" /></Link>
+          </div></div>
+        </footer>
       </main>
-
-      <footer className="border-t border-rule mt-auto">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4 meta">
-          <div className="flex items-center gap-5">
-            <ReadTheBookLink className="text-ink-faint hover:text-accent transition-colors meta" />
-          </div>
-          <Link
-            href="/fishing"
-            className="text-ink-faint hover:text-accent transition-colors inline-flex items-center"
-            title="psst"
-            aria-label="Fishing"
-          >
-            <FishIcon className="h-6 w-auto" />
-          </Link>
-        </div>
-      </footer>
     </div>
   );
 }

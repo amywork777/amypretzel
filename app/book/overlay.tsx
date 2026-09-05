@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-const StoryBook = dynamic(() => import("./book"), { ssr: false });
+const StoryBook = dynamic(() => import("./book"), { ssr: false, loading: () => <p className="book-loading" role="status">Opening the book…</p> });
 
 const SEEN_KEY = "amypretzel:book-seen";
 export const OPEN_BOOK_EVENT = "amypretzel:open-book";
@@ -28,6 +28,7 @@ function writeSeen() {
 
 export default function BookOverlay() {
   const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 620px)").matches;
@@ -66,18 +67,34 @@ export default function BookOverlay() {
 
   useEffect(() => {
     if (!open) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    function trapFocus(event: KeyboardEvent) {
+      if (event.key === "Escape") { close(); return; }
+      if (event.key !== "Tab") return;
+      const elements = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], summary, [tabindex="0"]') ?? []).filter(element => element.getClientRects().length > 0);
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    }
+    document.addEventListener("keydown", trapFocus);
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", trapFocus);
+      previousFocus?.focus();
     };
-  }, [open]);
+  }, [open, close]);
 
   if (!open) return null;
 
   return (
-    <div className="book-overlay" role="dialog" aria-label="Amy's making diary">
+    <div ref={dialogRef} className="book-overlay" role="dialog" aria-modal="true" aria-label="Amy's making diary">
+      <div className="book-overlay-heading">Amy Zhou<span>A little book of making</span></div>
       <button type="button" className="book-overlay-enter" onClick={close}>
-        enter site →
+        Enter site ↗
       </button>
       <StoryBook onExit={close} />
     </div>
