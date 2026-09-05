@@ -312,11 +312,9 @@ button:disabled { cursor: default; }
 .selected-image img { object-fit: contain; padding: 7%; mix-blend-mode: multiply; transition: transform .2s; }
 .selected-project:hover .selected-image img { transform: scale(1.025); }
 .project-sections { display: grid; gap: 35px; padding-bottom: 35px; }
-.software-image img { mix-blend-mode: normal; padding: 5%; }
 .project-caption { padding-top: 10px; }
 .project-caption h3, .project-caption h2 { font-size: 13px; font-weight: 500; }
 .project-caption p { margin-top: 4px; font-size: 11px; line-height: 1.4; color: var(--color-ink-muted); }
-.software-section { margin-top: 35px; }
 .software-group { display: grid; grid-template-columns: 110px 1fr; gap: 18px; margin-bottom: 15px; }
 .software-group > h3 { font-size: 11px; color: var(--color-ink-muted); padding-top: 13px; }
 .software-row { display: grid; grid-template-columns: 140px 1fr 12px; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--color-rule); align-items: baseline; }

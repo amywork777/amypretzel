@@ -133,34 +133,6 @@ I built the pipeline end to end and produced real commissioned pieces with it. I
         ],
       },
       {
-        slug: "tech-pack",
-        title: "Tech Pack",
-        meta: "AI spec generation",
-        summary:
-          "A tool that turns a product render, sketch, CAD file, or short prompt into a complete manufacturing tech pack with BOM, dimensions, spec sheets, and factory notes.",
-        body: `Tech Pack turns a product render, sketch, CAD file, or short prompt into a complete manufacturing tech pack — bill of materials, dimensions, spec sheets, and factory notes.
-
-A tech pack is the document that makes a design real: it's what a factory actually reads. Producing one is tedious, expert work, so most early-stage designs never get one. Tech Pack automates the first draft, parsing CAD geometry and images into structured specs a manufacturer can respond to.
-
-I designed and built it solo — CAD parsing (including a browser-side OpenCascade worker), the vision pipeline, and the document generation.`,
-        tags: ["Manufacturing", "CAD parsing", "AI documents"],
-        links: [{ label: "Live app", href: "https://techpack-ten.vercel.app" }],
-      },
-      {
-        slug: "kerf",
-        title: "Kerf",
-        meta: "CAD kernel",
-        summary:
-          "A Rust B-rep solid modeling kernel with half-edge topology, boolean operations, STL/OBJ/STEP export, and a full readiness test matrix.",
-        body: `Kerf is a solid-modeling kernel written in Rust: B-rep geometry with half-edge topology, boolean operations, and STL, OBJ, and STEP export, backed by a full readiness test matrix.
-
-Geometry kernels are the deep infrastructure of CAD — the part everyone depends on and almost no one writes. Kerf started as a way to understand that layer well enough to build on it: what it takes to make booleans robust, how topology and geometry stay consistent, where kernels break.
-
-It's open source on GitHub, built and tested from scratch.`,
-        tags: ["Rust", "Geometry kernel", "Booleans"],
-        links: [{ label: "GitHub", href: "https://github.com/amywork777/kerf" }],
-      },
-      {
         slug: "cad-steps",
         title: "CAD-Steps",
         meta: "CAD dataset",
@@ -242,16 +214,3 @@ Website and source below.`,
 export const softwareProjects = softwareSections.flatMap((section) =>
   section.projects.map((project) => ({ ...project, section: section.title }))
 );
-
-// Genuine project screenshots, not invented product interfaces.
-const softwareCovers: Record<string, string> = {
-  "taiyaki-3d": "/portfolio/taiyaki-3d/image.png",
-  "tech-pack": "/software/tech-pack.webp",
-  "sf-rats": "/software/sf-rats.webp",
-  "cute-ghostty": "/software/cute-ghostty.webp",
-};
-
-export const selectedSoftware = Object.entries(softwareCovers).flatMap(([slug, cover]) => {
-  const project = softwareProjects.find(project => project.slug === slug);
-  return project ? [{ ...project, cover }] : [];
-});

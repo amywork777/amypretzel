@@ -5,7 +5,7 @@ import BookOverlay from "./book/overlay";
 import ReadTheBookLink from "./book/read-the-book-link";
 import { FishIcon } from "./fish-icon";
 import { projects } from "./portfolio/projects";
-import { selectedSoftware } from "./software/projects";
+import SoftwareProjectList from "./software/project-list";
 import ProjectGrid from "./project-grid";
 
 const selectedSlugs = ["taya-pendant", "harp-instrument", "injection-molded-fabric", "pretzels-favorite-food"];
@@ -88,7 +88,7 @@ export default function Home() {
               <h2 id="software-title">Software</h2>
               <Link href="/software" className="quiet-link">All software <span aria-hidden="true">↗</span></Link>
             </header>
-            <ProjectGrid kind="software" projects={selectedSoftware.map(p => ({ title: p.title, caption: p.meta, cover: p.cover, href: `/software/${p.slug}` }))} />
+            <SoftwareProjectList />
           </section>
         </div>
 
