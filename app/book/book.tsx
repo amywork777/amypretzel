@@ -346,6 +346,7 @@ function AnimatedPage({
   const drag = useRef<PageDrag | null>(null);
   const dragCleanup = useRef<(() => void) | null>(null);
   const [highlighted, setHighlighted] = useState(false);
+  const lift = useRef(0);
   useCursor(highlighted);
   useEffect(() => () => dragCleanup.current?.(), []);
 
@@ -401,12 +402,18 @@ function AnimatedPage({
     let turningTime = Math.min(420, Date.now() - turnedAt.current) / 420;
     turningTime = Math.sin(turningTime * Math.PI);
 
+    // A hovered leaf lifts its free edge a little, as an invitation to turn it.
+    const liftTarget = highlighted && !drag.current && !reducedMotion?.matches ? 1 : 0;
+    moving = easing.damp(lift, "current", liftTarget, 0.14, delta) || moving;
+    const hoverLift = lift.current * (isCover ? 0.045 : 0.085);
+
     // The hinge rotates above the table; the leaves settle in two physical stacks.
     let targetRotation = opened ? -Math.PI : 0;
     if (drag.current) {
       targetRotation += (opened ? 1 : -1) * Math.PI * drag.current.progress;
     }
-    const arch = isCover || bookClosed ? 0 : 0.025 + 0.11 * turningTime;
+    targetRotation += (opened ? 1 : -1) * hoverLift;
+    const arch = isCover || bookClosed ? 0 : 0.025 + 0.11 * turningTime + 0.03 * lift.current;
     const bendSign = opened ? 1 : -1;
     const tangent = (segment: number) => bendSign * Math.atan(
       (arch * Math.PI / PAGE_WIDTH) * Math.cos(Math.PI * segment / PAGE_SEGMENTS)
@@ -421,7 +428,9 @@ function AnimatedPage({
         target.rotation.y = rotation;
         target.rotation.x = 0;
       } else {
-        moving = easing.damp(target.rotation, "y", rotation, drag.current ? 0.12 : easingFactor, delta) || moving;
+        // The free edge trails the hinge, so a turning leaf drags through the air and settles tip-last.
+        const trail = drag.current ? 0.12 : easingFactor * (1 + 0.6 * i / PAGE_SEGMENTS);
+        moving = easing.damp(target.rotation, "y", rotation, trail, delta) || moving;
         moving = easing.dampAngle(target.rotation, "x", 0, easingFactorFold, delta) || moving;
       }
     }
