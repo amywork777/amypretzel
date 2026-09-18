@@ -4,7 +4,7 @@ import { ThemeFlashScript } from "./theme-toggle";
 
 const SITE_URL = "https://amypretzel.com";
 const SITE_DESC =
-  "Amy Zhou makes hardware, software, and the in-between. Building AI tools for industrial designers at Vizcom; previously Apple and Stanford.";
+  "Amy Zhou builds objects, and software to build objects. Building AI tools for industrial designers at Vizcom; previously Apple and Stanford.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "Amy Zhou",
     description: SITE_DESC,
-    images: [{ url: "/og-image.png?v=2", width: 2400, height: 1260, alt: "Amy Zhou" }],
+    images: [{ url: "/og-image.png?v=3", width: 2400, height: 1260, alt: "Amy Zhou" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     site: "@amypretzel",
     title: "Amy Zhou",
     description: SITE_DESC,
-    images: ["/og-image.png?v=2"],
+    images: ["/og-image.png?v=3"],
   },
   robots: {
     index: true,
