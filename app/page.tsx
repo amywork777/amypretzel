@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
 import BookOverlay from "./book/overlay";
-import ReadTheBookLink from "./book/read-the-book-link";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -51,16 +50,12 @@ export default function Home() {
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="(max-width: 540px) 100px, 145px" priority />
             <div className="personal-copy">
               <p className="intro-statement">I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.</p>
-              <p>Currently building AI tools for industrial designers at Vizcom.</p>
-              <p>I studied product design and mechanical engineering at Stanford, with a minor in music. I also worked at Apple as a product design engineer, focusing on hardware that was useful, durable, and better for the environment.</p>
-              <p>Since then: Taiyaki, an AI-assisted concept-to-CAD system; Taya, a wearable AI journal designed as jewelry; a custom AI jewelry pipeline; and Mobius, a company focused on materials trading and recycling.</p>
-              <p>I live in San Francisco and spend my time learning, building, and exploring new ideas. I care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
+              <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
               <nav className="personal-links" aria-label="Contact Amy">
                 <a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a>
                 <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
                 <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="https://linkedin.com/in/amy7" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                <ReadTheBookLink className="quiet-link" />
               </nav>
             </div>
           </div>
