@@ -3,7 +3,6 @@ import Link from "next/link";
 import SiteNav from "./site-nav";
 import BookOverlay from "./book/overlay";
 import ReadTheBookLink from "./book/read-the-book-link";
-import { FishIcon } from "./fish-icon";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -13,7 +12,7 @@ const personJsonLd = {
   url: "https://amypretzel.com",
   image: "https://amypretzel.com/amy-portrait.jpg",
   description:
-    "Designer and engineer in San Francisco working on AI tools for industrial designers at Vizcom. Previously Apple, Stanford.",
+    "Makes hardware, software, and the in-between. Building AI tools for industrial designers at Vizcom. Previously Apple, Stanford.",
   worksFor: { "@type": "Organization", name: "Vizcom", url: "https://www.vizcom.ai" },
   alumniOf: [
     { "@type": "CollegeOrUniversity", name: "Stanford University", url: "https://www.stanford.edu" },
@@ -47,10 +46,7 @@ export default function Home() {
       <SiteNav />
       <main id="main-content" className="site-width">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
-          <div className="intro-title-row">
-            <h1 id="intro-title">Amy Zhou</h1>
-            <p className="intro-location">Designer & engineer<br />San Francisco, CA</p>
-          </div>
+          <h1 id="intro-title">Amy Zhou</h1>
           <div className="personal-intro">
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="(max-width: 540px) 100px, 145px" priority />
             <div className="personal-copy">
@@ -59,6 +55,7 @@ export default function Home() {
               <p>I studied product design and mechanical engineering at Stanford, with a minor in music. I also worked at Apple as a product design engineer, focusing on hardware that was useful, durable, and better for the environment.</p>
               <p>Since then: Taiyaki, an AI-assisted concept-to-CAD system; Taya, a wearable AI journal designed as jewelry; a custom AI jewelry pipeline; and Mobius, a company focused on materials trading and recycling.</p>
               <p>I live in San Francisco and spend my time learning, building, and exploring new ideas. I care about thoughtful design, clear engineering, and making things that feel personal and meaningful.</p>
+              <p className="work-statement">I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.</p>
               <nav className="personal-links" aria-label="Contact Amy">
                 <a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a>
                 <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
@@ -69,18 +66,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <section id="work" className="home-work" aria-label="Work">
-          <p className="work-statement">
-            I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.
-          </p>
-        </section>
-
-        <footer className="home-footer">
-          <div className="footer-bottom"><span>Amy Zhou</span>
-            <Link href="/fishing" aria-label="Fishing" className="footer-fish"><FishIcon className="h-5 w-auto" /></Link>
-          </div>
-        </footer>
       </main>
     </div>
   );
