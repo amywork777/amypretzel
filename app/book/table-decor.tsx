@@ -311,6 +311,7 @@ function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow
 }
 
 useGLTF.preload("/book/coffee-cup.glb");
+useGLTF.preload("/book/dog.glb");
 
 function Pen() {
   return <group name="green-and-brass-pen" rotation={[Math.PI / 2, 0, -.28]}>
@@ -337,6 +338,50 @@ function Pen() {
   </group>;
 }
 
+function Dog({ narrow }: { narrow: boolean }) {
+  const root = useRef<Group>(null!);
+  const hop = useRef(0);
+  const { invalidate } = useThree();
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered, "pointer");
+  const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
+  const { scene: dogModel } = useGLTF("/book/dog.glb");
+  const { model, lift } = useMemo(() => {
+    const model = dogModel.clone(true);
+    model.traverse(object => {
+      if (!(object instanceof Mesh)) return;
+      object.castShadow = true;
+      object.receiveShadow = true;
+      const material = object.material as MeshPhysicalMaterial;
+      if ("roughness" in material) material.roughness = Math.max(material.roughness, .85);
+    });
+    const bounds = new Box3().setFromObject(model, true);
+    return { model, lift: -bounds.min.y };
+  }, [dogModel]);
+  useFrame((_, delta) => {
+    if (hop.current <= 0) return;
+    hop.current = Math.max(0, hop.current - delta);
+    const t = 1 - hop.current / .55;
+    const arc = Math.sin(Math.min(1, t * 1.6) * Math.PI);
+    root.current.position.y = arc * .16;
+    root.current.rotation.z = Math.sin(t * Math.PI * 2) * .06;
+    if (hop.current === 0) { root.current.position.y = 0; root.current.rotation.z = 0; }
+    invalidate();
+  });
+  return <group
+    position={narrow ? [-.78, 0, 1.5] : [-1.72, 0, 1.02]}
+    rotation-y={narrow ? .35 : .85}
+    name="dog"
+    onPointerDown={e => { e.stopPropagation(); hop.current = reduced ? 0 : .55; invalidate(); }}
+    onPointerOver={e => { e.stopPropagation(); setHovered(true); }}
+    onPointerOut={() => setHovered(false)}
+  >
+    <group ref={root}>
+      <primitive object={model} position={[0, lift * 1.3, 0]} scale={1.3} />
+    </group>
+  </group>;
+}
+
 export default function TableDecor({ table, onDraggingChange }: InteractionProps) {
   const lowDetail = useCompactBook();
   const { size } = useThree();
@@ -351,5 +396,6 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
     <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><FlowerVase table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.93, 0, -1.5] : [1.78, 0, -.35]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.6, .024, 1.65] : [1.65, .024, .56]}><Pen /></group>
+    <Dog narrow={narrow} />
   </>;
 }

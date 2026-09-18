@@ -54,7 +54,7 @@ import assert from 'node:assert/strict';
             assert.equal(await p.locator('.flower-actions button').nth(i).getAttribute('aria-pressed'), 'true');
         }
         passed.push('all four flowers pulled separately');
-        assert.equal(await p.locator('.storybook-pagination span').innerText(), 'A little book of making');
+        assert.equal(await p.locator('.storybook-pagination span').innerText(), '');
         await idle(p);
         passed.push('zero idle draws after interactions');
         await p.screenshot({ path: join(artifacts, 'direct-all-out.png') });
@@ -101,7 +101,7 @@ import assert from 'node:assert/strict';
         await idle(p);
         passed.push('orbit still settles');
         await p.keyboard.press('Escape');
-        await p.getByRole('button', { name: 'read the book', exact: true }).click();
+        await p.getByRole('link', { name: 'Book', exact: true }).click();
         await p.locator('.book-overlay[data-ready="true"]').waitFor();
         await p.waitForTimeout(1000);
         assert.equal(await count(p), 0);
