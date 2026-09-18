@@ -79,7 +79,7 @@ export function usePropGesture({ onDraggingChange, onStart, onMove, onEnd, onCan
 export function TableActions({ table }: { table: TableState }) {
   const count = table.flowersOut.filter(Boolean).length;
   return <details className="table-actions">
-    <summary>Play with the table</summary>
+    <summary>Table</summary>
     <div className="table-actions-panel">
       <p>Tap the cup to tip it. Pull a flower up to take it out; tap it again to put it back.</p>
       <button type="button" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</button>

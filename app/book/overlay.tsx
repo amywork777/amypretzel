@@ -74,15 +74,14 @@ export default function BookOverlay() {
 
   // Focus the dialog on opening; the trap restores the page trigger on closing.
   useEffect(() => {
-    if (open) dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    if (open) dialogRef.current?.focus({ preventScroll: true });
   }, [open]);
 
   if (!open) return null;
 
   return (
-    <div ref={dialogRef} className="book-overlay" data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="Amy's making diary">
+    <div ref={dialogRef} className="book-overlay" tabIndex={-1} data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="Amy's making diary">
       <BookPoster hidden={sceneReady} />
-      <div className="book-overlay-heading">Amy Zhou<span>A little book of making</span></div>
       <button type="button" className="book-overlay-enter" onClick={close}>
         Enter site
       </button>

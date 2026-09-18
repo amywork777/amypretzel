@@ -178,10 +178,7 @@ function drawCover(ctx: CanvasRenderingContext2D, back = false) {
     ctx.fillText("making.", 120, 626);
     ctx.fillStyle = "rgba(216,200,166,.75)";
     ctx.font = printFont(23);
-    ctx.fillText("Hardware, software, and the in-between.", 125, 965);
-    ctx.fillRect(125, 1010, 45, 1);
-    ctx.font = printFont(18);
-    ctx.fillText("A PERSONAL HISTORY", 125, 1060);
+    ctx.fillText("Objects, and software to build objects.", 125, 1040);
   }
 }
 
@@ -598,11 +595,11 @@ function Tabletop() {
     const canvas = document.createElement("canvas");
     canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext("2d")!;
-    ctx.fillStyle = "#c3b096";
+    ctx.fillStyle = "#d6cdbc";
     ctx.fillRect(0, 0, 1024, 1024);
     for (let i = 0; i < 1800; i++) {
       const y = i / 1800 * 1024;
-      ctx.strokeStyle = `rgba(97,77,48,${0.015 + seededJitter(i + 9) * 0.04})`;
+      ctx.strokeStyle = `rgba(97,77,48,${0.01 + seededJitter(i + 9) * 0.03})`;
       ctx.lineWidth = 0.5 + seededJitter(i + 3);
       ctx.beginPath(); ctx.moveTo(0, y);
       ctx.bezierCurveTo(300, y + Math.sin(i * .008) * 65, 750, y - Math.cos(i * .007) * 48, 1024, y);
@@ -677,7 +674,7 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
-      <color attach="background" args={["#ded8cc"]} />
+      <color attach="background" args={["#ebe7de"]} />
       <ambientLight intensity={0.3} />
       <hemisphereLight args={["#f7f5ef", "#847561", 0.65]} />
       <directionalLight
@@ -838,10 +835,9 @@ export default function StoryBook({ onExit, onReady }: { onExit?: () => void; on
       <div className="storybook-controls">
         <div className="storybook-pagination">
           <button type="button" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
-          <span aria-live="polite">{page === 0 ? "A little book of making" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
+          <span aria-live="polite">{page === 0 ? "" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
           <button type="button" aria-label={atBackCover ? "Enter site" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Enter site" : "Next"}</button>
         </div>
-        <p className="storybook-hint">Turn a page · Tip the cup · Pick a flower</p>
       </div>
       <TableActions table={table} />
       <details className="book-reading"><summary>Read as text</summary>

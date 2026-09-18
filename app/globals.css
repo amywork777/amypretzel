@@ -279,27 +279,25 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
 }
 
 /* Book: a cloth-bound object on a neutral photographic ground. */
-.book-overlay { position: fixed; inset: 0; z-index: 80; background: #e9e7e1; color: #302d29; overflow: hidden; }
+.book-overlay { position: fixed; inset: 0; z-index: 80; background: #ebe7de; color: #302d29; overflow: hidden; outline: none; }
 .book-overlay::before { display: none; content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 45% 38%, #f7f6f2, transparent 75%); }
-.book-overlay-heading { position: absolute; top: 30px; left: 36px; z-index: 5; font-size: 12px; line-height: 1.7; }
-.book-overlay-heading span { display: block; color: #817b72; font-size: 11px; }
-.book-overlay-enter { position: absolute; top: 33px; right: 36px; z-index: 5; font-size: 12px; color: #57524a; padding: 7px 0; border-bottom: 1px solid #a39c90; }
-.book-overlay-enter:hover { color: #6b2438; }
+.book-overlay-enter { position: absolute; top: 30px; right: 36px; z-index: 5; font-size: 11px; color: #6f6960; padding: 7px 0; text-decoration: underline; text-decoration-color: #c9c2b5; text-underline-offset: 4px; }
+.book-overlay-enter:hover { color: #302d29; text-decoration-color: currentColor; }
 .storybook { position: relative; height: 100%; width: 100%; }
 .storybook-canvas { position: absolute; inset: 0; }
-.storybook-controls { position: absolute; z-index: 3; bottom: 35px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 17px; align-items: center; width: min(100% - 40px, 520px); }
+.storybook-controls { position: absolute; z-index: 3; bottom: 34px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 17px; align-items: center; width: min(100% - 40px, 520px); }
 .storybook-pagination { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; }
-.storybook-pagination button { min-width: 68px; min-height: 44px; font-size: 12px; }
+.storybook-pagination button { min-width: 68px; min-height: 44px; font-size: 11px; color: #4a4640; }
+.storybook-pagination button:hover { color: #1a1916; }
 .storybook-pagination button:disabled { opacity: .25; }
 .storybook-pagination span { font-size: 11px; min-width: 130px; text-align: center; color: #615b53; }
-.storybook-hint { font-size: 10px; color: #817b72; }
-.book-reading { position: absolute; right: 36px; bottom: 40px; z-index: 4; font-size: 11px; }
-.book-reading > summary { cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.book-reading { position: absolute; right: 36px; bottom: 40px; z-index: 4; font-size: 11px; color: #6f6960; }
+.book-reading > summary { cursor: pointer; text-decoration: underline; text-decoration-color: #c9c2b5; text-underline-offset: 4px; }
+.book-reading > summary:hover { color: #302d29; text-decoration-color: currentColor; }
 .book-reading[open] { inset: 100px 36px 115px auto; width: min(430px, calc(100% - 72px)); overflow: auto; padding: 24px; background: #faf9f6; box-shadow: 0 10px 50px #302d2915; }
 .book-reading h2 { font-family: var(--font-display); font-size: 30px; margin: 24px 0 12px; }
 .book-reading p { font-size: 14px; line-height: 1.8; margin-bottom: 20px; }
 @media (max-width: 700px) {
-  .book-overlay-heading { top: 23px; left: 20px; }
   .book-overlay-enter { top: 23px; right: 20px; }
   .storybook-canvas { inset: 0; }
   .storybook-controls { bottom: 62px; }
@@ -332,8 +330,9 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
   .personal-links { font-size: 13px; }
 }
 
-.table-actions { position: absolute; left: 36px; bottom: 40px; z-index: 4; font-size: 11px; }
-.table-actions > summary { cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.table-actions { position: absolute; left: 36px; bottom: 40px; z-index: 4; font-size: 11px; color: #6f6960; }
+.table-actions > summary { cursor: pointer; text-decoration: underline; text-decoration-color: #c9c2b5; text-underline-offset: 4px; }
+.table-actions > summary:hover { color: #302d29; text-decoration-color: currentColor; }
 .table-actions-panel { position: absolute; bottom: 30px; left: 0; width: 260px; padding: 18px; background: #faf9f6f5; box-shadow: 0 8px 35px #302d2912; }
 .table-actions-panel p { font-size: 11px; line-height: 1.6; margin-bottom: 12px; color: #746d63; }
 .table-actions-panel button { min-height: 38px; padding: 7px 10px; border: 1px solid #d8d3c9; background: transparent; color: #403a32; font-size: 11px; }
@@ -353,7 +352,6 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
 @media (max-width: 700px) {
   .storybook-pagination { gap: 10px; }
   .storybook-pagination span { min-width: 100px; }
-  .storybook-hint { font-size: 11px; color: #625b52; }
   .book-reading { display: none; }
   .table-actions { font-size: 12px; bottom: max(18px, env(safe-area-inset-bottom)); }
   .table-actions > summary { min-height: 44px; display: flex; align-items: center; }
