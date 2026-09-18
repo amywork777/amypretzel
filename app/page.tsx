@@ -51,6 +51,7 @@ export default function Home() {
             <div className="personal-copy">
               <p className="intro-statement">I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.</p>
               <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
+              <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <nav className="personal-links" aria-label="Contact Amy">
                 <a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a>
                 <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
