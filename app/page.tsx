@@ -4,12 +4,7 @@ import SiteNav from "./site-nav";
 import BookOverlay from "./book/overlay";
 import ReadTheBookLink from "./book/read-the-book-link";
 import { FishIcon } from "./fish-icon";
-import { projects } from "./portfolio/projects";
-import SoftwareProjectList from "./software/project-list";
-import ProjectGrid from "./project-grid";
 
-const selectedSlugs = ["taya-pendant", "harp-instrument", "injection-molded-fabric", "pretzels-favorite-food"];
-const selectedObjects = selectedSlugs.flatMap(slug => projects.find(p => p.slug === slug) ?? []);
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -75,22 +70,11 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="project-sections">
-          <section id="objects" className="home-section" aria-labelledby="objects-title">
-            <header className="section-heading">
-              <h2 id="objects-title">Objects</h2>
-              <Link href="/portfolio" className="quiet-link">All objects</Link>
-            </header>
-            <ProjectGrid projects={selectedObjects.map(p => ({ title: p.title, caption: p.role, cover: p.cover, href: `/portfolio/${p.slug}` }))} />
-          </section>
-          <section id="software" className="home-section" aria-labelledby="software-title">
-            <header className="section-heading">
-              <h2 id="software-title">Software</h2>
-              <Link href="/software" className="quiet-link">All software</Link>
-            </header>
-            <SoftwareProjectList />
-          </section>
-        </div>
+        <section id="work" className="home-work" aria-label="Work">
+          <p className="work-statement">
+            I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.
+          </p>
+        </section>
 
         <footer className="home-footer">
           <div className="footer-bottom"><span>Amy Zhou</span>

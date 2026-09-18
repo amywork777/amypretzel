@@ -11,8 +11,8 @@ export default function SiteNav({ active = null }: Props) {
       <div className="site-width site-header-inner">
         <Link href="/" className="site-wordmark" aria-label="Amy Zhou — home">amypretzel</Link>
         <nav aria-label="Main navigation">
-          <Link href="/#objects" aria-current={active === "portfolio" ? "page" : undefined}>Objects</Link>
-          <Link href="/#software" aria-current={active === "software" ? "page" : undefined}>Software</Link>
+          <Link href="/portfolio" aria-current={active === "portfolio" ? "page" : undefined}>Objects</Link>
+          <Link href="/software" aria-current={active === "software" ? "page" : undefined}>Software</Link>
           <BookNavLink />
           <ThemeToggle />
         </nav>
