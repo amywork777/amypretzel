@@ -4,12 +4,10 @@ import { Environment, Lightformer, useGLTF, useCursor } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Color,
   Group,
   Shape,
   CanvasTexture,
   SRGBColorSpace,
-  Float32BufferAttribute,
   Vector2,
   Vector3,
   Mesh,
@@ -26,16 +24,26 @@ function approach(value: number, target: number, delta: number, reduced: boolean
   return Math.abs(next - target) < .0001 ? target : next;
 }
 
-// Where each macaron sits on the plate, and where it lands when taken off it.
-const cookieSpots = [
-  { plate: [-.24, .022, .1], taken: [.9, 0, .6], turn: .4, shell: "#f2b6c6" },
-  { plate: [.24, .022, .1], taken: [1.05, 0, 1.05], turn: 2.1, shell: "#cdbde8" },
-  { plate: [0, .022, -.24], taken: [.7, 0, 1.4], turn: 4.2, shell: "#bfe3cf" },
-];
-const COOKIE_SCALE = .0068; // the model is about 72 units across
-const COOKIE_LIFT = 0;
+// A pile of tiny pretzels: a ring of five lying flat, three leaning on top of
+// them, one on the crown. Each remembers where it lands when taken off the plate.
+const PRETZEL_COUNT = 9;
+const COOKIE_SCALE = .4; // the model is about .84 units across
+const COOKIE_LIFT = .044; // laid flat, its thickness is .22 units, so half of that scaled
+const cookieSpots = Array.from({ length: PRETZEL_COUNT }, (_, i) => {
+  const layer = i < 5 ? 0 : i < 8 ? 1 : 2;
+  const k = layer === 0 ? i : layer === 1 ? i - 5 : 0;
+  const angle = layer === 0 ? k * (Math.PI * 2 / 5) + .3 : layer === 1 ? k * (Math.PI * 2 / 3) + 1.2 : 0;
+  const radius = layer === 0 ? .3 : layer === 1 ? .17 : 0;
+  return {
+    plate: [Math.cos(angle) * radius, .022 + COOKIE_LIFT + layer * .075, Math.sin(angle) * radius] as [number, number, number],
+    tilt: layer === 0 ? .08 : layer === 1 ? .34 : .15,
+    // Taken pretzels land in front of the plate, toward the viewer, clear of the book.
+    taken: [-.3 + (i % 3) * .4 + (i % 2) * .05, COOKIE_LIFT, .9 + Math.floor(i / 3) * .38 + ((i * 7) % 3) * .05] as [number, number, number],
+    turn: i * 2.4,
+  };
+});
 
-function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: InteractionProps & { index: number; narrow: boolean; model: Mesh }) {
+function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: InteractionProps & { index: number; narrow: boolean; model: Group }) {
   const root = useRef<Group>(null!);
   const progress = useRef(0);
   const preview = useRef<number | null>(null);
@@ -64,47 +72,41 @@ function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: In
       from[1] + (to[1] - from[1]) * lower + .32 * lift * (1 - lower),
       from[2] + (to[2] - from[2]) * move,
     );
-    root.current.rotation.y = spot.turn + .7 * move;
+    // The model is thin along x, so a quarter turn about z lays it flat; the tilt leans it on the pile.
+    root.current.rotation.set(spot.tilt * (1 - move), spot.turn + .7 * move, Math.PI / 2, "YXZ");
     if (p !== target) invalidate();
   });
   return <group ref={root} name={`interactive-cookie-${index}`} onPointerDown={gesture} onPointerOver={e => { e.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}>
-    <primitive object={model} position={[0, COOKIE_LIFT, 0]} scale={COOKIE_SCALE} />
+    <primitive object={model} scale={COOKIE_SCALE} />
   </group>;
 }
 
 function CookiePlate(props: InteractionProps & { narrow: boolean }) {
   const lowDetail = useCompactBook();
-  const { scene: macaronModel } = useGLTF("/book/macaron.glb");
-  const { cookies, materials, glaze } = useMemo(() => {
+  const { scene: pretzelModel } = useGLTF("/book/pretzel.glb");
+  const { cookies, dough, salt, glaze } = useMemo(() => {
     const glaze = new MeshPhysicalMaterial({ color: "#e7e3d8", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
-    const source = macaronModel.getObjectByName("Macaron") as Mesh;
-    const materials: MeshPhysicalMaterial[] = [];
-    const cookies = cookieSpots.map(spot => {
-      // The model is one textured mesh; paint the shells and the cream filling
-      // by height instead, so each macaron gets its own pastel.
-      const geometry = source.geometry.clone();
-      const position = geometry.getAttribute("position");
-      const shell = new Color(spot.shell), filling = new Color("#fff3e2"), colors: number[] = [];
-      for (let i = 0; i < position.count; i++) {
-        const y = position.getY(i);
-        const tint = y > 14.8 && y < 18.3 ? filling : shell;
-        colors.push(tint.r, tint.g, tint.b);
-      }
-      geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
-      const material = new MeshPhysicalMaterial({ vertexColors: true, roughness: .62, sheen: .5, sheenColor: "#ffffff", sheenRoughness: .7 });
-      materials.push(material);
-      const mesh = new Mesh(geometry, material);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      return mesh;
+    const dough = new MeshPhysicalMaterial({ color: "#b8642a", roughness: .55, clearcoat: .35, clearcoatRoughness: .45, sheen: .2, sheenColor: "#f0c090" });
+    const salt = new MeshPhysicalMaterial({ color: "#f7f4ee", roughness: .35 });
+    const cookies = cookieSpots.map(() => {
+      const clone = pretzelModel.clone(true);
+      clone.traverse(object => {
+        if (!(object instanceof Mesh)) return;
+        const source = Array.isArray(object.material) ? object.material[0] : object.material;
+        // The model's two materials: an orange one for the dough, a white one for the salt.
+        object.material = (source as MeshPhysicalMaterial).color?.r > .9 ? salt : dough;
+        object.castShadow = true;
+        object.receiveShadow = true;
+      });
+      return clone;
     });
-    return { cookies, materials, glaze };
-  }, [macaronModel]);
-  useEffect(() => () => { glaze.dispose(); materials.forEach(m => m.dispose()); cookies.forEach(c => c.geometry.dispose()); }, [glaze, materials, cookies]);
+    return { cookies, dough, salt, glaze };
+  }, [pretzelModel]);
+  useEffect(() => () => { glaze.dispose(); dough.dispose(); salt.dispose(); }, [glaze, dough, salt]);
   const plateProfile = useMemo(() => [
     [0, 0], [.38, 0], [.38, .012], [.53, .04], [.59, .062], [.595, .07], [.58, .072], [.5, .05], [.37, .024], [0, .022],
   ].map(([x, y]) => new Vector2(x, y)), []);
-  return <group name="macaron-plate">
+  return <group name="pretzel-plate">
     <mesh castShadow receiveShadow material={glaze}>
       <latheGeometry args={[plateProfile, lowDetail ? 32 : 80]} />
     </mesh>
@@ -237,7 +239,7 @@ function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow
 }
 
 useGLTF.preload("/book/coffee-cup.glb");
-useGLTF.preload("/book/macaron.glb");
+useGLTF.preload("/book/pretzel.glb");
 useGLTF.preload("/book/pencil.glb");
 
 // A plain wooden pencil, lying where a hand would leave it.
