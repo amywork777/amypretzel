@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  ContactShadows,
+  Environment,
+  Lightformer,
   OrbitControls,
   PerspectiveCamera,
   RoundedBox,
@@ -9,11 +12,13 @@ import {
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { easing } from "maath";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ComponentRef } from "react";
+import type { ComponentRef, RefObject } from "react";
 import {
   Bone,
   BoxGeometry,
+  BufferGeometry,
   CanvasTexture,
+  CatmullRomCurve3,
   Color,
   Float32BufferAttribute,
   MathUtils,
@@ -23,10 +28,11 @@ import {
   Skeleton,
   SkinnedMesh,
   SRGBColorSpace,
+  DoubleSide,
   Uint16BufferAttribute,
   Vector3,
 } from "three";
-import type { Group, Texture } from "three";
+import type { Group, Mesh, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
 import TableDecor from "./table-decor";
 import { useCompactBook } from "./use-compact-book";
@@ -224,7 +230,7 @@ function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
   ctx.textAlign = "left";
 }
 
-function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
+function createPageCanvasTexture(content: TexturePage, lowDetail: boolean, reverse?: TexturePage) {
   const canvas = document.createElement("canvas");
   canvas.width = lowDetail ? 384 : 768;
   canvas.height = lowDetail ? 512 : 1024;
@@ -248,14 +254,25 @@ function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
     drawPaper(ctx);
   }
 
+  // Thin paper: the printing on the other side of the sheet shows through,
+  // mirrored and faint, the way it does on a real page held to the light.
+  if (reverse?.kind === "story" && content.kind !== "cover" && content.kind !== "back-cover") {
+    ctx.save();
+    ctx.globalAlpha = 0.035;
+    ctx.translate(TEXTURE_WIDTH, 0);
+    ctx.scale(-1, 1);
+    drawStoryPage(ctx, reverse.page);
+    ctx.restore();
+  }
+
   return texture;
 }
 
-function usePageTexture(content: TexturePage) {
+function usePageTexture(content: TexturePage, reverse?: TexturePage) {
   const lowDetail = useCompactBook();
   // These pages use installed system fonts. Redrawing after fonts.ready only
   // repeated all of the canvas work and uploaded every texture a second time.
-  const texture = useMemo(() => createPageCanvasTexture(content, lowDetail), [content, lowDetail]);
+  const texture = useMemo(() => createPageCanvasTexture(content, lowDetail, reverse), [content, lowDetail, reverse]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }
@@ -266,13 +283,47 @@ function createEdgeTexture(vertical: boolean) {
   const ctx = canvas.getContext("2d")!;
   ctx.fillStyle = "#e9e1ce";
   ctx.fillRect(0, 0, 64, 64);
-  for (let i = 0; i < 64; i += 8) {
-    ctx.fillStyle = `rgba(98,82,57,${.1 + seededJitter(i) * .14})`;
-    ctx.fillRect(vertical ? i : 0, vertical ? 0 : i, vertical ? 1 : 64, vertical ? 64 : 1);
+  // Each sheet sits a hair proud or shy of its neighbours, so the block of
+  // pages reads as many leaves rather than one printed stripe.
+  for (let i = 0; i < 64; i += 4) {
+    const shade = .05 + seededJitter(i) * .18;
+    const offset = Math.floor(seededJitter(i + 7) * 3) - 1;
+    ctx.fillStyle = `rgba(98,82,57,${shade})`;
+    ctx.fillRect(vertical ? i + offset : 0, vertical ? 0 : i + offset, vertical ? 1 : 64, vertical ? 64 : 1);
+    ctx.fillStyle = `rgba(255,252,244,${.15 + seededJitter(i + 3) * .2})`;
+    ctx.fillRect(vertical ? i + offset + 1 : 0, vertical ? 0 : i + offset + 1, vertical ? 1 : 64, vertical ? 64 : 1);
   }
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
   return texture;
+}
+
+// Short fibres laid at random, tiled across every page as shallow relief.
+let paperFiber: CanvasTexture | undefined;
+function getPaperFiber() {
+  if (paperFiber) return paperFiber;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 256;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "#808080";
+  ctx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 2600; i++) {
+    const x = seededJitter(i * 3 + 11) * 256;
+    const y = seededJitter(i * 3 + 12) * 256;
+    const angle = seededJitter(i * 3 + 13) * Math.PI;
+    const length = 3 + seededJitter(i + 40) * 9;
+    const light = seededJitter(i + 90) > .5;
+    ctx.strokeStyle = light ? `rgba(255,255,255,${.06 + seededJitter(i + 5) * .1})` : `rgba(0,0,0,${.06 + seededJitter(i + 6) * .1})`;
+    ctx.lineWidth = .6 + seededJitter(i + 8) * .8;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(angle) * length, y + Math.sin(angle) * length);
+    ctx.stroke();
+  }
+  paperFiber = new CanvasTexture(canvas);
+  paperFiber.wrapS = paperFiber.wrapT = RepeatWrapping;
+  paperFiber.repeat.set(3, 4);
+  return paperFiber;
 }
 
 function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontCover: boolean, backCover: boolean) {
@@ -288,8 +339,8 @@ function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontC
     new MeshPhysicalMaterial({
       color: "#ffffff",
       map: frontTexture,
-      bumpMap: frontCover ? frontTexture : null,
-      bumpScale: frontCover ? 0.002 : 0,
+      bumpMap: frontCover ? frontTexture : getPaperFiber(),
+      bumpScale: frontCover ? 0.002 : 0.0012,
       sheen: frontCover ? 0.45 : 0,
       sheenColor: new Color("#ad8d81"),
       sheenRoughness: 0.85,
@@ -300,8 +351,8 @@ function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontC
     new MeshPhysicalMaterial({
       color: "#ffffff",
       map: backTexture,
-      bumpMap: backCover ? backTexture : null,
-      bumpScale: backCover ? 0.002 : 0,
+      bumpMap: backCover ? backTexture : getPaperFiber(),
+      bumpScale: backCover ? 0.002 : 0.0012,
       sheen: backCover ? 0.45 : 0,
       sheenColor: new Color("#ad8d81"),
       sheenRoughness: 0.85,
@@ -337,8 +388,8 @@ function AnimatedPage({
 }) {
   const invalidate = useThree(state => state.invalidate);
   const isCover = sheet.front.kind === "cover" || sheet.back.kind === "back-cover";
-  const frontTexture = usePageTexture(sheet.front);
-  const backTexture = usePageTexture(sheet.back);
+  const frontTexture = usePageTexture(sheet.front, sheet.back);
+  const backTexture = usePageTexture(sheet.back, sheet.front);
   const groupRef = useRef<Group>(null);
   const skinnedMeshRef = useRef<SkinnedMesh>(null);
   const turnedAt = useRef(0);
@@ -399,8 +450,15 @@ function AnimatedPage({
       lastOpened.current = opened;
     }
 
-    let turningTime = Math.min(420, Date.now() - turnedAt.current) / 420;
+    const sinceTurn = Date.now() - turnedAt.current;
+    let turningTime = Math.min(420, sinceTurn) / 420;
     turningTime = Math.sin(turningTime * Math.PI);
+    // After a leaf lands its free edge bounces up once and settles; the
+    // stiff cover gets a heavier, later bounce at the hinge.
+    const settleStart = isCover ? 420 : 340;
+    const settleLength = isCover ? 620 : 480;
+    const settle = reducedMotion?.matches ? 0 : MathUtils.clamp((sinceTurn - settleStart) / settleLength, 0, 1);
+    const bounce = settle > 0 && settle < 1 ? Math.sin(settle * Math.PI) * (1 - settle * 0.5) : 0;
 
     // A hovered leaf lifts its free edge a little, as an invitation to turn it.
     const liftTarget = highlighted && !drag.current && !reducedMotion?.matches ? 1 : 0;
@@ -413,7 +471,8 @@ function AnimatedPage({
       targetRotation += (opened ? 1 : -1) * Math.PI * drag.current.progress;
     }
     targetRotation += (opened ? 1 : -1) * hoverLift;
-    const arch = isCover || bookClosed ? 0 : 0.025 + 0.11 * turningTime + 0.03 * lift.current;
+    if (isCover) targetRotation += (opened ? 1 : -1) * 0.05 * bounce;
+    const arch = isCover || bookClosed ? 0 : 0.025 + 0.11 * turningTime + 0.03 * lift.current + 0.045 * bounce;
     const bendSign = opened ? 1 : -1;
     const tangent = (segment: number) => bendSign * Math.atan(
       (arch * Math.PI / PAGE_WIDTH) * Math.cos(Math.PI * segment / PAGE_SEGMENTS)
@@ -434,7 +493,7 @@ function AnimatedPage({
         moving = easing.dampAngle(target.rotation, "x", 0, easingFactorFold, delta) || moving;
       }
     }
-    if (moving || turningTime > 0.001 || drag.current) invalidate();
+    if (moving || sinceTurn < settleStart + settleLength + 50 || drag.current) invalidate();
   });
 
   const beginDrag = useCallback(
@@ -568,6 +627,12 @@ function BookStack({
         <cylinderGeometry args={[spineRadius, spineRadius, PAGE_HEIGHT * 1.028, 24, 1, false, Math.PI, Math.PI]} />
         <meshPhysicalMaterial color="#493333" roughness={.9} sheen={.45} sheenColor="#ad8d81" />
       </mesh>
+      <BookmarkRibbon
+        delayedPage={delayedPage}
+        sheetCount={sheets.length}
+        leftStack={thicknesses.slice(0, delayedPage).reduce((sum, depth) => sum + depth, 0)}
+        rightStack={thicknesses.slice(delayedPage).reduce((sum, depth) => sum + depth, 0)}
+      />
       {sheets.map((sheet, index) => (
         <AnimatedPage
           key={index}
@@ -589,6 +654,182 @@ function BookStack({
       ))}
     </group>
   );
+}
+
+// A cloth ribbon out of the spine, lying across the open spread and hanging
+// off the bottom edge onto the table. It swings out of the way of a turning leaf.
+const RIBBON_WIDTH = 0.075;
+const RIBBON_POINTS = 6;
+const RIBBON_SEGMENTS = 48;
+
+function ribbonTargets(delayedPage: number, sheetCount: number, leftStack: number, rightStack: number): Vector3[] {
+  const H = PAGE_HEIGHT;
+  if (delayedPage === 0 || delayedPage === sheetCount) {
+    // Closed: only the tail shows, slipping out of the bottom edge mid-stack.
+    const side = delayedPage === 0 ? 1 : -1;
+    const mid = (delayedPage === 0 ? rightStack : leftStack) * 0.55;
+    const x = side * 0.36;
+    return [
+      new Vector3(x, -H / 2 + 0.3, mid),
+      new Vector3(x, -H / 2 + 0.01, mid),
+      new Vector3(x + side * 0.01, -H / 2 - 0.1, mid * 0.55),
+      new Vector3(x + side * 0.02, -H / 2 - 0.22, 0.006),
+      new Vector3(x + side * 0.035, -H / 2 - 0.38, 0.004),
+      new Vector3(x + side * 0.05, -H / 2 - 0.52, 0.004),
+    ];
+  }
+  const z = rightStack + 0.004;
+  // Stays inside the inner margin so it never covers the printed text.
+  return [
+    new Vector3(0.04, H / 2 + 0.01, z + 0.006),
+    new Vector3(0.075, H / 6, z),
+    new Vector3(0.1, -H / 2 + 0.06, z),
+    new Vector3(0.11, -H / 2 - 0.06, z * 0.5),
+    new Vector3(0.12, -H / 2 - 0.22, 0.004),
+    new Vector3(0.135, -H / 2 - 0.44, 0.004),
+  ];
+}
+
+function BookmarkRibbon({ delayedPage, sheetCount, leftStack, rightStack }: { delayedPage: number; sheetCount: number; leftStack: number; rightStack: number }) {
+  const invalidate = useThree(state => state.invalidate);
+  // Live control points; seeded on first render and eased toward the targets each frame.
+  const pointsRef = useRef<Vector3[] | null>(null);
+  if (pointsRef.current == null) { pointsRef.current = ribbonTargets(delayedPage, sheetCount, leftStack, rightStack); }
+  const lastPage = useRef(delayedPage);
+  const turnedAt = useRef(0);
+  const meshRef = useRef<Mesh>(null);
+  const geometry = useMemo(() => {
+    const g = new BufferGeometry();
+    const count = (RIBBON_SEGMENTS + 1) * 2;
+    g.setAttribute("position", new Float32BufferAttribute(new Float32Array(count * 3), 3));
+    g.setAttribute("normal", new Float32BufferAttribute(new Float32Array(count * 3), 3));
+    const uv: number[] = [];
+    const index: number[] = [];
+    for (let i = 0; i <= RIBBON_SEGMENTS; i++) {
+      uv.push(0, i / RIBBON_SEGMENTS, 1, i / RIBBON_SEGMENTS);
+      if (i < RIBBON_SEGMENTS) {
+        const a = i * 2;
+        index.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      }
+    }
+    g.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+    g.setIndex(index);
+    return g;
+  }, []);
+  // r3f disposes a mesh's geometry on unmount, so no cleanup effect here.
+
+  useFrame((_, delta) => {
+    delta = Math.min(delta, 0.05);
+    const strip = meshRef.current?.geometry;
+    const points = pointsRef.current;
+    if (!strip || !points) return;
+    if (lastPage.current !== delayedPage) {
+      lastPage.current = delayedPage;
+      turnedAt.current = Date.now();
+    }
+    const since = Date.now() - turnedAt.current;
+    const swing = reducedMotion?.matches ? 0 : Math.sin(MathUtils.clamp(since / 700, 0, 1) * Math.PI);
+    const targets = ribbonTargets(delayedPage, sheetCount, leftStack, rightStack);
+    let moving = false;
+    for (let i = 0; i < RIBBON_POINTS; i++) {
+      const t = targets[i];
+      // Lift and sway while a leaf passes over, most at the free end on the page.
+      const onPage = i >= 1 && i <= 3 ? 1 : i === 0 ? 0.3 : 0;
+      t.z += swing * 0.09 * onPage;
+      t.x += swing * 0.05 * onPage;
+      if (reducedMotion?.matches) points[i].copy(t);
+      else moving = easing.damp3(points[i], t, 0.28, delta) || moving;
+    }
+
+    const curve = new CatmullRomCurve3(points, false, "centripetal", 0.6);
+    const position = strip.attributes.position as Float32BufferAttribute;
+    const normal = strip.attributes.normal as Float32BufferAttribute;
+    // The ribbon's width always runs across the page (x); it never twists as it
+    // drops over the edge, so it is never seen edge-on.
+    const p = new Vector3(), tangent = new Vector3(), n = new Vector3();
+    const side = new Vector3(1, 0, 0);
+    for (let i = 0; i <= RIBBON_SEGMENTS; i++) {
+      const u = i / RIBBON_SEGMENTS;
+      curve.getPoint(u, p);
+      curve.getTangent(u, tangent);
+      n.crossVectors(side, tangent).normalize();
+      const w = RIBBON_WIDTH / 2;
+      position.setXYZ(i * 2, p.x - side.x * w, p.y - side.y * w, p.z - side.z * w);
+      position.setXYZ(i * 2 + 1, p.x + side.x * w, p.y + side.y * w, p.z + side.z * w);
+      normal.setXYZ(i * 2, n.x, n.y, n.z);
+      normal.setXYZ(i * 2 + 1, n.x, n.y, n.z);
+    }
+    position.needsUpdate = true;
+    normal.needsUpdate = true;
+    strip.computeBoundingSphere();
+    if (moving || since < 750) invalidate();
+  });
+
+  return (
+    <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow frustumCulled={false}>
+      <meshPhysicalMaterial color="#c2864f" roughness={0.62} sheen={0.7} sheenColor="#f2d2a8" sheenRoughness={0.5} side={DoubleSide} />
+    </mesh>
+  );
+}
+
+// The camera drifts a few degrees with the pointer while nothing else is
+// happening, so the table feels alive before the first click.
+function PointerParallax({ controls }: { controls: RefObject<ComponentRef<typeof OrbitControls> | null> }) {
+  const { gl, invalidate } = useThree();
+  const pointer = useRef({ x: 0, y: 0 });
+  const applied = useRef({ x: 0, y: 0 });
+  const lastApplied = useRef({ x: 0, y: 0 });
+  const orbiting = useRef(false);
+
+  useEffect(() => {
+    if (reducedMotion?.matches || window.matchMedia("(pointer: coarse)").matches) return;
+    const el = gl.domElement;
+    const move = (event: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      pointer.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.current.y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+      invalidate();
+    };
+    const leave = () => { pointer.current.x = 0; pointer.current.y = 0; invalidate(); };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerleave", leave);
+    return () => {
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerleave", leave);
+    };
+  }, [gl, invalidate]);
+
+  useEffect(() => {
+    const c = controls.current;
+    if (!c) return;
+    const start = () => { orbiting.current = true; };
+    const end = () => { orbiting.current = false; };
+    c.addEventListener("start", start);
+    c.addEventListener("end", end);
+    return () => {
+      c.removeEventListener("start", start);
+      c.removeEventListener("end", end);
+    };
+  }, [controls]);
+
+  useFrame((_, delta) => {
+    const c = controls.current;
+    if (!c || !c.enabled || orbiting.current) return;
+    const target = { x: pointer.current.x * 0.045, y: pointer.current.y * 0.022 };
+    const moving = easing.damp(applied.current, "x", target.x, 0.6, delta);
+    const movingY = easing.damp(applied.current, "y", target.y, 0.6, delta);
+    const dx = applied.current.x - lastApplied.current.x;
+    const dy = applied.current.y - lastApplied.current.y;
+    if (Math.abs(dx) > 1e-6 || Math.abs(dy) > 1e-6) {
+      c.setAzimuthalAngle(c.getAzimuthalAngle() - dx);
+      c.setPolarAngle(c.getPolarAngle() + dy);
+      c.update();
+    }
+    lastApplied.current.x = applied.current.x;
+    lastApplied.current.y = applied.current.y;
+    if (moving || movingY) invalidate();
+  });
+  return null;
 }
 
 function ResponsiveCamera() {
@@ -684,8 +925,15 @@ function BookScene({
       <CanvasSizer />
       <ResponsiveCamera />
       <color attach="background" args={["#ebe7de"]} />
-      <ambientLight intensity={0.3} />
-      <hemisphereLight args={["#f7f5ef", "#847561", 0.65]} />
+      <Environment resolution={lowDetail ? 64 : 256} frames={1} environmentIntensity={0.55}>
+        <color attach="background" args={["#d9d3c7"]} />
+        {/* the window the key light comes from, a cool fill opposite, and the ceiling */}
+        <Lightformer form="rect" intensity={2.4} color="#fff4e4" position={[-3, 5, -3]} scale={[3.2, 2.6, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={0.9} color="#e8efff" position={[4, 2.5, 4]} scale={[4, 1.8, 1]} target={[0, 0, 0]} />
+        <Lightformer form="ring" intensity={0.5} color="#f7f5ef" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
+      </Environment>
+      <ambientLight intensity={0.18} />
+      <hemisphereLight args={["#f7f5ef", "#847561", 0.5]} />
       <directionalLight
         position={[-3, 6, -3]}
         color="#fff7ed"
@@ -704,6 +952,16 @@ function BookScene({
       />
       <directionalLight position={[4, 3, 4]} intensity={0.25} color="#e8efff" />
       <Tabletop />
+      <ContactShadows
+        position={[0, 0.0015, 0]}
+        opacity={lowDetail ? 0.3 : 0.42}
+        scale={[7.5, 6]}
+        blur={2.4}
+        far={1.3}
+        resolution={lowDetail ? 256 : 512}
+        color="#2f2519"
+        frames={Infinity}
+      />
       <TableDecor table={table} onDraggingChange={handleDraggingChange} />
       <group position-y={0.003} rotation-x={-Math.PI / 2}>
         <BookStack sheets={sheets} page={page} onPageChange={onPageChange} onDraggingChange={handleDraggingChange} />
@@ -721,6 +979,7 @@ function BookScene({
         dampingFactor={0.08}
         target={[0, 0.04, 0]}
       />
+      {!lowDetail && <PointerParallax controls={controlsRef} />}
     </>
   );
 }
@@ -748,6 +1007,10 @@ function BookCanvas({
         camera={{ position: [0.82, 3.36, 2.25], fov: 42 }}
         dpr={lowDetail ? 1 : [1, 1.5]}
         gl={{ alpha: false, antialias: !lowDetail, powerPreference: "high-performance" }}
+        // The contact-shadow pass clears its render target with the renderer's
+        // clear alpha; on an opaque canvas that is 1, which paints the whole
+        // shadow plane dark instead of only where something casts.
+        onCreated={({ gl }) => gl.setClearAlpha(0)}
       >
         <BookScene sheets={sheets} page={page} onPageChange={onPageChange} table={table} />
         <SceneReady onReady={onReady} />
