@@ -144,27 +144,27 @@ function drawPaper(target: CanvasRenderingContext2D) {
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, back = false) {
-  ctx.fillStyle = "#1c1c1e";
+  ctx.fillStyle = "#f4f4f4";
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   // Fine crossing threads, also used by the material as shallow relief.
   for (let x = 0; x < TEXTURE_WIDTH; x += 3) {
-    ctx.fillStyle = `rgba(255,255,255,${.02 + seededJitter(x) * .04})`;
+    ctx.fillStyle = `rgba(0,0,0,${.015 + seededJitter(x) * .03})`;
     ctx.fillRect(x, 0, 1, TEXTURE_HEIGHT);
   }
   for (let y = 0; y < TEXTURE_HEIGHT; y += 3) {
-    ctx.fillStyle = `rgba(0,0,0,${.06 + seededJitter(y + 1) * .08})`;
+    ctx.fillStyle = `rgba(0,0,0,${.02 + seededJitter(y + 1) * .04})`;
     ctx.fillRect(0, y, TEXTURE_WIDTH, 1);
   }
   const hinge = ctx.createLinearGradient(back ? TEXTURE_WIDTH : 0, 0, back ? TEXTURE_WIDTH - 95 : 95, 0);
-  hinge.addColorStop(0, "rgba(0,0,0,.3)");
+  hinge.addColorStop(0, "rgba(0,0,0,.18)");
   hinge.addColorStop(.45, "rgba(0,0,0,.05)");
-  hinge.addColorStop(.6, "rgba(0,0,0,.24)");
+  hinge.addColorStop(.6, "rgba(0,0,0,.12)");
   hinge.addColorStop(.7, "rgba(255,255,255,.07)");
   hinge.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = hinge;
   ctx.fillRect(back ? TEXTURE_WIDTH - 95 : 0, 0, 95, TEXTURE_HEIGHT);
   ctx.textAlign = "left";
-  ctx.fillStyle = "#f5f5f7";
+  ctx.fillStyle = "#1c1c1c";
   if (back) {
     ctx.font = printFont(32, "--font-display");
     ctx.fillText("To be continued.", 125, 910);
@@ -177,7 +177,7 @@ function drawCover(ctx: CanvasRenderingContext2D, back = false) {
     ctx.fillText("A little", 120, 380);
     ctx.fillText("book of", 120, 503);
     ctx.fillText("making.", 120, 626);
-    ctx.fillStyle = "rgba(245,245,247,.6)";
+    ctx.fillStyle = "rgba(28,28,28,.6)";
     ctx.font = printFont(23);
     ctx.fillText("Objects, and software to build objects.", 125, 1040);
   }
@@ -322,7 +322,7 @@ function getPaperFiber() {
 }
 
 function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontCover: boolean, backCover: boolean) {
-  const white = new Color(frontCover || backCover ? "#1c1c1e" : "#ededed");
+  const white = new Color(frontCover || backCover ? "#f4f4f4" : "#ededed");
   const edgeMaps = frontCover || backCover ? [null, null] : [createEdgeTexture(true), createEdgeTexture(false)];
   const hoverEmissive = new Color("#ffffff");
 
@@ -620,7 +620,7 @@ function BookStack({
     >
       <mesh position={[0, 0, spineRadius]} rotation-y={delayedPage === sheets.length ? Math.PI : 0} visible={delayedPage === 0 || delayedPage === sheets.length} castShadow receiveShadow>
         <cylinderGeometry args={[spineRadius, spineRadius, PAGE_HEIGHT * 1.028, 24, 1, false, Math.PI, Math.PI]} />
-        <meshPhysicalMaterial color="#1c1c1e" roughness={.9} sheen={.45} sheenColor="#8e8e93" />
+        <meshPhysicalMaterial color="#f4f4f4" roughness={.9} sheen={.45} sheenColor="#ffffff" />
       </mesh>
       {sheets.map((sheet, index) => (
         <AnimatedPage
@@ -718,11 +718,11 @@ function Tabletop() {
     const canvas = document.createElement("canvas");
     canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext("2d")!;
-    ctx.fillStyle = "#ebebeb";
+    ctx.fillStyle = "#121212";
     ctx.fillRect(0, 0, 1024, 1024);
     for (let i = 0; i < 1800; i++) {
       const y = i / 1800 * 1024;
-      ctx.strokeStyle = `rgba(0,0,0,${0.004 + seededJitter(i + 9) * 0.012})`;
+      ctx.strokeStyle = `rgba(255,255,255,${0.004 + seededJitter(i + 9) * 0.012})`;
       ctx.lineWidth = 0.5 + seededJitter(i + 3);
       ctx.beginPath(); ctx.moveTo(0, y);
       ctx.bezierCurveTo(300, y + Math.sin(i * .008) * 65, 750, y - Math.cos(i * .007) * 48, 1024, y);
@@ -797,9 +797,9 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
-      <color attach="background" args={["#f2f2f2"]} />
+      <color attach="background" args={["#000000"]} />
       <ambientLight intensity={0.18} />
-      <hemisphereLight args={["#ffffff", "#9a9a9a", 0.5]} />
+      <hemisphereLight args={["#ffffff", "#2a2a2a", 0.55]} />
       <directionalLight
         position={[-3, 6, -3]}
         color="#ffffff"
@@ -825,7 +825,7 @@ function BookScene({
         blur={2.4}
         far={1.3}
         resolution={lowDetail ? 256 : 512}
-        color="#1a1a1a"
+        color="#000000"
         frames={Infinity}
       />
       <TableDecor table={table} onDraggingChange={handleDraggingChange} />

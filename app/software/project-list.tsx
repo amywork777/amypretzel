@@ -3,14 +3,16 @@ import { softwareSections } from "./projects";
 
 export default function SoftwareProjectList() {
   return <>{softwareSections.map(section => (
-    <div className="software-group" key={section.title}>
-      <h3>{section.title}</h3>
-      <div>{section.projects.map(project => (
-        <Link key={project.slug} href={`/software/${project.slug}`} className="software-row">
-          <h4>{project.title}</h4>
-          <p>{project.summary}</p>
-        </Link>
-      ))}</div>
-    </div>
+    <section className="index-group" key={section.title} aria-label={section.title}>
+      <h2>{section.title}</h2>
+      <ul className="index-list">{section.projects.map(project => (
+        <li key={project.slug}>
+          <Link href={`/software/${project.slug}`} className="index-row">
+            <span className="text-display index-title">{project.title}</span>
+            <span className="index-meta">{project.meta}</span>
+          </Link>
+        </li>
+      ))}</ul>
+    </section>
   ))}</>;
 }
