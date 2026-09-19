@@ -14,11 +14,14 @@ export default function SoftwarePage() {
     <SiteNav active="software" />
     <main id="main-content" className="site-width">
       <section className="portfolio-intro"><h1>Software.</h1><p>AI design tools, CAD systems, and small things that make everyday work better.</p></section>
-      <SoftwareProjectList />
+      <section aria-labelledby="all-software-title">
+        <header className="section-heading"><h2 id="all-software-title">All software</h2></header>
+        <SoftwareProjectList />
+      </section>
       <footer className="index-footer">
-        <p className="text-display signoff">Building a tool? <a href="mailto:amzyst@gmail.com">Say hi.</a></p>
-        <Link href="/" className="quiet-link">Home</Link>
-      </footer>
+          <p className="text-display signoff">i love meeting people who make things. <a href="mailto:amzyst@gmail.com">say hi :)</a></p>
+          <Link href="/" className="quiet-link">Home</Link>
+        </footer>
     </main>
   </div>;
 }
