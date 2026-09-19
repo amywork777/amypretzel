@@ -45,11 +45,11 @@ export default function Home() {
       <SiteNav />
       <main id="main-content" className="site-width">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
-          <h1 id="intro-title">Amy Zhou</h1>
+          <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
+          <p className="text-display intro-statement">I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.</p>
           <div className="personal-intro">
-            <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="(max-width: 540px) 100px, 145px" priority />
+            <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
             <div className="personal-copy">
-              <p className="intro-statement">I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.</p>
               <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <nav className="personal-links" aria-label="Contact Amy">

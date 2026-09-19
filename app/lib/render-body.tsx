@@ -17,7 +17,7 @@ export function renderBody(body: string) {
     // bullet list
     if (lines.every((l) => l.trim().startsWith("- "))) {
       blocks.push(
-        <ul key={bi} className="space-y-2 text-[16px] sm:text-[17px] leading-[1.65] text-ink-soft my-5 list-disc pl-5 marker:text-ink-faint">
+        <ul key={bi}>
           {lines.map((l, i) => (
             <li key={i}>{renderInline(l.replace(/^-\s+/, ""))}</li>
           ))}
@@ -31,7 +31,7 @@ export function renderBody(body: string) {
       const t = lines[0].trim();
       if (t.startsWith("### ")) {
         blocks.push(
-          <h3 key={bi} className="font-display font-medium tracking-tight text-[24px] sm:text-[28px] leading-[1.1] text-ink mt-10 mb-3">
+          <h3 key={bi}>
             {t.slice(4)}
           </h3>
         );
@@ -39,7 +39,7 @@ export function renderBody(body: string) {
       }
       if (t.startsWith("## ")) {
         blocks.push(
-          <h2 key={bi} className="font-display font-medium tracking-tight text-[32px] sm:text-[40px] leading-[1.05] text-ink mt-14 mb-4">
+          <h2 key={bi}>
             {t.slice(3)}
           </h2>
         );
@@ -49,7 +49,7 @@ export function renderBody(body: string) {
 
     // paragraph (joined with line breaks)
     blocks.push(
-      <p key={bi} className="text-[16px] sm:text-[17px] leading-[1.7] text-ink-soft mb-4">
+      <p key={bi}>
         {renderInline(lines.join(" "))}
       </p>
     );
@@ -63,7 +63,7 @@ export function renderInline(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((p, i) =>
     p.startsWith("**") && p.endsWith("**") ? (
-      <strong key={i} className="text-ink font-semibold">
+      <strong key={i}>
         {p.slice(2, -2)}
       </strong>
     ) : (

@@ -61,95 +61,35 @@ export default async function SoftwareProjectPage({
       <SiteNav active="software" />
 
       <main id="main-content" className="flex-1 project-detail">
-        <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-8 sm:pt-16 pb-7 sm:pb-10">
-          <Link href="/software" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">
-            All software
-          </Link>
-          <div className="flex items-baseline justify-between gap-4 sm:gap-6 flex-wrap mb-3">
-            <h1 className="display text-[38px] sm:text-[64px] md:text-[88px] leading-[0.98] animate-fade-up delay-100">
-              {project.title}
-            </h1>
-            <span className="meta animate-fade-up delay-100">{project.section}</span>
-          </div>
-          <p className="meta text-ink animate-fade-up delay-200">{project.meta}</p>
-          {project.tags && (
-            <p className="meta text-ink-faint mt-2 animate-fade-up delay-200">
-              {project.tags.join(" / ")}
-            </p>
-          )}
+        <section className="detail-head">
+          <h1 className="display">{project.title}</h1>
+          <span className="meta">{project.section}</span>
         </section>
+        <p className="detail-summary">{project.summary}</p>
 
-        <div className="rule" />
-
-        <section className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-16">
+        <section className="detail-body">
           <div>{renderBody(project.body)}</div>
-
           {project.links && project.links.length > 0 && (
-            <div className="mt-10 pt-6 border-t border-rule">
-              <p className="meta mb-3">Links</p>
-              <ul className="space-y-2">
-                {project.links.map((l) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      target={l.href.startsWith("http") ? "_blank" : undefined}
-                      rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="link text-[15px] text-ink-soft"
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <nav className="detail-links" aria-label="Links">
+              {project.links.map((l) => (
+                <a key={l.href} href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}>{l.label}</a>
+              ))}
+            </nav>
           )}
         </section>
 
         {project.demos && project.demos.length > 0 && (
-          <>
-            <div className="rule" />
-            <section className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-16">
-              <p className="meta mb-5">Demos</p>
-              <div className="space-y-4">
-                {project.demos.map((demo) => (
-                  <div key={demo.src} className="border border-rule bg-card">
-                    <p className="meta px-3 py-2 border-b border-rule">{demo.label}</p>
-                    <div className="bg-white overflow-hidden">
-                      <iframe
-                        src={demo.src}
-                        height="399"
-                        width="504"
-                        frameBorder="0"
-                        allowFullScreen
-                        title={`${project.title}, ${demo.label}`}
-                        loading="lazy"
-                        className="block w-full min-h-[399px]"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </>
+          <section className="detail-media">
+            {project.demos.map((demo) => (
+              <iframe key={demo.src} src={demo.src} height="399" frameBorder="0" allowFullScreen title={`${project.title}, ${demo.label}`} loading="lazy" className="min-h-[399px]" />
+            ))}
+          </section>
         )}
 
-        <div className="rule" />
-        <section className="max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
-          <div className="grid grid-cols-2 gap-4 sm:gap-10">
-            <Link href={`/software/${prev.slug}`} className="group block">
-              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Prev</p>
-              <p className="font-display font-medium tracking-tight text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
-                {prev.title}
-              </p>
-            </Link>
-            <Link href={`/software/${next.slug}`} className="group block text-right">
-              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Next</p>
-              <p className="font-display font-medium tracking-tight text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
-                {next.title}
-              </p>
-            </Link>
-          </div>
-        </section>
+        <nav className="detail-nav" aria-label="More software">
+          <Link href={`/software/${prev.slug}`}><small>Previous</small>{prev.title}</Link>
+          <Link href={`/software/${next.slug}`} className="text-right"><small>Next</small>{next.title}</Link>
+        </nav>
       </main>
     </div>
   );

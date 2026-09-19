@@ -86,139 +86,62 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <SiteNav active="portfolio" />
 
       <main id="main-content" className="flex-1 project-detail">
-        {/* === HEADER === */}
-        <section className="max-w-5xl mx-auto px-5 sm:px-8 pt-8 sm:pt-16 pb-7 sm:pb-10">
-          <Link href="/portfolio" className="link-soft meta inline-block mb-5 sm:mb-7 animate-fade-up">
-            All projects
-          </Link>
-          <div className="flex items-baseline justify-between gap-4 sm:gap-6 flex-wrap mb-3">
-            <h1 className="display text-[38px] sm:text-[64px] md:text-[88px] leading-[0.98] animate-fade-up delay-100">
-              {project.title}
-            </h1>
-            {project.year && (
-              <span className="meta animate-fade-up delay-100">{project.year}</span>
-            )}
-          </div>
-          <p className="meta text-ink animate-fade-up delay-200">{project.role}</p>
+        <section className="detail-head">
+          <h1 className="display">{project.title}</h1>
+          {project.year && <span className="meta">{project.year}</span>}
         </section>
+        {project.role && <p className="detail-summary">{project.role}</p>}
 
         {/* === LEAD IMAGE === */}
         {lead && (
-          <section className="max-w-5xl mx-auto px-5 sm:px-8 mb-10 sm:mb-16 animate-fade-up delay-300">
-            <div className="bg-white border border-rule rounded-sm overflow-hidden">
-              <Image
-                src={lead}
-                alt={project.title}
-                width={1600}
-                height={1200}
-                className="w-full h-auto object-contain max-h-[78vh]"
-                priority
-              />
-            </div>
+          <section className="detail-media">
+            <Image src={lead} alt={project.title} width={1600} height={1200} priority />
           </section>
         )}
 
         {/* === TWEET EMBED (with launch video) === */}
         {project.tweetId && (
-          <section className="max-w-2xl mx-auto px-5 sm:px-8 mb-12 sm:mb-16">
-            <p className="meta mb-4">Launch demo</p>
+          <section className="detail-media">
             <div data-theme="light" className="tweet-host">
               <SafeTweet id={project.tweetId} />
             </div>
           </section>
         )}
 
-        <div className="rule" />
-
-        {/* === BODY + LINKS === */}
         {(project.body || project.links?.length) && (
-          <section className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-20">
+          <section className="detail-body">
             {project.body && <div>{renderBody(project.body)}</div>}
-
             {project.links && project.links.length > 0 && (
-              <div className="mt-10 pt-6 border-t border-rule">
-                <p className="meta mb-3">References</p>
-                <ul className="space-y-2">
-                  {project.links.map((l) => (
-                    <li key={l.url}>
-                      <a
-                        href={l.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="link text-[15px] text-ink-soft"
-                      >
-                        {l.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <nav className="detail-links" aria-label="References">
+                {project.links.map((l) => (
+                  <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
+                ))}
+              </nav>
             )}
           </section>
         )}
 
         {/* === PDF VIEWER === */}
         {project.pdfPreview && (
-          <section className="max-w-4xl mx-auto px-5 sm:px-8 pb-10 sm:pb-16 animate-fade-up">
-            <div className="bg-white border border-rule rounded-sm overflow-hidden">
-              <iframe
-                src={project.pdfPreview}
-                title={`${project.title} document preview`}
-                className="block w-full h-[70vh] sm:h-[85vh]"
-                loading="lazy"
-              />
-            </div>
-            <p className="meta mt-3 text-ink-faint">
-              If the viewer doesn&apos;t load on your device, open the PDF directly from the references above.
-            </p>
+          <section className="detail-media">
+            <iframe src={project.pdfPreview} title={`${project.title} document preview`} className="h-[70vh] sm:h-[85vh]" loading="lazy" />
+            <p className="meta">If the viewer doesn&apos;t load on your device, open the PDF from the references above.</p>
           </section>
         )}
 
         {/* === REMAINING GALLERY === */}
         {rest.length > 0 && (
-          <>
-            <div className="rule" />
-            <section className="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-20">
-              <p className="meta mb-6 sm:mb-8">Gallery, {rest.length} {rest.length === 1 ? "image" : "images"}</p>
-              <div className="space-y-4 sm:space-y-7">
-                {rest.map((src, i) => (
-                  <div
-                    key={src}
-                    className="bg-white border border-rule rounded-sm overflow-hidden animate-fade-up"
-                    style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
-                  >
-                    <Image
-                      src={src}
-                      alt={`${project.title}, ${i + 2}`}
-                      width={1600}
-                      height={1200}
-                      className="w-full h-auto object-contain max-h-[80vh]"
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-          </>
+          <section className="detail-media">
+            {rest.map((src, i) => (
+              <Image key={src} src={src} alt={`${project.title}, ${i + 2}`} width={1600} height={1200} />
+            ))}
+          </section>
         )}
 
-        {/* === PREV / NEXT === */}
-        <div className="rule" />
-        <section className="max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
-          <div className="grid grid-cols-2 gap-4 sm:gap-10">
-            <Link href={`/portfolio/${prev.slug}`} className="group block">
-              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Prev</p>
-              <p className="font-display font-medium tracking-tight text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
-                {prev.title}
-              </p>
-            </Link>
-            <Link href={`/portfolio/${next.slug}`} className="group block text-right">
-              <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Next</p>
-              <p className="font-display font-medium tracking-tight text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
-                {next.title}
-              </p>
-            </Link>
-          </div>
-        </section>
+        <nav className="detail-nav" aria-label="More objects">
+          <Link href={`/portfolio/${prev.slug}`}><small>Previous</small>{prev.title}</Link>
+          <Link href={`/portfolio/${next.slug}`} className="text-right"><small>Next</small>{next.title}</Link>
+        </nav>
       </main>
 
     </div>

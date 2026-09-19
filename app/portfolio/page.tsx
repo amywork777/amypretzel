@@ -35,17 +35,21 @@ export default function PortfolioPage() {
           <h1>Objects.</h1>
           <p>Product design, mechanical engineering, jewelry, instruments, and the occasional craft.</p>
         </section>
-        <section className="objects-index-grid" aria-label="All objects">
+        <ul className="index-list" aria-label="All objects">
           {projects.map((p, i) => (
-            <Link key={p.slug} href={`/portfolio/${p.slug}`} className="selected-project">
-              <div className="selected-image object-study">
-                <Image src={p.cover} alt={p.title} fill sizes="(max-width: 700px) 100vw, 50vw" priority={i < 2} />
-              </div>
-              <div className="project-caption"><div><h2>{p.title}</h2><p>{p.role}</p></div></div>
-            </Link>
+            <li key={p.slug}>
+              <Link href={`/portfolio/${p.slug}`} className="index-row">
+                <span className="index-thumb"><Image src={p.cover} alt="" fill sizes="84px" priority={i < 4} /></span>
+                <span className="text-display index-title">{p.title}</span>
+                <span className="index-meta">{p.role}</span>
+              </Link>
+            </li>
           ))}
-        </section>
-        <footer className="index-footer"><Link href="/" className="quiet-link">Back home</Link><a href="mailto:amzyst@gmail.com" className="quiet-link">Say hello</a></footer>
+        </ul>
+        <footer className="index-footer">
+          <p className="text-display signoff">Made a thing? <a href="mailto:amzyst@gmail.com">Say hi.</a></p>
+          <Link href="/" className="quiet-link">Home</Link>
+        </footer>
       </main>
     </div>
   );

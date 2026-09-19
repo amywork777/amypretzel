@@ -276,7 +276,7 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
   return <>
     {/* Reflection cards live only in the environment, outside the visible scene. */}
     <Environment resolution={lowDetail ? 64 : 256} frames={1} environmentIntensity={.55}>
-      <color attach="background" args={["#e9e9e9"]} />
+      <color attach="background" args={["#0a0a0a"]} />
       <Lightformer form="rect" intensity={3} position={[-3, 4, 2]} scale={[3, 4, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={2} position={[-1, 3, -3]} scale={[3, 2, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />
