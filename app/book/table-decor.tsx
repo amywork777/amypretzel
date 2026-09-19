@@ -4,10 +4,12 @@ import { Environment, Lightformer, useGLTF, useCursor } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Color,
   Group,
   Shape,
   CanvasTexture,
   SRGBColorSpace,
+  Float32BufferAttribute,
   Vector2,
   Vector3,
   Mesh,
@@ -24,16 +26,16 @@ function approach(value: number, target: number, delta: number, reduced: boolean
   return Math.abs(next - target) < .0001 ? target : next;
 }
 
-// Where each cookie sits on the plate, and where it lands when taken off it.
+// Where each macaron sits on the plate, and where it lands when taken off it.
 const cookieSpots = [
-  { plate: [-.19, .022, .08], taken: [.7, 0, .55], turn: .4 },
-  { plate: [.19, .022, -.05], taken: [.82, 0, .95], turn: 2.1 },
-  { plate: [.0, .12, .03], taken: [.55, 0, 1.3], turn: 4.2 },
+  { plate: [-.24, .022, .1], taken: [.9, 0, .6], turn: .4, shell: "#f2b6c6" },
+  { plate: [.24, .022, .1], taken: [1.05, 0, 1.05], turn: 2.1, shell: "#cdbde8" },
+  { plate: [0, .022, -.24], taken: [.7, 0, 1.4], turn: 4.2, shell: "#bfe3cf" },
 ];
-const COOKIE_SCALE = 3.3;
-const COOKIE_LIFT = .043; // model origin sits a little above its underside
+const COOKIE_SCALE = .0068; // the model is about 72 units across
+const COOKIE_LIFT = 0;
 
-function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: InteractionProps & { index: number; narrow: boolean; model: Group }) {
+function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: InteractionProps & { index: number; narrow: boolean; model: Mesh }) {
   const root = useRef<Group>(null!);
   const progress = useRef(0);
   const preview = useRef<number | null>(null);
@@ -72,31 +74,37 @@ function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: In
 
 function CookiePlate(props: InteractionProps & { narrow: boolean }) {
   const lowDetail = useCompactBook();
-  const { scene: cookieModel } = useGLTF("/book/cookie.glb");
-  const { cookies, dough, chips, glaze } = useMemo(() => {
-    const dough = new MeshPhysicalMaterial({ color: "#d9a25f", roughness: .82, sheen: .25, sheenColor: "#f3d9a8" });
-    const chips = new MeshPhysicalMaterial({ color: "#3b2418", roughness: .55, clearcoat: .2 });
+  const { scene: macaronModel } = useGLTF("/book/macaron.glb");
+  const { cookies, materials, glaze } = useMemo(() => {
     const glaze = new MeshPhysicalMaterial({ color: "#e7e3d8", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
-    const cookies = cookieSpots.map(() => {
-      const clone = cookieModel.clone(true);
-      clone.traverse(object => {
-        if (!(object instanceof Mesh)) return;
-        const source = Array.isArray(object.material) ? object.material[0] : object.material;
-        // The model's two materials: a dark one for the chips, a light one for the dough.
-        const color = (source as MeshPhysicalMaterial).color;
-        object.material = color && color.r < .5 ? chips : dough;
-        object.castShadow = true;
-        object.receiveShadow = true;
-      });
-      return clone;
+    const source = macaronModel.getObjectByName("Macaron") as Mesh;
+    const materials: MeshPhysicalMaterial[] = [];
+    const cookies = cookieSpots.map(spot => {
+      // The model is one textured mesh; paint the shells and the cream filling
+      // by height instead, so each macaron gets its own pastel.
+      const geometry = source.geometry.clone();
+      const position = geometry.getAttribute("position");
+      const shell = new Color(spot.shell), filling = new Color("#fff3e2"), colors: number[] = [];
+      for (let i = 0; i < position.count; i++) {
+        const y = position.getY(i);
+        const tint = y > 14.8 && y < 18.3 ? filling : shell;
+        colors.push(tint.r, tint.g, tint.b);
+      }
+      geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+      const material = new MeshPhysicalMaterial({ vertexColors: true, roughness: .62, sheen: .5, sheenColor: "#ffffff", sheenRoughness: .7 });
+      materials.push(material);
+      const mesh = new Mesh(geometry, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
     });
-    return { cookies, dough, chips, glaze };
-  }, [cookieModel]);
-  useEffect(() => () => { dough.dispose(); chips.dispose(); glaze.dispose(); }, [dough, chips, glaze]);
+    return { cookies, materials, glaze };
+  }, [macaronModel]);
+  useEffect(() => () => { glaze.dispose(); materials.forEach(m => m.dispose()); cookies.forEach(c => c.geometry.dispose()); }, [glaze, materials, cookies]);
   const plateProfile = useMemo(() => [
     [0, 0], [.38, 0], [.38, .012], [.53, .04], [.59, .062], [.595, .07], [.58, .072], [.5, .05], [.37, .024], [0, .022],
   ].map(([x, y]) => new Vector2(x, y)), []);
-  return <group name="cookie-plate">
+  return <group name="macaron-plate">
     <mesh castShadow receiveShadow material={glaze}>
       <latheGeometry args={[plateProfile, lowDetail ? 32 : 80]} />
     </mesh>
@@ -229,30 +237,33 @@ function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow
 }
 
 useGLTF.preload("/book/coffee-cup.glb");
-useGLTF.preload("/book/cookie.glb");
+useGLTF.preload("/book/macaron.glb");
+useGLTF.preload("/book/pencil.glb");
 
-function Pen() {
-  return <group name="green-and-brass-pen" rotation={[Math.PI / 2, 0, -.28]}>
-    <mesh castShadow receiveShadow>
-      <cylinderGeometry args={[.021, .021, .66, 24]} />
-      <meshPhysicalMaterial color="#183f36" roughness={.22} clearcoat={1} />
-    </mesh>
-    <mesh position={[0, -.375, 0]} castShadow>
-      <cylinderGeometry args={[.021, .009, .09, 24]} />
-      <meshStandardMaterial color="#b9a16b" roughness={.25} metalness={.85} />
-    </mesh>
-    <mesh position={[0, -.437, 0]} rotation-z={Math.PI} castShadow>
-      <coneGeometry args={[.009, .035, 20]} />
-      <meshStandardMaterial color="#c9c8c3" roughness={.2} metalness={1} />
-    </mesh>
-    <mesh position={[0, .335, 0]} castShadow>
-      <cylinderGeometry args={[.021, .021, .018, 24]} />
-      <meshStandardMaterial color="#b9a16b" roughness={.24} metalness={.85} />
-    </mesh>
-    <mesh position={[0, .245, -.025]} castShadow>
-      <boxGeometry args={[.009, .18, .006]} />
-      <meshStandardMaterial color="#b9a16b" roughness={.24} metalness={.85} />
-    </mesh>
+// A plain wooden pencil, lying where a hand would leave it.
+const pencilFinishes: Record<string, MeshPhysicalMaterial> = {
+  mat13: new MeshPhysicalMaterial({ color: "#e9b636", roughness: .38, clearcoat: .5, clearcoatRoughness: .3 }),
+  mat15: new MeshPhysicalMaterial({ color: "#c9c8c3", roughness: .3, metalness: .9 }),
+  mat19: new MeshPhysicalMaterial({ color: "#dcb98a", roughness: .8 }),
+  mat23: new MeshPhysicalMaterial({ color: "#33302c", roughness: .5 }),
+  mat7: new MeshPhysicalMaterial({ color: "#d98a90", roughness: .7 }),
+};
+
+function Pencil() {
+  const { scene: pencilModel } = useGLTF("/book/pencil.glb");
+  const pencil = useMemo(() => {
+    const clone = pencilModel.clone(true);
+    clone.traverse(object => {
+      if (!(object instanceof Mesh)) return;
+      const source = Array.isArray(object.material) ? object.material[0] : object.material;
+      object.material = pencilFinishes[source.name] ?? pencilFinishes.mat13;
+      object.castShadow = true;
+      object.receiveShadow = true;
+    });
+    return clone;
+  }, [pencilModel]);
+  return <group name="pencil" rotation={[Math.PI / 2, 0, -.28]}>
+    <primitive object={pencil} scale={.6} />
   </group>;
 }
 
@@ -271,6 +282,6 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
     </Environment>
     <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><CookiePlate table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.93, 0, -1.5] : [1.78, 0, -.35]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
-    <group position={narrow ? [.6, .024, 1.65] : [1.65, .024, .56]}><Pen /></group>
+    <group position={narrow ? [.6, .023, 1.65] : [1.65, .023, .56]}><Pencil /></group>
   </>;
 }
