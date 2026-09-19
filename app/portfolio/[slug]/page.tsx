@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SafeTweet } from "../../lib/safe-tweet";
+import { splitLinks } from "../../lib/embed";
+import { Embeds } from "../../lib/embeds";
 import { renderBody } from "../../lib/render-body";
 import SiteNav from "../../site-nav";
 import { projects } from "../projects";
@@ -77,6 +79,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     ...(project.year ? { dateCreated: project.year } : {}),
   };
 
+  // The tweet and the PDF already have their own blocks above; everything
+  // else that can be shown rather than linked becomes an embed.
+  const { embeds, rest: otherLinks } = splitLinks(
+    project.links,
+    [project.tweetId, project.pdfPreview].filter(Boolean) as string[]
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-paper">
       <script
@@ -108,18 +117,20 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
 
-        {(project.body || project.links?.length) && (
+        {(project.body || otherLinks.length > 0) && (
           <section className="detail-body">
             {project.body && <div>{renderBody(project.body)}</div>}
-            {project.links && project.links.length > 0 && (
+            {otherLinks.length > 0 && (
               <nav className="detail-links" aria-label="References">
-                {project.links.map((l) => (
+                {otherLinks.map((l) => (
                   <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
                 ))}
               </nav>
             )}
           </section>
         )}
+
+        <Embeds embeds={embeds} />
 
         {/* === PDF VIEWER === */}
         {project.pdfPreview && (

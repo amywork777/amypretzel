@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "../../site-nav";
 import { renderBody } from "../../lib/render-body";
+import { splitLinks, type Embed } from "../../lib/embed";
+import { Embeds } from "../../lib/embeds";
 import { softwareProjects } from "../projects";
 
 const SITE_URL = "https://amypretzel.com";
@@ -43,6 +45,21 @@ export default async function SoftwareProjectPage({
   const prev = idx > 0 ? softwareProjects[idx - 1] : softwareProjects[softwareProjects.length - 1];
   const next = idx < softwareProjects.length - 1 ? softwareProjects[idx + 1] : softwareProjects[0];
 
+  // Demos are already embed URLs; the rest of the links become embeds where
+  // the destination allows framing.
+  const demoEmbeds: Embed[] = (project.demos ?? []).map(demo => ({
+    kind: "frame" as const,
+    src: demo.src,
+    height: 560,
+    label: demo.label,
+    href: demo.src,
+    domain: "linkedin.com",
+  }));
+  const { embeds, rest: otherLinks } = splitLinks(
+    project.links?.map(l => ({ label: l.label, url: l.href })),
+    (project.demos ?? []).map(d => d.src)
+  );
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -69,22 +86,16 @@ export default async function SoftwareProjectPage({
 
         <section className="detail-body">
           <div>{renderBody(project.body)}</div>
-          {project.links && project.links.length > 0 && (
+          {otherLinks.length > 0 && (
             <nav className="detail-links" aria-label="Links">
-              {project.links.map((l) => (
-                <a key={l.href} href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}>{l.label}</a>
+              {otherLinks.map((l) => (
+                <a key={l.url} href={l.url} target={l.url.startsWith("http") ? "_blank" : undefined} rel={l.url.startsWith("http") ? "noopener noreferrer" : undefined}>{l.label}</a>
               ))}
             </nav>
           )}
         </section>
 
-        {project.demos && project.demos.length > 0 && (
-          <section className="detail-media">
-            {project.demos.map((demo) => (
-              <iframe key={demo.src} src={demo.src} height="399" frameBorder="0" allowFullScreen title={`${project.title}, ${demo.label}`} loading="lazy" className="min-h-[399px]" />
-            ))}
-          </section>
-        )}
+        <Embeds embeds={[...demoEmbeds, ...embeds]} />
 
         <nav className="detail-nav" aria-label="More software">
           <Link href={`/software/${prev.slug}`}><small>Previous</small>{prev.title}</Link>
