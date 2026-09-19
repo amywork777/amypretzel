@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 
-export const cookieNames = ["Left", "Right", "Top"];
+export const cookieNames = ["Pink", "Lavender", "Mint"];
 
 type TableValues = {
   coffeeTipped: boolean;
@@ -81,10 +81,10 @@ export function TableActions({ table }: { table: TableState }) {
   return <details className="table-actions">
     <summary>Table</summary>
     <div className="table-actions-panel">
-      <p>Tap the cup to tip it. Tap a cookie to take it off the plate; tap it again to put it back.</p>
+      <p>Tap the cup to tip it. Tap a macaron to take it off the plate; tap it again to put it back.</p>
       <button type="button" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</button>
-      <div className="flower-actions">{cookieNames.map((name, i) => <button key={name} type="button" aria-label={`${table.cookiesTaken[i] ? "Put back" : "Take"} ${name.toLowerCase()} cookie`} aria-pressed={table.cookiesTaken[i]} onClick={() => table.setCookie(i, !table.cookiesTaken[i])}>{name}</button>)}</div>
-      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of 3 cookies taken</p>
+      <div className="flower-actions">{cookieNames.map((name, i) => <button key={name} type="button" aria-label={`${table.cookiesTaken[i] ? "Put back" : "Take"} ${name.toLowerCase()} macaron`} aria-pressed={table.cookiesTaken[i]} onClick={() => table.setCookie(i, !table.cookiesTaken[i])}>{name}</button>)}</div>
+      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of 3 macarons taken</p>
       <button type="button" className="table-reset" onClick={table.reset}>Reset table</button>
     </div>
   </details>;
