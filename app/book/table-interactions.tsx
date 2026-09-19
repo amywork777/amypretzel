@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
+import { clearSketch, sketch } from "./sketch";
 
 export const PRETZEL_COUNT = 9;
 
@@ -9,16 +10,18 @@ type TableValues = {
   coffeeTipped: boolean;
   coffeeSpilled: boolean;
   cookiesTaken: boolean[];
+  pencilHeld: boolean;
   resetVersion: number;
 };
 
 export function useTableState() {
-  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), resetVersion: 0 });
+  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), pencilHeld: false, resetVersion: 0 });
   const setCoffee = useCallback((coffeeTipped: boolean) => setValues(v => ({ ...v, coffeeTipped })), []);
   const spillCoffee = useCallback(() => setValues(v => v.coffeeSpilled ? v : { ...v, coffeeSpilled: true }), []);
   const setCookie = useCallback((index: number, taken: boolean) => setValues(v => ({ ...v, cookiesTaken: v.cookiesTaken.map((value, i) => i === index ? taken : value) })), []);
-  const reset = useCallback(() => setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), resetVersion: v.resetVersion + 1 })), []);
-  return { ...values, setCoffee, spillCoffee, setCookie, reset };
+  const setPencil = useCallback((pencilHeld: boolean) => setValues(v => ({ ...v, pencilHeld })), []);
+  const reset = useCallback(() => { clearSketch(); setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), pencilHeld: false, resetVersion: v.resetVersion + 1 })); }, []);
+  return { ...values, setCoffee, spillCoffee, setCookie, setPencil, reset };
 }
 
 export type TableState = ReturnType<typeof useTableState>;
@@ -38,6 +41,7 @@ export function usePropGesture({ onDraggingChange, onStart, onMove, onEnd, onCan
   useEffect(() => () => cancel.current?.(), [resetVersion]);
 
   return (event: ThreeEvent<PointerEvent>) => {
+    if (sketch.held) return;
     event.stopPropagation();
     if (!event.nativeEvent.isPrimary || event.button !== 0) return;
     // The canvas uses touch-action: none; R3F pointer listeners are passive.
@@ -81,7 +85,8 @@ export function TableActions({ table }: { table: TableState }) {
   return <details className="table-actions">
     <summary>Table</summary>
     <div className="table-actions-panel">
-      <p>Tap the cup to tip it. Tap a pretzel to take it off the pile; tap it again to put it back.</p>
+      <p>Tap the cup to tip it. Tap a pretzel to take it off the pile; tap it again to put it back. Pick up the pencil and draw on the last page.</p>
+      <button type="button" onClick={() => table.setPencil(!table.pencilHeld)}>{table.pencilHeld ? "Put the pencil down" : "Pick up the pencil"}</button>
       <button type="button" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</button>
       <div className="flower-actions">
         <button type="button" disabled={count === PRETZEL_COUNT} onClick={() => table.setCookie(table.cookiesTaken.lastIndexOf(false), true)}>Take a pretzel</button>

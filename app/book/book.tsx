@@ -24,11 +24,14 @@ import {
   Skeleton,
   SkinnedMesh,
   SRGBColorSpace,
+  Plane,
   Uint16BufferAttribute,
+  Vector2,
   Vector3,
 } from "three";
 import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
+import { sketch, sketchAt } from "./sketch";
 import TableDecor from "./table-decor";
 import { useCompactBook } from "./use-compact-book";
 import { TableActions, useTableState, type TableState } from "./table-interactions";
@@ -44,6 +47,7 @@ type TexturePage =
   | { kind: "cover" }
   | { kind: "back-cover" }
   | { kind: "blank" }
+  | { kind: "sketch" }
   | { kind: "story"; page: StoryPage };
 
 type BookSheet = {
@@ -245,6 +249,21 @@ function createPageCanvasTexture(content: TexturePage, lowDetail: boolean, rever
     drawCover(ctx, true);
   } else if (content.kind === "story") {
     drawStoryPage(ctx, content.page);
+  } else if (content.kind === "sketch") {
+    const paint = () => {
+      drawPaper(ctx);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#aaaaaa";
+      ctx.font = printFont(18);
+      ctx.fillText("your page. pick up the pencil and draw something :)", 116, 1080);
+    };
+    paint();
+    sketch.ctx = ctx;
+    sketch.texture = texture;
+    sketch.width = TEXTURE_WIDTH;
+    sketch.height = TEXTURE_HEIGHT;
+    sketch.repaint = paint;
+    sketch.last = null;
   } else {
     drawPaper(ctx);
   }
@@ -268,7 +287,10 @@ function usePageTexture(content: TexturePage, reverse?: TexturePage) {
   // These pages use installed system fonts. Redrawing after fonts.ready only
   // repeated all of the canvas work and uploaded every texture a second time.
   const texture = useMemo(() => createPageCanvasTexture(content, lowDetail, reverse), [content, lowDetail, reverse]);
-  useEffect(() => () => texture.dispose(), [texture]);
+  useEffect(() => () => {
+    texture.dispose();
+    if (sketch.texture === texture) { sketch.texture = null; sketch.ctx = null; sketch.repaint = null; }
+  }, [texture]);
   return texture;
 }
 
@@ -411,6 +433,7 @@ function AnimatedPage({
     const geometry = isCover ? pageGeometry.clone() : pageGeometry;
     if (isCover) geometry.scale(1.018, 1.028, COVER_DEPTH / PAGE_DEPTH);
     const mesh = new SkinnedMesh(geometry, materials);
+    if (sheet.front.kind === "sketch") mesh.name = "sketch-page";
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
@@ -543,7 +566,7 @@ function AnimatedPage({
       ref={groupRef}
       onPointerEnter={(event) => {
         event.stopPropagation();
-        setHighlighted(true);
+        if (!sketch.held) setHighlighted(true);
       }}
       onPointerLeave={(event) => {
         event.stopPropagation();
@@ -551,6 +574,7 @@ function AnimatedPage({
       }}
       onPointerDown={(event) => {
         event.stopPropagation();
+        if (sketch.held) return; // the pencil owns the pointer
         beginDrag(event.nativeEvent.clientX);
       }}
     >
@@ -687,7 +711,7 @@ function PointerParallax({ controls }: { controls: RefObject<ComponentRef<typeof
 
   useFrame((_, delta) => {
     const c = controls.current;
-    if (!c || !c.enabled || orbiting.current) return;
+    if (!c || !c.enabled || orbiting.current || sketch.held) return;
     const target = { x: pointer.current.x * 0.045, y: pointer.current.y * 0.022 };
     const moving = easing.damp(applied.current, "x", target.x, 0.6, delta);
     const movingY = easing.damp(applied.current, "y", target.y, 0.6, delta);
@@ -702,6 +726,67 @@ function PointerParallax({ controls }: { controls: RefObject<ComponentRef<typeof
     lastApplied.current.y = applied.current.y;
     if (moving || movingY) invalidate();
   });
+  return null;
+}
+
+// While the pencil is in hand: it follows the pointer across the table, and a
+// press-and-drag over the sketch page lays graphite onto that page's texture.
+function PencilSketcher({ table }: { table: TableState }) {
+  const { gl, camera, raycaster, scene, invalidate } = useThree();
+  const held = table.pencilHeld;
+
+  useEffect(() => {
+    sketch.held = held;
+    sketch.drawing = false;
+    sketch.last = null;
+    if (!held) sketch.hasPointer = false;
+    invalidate();
+  }, [held, invalidate]);
+
+  useEffect(() => {
+    if (!held) return;
+    const el = gl.domElement;
+    const tabletop = new Plane(new Vector3(0, 1, 0), 0);
+    const ndc = new Vector2();
+    const hit = new Vector3();
+    const aim = (event: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      ndc.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
+      raycaster.setFromCamera(ndc, camera);
+      const page = scene.getObjectByName("sketch-page");
+      const onPage = page ? raycaster.intersectObject(page, false).find(h => h.face?.materialIndex === 4 && h.uv) : undefined;
+      if (onPage) {
+        sketch.pointer.copy(onPage.point);
+        sketch.hasPointer = true;
+        if (sketch.drawing && onPage.uv) sketchAt(onPage.uv.x, onPage.uv.y);
+      } else {
+        if (raycaster.ray.intersectPlane(tabletop, hit)) { sketch.pointer.copy(hit); sketch.hasPointer = true; }
+        sketch.last = null;
+      }
+      invalidate();
+    };
+    const down = (event: PointerEvent) => {
+      if (!event.isPrimary) return;
+      sketch.drawing = true;
+      sketch.last = null;
+      aim(event);
+    };
+    const up = () => { sketch.drawing = false; sketch.last = null; };
+    const key = (event: KeyboardEvent) => { if (event.key === "Escape") table.setPencil(false); };
+    el.addEventListener("pointermove", aim);
+    el.addEventListener("pointerdown", down);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    window.addEventListener("keydown", key);
+    return () => {
+      el.removeEventListener("pointermove", aim);
+      el.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      window.removeEventListener("keydown", key);
+    };
+  }, [held, gl, camera, raycaster, scene, invalidate, table]);
+
   return null;
 }
 
@@ -792,6 +877,8 @@ function BookScene({
       controlsRef.current.enabled = !dragging;
     }
   }, []);
+  // Orbit yields to the pencil the same way it yields to a page drag.
+  useEffect(() => { handleDraggingChange(table.pencilHeld); }, [table.pencilHeld, handleDraggingChange]);
 
   return (
     <>
@@ -846,6 +933,7 @@ function BookScene({
         target={[0, 0.04, 0]}
       />
       {!lowDetail && <PointerParallax controls={controlsRef} />}
+      <PencilSketcher table={table} />
     </>
   );
 }
@@ -865,7 +953,7 @@ function BookCanvas({
 }) {
   const lowDetail = useCompactBook();
   return (
-    <div className="book-three-frame">
+    <div className="book-three-frame" data-pencil={table.pencilHeld || undefined}>
       <Canvas
         className="book-three-canvas"
         shadows="variance"
@@ -929,8 +1017,12 @@ function makeBookModel(chapters: BookChapter[]) {
     // back cover needs a final sheet of its own
     sheets.push({ front: { kind: "blank" }, back: { kind: "back-cover" } });
   }
+  // One blank page at the end, for the reader's own pencil.
+  const last = sheets[sheets.length - 1];
+  if (last.back.kind === "back-cover") last.back = { kind: "blank" };
+  sheets.push({ front: { kind: "sketch" }, back: { kind: "back-cover" } });
 
-  return { sheets, spreadCount: Math.ceil(pages.length / 2) };
+  return { sheets, spreadCount: Math.ceil((pages.length + 1) / 2) };
 }
 
 export default function StoryBook({ onExit, onReady }: { onExit?: () => void; onReady?: () => void }) {

@@ -4,6 +4,7 @@ import { Environment, Lightformer, useGLTF, useCursor } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Euler,
   Group,
   Shape,
   CanvasTexture,
@@ -15,6 +16,7 @@ import {
 } from "three";
 
 import { useCompactBook } from "./use-compact-book";
+import { sketch } from "./sketch";
 import { usePropGesture, type TableState, type DraggingChange } from "./table-interactions";
 
 type InteractionProps = { table: TableState; onDraggingChange: DraggingChange };
@@ -251,7 +253,12 @@ const pencilFinishes: Record<string, MeshPhysicalMaterial> = {
   mat7: new MeshPhysicalMaterial({ color: "#d98a90", roughness: .7 }),
 };
 
-function Pencil() {
+function Pencil({ rest, table }: { rest: [number, number, number]; table: TableState }) {
+  const root = useRef<Group>(null!);
+  const { invalidate } = useThree();
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered && !table.pencilHeld, "grab");
+  const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
   const { scene: pencilModel } = useGLTF("/book/pencil.glb");
   const pencil = useMemo(() => {
     const clone = pencilModel.clone(true);
@@ -264,7 +271,40 @@ function Pencil() {
     });
     return clone;
   }, [pencilModel]);
-  return <group name="pencil" rotation={[Math.PI / 2, 0, -.28]}>
+  // Lying down: along the table. In hand: tip down, leaning back toward the writer.
+  const poses = useMemo(() => ({
+    lying: new Euler(Math.PI / 2, 0, -.28),
+    held: new Euler(.42, .2, -.5),
+    tip: new Vector3(0, -.58 * .6, 0),
+  }), []);
+  const target = useMemo(() => ({ position: new Vector3(), rotation: new Euler() }), []);
+  useFrame((_, delta) => {
+    const group = root.current;
+    const held = table.pencilHeld && sketch.hasPointer;
+    if (held) {
+      const tip = poses.tip.clone().applyEuler(poses.held);
+      target.position.copy(sketch.pointer).sub(tip);
+      target.rotation.copy(poses.held);
+    } else {
+      target.position.set(rest[0], rest[1], rest[2]);
+      target.rotation.copy(poses.lying);
+    }
+    const k = reduced ? 1 : 1 - Math.exp(-Math.min(delta, .05) * 14);
+    group.position.lerp(target.position, k);
+    group.rotation.x += (target.rotation.x - group.rotation.x) * k;
+    group.rotation.y += (target.rotation.y - group.rotation.y) * k;
+    group.rotation.z += (target.rotation.z - group.rotation.z) * k;
+    if (group.position.distanceToSquared(target.position) > 1e-7 || Math.abs(group.rotation.x - target.rotation.x) > 1e-4) invalidate();
+  });
+  return <group
+    ref={root}
+    name="pencil"
+    position={rest}
+    rotation={[Math.PI / 2, 0, -.28]}
+    onPointerDown={e => { if (table.pencilHeld) return; e.stopPropagation(); table.setPencil(true); }}
+    onPointerOver={e => { e.stopPropagation(); setHovered(true); }}
+    onPointerOut={() => setHovered(false)}
+  >
     <primitive object={pencil} scale={.6} />
   </group>;
 }
@@ -284,6 +324,6 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
     </Environment>
     <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><CookiePlate table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.93, 0, -1.5] : [1.78, 0, -.35]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
-    <group position={narrow ? [.6, .023, 1.65] : [1.65, .023, .56]}><Pencil /></group>
+    <Pencil rest={narrow ? [.6, .023, 1.65] : [1.65, .023, .56]} table={table} />
   </>;
 }
