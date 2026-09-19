@@ -307,7 +307,9 @@ html[data-theme="dark"] .selected-image img { mix-blend-mode: normal; }
 .detail-body h2, .detail-body h3 { font-size: inherit; font-weight: 500; letter-spacing: var(--tracking-body); color: var(--color-ink); margin: 0 0 .4em; }
 .detail-body p { color: var(--color-ink-soft); margin: 0 0 1.2em; }
 .detail-body p + h2, .detail-body ul + h2, .detail-body p + h3 { margin-top: 2.4em; }
-.detail-body ul { color: var(--color-ink-soft); margin: 0 0 1.2em; padding-left: 1.1em; }
+.detail-body ul { color: var(--color-ink-soft); margin: 0 0 1.2em; padding-left: 1.1em; list-style: disc; }
+.detail-body li { margin-bottom: .25em; }
+.detail-body li::marker { color: var(--color-ink-faint); }
 .detail-body strong { color: var(--color-ink); font-weight: 500; }
 .detail-links { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: 14px; }
 .detail-links a { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent-hover); text-underline-offset: 4px; }
@@ -315,6 +317,21 @@ html[data-theme="dark"] .selected-image img { mix-blend-mode: normal; }
 .detail-media { padding: 40px 0 0; }
 .detail-media > * + * { margin-top: 24px; }
 .detail-media img, .detail-media iframe { display: block; width: 100%; height: auto; border-radius: 6px; background: var(--color-card); }
+.embeds { padding: 48px 0 0; display: grid; gap: 36px; }
+.embed { margin: 0; }
+.embed-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 10px; font-size: 14px; }
+.embed-head a { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent-hover); text-underline-offset: 4px; }
+.embed-head a:hover { color: var(--color-accent); }
+.embed-head span { color: var(--color-ink-muted); }
+.embed-frame { border: 1px solid var(--color-rule); border-radius: 6px; overflow: hidden; background: var(--color-card); }
+.embed-frame iframe { display: block; width: 100%; border: 0; }
+.embed-frame img { display: block; width: 100%; height: auto; }
+.embed-frame .tweet-host { padding: 0; }
+@media (max-width: 640px) {
+  .embeds { gap: 28px; }
+  .embed-frame iframe { height: 420px !important; }
+}
+
 .detail-nav { display: flex; justify-content: space-between; gap: 24px; margin-top: 72px; padding: 20px 0 64px; border-top: 1px solid var(--color-rule); }
 .detail-nav a { color: var(--color-ink); text-decoration: none; min-width: 0; }
 .detail-nav a:hover { color: var(--color-accent); }

@@ -31,7 +31,7 @@ import {
 } from "three";
 import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
-import { sketch, sketchAt } from "./sketch";
+import { registerMesh, registerSurface, releaseSurface, sketch, sketchAt } from "./sketch";
 import TableDecor from "./table-decor";
 import { useCompactBook } from "./use-compact-book";
 import { TableActions, useTableState, type TableState } from "./table-interactions";
@@ -47,7 +47,7 @@ type TexturePage =
   | { kind: "cover" }
   | { kind: "back-cover" }
   | { kind: "blank" }
-  | { kind: "sketch" }
+  | { kind: "sketch"; id: string }
   | { kind: "story"; page: StoryPage };
 
 type BookSheet = {
@@ -252,18 +252,18 @@ function createPageCanvasTexture(content: TexturePage, lowDetail: boolean, rever
   } else if (content.kind === "sketch") {
     const paint = () => {
       drawPaper(ctx);
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#aaaaaa";
-      ctx.font = printFont(18);
-      ctx.fillText("your page. pick up the pencil and draw something :)", 116, 1080);
+      // The invitation sits once, on the left of the spread.
+      if (content.id === "left") {
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#aaaaaa";
+        ctx.font = printFont(18);
+        ctx.fillText("your pages. pick up the pencil and draw something :)", 116, 1080);
+      }
     };
     paint();
-    sketch.ctx = ctx;
-    sketch.texture = texture;
     sketch.width = TEXTURE_WIDTH;
     sketch.height = TEXTURE_HEIGHT;
-    sketch.repaint = paint;
-    sketch.last = null;
+    registerSurface(content.id, { ctx, texture, repaint: paint });
   } else {
     drawPaper(ctx);
   }
@@ -289,8 +289,8 @@ function usePageTexture(content: TexturePage, reverse?: TexturePage) {
   const texture = useMemo(() => createPageCanvasTexture(content, lowDetail, reverse), [content, lowDetail, reverse]);
   useEffect(() => () => {
     texture.dispose();
-    if (sketch.texture === texture) { sketch.texture = null; sketch.ctx = null; sketch.repaint = null; }
-  }, [texture]);
+    if (content.kind === "sketch") releaseSurface(content.id, texture);
+  }, [texture, content]);
   return texture;
 }
 
@@ -433,7 +433,11 @@ function AnimatedPage({
     const geometry = isCover ? pageGeometry.clone() : pageGeometry;
     if (isCover) geometry.scale(1.018, 1.028, COVER_DEPTH / PAGE_DEPTH);
     const mesh = new SkinnedMesh(geometry, materials);
-    if (sheet.front.kind === "sketch") mesh.name = "sketch-page";
+    // Material 4 is the sheet's front face, 5 its back; either can be drawable.
+    mesh.userData.sketch = {
+      4: sheet.front.kind === "sketch" ? sheet.front.id : null,
+      5: sheet.back.kind === "sketch" ? sheet.back.id : null,
+    };
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
@@ -441,6 +445,11 @@ function AnimatedPage({
     mesh.bind(skeleton);
     return mesh;
   }, [frontTexture, backTexture, sheet, isCover]);
+
+  useEffect(() => {
+    if (!sheet.front.kind.startsWith("sketch") && !sheet.back.kind.startsWith("sketch")) return;
+    return registerMesh(manualSkinnedMesh);
+  }, [manualSkinnedMesh, sheet]);
 
   useEffect(() => () => {
     const materials = manualSkinnedMesh.material as MeshStandardMaterial[];
@@ -732,7 +741,7 @@ function PointerParallax({ controls }: { controls: RefObject<ComponentRef<typeof
 // While the pencil is in hand: it follows the pointer across the table, and a
 // press-and-drag over the sketch page lays graphite onto that page's texture.
 function PencilSketcher({ table }: { table: TableState }) {
-  const { gl, camera, raycaster, scene, invalidate } = useThree();
+  const { gl, camera, raycaster, invalidate } = useThree();
   const held = table.pencilHeld;
 
   useEffect(() => {
@@ -753,12 +762,17 @@ function PencilSketcher({ table }: { table: TableState }) {
       const rect = el.getBoundingClientRect();
       ndc.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
       raycaster.setFromCamera(ndc, camera);
-      const page = scene.getObjectByName("sketch-page");
-      const onPage = page ? raycaster.intersectObject(page, false).find(h => h.face?.materialIndex === 4 && h.uv) : undefined;
+      const hits = sketch.meshes.length ? raycaster.intersectObjects(sketch.meshes, false) : [];
+      let onPage: { point: Vector3; uv?: Vector2; id: string } | undefined;
+      for (const hit of hits) {
+        const index = hit.face?.materialIndex;
+        const id = index === undefined ? null : (hit.object.userData.sketch as Record<number, string | null>)?.[index];
+        if (id && hit.uv) { onPage = { point: hit.point, uv: hit.uv, id }; break; }
+      }
       if (onPage) {
         sketch.pointer.copy(onPage.point);
         sketch.hasPointer = true;
-        if (sketch.drawing && onPage.uv) sketchAt(onPage.uv.x, onPage.uv.y);
+        if (sketch.drawing && onPage.uv) sketchAt(onPage.id, onPage.uv.x, onPage.uv.y);
       } else {
         if (raycaster.ray.intersectPlane(tabletop, hit)) { sketch.pointer.copy(hit); sketch.hasPointer = true; }
         sketch.last = null;
@@ -785,7 +799,7 @@ function PencilSketcher({ table }: { table: TableState }) {
       window.removeEventListener("pointercancel", up);
       window.removeEventListener("keydown", key);
     };
-  }, [held, gl, camera, raycaster, scene, invalidate, table]);
+  }, [held, gl, camera, raycaster, invalidate, table]);
 
   return null;
 }
@@ -1017,10 +1031,11 @@ function makeBookModel(chapters: BookChapter[]) {
     // back cover needs a final sheet of its own
     sheets.push({ front: { kind: "blank" }, back: { kind: "back-cover" } });
   }
-  // One blank page at the end, for the reader's own pencil.
+  // A blank spread at the end, both pages drawable, for the reader's own pencil.
   const last = sheets[sheets.length - 1];
   if (last.back.kind === "back-cover") last.back = { kind: "blank" };
-  sheets.push({ front: { kind: "sketch" }, back: { kind: "back-cover" } });
+  last.back = { kind: "sketch", id: "left" };
+  sheets.push({ front: { kind: "sketch", id: "right" }, back: { kind: "back-cover" } });
 
   return { sheets, spreadCount: Math.ceil((pages.length + 1) / 2) };
 }

@@ -1,31 +1,54 @@
 import { Vector3 } from "three";
-import type { CanvasTexture } from "three";
+import type { CanvasTexture, Object3D } from "three";
+
+type Surface = {
+  ctx: CanvasRenderingContext2D;
+  texture: CanvasTexture;
+  repaint: () => void;
+};
 
 // Shared state for the pencil: whether it is in hand, where the pointer is on
-// the table, and the one page texture that strokes are drawn onto. Module
-// scope, not React state, because the frame loop and pointer handlers read it
-// every frame and the book's pages are rendered from a different subtree.
+// the table, and the drawable pages. Module scope, not React state, because
+// the frame loop and the pointer handlers read it every frame and the book's
+// pages are rendered from a different subtree.
 export const sketch = {
   held: false,
   drawing: false,
   hasPointer: false,
   pointer: new Vector3(),
-  texture: null as CanvasTexture | null,
-  ctx: null as CanvasRenderingContext2D | null,
+  // One entry per blank page; the final spread has a left and a right.
+  surfaces: new Map<string, Surface>(),
+  meshes: [] as Object3D[],
   width: 900,
   height: 1200,
-  last: null as { x: number; y: number } | null,
-  strokes: 0,
-  repaint: null as (() => void) | null,
+  last: null as { id: string; x: number; y: number } | null,
 };
 
+export function registerSurface(id: string, surface: Surface) {
+  sketch.surfaces.set(id, surface);
+}
+
+export function releaseSurface(id: string, texture: CanvasTexture) {
+  if (sketch.surfaces.get(id)?.texture === texture) sketch.surfaces.delete(id);
+}
+
+export function registerMesh(mesh: Object3D) {
+  if (!sketch.meshes.includes(mesh)) sketch.meshes.push(mesh);
+  return () => {
+    const i = sketch.meshes.indexOf(mesh);
+    if (i >= 0) sketch.meshes.splice(i, 1);
+  };
+}
+
 // u, v are the page's texture coordinates (v = 1 at the top of the page).
-export function sketchAt(u: number, v: number) {
-  const { ctx, texture } = sketch;
-  if (!ctx || !texture) return;
+export function sketchAt(id: string, u: number, v: number) {
+  const surface = sketch.surfaces.get(id);
+  if (!surface) return;
+  const { ctx, texture } = surface;
   const x = u * sketch.width;
   const y = (1 - v) * sketch.height;
-  const last = sketch.last;
+  // A stroke belongs to one page; crossing the gutter starts a new one.
+  const last = sketch.last && sketch.last.id === id ? sketch.last : null;
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -43,14 +66,14 @@ export function sketchAt(u: number, v: number) {
   }
   ctx.stroke();
   ctx.restore();
-  sketch.last = { x, y };
-  sketch.strokes += 1;
+  sketch.last = { id, x, y };
   texture.needsUpdate = true;
 }
 
 export function clearSketch() {
-  sketch.repaint?.();
-  sketch.strokes = 0;
+  for (const surface of sketch.surfaces.values()) {
+    surface.repaint();
+    surface.texture.needsUpdate = true;
+  }
   sketch.last = null;
-  if (sketch.texture) sketch.texture.needsUpdate = true;
 }
