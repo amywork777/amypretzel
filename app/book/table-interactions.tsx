@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 
-export const cookieNames = ["Pink", "Lavender", "Mint"];
+export const PRETZEL_COUNT = 9;
 
 type TableValues = {
   coffeeTipped: boolean;
@@ -13,11 +13,11 @@ type TableValues = {
 };
 
 export function useTableState() {
-  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: [false, false, false], resetVersion: 0 });
+  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), resetVersion: 0 });
   const setCoffee = useCallback((coffeeTipped: boolean) => setValues(v => ({ ...v, coffeeTipped })), []);
   const spillCoffee = useCallback(() => setValues(v => v.coffeeSpilled ? v : { ...v, coffeeSpilled: true }), []);
   const setCookie = useCallback((index: number, taken: boolean) => setValues(v => ({ ...v, cookiesTaken: v.cookiesTaken.map((value, i) => i === index ? taken : value) })), []);
-  const reset = useCallback(() => setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: [false, false, false], resetVersion: v.resetVersion + 1 })), []);
+  const reset = useCallback(() => setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), resetVersion: v.resetVersion + 1 })), []);
   return { ...values, setCoffee, spillCoffee, setCookie, reset };
 }
 
@@ -81,10 +81,13 @@ export function TableActions({ table }: { table: TableState }) {
   return <details className="table-actions">
     <summary>Table</summary>
     <div className="table-actions-panel">
-      <p>Tap the cup to tip it. Tap a macaron to take it off the plate; tap it again to put it back.</p>
+      <p>Tap the cup to tip it. Tap a pretzel to take it off the pile; tap it again to put it back.</p>
       <button type="button" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</button>
-      <div className="flower-actions">{cookieNames.map((name, i) => <button key={name} type="button" aria-label={`${table.cookiesTaken[i] ? "Put back" : "Take"} ${name.toLowerCase()} macaron`} aria-pressed={table.cookiesTaken[i]} onClick={() => table.setCookie(i, !table.cookiesTaken[i])}>{name}</button>)}</div>
-      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of 3 macarons taken</p>
+      <div className="flower-actions">
+        <button type="button" disabled={count === PRETZEL_COUNT} onClick={() => table.setCookie(table.cookiesTaken.lastIndexOf(false), true)}>Take a pretzel</button>
+        <button type="button" disabled={count === 0} onClick={() => table.setCookie(table.cookiesTaken.indexOf(true), false)}>Put one back</button>
+      </div>
+      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of {PRETZEL_COUNT} pretzels taken</p>
       <button type="button" className="table-reset" onClick={table.reset}>Reset table</button>
     </div>
   </details>;
