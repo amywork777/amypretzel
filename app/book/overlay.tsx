@@ -83,7 +83,7 @@ export default function BookOverlay() {
     <div ref={dialogRef} className="book-overlay" tabIndex={-1} data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="Amy's making diary">
       <BookPoster hidden={sceneReady} />
       <button type="button" className="book-overlay-enter" onClick={close}>
-        Enter site
+        Skip the book
       </button>
       <StoryBook onExit={close} onReady={handleReady} />
     </div>

@@ -281,8 +281,9 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
 /* Book: a cloth-bound object on a neutral photographic ground. */
 .book-overlay { position: fixed; inset: 0; z-index: 80; background: #ebe7de; color: #302d29; overflow: hidden; outline: none; }
 .book-overlay::before { display: none; content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 45% 38%, #f7f6f2, transparent 75%); }
-.book-overlay-enter { position: absolute; top: 30px; right: 36px; z-index: 5; font-size: 11px; color: #6f6960; padding: 7px 0; text-decoration: underline; text-decoration-color: #c9c2b5; text-underline-offset: 4px; }
-.book-overlay-enter:hover { color: #302d29; text-decoration-color: currentColor; }
+.book-overlay-enter { position: absolute; top: 26px; right: 32px; z-index: 5; font-size: 13px; line-height: 1; color: #4a4640; padding: 11px 16px; border: 1px solid #cfc8bb; border-radius: 999px; background: rgba(245, 242, 235, .7); backdrop-filter: blur(6px); transition: color .15s, border-color .15s, background-color .15s; }
+.book-overlay-enter:hover { color: #1a1916; border-color: #8f877a; background: #f7f4ee; }
+.book-overlay-enter:focus-visible { outline: 2px solid #8f877a; outline-offset: 2px; }
 .storybook { position: relative; height: 100%; width: 100%; }
 .storybook-canvas { position: absolute; inset: 0; }
 .storybook-controls { position: absolute; z-index: 3; bottom: 34px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 17px; align-items: center; width: min(100% - 40px, 520px); }
@@ -298,7 +299,7 @@ html[data-theme="dark"] .selected-image { background: #dedcd6; }
 .book-reading h2 { font-family: var(--font-display); font-size: 30px; margin: 24px 0 12px; }
 .book-reading p { font-size: 14px; line-height: 1.8; margin-bottom: 20px; }
 @media (max-width: 700px) {
-  .book-overlay-enter { top: 23px; right: 20px; }
+  .book-overlay-enter { top: 18px; right: 16px; font-size: 12px; padding: 10px 14px; }
   .storybook-canvas { inset: 0; }
   .storybook-controls { bottom: 62px; }
   .book-reading { bottom: 25px; right: 20px; }
