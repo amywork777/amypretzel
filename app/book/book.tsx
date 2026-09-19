@@ -974,7 +974,7 @@ export default function StoryBook({ onExit, onReady }: { onExit?: () => void; on
         <div className="storybook-pagination">
           <button type="button" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
           <span aria-live="polite">{page === 0 ? "" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
-          <button type="button" aria-label={atBackCover ? "Enter site" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Enter site" : "Next"}</button>
+          <button type="button" aria-label={atBackCover ? "Go to the website" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Go to the website" : "Next"}</button>
         </div>
       </div>
       <TableActions table={table} />
