@@ -27,23 +27,23 @@ export const bookChapters: BookChapter[] = [
     ],
   },
   {
-    id: "stanford",
-    title: "Stanford",
+    id: "studies",
+    title: "Studies",
     kicker: "Chapter 02",
     pages: [
       {
-        title: "stanford",
+        title: "design and engineering",
         text: "i studied product design and mechanical engineering at stanford, with a minor in music. i learned to sketch, machine, mold, and prototype. the fastest way to understand anything is to just try to build it.",
       },
     ],
   },
   {
-    id: "apple",
-    title: "Apple",
+    id: "shipping",
+    title: "Shipping",
     kicker: "Chapter 03",
     pages: [
       {
-        title: "apple",
+        title: "shipping at scale",
         text: "then apple, as a product design engineer. i got a little obsessed with materials and durability, and learned what shipping at scale actually takes. about a million tiny decisions between a pretty prototype and a million real units.",
       },
     ],
