@@ -2,17 +2,12 @@
 
 import { Environment, Lightformer, useGLTF, useCursor } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Box3,
   Group,
   Shape,
-  BufferGeometry,
-  CatmullRomCurve3,
   CanvasTexture,
   SRGBColorSpace,
-  DoubleSide,
-  Float32BufferAttribute,
   Vector2,
   Vector3,
   Mesh,
@@ -29,160 +24,83 @@ function approach(value: number, target: number, delta: number, reduced: boolean
   return Math.abs(next - target) < .0001 ? target : next;
 }
 
-const vaseProfile = [
-  [0, 0], [.17, 0], [.205, .018], [.225, .09], [.228, .22],
-  [.20, .36], [.15, .49], [.145, .59], [.148, .61],
-  [.134, .61], [.131, .585], [.137, .49], [.187, .36],
-  [.214, .22], [.211, .09], [.187, .035], [0, .035],
-].map(([x, y]) => new Vector2(x, y));
-
-// Curved, tapered surfaces give the flowers thin overlapping petals and leaves.
-function botanicalSurface(leaf = false) {
-  const geometry = new BufferGeometry();
-  const vertices: number[] = [];
-  const colors: number[] = [];
-  const indices: number[] = [];
-  const rows = 24;
-  const columns = 12;
-  for (let j = 0; j <= rows; j++) {
-    const t = j / rows;
-    for (let i = 0; i <= columns; i++) {
-      const u = i / columns * 2 - 1;
-      const width = Math.pow(Math.sin(Math.PI * t * (leaf ? 1 : .8)), .65) * (leaf ? .065 : .115);
-      const x = u * width;
-      const y = t * (leaf ? .49 : .31) - (leaf ? 0 : .045 * u * u * t ** 3);
-      const z = leaf
-        ? .22 * t * t + .02 * u * u
-        : .018 + .13 * Math.sin(t * Math.PI * .7) + .018 * u * u;
-      vertices.push(x, y, z);
-      const shade = .83 + .17 * t - Math.abs(u) * .035;
-      colors.push(shade, shade, shade);
-      if (j < rows && i < columns) {
-        const a = j * (columns + 1) + i;
-        indices.push(a, a + 1, a + columns + 1, a + 1, a + columns + 2, a + columns + 1);
-      }
-    }
-  }
-  geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-  return geometry;
-}
-
-const flowers = [
-  { tip: [-.20, 1.13, -.03], color: "#e8a18e", tilt: -.22, scale: 1 },
-  { tip: [.16, 1.25, -.08], color: "#f1d9b7", tilt: .15, scale: .92 },
-  { tip: [.03, .96, .18], color: "#c96e78", tilt: -.1, scale: .91 },
-  { tip: [-.12, 1.35, -.17], color: "#e4b1a0", tilt: -.25, scale: .84 },
+// Where each cookie sits on the plate, and where it lands when taken off it.
+const cookieSpots = [
+  { plate: [-.19, .022, .08], taken: [.7, 0, .55], turn: .4 },
+  { plate: [.19, .022, -.05], taken: [.82, 0, .95], turn: 2.1 },
+  { plate: [.0, .12, .03], taken: [.55, 0, 1.3], turn: 4.2 },
 ];
+const COOKIE_SCALE = 3.3;
+const COOKIE_LIFT = .043; // model origin sits a little above its underside
 
-function InteractiveFlower({ index, narrow, table, onDraggingChange, children }: InteractionProps & { index: number; narrow: boolean; children: ReactNode }) {
+function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: InteractionProps & { index: number; narrow: boolean; model: Group }) {
   const root = useRef<Group>(null!);
   const progress = useRef(0);
   const preview = useRef<number | null>(null);
-  const restingHeight = useRef(.25);
   const { invalidate } = useThree();
   const [hovered, setHovered] = useState(false);
   useCursor(hovered, "grab");
-  const out = table.flowersOut[index];
-  const restAngle = narrow ? -Math.PI / 2 : Math.PI / 2;
+  const taken = table.cookiesTaken[index];
+  const spot = cookieSpots[index];
   const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
-  useLayoutEffect(() => {
-    const group = root.current;
-    const rotation = group.rotation.x;
-    const position = group.position.clone();
-    group.position.set(0, 0, 0);
-    group.rotation.x = restAngle;
-    group.updateWorldMatrix(true, true);
-    const bounds = new Box3().setFromObject(group, true);
-    restingHeight.current = -bounds.min.y / .75 + .009;
-    group.position.copy(position);
-    group.rotation.x = rotation;
-    invalidate();
-  }, [restAngle, invalidate]);
   const gesture = usePropGesture({
     onDraggingChange, resetVersion: table.resetVersion,
     onStart: () => { preview.current = progress.current; invalidate(); },
-    onMove: (_dx, dy) => { if (!out) preview.current = Math.min(.3, Math.max(0, -dy / 240)); invalidate(); },
-    onEnd: (moved, _dx, dy) => { preview.current = null; if (!moved || dy < -20 || out) table.setFlower(index, !out); invalidate(); },
+    onMove: (_dx, dy) => { if (!taken) preview.current = Math.min(.3, Math.max(0, -dy / 240)); invalidate(); },
+    onEnd: (moved, _dx, dy) => { preview.current = null; if (!moved || dy < -20 || taken) table.setCookie(index, !taken); invalidate(); },
     onCancel: () => { preview.current = null; invalidate(); },
   });
   useFrame((_, delta) => {
-    const target = preview.current ?? (out ? 1 : 0);
+    const target = preview.current ?? (taken ? 1 : 0);
     progress.current = approach(progress.current, target, delta, reduced);
     const p = progress.current;
-    const lift = smooth(p / .3), move = smooth((p - .3) / .25), turn = smooth((p - .55) / .23), lower = smooth((p - .78) / .22);
-    root.current.position.set(((narrow ? -.16 : .12) + index * .17) * move, .82 * lift * (1 - lower) + restingHeight.current * lower, (narrow ? -.58 : .58) * move);
-    root.current.rotation.x = restAngle * turn;
+    const lift = smooth(p / .35), move = smooth((p - .25) / .45), lower = smooth((p - .7) / .3);
+    const from = spot.plate, to = spot.taken;
+    const sideways = narrow ? -1 : 1;
+    root.current.position.set(
+      from[0] + (to[0] * sideways - from[0]) * move,
+      from[1] + (to[1] - from[1]) * lower + .32 * lift * (1 - lower),
+      from[2] + (to[2] - from[2]) * move,
+    );
+    root.current.rotation.y = spot.turn + .7 * move;
     if (p !== target) invalidate();
   });
-  return <group ref={root} name={`interactive-flower-${index}`} onPointerDown={gesture} onPointerOver={e => { e.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}>{children}</group>;
+  return <group ref={root} name={`interactive-cookie-${index}`} onPointerDown={gesture} onPointerOver={e => { e.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}>
+    <primitive object={model} position={[0, COOKIE_LIFT, 0]} scale={COOKIE_SCALE} />
+  </group>;
 }
 
-function Flowers({ table, onDraggingChange, narrow }: InteractionProps & { narrow: boolean }) {
-  const { petal, leaf, stems } = useMemo(() => ({
-    petal: botanicalSurface(),
-    leaf: botanicalSurface(true),
-    stems: flowers.map(({ tip }, i) => new CatmullRomCurve3([
-      new Vector3((i - 1.5) * .035, .05, (i % 2) * .035),
-      new Vector3((i - 1.5) * .025, .48, 0),
-      new Vector3(tip[0] * .7, tip[1] * .82, tip[2] * .7),
-      new Vector3(...tip),
-    ])),
-  }), []);
-  useEffect(() => () => { petal.dispose(); leaf.dispose(); }, [petal, leaf]);
-
-  return <>
-    {flowers.map((flower, i) => (
-      <InteractiveFlower key={i} index={i} table={table} onDraggingChange={onDraggingChange} narrow={narrow}>
-        <mesh castShadow>
-          <tubeGeometry args={[stems[i], 32, .008, 7, false]} />
-          <meshStandardMaterial color={i % 2 ? "#667840" : "#738647"} roughness={.72} />
-        </mesh>
-        <group position={[(i - 1.5) * .025, .48 + (i % 2) * .12, 0]} rotation={[.25, i * 2.4, -.2]}>
-          <mesh geometry={leaf} castShadow receiveShadow>
-            <meshPhysicalMaterial color="#596e36" roughness={.6} side={DoubleSide} vertexColors sheen={.35} sheenColor="#8d9b65" />
-          </mesh>
-        </group>
-        <group position={flower.tip as [number, number, number]} rotation={[.1, i * .8, flower.tilt]} scale={flower.scale}>
-          {Array.from({ length: 6 }, (_, j) => (
-            <group key={j} rotation-y={j * Math.PI / 3} scale={j % 2 ? .95 : 1}>
-              <mesh geometry={petal} castShadow receiveShadow>
-                <meshPhysicalMaterial color={flower.color} roughness={.53} side={DoubleSide} vertexColors sheen={.8} sheenColor="#ffe4d4" metalness={0} />
-              </mesh>
-            </group>
-          ))}
-          <mesh position={[0, .07, 0]}>
-            <sphereGeometry args={[.034, 12, 8]} />
-            <meshStandardMaterial color="#b69942" roughness={.95} />
-          </mesh>
-        </group>
-      </InteractiveFlower>
-    ))}
-  </>;
-}
-
-function FlowerVase(props: InteractionProps & { narrow: boolean }) {
+function CookiePlate(props: InteractionProps & { narrow: boolean }) {
   const lowDetail = useCompactBook();
-  return <group name="glass-vase-and-tulips">
-    <Flowers {...props} />
-    <mesh position={[0, .18, 0]}>
-      <cylinderGeometry args={[.209, .20, .27, 48]} />
-      <meshPhysicalMaterial color="#d8e8d9" transparent opacity={.13} roughness={.1} depthWrite={false} />
+  const { scene: cookieModel } = useGLTF("/book/cookie.glb");
+  const { cookies, dough, chips, glaze } = useMemo(() => {
+    const dough = new MeshPhysicalMaterial({ color: "#d9a25f", roughness: .82, sheen: .25, sheenColor: "#f3d9a8" });
+    const chips = new MeshPhysicalMaterial({ color: "#3b2418", roughness: .55, clearcoat: .2 });
+    const glaze = new MeshPhysicalMaterial({ color: "#e7e3d8", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
+    const cookies = cookieSpots.map(() => {
+      const clone = cookieModel.clone(true);
+      clone.traverse(object => {
+        if (!(object instanceof Mesh)) return;
+        const source = Array.isArray(object.material) ? object.material[0] : object.material;
+        // The model's two materials: a dark one for the chips, a light one for the dough.
+        const color = (source as MeshPhysicalMaterial).color;
+        object.material = color && color.r < .5 ? chips : dough;
+        object.castShadow = true;
+        object.receiveShadow = true;
+      });
+      return clone;
+    });
+    return { cookies, dough, chips, glaze };
+  }, [cookieModel]);
+  useEffect(() => () => { dough.dispose(); chips.dispose(); glaze.dispose(); }, [dough, chips, glaze]);
+  const plateProfile = useMemo(() => [
+    [0, 0], [.38, 0], [.38, .012], [.53, .04], [.59, .062], [.595, .07], [.58, .072], [.5, .05], [.37, .024], [0, .022],
+  ].map(([x, y]) => new Vector2(x, y)), []);
+  return <group name="cookie-plate">
+    <mesh castShadow receiveShadow material={glaze}>
+      <latheGeometry args={[plateProfile, lowDetail ? 32 : 80]} />
     </mesh>
-    <mesh position={[0, .315, 0]} rotation-x={-Math.PI / 2}>
-      <circleGeometry args={[.209, 64]} />
-      <meshPhysicalMaterial color="#dce9e3" transparent opacity={.2} roughness={.08} metalness={.15} side={DoubleSide} depthWrite={false} />
-    </mesh>
-    <mesh>
-      <latheGeometry args={[vaseProfile, lowDetail ? 32 : 96]} />
-      <meshPhysicalMaterial transparent={lowDetail} opacity={lowDetail ? .22 : 1} thickness={.04} transmission={lowDetail ? 0 : 1} roughness={.045} ior={1.46} color="#f1f8f4" envMapIntensity={1.2} />
-    </mesh>
-    <mesh position={[0, .606, 0]} rotation-x={Math.PI / 2}>
-      <torusGeometry args={[.141, .006, 8, 80]} />
-      <meshPhysicalMaterial color="#e4f0ea" transparent={lowDetail} opacity={lowDetail ? .5 : 1} transmission={lowDetail ? 0 : .94} thickness={.01} roughness={.07} ior={1.46} />
-    </mesh>
+    {cookies.map((model, i) => <InteractiveCookie key={i} index={i} model={model} {...props} />)}
   </group>;
 }
 
@@ -311,6 +229,7 @@ function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow
 }
 
 useGLTF.preload("/book/coffee-cup.glb");
+useGLTF.preload("/book/cookie.glb");
 
 function Pen() {
   return <group name="green-and-brass-pen" rotation={[Math.PI / 2, 0, -.28]}>
@@ -343,12 +262,14 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
   const narrow = size.width / size.height < .9;
   return <>
     {/* Reflection cards live only in the environment, outside the visible scene. */}
-    <Environment resolution={lowDetail ? 64 : 128} frames={1} environmentIntensity={.45}>
+    <Environment resolution={lowDetail ? 64 : 256} frames={1} environmentIntensity={.55}>
+      <color attach="background" args={["#d9d3c7"]} />
       <Lightformer form="rect" intensity={3} position={[-3, 4, 2]} scale={[3, 4, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={2} position={[-1, 3, -3]} scale={[3, 2, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />
+      <Lightformer form="ring" intensity={.5} color="#f7f5ef" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
     </Environment>
-    <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><FlowerVase table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
+    <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><CookiePlate table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.93, 0, -1.5] : [1.78, 0, -.35]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.6, .024, 1.65] : [1.65, .024, .56]}><Pen /></group>
   </>;

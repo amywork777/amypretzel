@@ -3,22 +3,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 
-export const flowerNames = ["Peach", "Cream", "Rose", "Blush"];
+export const cookieNames = ["Left", "Right", "Top"];
 
 type TableValues = {
   coffeeTipped: boolean;
   coffeeSpilled: boolean;
-  flowersOut: boolean[];
+  cookiesTaken: boolean[];
   resetVersion: number;
 };
 
 export function useTableState() {
-  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, flowersOut: [false, false, false, false], resetVersion: 0 });
+  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: [false, false, false], resetVersion: 0 });
   const setCoffee = useCallback((coffeeTipped: boolean) => setValues(v => ({ ...v, coffeeTipped })), []);
   const spillCoffee = useCallback(() => setValues(v => v.coffeeSpilled ? v : { ...v, coffeeSpilled: true }), []);
-  const setFlower = useCallback((index: number, out: boolean) => setValues(v => ({ ...v, flowersOut: v.flowersOut.map((value, i) => i === index ? out : value) })), []);
-  const reset = useCallback(() => setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, flowersOut: [false, false, false, false], resetVersion: v.resetVersion + 1 })), []);
-  return { ...values, setCoffee, spillCoffee, setFlower, reset };
+  const setCookie = useCallback((index: number, taken: boolean) => setValues(v => ({ ...v, cookiesTaken: v.cookiesTaken.map((value, i) => i === index ? taken : value) })), []);
+  const reset = useCallback(() => setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: [false, false, false], resetVersion: v.resetVersion + 1 })), []);
+  return { ...values, setCoffee, spillCoffee, setCookie, reset };
 }
 
 export type TableState = ReturnType<typeof useTableState>;
@@ -77,14 +77,14 @@ export function usePropGesture({ onDraggingChange, onStart, onMove, onEnd, onCan
 }
 
 export function TableActions({ table }: { table: TableState }) {
-  const count = table.flowersOut.filter(Boolean).length;
+  const count = table.cookiesTaken.filter(Boolean).length;
   return <details className="table-actions">
     <summary>Table</summary>
     <div className="table-actions-panel">
-      <p>Tap the cup to tip it. Pull a flower up to take it out; tap it again to put it back.</p>
+      <p>Tap the cup to tip it. Tap a cookie to take it off the plate; tap it again to put it back.</p>
       <button type="button" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</button>
-      <div className="flower-actions">{flowerNames.map((name, i) => <button key={name} type="button" aria-label={`${table.flowersOut[i] ? "Return" : "Pick"} ${name.toLowerCase()} flower`} aria-pressed={table.flowersOut[i]} onClick={() => table.setFlower(i, !table.flowersOut[i])}>{name}</button>)}</div>
-      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of 4 flowers out</p>
+      <div className="flower-actions">{cookieNames.map((name, i) => <button key={name} type="button" aria-label={`${table.cookiesTaken[i] ? "Put back" : "Take"} ${name.toLowerCase()} cookie`} aria-pressed={table.cookiesTaken[i]} onClick={() => table.setCookie(i, !table.cookiesTaken[i])}>{name}</button>)}</div>
+      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of 3 cookies taken</p>
       <button type="button" className="table-reset" onClick={table.reset}>Reset table</button>
     </div>
   </details>;

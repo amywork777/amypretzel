@@ -2,8 +2,6 @@
 
 import {
   ContactShadows,
-  Environment,
-  Lightformer,
   OrbitControls,
   PerspectiveCamera,
   RoundedBox,
@@ -16,9 +14,7 @@ import type { ComponentRef, RefObject } from "react";
 import {
   Bone,
   BoxGeometry,
-  BufferGeometry,
   CanvasTexture,
-  CatmullRomCurve3,
   Color,
   Float32BufferAttribute,
   MathUtils,
@@ -28,11 +24,10 @@ import {
   Skeleton,
   SkinnedMesh,
   SRGBColorSpace,
-  DoubleSide,
   Uint16BufferAttribute,
   Vector3,
 } from "three";
-import type { Group, Mesh, Texture } from "three";
+import type { Group, Texture } from "three";
 import { bookChapters, type BookChapter } from "./chapters";
 import TableDecor from "./table-decor";
 import { useCompactBook } from "./use-compact-book";
@@ -627,12 +622,6 @@ function BookStack({
         <cylinderGeometry args={[spineRadius, spineRadius, PAGE_HEIGHT * 1.028, 24, 1, false, Math.PI, Math.PI]} />
         <meshPhysicalMaterial color="#493333" roughness={.9} sheen={.45} sheenColor="#ad8d81" />
       </mesh>
-      <BookmarkRibbon
-        delayedPage={delayedPage}
-        sheetCount={sheets.length}
-        leftStack={thicknesses.slice(0, delayedPage).reduce((sum, depth) => sum + depth, 0)}
-        rightStack={thicknesses.slice(delayedPage).reduce((sum, depth) => sum + depth, 0)}
-      />
       {sheets.map((sheet, index) => (
         <AnimatedPage
           key={index}
@@ -653,122 +642,6 @@ function BookStack({
         />
       ))}
     </group>
-  );
-}
-
-// A cloth ribbon out of the spine, lying across the open spread and hanging
-// off the bottom edge onto the table. It swings out of the way of a turning leaf.
-const RIBBON_WIDTH = 0.075;
-const RIBBON_POINTS = 6;
-const RIBBON_SEGMENTS = 48;
-
-function ribbonTargets(delayedPage: number, sheetCount: number, leftStack: number, rightStack: number): Vector3[] {
-  const H = PAGE_HEIGHT;
-  if (delayedPage === 0 || delayedPage === sheetCount) {
-    // Closed: only the tail shows, slipping out of the bottom edge mid-stack.
-    const side = delayedPage === 0 ? 1 : -1;
-    const mid = (delayedPage === 0 ? rightStack : leftStack) * 0.55;
-    const x = side * 0.36;
-    return [
-      new Vector3(x, -H / 2 + 0.3, mid),
-      new Vector3(x, -H / 2 + 0.01, mid),
-      new Vector3(x + side * 0.01, -H / 2 - 0.1, mid * 0.55),
-      new Vector3(x + side * 0.02, -H / 2 - 0.22, 0.006),
-      new Vector3(x + side * 0.035, -H / 2 - 0.38, 0.004),
-      new Vector3(x + side * 0.05, -H / 2 - 0.52, 0.004),
-    ];
-  }
-  const z = rightStack + 0.004;
-  // Stays inside the inner margin so it never covers the printed text.
-  return [
-    new Vector3(0.04, H / 2 + 0.01, z + 0.006),
-    new Vector3(0.075, H / 6, z),
-    new Vector3(0.1, -H / 2 + 0.06, z),
-    new Vector3(0.11, -H / 2 - 0.06, z * 0.5),
-    new Vector3(0.12, -H / 2 - 0.22, 0.004),
-    new Vector3(0.135, -H / 2 - 0.44, 0.004),
-  ];
-}
-
-function BookmarkRibbon({ delayedPage, sheetCount, leftStack, rightStack }: { delayedPage: number; sheetCount: number; leftStack: number; rightStack: number }) {
-  const invalidate = useThree(state => state.invalidate);
-  // Live control points; seeded on first render and eased toward the targets each frame.
-  const pointsRef = useRef<Vector3[] | null>(null);
-  if (pointsRef.current == null) { pointsRef.current = ribbonTargets(delayedPage, sheetCount, leftStack, rightStack); }
-  const lastPage = useRef(delayedPage);
-  const turnedAt = useRef(0);
-  const meshRef = useRef<Mesh>(null);
-  const geometry = useMemo(() => {
-    const g = new BufferGeometry();
-    const count = (RIBBON_SEGMENTS + 1) * 2;
-    g.setAttribute("position", new Float32BufferAttribute(new Float32Array(count * 3), 3));
-    g.setAttribute("normal", new Float32BufferAttribute(new Float32Array(count * 3), 3));
-    const uv: number[] = [];
-    const index: number[] = [];
-    for (let i = 0; i <= RIBBON_SEGMENTS; i++) {
-      uv.push(0, i / RIBBON_SEGMENTS, 1, i / RIBBON_SEGMENTS);
-      if (i < RIBBON_SEGMENTS) {
-        const a = i * 2;
-        index.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
-      }
-    }
-    g.setAttribute("uv", new Float32BufferAttribute(uv, 2));
-    g.setIndex(index);
-    return g;
-  }, []);
-  // r3f disposes a mesh's geometry on unmount, so no cleanup effect here.
-
-  useFrame((_, delta) => {
-    delta = Math.min(delta, 0.05);
-    const strip = meshRef.current?.geometry;
-    const points = pointsRef.current;
-    if (!strip || !points) return;
-    if (lastPage.current !== delayedPage) {
-      lastPage.current = delayedPage;
-      turnedAt.current = Date.now();
-    }
-    const since = Date.now() - turnedAt.current;
-    const swing = reducedMotion?.matches ? 0 : Math.sin(MathUtils.clamp(since / 700, 0, 1) * Math.PI);
-    const targets = ribbonTargets(delayedPage, sheetCount, leftStack, rightStack);
-    let moving = false;
-    for (let i = 0; i < RIBBON_POINTS; i++) {
-      const t = targets[i];
-      // Lift and sway while a leaf passes over, most at the free end on the page.
-      const onPage = i >= 1 && i <= 3 ? 1 : i === 0 ? 0.3 : 0;
-      t.z += swing * 0.09 * onPage;
-      t.x += swing * 0.05 * onPage;
-      if (reducedMotion?.matches) points[i].copy(t);
-      else moving = easing.damp3(points[i], t, 0.28, delta) || moving;
-    }
-
-    const curve = new CatmullRomCurve3(points, false, "centripetal", 0.6);
-    const position = strip.attributes.position as Float32BufferAttribute;
-    const normal = strip.attributes.normal as Float32BufferAttribute;
-    // The ribbon's width always runs across the page (x); it never twists as it
-    // drops over the edge, so it is never seen edge-on.
-    const p = new Vector3(), tangent = new Vector3(), n = new Vector3();
-    const side = new Vector3(1, 0, 0);
-    for (let i = 0; i <= RIBBON_SEGMENTS; i++) {
-      const u = i / RIBBON_SEGMENTS;
-      curve.getPoint(u, p);
-      curve.getTangent(u, tangent);
-      n.crossVectors(side, tangent).normalize();
-      const w = RIBBON_WIDTH / 2;
-      position.setXYZ(i * 2, p.x - side.x * w, p.y - side.y * w, p.z - side.z * w);
-      position.setXYZ(i * 2 + 1, p.x + side.x * w, p.y + side.y * w, p.z + side.z * w);
-      normal.setXYZ(i * 2, n.x, n.y, n.z);
-      normal.setXYZ(i * 2 + 1, n.x, n.y, n.z);
-    }
-    position.needsUpdate = true;
-    normal.needsUpdate = true;
-    strip.computeBoundingSphere();
-    if (moving || since < 750) invalidate();
-  });
-
-  return (
-    <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow frustumCulled={false}>
-      <meshPhysicalMaterial color="#c2864f" roughness={0.62} sheen={0.7} sheenColor="#f2d2a8" sheenRoughness={0.5} side={DoubleSide} />
-    </mesh>
   );
 }
 
@@ -835,7 +708,7 @@ function PointerParallax({ controls }: { controls: RefObject<ComponentRef<typeof
 function ResponsiveCamera() {
   const { size } = useThree();
   const aspect = size.width / size.height;
-  // Fit the whole interaction area, including laid-down flowers and tipped coffee.
+  // Fit the whole interaction area, including taken cookies and tipped coffee.
   const distance = Math.max(4.9, (aspect < .9 ? 4.8 : 7) / aspect);
   return <PerspectiveCamera makeDefault position={[distance * 0.2, distance * 0.82, distance * 0.55]} fov={42} />;
 }
@@ -925,13 +798,6 @@ function BookScene({
       <CanvasSizer />
       <ResponsiveCamera />
       <color attach="background" args={["#ebe7de"]} />
-      <Environment resolution={lowDetail ? 64 : 256} frames={1} environmentIntensity={0.55}>
-        <color attach="background" args={["#d9d3c7"]} />
-        {/* the window the key light comes from, a cool fill opposite, and the ceiling */}
-        <Lightformer form="rect" intensity={2.4} color="#fff4e4" position={[-3, 5, -3]} scale={[3.2, 2.6, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={0.9} color="#e8efff" position={[4, 2.5, 4]} scale={[4, 1.8, 1]} target={[0, 0, 0]} />
-        <Lightformer form="ring" intensity={0.5} color="#f7f5ef" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
-      </Environment>
       <ambientLight intensity={0.18} />
       <hemisphereLight args={["#f7f5ef", "#847561", 0.5]} />
       <directionalLight
