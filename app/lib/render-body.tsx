@@ -31,7 +31,7 @@ export function renderBody(body: string) {
       const t = lines[0].trim();
       if (t.startsWith("### ")) {
         blocks.push(
-          <h3 key={bi} className="font-display italic text-[24px] sm:text-[28px] leading-[1.1] text-ink mt-10 mb-3">
+          <h3 key={bi} className="font-display font-medium tracking-tight text-[24px] sm:text-[28px] leading-[1.1] text-ink mt-10 mb-3">
             {t.slice(4)}
           </h3>
         );
@@ -39,7 +39,7 @@ export function renderBody(body: string) {
       }
       if (t.startsWith("## ")) {
         blocks.push(
-          <h2 key={bi} className="font-display italic text-[32px] sm:text-[40px] leading-[1.05] text-ink mt-14 mb-4">
+          <h2 key={bi} className="font-display font-medium tracking-tight text-[32px] sm:text-[40px] leading-[1.05] text-ink mt-14 mb-4">
             {t.slice(3)}
           </h2>
         );

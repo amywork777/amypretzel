@@ -116,8 +116,8 @@ function seededJitter(seed: number) {
 
 function printFont(size: number, family = "--font-body") {
   return family === "--font-display"
-    ? `400 ${size}px Georgia, serif`
-    : `400 ${size}px Helvetica, Arial, sans-serif`;
+    ? `600 ${size}px "Helvetica Neue", Helvetica, Arial, sans-serif`
+    : `400 ${size}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
 }
 
 let paperBase: HTMLCanvasElement | undefined;
@@ -127,44 +127,44 @@ function drawPaper(target: CanvasRenderingContext2D) {
   paperBase.width = TEXTURE_WIDTH;
   paperBase.height = TEXTURE_HEIGHT;
   const ctx = paperBase.getContext("2d")!;
-  ctx.fillStyle = "#f5f1e7";
+  ctx.fillStyle = "#fbfbfb";
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   for (let i = 0; i < 24000; i++) {
-    ctx.fillStyle = `rgba(85,70,45,${seededJitter(i + 2) * .035})`;
+    ctx.fillStyle = `rgba(60,60,60,${seededJitter(i + 2) * .03})`;
     ctx.fillRect(seededJitter(i) * TEXTURE_WIDTH, seededJitter(i + 1) * TEXTURE_HEIGHT, 1, 1);
   }
   const gutter = ctx.createLinearGradient(0, 0, TEXTURE_WIDTH, 0);
-  gutter.addColorStop(0, "rgba(58,45,25,.23)");
-  gutter.addColorStop(.08, "rgba(58,45,25,.02)");
-  gutter.addColorStop(.85, "rgba(58,45,25,0)");
-  gutter.addColorStop(1, "rgba(58,45,25,.06)");
+  gutter.addColorStop(0, "rgba(0,0,0,.2)");
+  gutter.addColorStop(.08, "rgba(0,0,0,.02)");
+  gutter.addColorStop(.85, "rgba(0,0,0,0)");
+  gutter.addColorStop(1, "rgba(0,0,0,.05)");
   ctx.fillStyle = gutter;
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   target.drawImage(paperBase, 0, 0);
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, back = false) {
-  ctx.fillStyle = "#493333";
+  ctx.fillStyle = "#1c1c1e";
   ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   // Fine crossing threads, also used by the material as shallow relief.
   for (let x = 0; x < TEXTURE_WIDTH; x += 3) {
-    ctx.fillStyle = `rgba(230,205,175,${.025 + seededJitter(x) * .05})`;
+    ctx.fillStyle = `rgba(255,255,255,${.02 + seededJitter(x) * .04})`;
     ctx.fillRect(x, 0, 1, TEXTURE_HEIGHT);
   }
   for (let y = 0; y < TEXTURE_HEIGHT; y += 3) {
-    ctx.fillStyle = `rgba(10,5,3,${.06 + seededJitter(y + 1) * .08})`;
+    ctx.fillStyle = `rgba(0,0,0,${.06 + seededJitter(y + 1) * .08})`;
     ctx.fillRect(0, y, TEXTURE_WIDTH, 1);
   }
   const hinge = ctx.createLinearGradient(back ? TEXTURE_WIDTH : 0, 0, back ? TEXTURE_WIDTH - 95 : 95, 0);
   hinge.addColorStop(0, "rgba(0,0,0,.3)");
   hinge.addColorStop(.45, "rgba(0,0,0,.05)");
   hinge.addColorStop(.6, "rgba(0,0,0,.24)");
-  hinge.addColorStop(.7, "rgba(255,240,210,.08)");
+  hinge.addColorStop(.7, "rgba(255,255,255,.07)");
   hinge.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = hinge;
   ctx.fillRect(back ? TEXTURE_WIDTH - 95 : 0, 0, 95, TEXTURE_HEIGHT);
   ctx.textAlign = "left";
-  ctx.fillStyle = "#d8c8a6";
+  ctx.fillStyle = "#f5f5f7";
   if (back) {
     ctx.font = printFont(32, "--font-display");
     ctx.fillText("To be continued.", 125, 910);
@@ -177,7 +177,7 @@ function drawCover(ctx: CanvasRenderingContext2D, back = false) {
     ctx.fillText("A little", 120, 380);
     ctx.fillText("book of", 120, 503);
     ctx.fillText("making.", 120, 626);
-    ctx.fillStyle = "rgba(216,200,166,.75)";
+    ctx.fillStyle = "rgba(245,245,247,.6)";
     ctx.font = printFont(23);
     ctx.fillText("Objects, and software to build objects.", 125, 1040);
   }
@@ -188,13 +188,13 @@ function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
   const margin = 116;
   const maxWidth = TEXTURE_WIDTH - margin * 2;
   ctx.textAlign = "left";
-  ctx.fillStyle = "#807a6e";
+  ctx.fillStyle = "#8e8e93";
   ctx.font = printFont(18);
-  ctx.fillText(page.chapter.toUpperCase(), margin, 104);
-  ctx.fillStyle = "#d4ccbc";
+  ctx.fillText(page.chapter, margin, 104);
+  ctx.fillStyle = "#e5e5e7";
   ctx.fillRect(margin, 130, maxWidth, 1);
-  ctx.fillStyle = "#38352f";
-  ctx.font = printFont(70, "--font-display");
+  ctx.fillStyle = "#1d1d1f";
+  ctx.font = printFont(64, "--font-display");
   const titleWords = page.title.split(" ");
   let titleLine = "";
   let y = 280;
@@ -217,7 +217,7 @@ function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
     } else line = test;
   }
   if (line) ctx.fillText(line, margin, y);
-  ctx.fillStyle = "#807a6e";
+  ctx.fillStyle = "#8e8e93";
   ctx.font = printFont(18);
   ctx.fillText("AMY ZHOU", margin, 1090);
   ctx.textAlign = "right";
@@ -276,16 +276,16 @@ function createEdgeTexture(vertical: boolean) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 64;
   const ctx = canvas.getContext("2d")!;
-  ctx.fillStyle = "#e9e1ce";
+  ctx.fillStyle = "#f0f0f0";
   ctx.fillRect(0, 0, 64, 64);
   // Each sheet sits a hair proud or shy of its neighbours, so the block of
   // pages reads as many leaves rather than one printed stripe.
   for (let i = 0; i < 64; i += 4) {
     const shade = .05 + seededJitter(i) * .18;
     const offset = Math.floor(seededJitter(i + 7) * 3) - 1;
-    ctx.fillStyle = `rgba(98,82,57,${shade})`;
+    ctx.fillStyle = `rgba(90,90,90,${shade})`;
     ctx.fillRect(vertical ? i + offset : 0, vertical ? 0 : i + offset, vertical ? 1 : 64, vertical ? 64 : 1);
-    ctx.fillStyle = `rgba(255,252,244,${.15 + seededJitter(i + 3) * .2})`;
+    ctx.fillStyle = `rgba(255,255,255,${.15 + seededJitter(i + 3) * .2})`;
     ctx.fillRect(vertical ? i + offset + 1 : 0, vertical ? 0 : i + offset + 1, vertical ? 1 : 64, vertical ? 64 : 1);
   }
   const texture = new CanvasTexture(canvas);
@@ -322,9 +322,9 @@ function getPaperFiber() {
 }
 
 function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontCover: boolean, backCover: boolean) {
-  const white = new Color(frontCover || backCover ? "#493333" : "#e8e0cd");
+  const white = new Color(frontCover || backCover ? "#1c1c1e" : "#ededed");
   const edgeMaps = frontCover || backCover ? [null, null] : [createEdgeTexture(true), createEdgeTexture(false)];
-  const hoverEmissive = new Color("#c98a5a");
+  const hoverEmissive = new Color("#ffffff");
 
   return [
     new MeshStandardMaterial({ color: white, map: edgeMaps[0], roughness: 0.88 }),
@@ -337,7 +337,7 @@ function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontC
       bumpMap: frontCover ? frontTexture : getPaperFiber(),
       bumpScale: frontCover ? 0.002 : 0.0012,
       sheen: frontCover ? 0.45 : 0,
-      sheenColor: new Color("#ad8d81"),
+      sheenColor: new Color("#8e8e93"),
       sheenRoughness: 0.85,
       roughness: 0.94,
       emissive: hoverEmissive,
@@ -349,7 +349,7 @@ function createPageMaterials(frontTexture: Texture, backTexture: Texture, frontC
       bumpMap: backCover ? backTexture : getPaperFiber(),
       bumpScale: backCover ? 0.002 : 0.0012,
       sheen: backCover ? 0.45 : 0,
-      sheenColor: new Color("#ad8d81"),
+      sheenColor: new Color("#8e8e93"),
       sheenRoughness: 0.85,
       roughness: 0.94,
       emissive: hoverEmissive,
@@ -620,7 +620,7 @@ function BookStack({
     >
       <mesh position={[0, 0, spineRadius]} rotation-y={delayedPage === sheets.length ? Math.PI : 0} visible={delayedPage === 0 || delayedPage === sheets.length} castShadow receiveShadow>
         <cylinderGeometry args={[spineRadius, spineRadius, PAGE_HEIGHT * 1.028, 24, 1, false, Math.PI, Math.PI]} />
-        <meshPhysicalMaterial color="#493333" roughness={.9} sheen={.45} sheenColor="#ad8d81" />
+        <meshPhysicalMaterial color="#1c1c1e" roughness={.9} sheen={.45} sheenColor="#8e8e93" />
       </mesh>
       {sheets.map((sheet, index) => (
         <AnimatedPage
@@ -718,11 +718,11 @@ function Tabletop() {
     const canvas = document.createElement("canvas");
     canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext("2d")!;
-    ctx.fillStyle = "#d6cdbc";
+    ctx.fillStyle = "#ebebeb";
     ctx.fillRect(0, 0, 1024, 1024);
     for (let i = 0; i < 1800; i++) {
       const y = i / 1800 * 1024;
-      ctx.strokeStyle = `rgba(97,77,48,${0.01 + seededJitter(i + 9) * 0.03})`;
+      ctx.strokeStyle = `rgba(0,0,0,${0.004 + seededJitter(i + 9) * 0.012})`;
       ctx.lineWidth = 0.5 + seededJitter(i + 3);
       ctx.beginPath(); ctx.moveTo(0, y);
       ctx.bezierCurveTo(300, y + Math.sin(i * .008) * 65, 750, y - Math.cos(i * .007) * 48, 1024, y);
@@ -797,12 +797,12 @@ function BookScene({
     <>
       <CanvasSizer />
       <ResponsiveCamera />
-      <color attach="background" args={["#ebe7de"]} />
+      <color attach="background" args={["#f2f2f2"]} />
       <ambientLight intensity={0.18} />
-      <hemisphereLight args={["#f7f5ef", "#847561", 0.5]} />
+      <hemisphereLight args={["#ffffff", "#9a9a9a", 0.5]} />
       <directionalLight
         position={[-3, 6, -3]}
-        color="#fff7ed"
+        color="#ffffff"
         intensity={2.8}
         castShadow
         shadow-mapSize-width={lowDetail ? 512 : 2048}
@@ -825,7 +825,7 @@ function BookScene({
         blur={2.4}
         far={1.3}
         resolution={lowDetail ? 256 : 512}
-        color="#2f2519"
+        color="#1a1a1a"
         frames={Infinity}
       />
       <TableDecor table={table} onDraggingChange={handleDraggingChange} />

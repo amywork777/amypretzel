@@ -138,13 +138,13 @@ export default async function SoftwareProjectPage({
           <div className="grid grid-cols-2 gap-4 sm:gap-10">
             <Link href={`/software/${prev.slug}`} className="group block">
               <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Prev</p>
-              <p className="font-display italic text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
+              <p className="font-display font-medium tracking-tight text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
                 {prev.title}
               </p>
             </Link>
             <Link href={`/software/${next.slug}`} className="group block text-right">
               <p className="meta text-ink-faint mb-1.5 group-hover:text-accent transition-colors">Next</p>
-              <p className="font-display italic text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
+              <p className="font-display font-medium tracking-tight text-[18px] sm:text-[26px] leading-[1.1] text-ink group-hover:text-accent transition-colors">
                 {next.title}
               </p>
             </Link>

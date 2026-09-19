@@ -85,7 +85,7 @@ function CookiePlate(props: InteractionProps & { narrow: boolean }) {
   const lowDetail = useCompactBook();
   const { scene: pretzelModel } = useGLTF("/book/pretzel.glb");
   const { cookies, dough, salt, glaze } = useMemo(() => {
-    const glaze = new MeshPhysicalMaterial({ color: "#e7e3d8", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
+    const glaze = new MeshPhysicalMaterial({ color: "#f4f4f4", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
     const dough = new MeshPhysicalMaterial({ color: "#b8642a", roughness: .55, clearcoat: .35, clearcoatRoughness: .45, sheen: .2, sheenColor: "#f0c090" });
     const salt = new MeshPhysicalMaterial({ color: "#f7f4ee", roughness: .35 });
     const cookies = cookieSpots.map(() => {
@@ -152,7 +152,7 @@ function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow
   }, []);
   const { cup, saucer, surface, support, glaze, liquid } = useMemo(() => {
     const scene = cupModel.clone(true);
-    const glaze = new MeshPhysicalMaterial({ color: "#e7e3d8", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
+    const glaze = new MeshPhysicalMaterial({ color: "#f4f4f4", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
     const liquid = new MeshPhysicalMaterial({ map: coffee, transparent: true, roughness: .12, clearcoat: 1, clearcoatRoughness: .05 });
     scene.traverse(object => {
       if (!(object instanceof Mesh)) return;
@@ -276,11 +276,11 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
   return <>
     {/* Reflection cards live only in the environment, outside the visible scene. */}
     <Environment resolution={lowDetail ? 64 : 256} frames={1} environmentIntensity={.55}>
-      <color attach="background" args={["#d9d3c7"]} />
+      <color attach="background" args={["#e9e9e9"]} />
       <Lightformer form="rect" intensity={3} position={[-3, 4, 2]} scale={[3, 4, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={2} position={[-1, 3, -3]} scale={[3, 2, 1]} target={[0, 0, 0]} />
       <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />
-      <Lightformer form="ring" intensity={.5} color="#f7f5ef" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
+      <Lightformer form="ring" intensity={.5} color="#ffffff" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
     </Environment>
     <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><CookiePlate table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
     <group position={narrow ? [.93, 0, -1.5] : [1.78, 0, -.35]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
