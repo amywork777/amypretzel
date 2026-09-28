@@ -1,6 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
-import SiteNav from "../site-nav";
+import { Page, PageIntro, SiteFooter } from "../_ui/layout";
+import { Tile, TileGrid } from "../_ui/items";
 import { projects } from "./projects";
 
 import type { Metadata } from "next";
@@ -27,29 +26,14 @@ export const metadata: Metadata = {
 
 export default function PortfolioPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-paper">
-      <SiteNav active="portfolio" />
-
-      <main id="main-content" className="site-width portfolio-index">
-        <section className="portfolio-intro">
-          <h1>Objects.</h1>
-          <p>Product design, mechanical engineering, jewelry, instruments, and the occasional craft.</p>
-        </section>
-        <section className="objects-index-grid" aria-label="All objects">
-          {projects.map((p, i) => (
-            <Link key={p.slug} href={`/portfolio/${p.slug}`} className="selected-project">
-              <div className="selected-image object-study">
-                <Image src={p.cover} alt={p.title} fill sizes="(max-width: 700px) 100vw, 50vw" priority={i < 2} />
-              </div>
-              <div className="project-caption"><div><h2>{p.title}</h2><p>{p.role}</p></div></div>
-            </Link>
-          ))}
-        </section>
-        <footer className="index-footer">
-          <p className="text-display signoff">i love meeting people who make things. <a href="mailto:amzyst@gmail.com">say hi :)</a></p>
-          <Link href="/" className="quiet-link">Home</Link>
-        </footer>
-      </main>
-    </div>
+    <Page active="portfolio">
+      <PageIntro title="Objects.">Product design, mechanical engineering, jewelry, instruments, and the occasional craft.</PageIntro>
+      <TileGrid label="All objects">
+        {projects.map((p, i) => (
+          <Tile key={p.slug} href={`/portfolio/${p.slug}`} image={p.cover} title={p.title} text={p.role} priority={i < 2} />
+        ))}
+      </TileGrid>
+      <SiteFooter />
+    </Page>
   );
 }

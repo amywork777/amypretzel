@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import SiteNav from "./site-nav";
+import { LinkList, TextLink } from "./_ui/link";
 import BookOverlay from "./book/overlay";
 
 const personJsonLd = {
@@ -37,27 +37,29 @@ const personJsonLd = {
   ],
 };
 
+const contactLinks = [
+  { href: "mailto:amzyst@gmail.com", label: "amzyst@gmail.com" },
+  { href: "https://x.com/amypretzel", label: "Twitter" },
+  { href: "https://github.com/amywork777", label: "GitHub" },
+  { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
+];
+
 export default function Home() {
   return (
     <div className="home-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <BookOverlay />
       <SiteNav />
-      <main id="main-content" className="site-width">
+      <main id="main-content" className="ui-column">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
           <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
-          <p className="text-display intro-statement">I like building <Link href="/portfolio">objects</Link>, and <Link href="/software">software</Link> to build objects.</p>
+          <p className="ui-display home-statement">I like building <TextLink href="/portfolio">objects</TextLink>, and <TextLink href="/software">software</TextLink> to build objects.</p>
           <div className="personal-intro">
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
-            <div className="personal-copy">
+            <div className="personal-copy ui-prose">
               <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
-              <nav className="personal-links" aria-label="Contact Amy">
-                <a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a>
-                <a href="https://x.com/amypretzel" target="_blank" rel="noopener noreferrer">Twitter</a>
-                <a href="https://github.com/amywork777" target="_blank" rel="noopener noreferrer">GitHub</a>
-                <a href="https://linkedin.com/in/amy7" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              </nav>
+              <LinkList label="Contact Amy" links={contactLinks} />
             </div>
           </div>
         </section>

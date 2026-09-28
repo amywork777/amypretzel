@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SafeTweet } from "./safe-tweet";
+import { TextLink } from "../_ui/link";
 import type { Embed } from "./embed";
 
 /**
@@ -10,14 +11,14 @@ import type { Embed } from "./embed";
 export function Embeds({ embeds }: { embeds: Embed[] }) {
   if (embeds.length === 0) return null;
   return (
-    <section className="embeds" aria-label="Project links">
+    <section className="ui-embeds" aria-label="Project links">
       {embeds.map((embed) => (
-        <figure className="embed" key={embed.kind === "tweet" ? embed.id : embed.src}>
-          <figcaption className="embed-head">
-            <a href={embed.href} target="_blank" rel="noopener noreferrer">{embed.label}</a>
-            <span>{embed.kind === "tweet" ? "x.com" : embed.domain}</span>
+        <figure className="ui-embed" key={embed.kind === "tweet" ? embed.id : embed.src}>
+          <figcaption className="ui-embed-head">
+            <TextLink href={embed.href}>{embed.label}</TextLink>
+            <span className="ui-meta">{embed.kind === "tweet" ? "x.com" : embed.domain}</span>
           </figcaption>
-          <div className="embed-frame">
+          <div className="ui-media ui-embed-frame">
             {embed.kind === "tweet" ? (
               <div data-theme="light" className="tweet-host"><SafeTweet id={embed.id} /></div>
             ) : embed.kind === "image" ? (

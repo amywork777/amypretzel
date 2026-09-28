@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import SiteNav from "../site-nav";
+import { Page, PageIntro, SectionHeading, SiteFooter } from "../_ui/layout";
 import SoftwareProjectList from "./project-list";
 
 export const metadata: Metadata = {
@@ -10,18 +9,14 @@ export const metadata: Metadata = {
 };
 
 export default function SoftwarePage() {
-  return <div className="min-h-screen flex flex-col bg-paper">
-    <SiteNav active="software" />
-    <main id="main-content" className="site-width">
-      <section className="portfolio-intro"><h1>Software.</h1><p>AI design tools, CAD systems, and small things that make everyday work better.</p></section>
+  return (
+    <Page active="software">
+      <PageIntro title="Software.">AI design tools, CAD systems, and small things that make everyday work better.</PageIntro>
       <section aria-labelledby="all-software-title">
-        <header className="section-heading"><h2 id="all-software-title">All software</h2></header>
+        <SectionHeading id="all-software-title">All software</SectionHeading>
         <SoftwareProjectList />
       </section>
-      <footer className="index-footer">
-          <p className="text-display signoff">i love meeting people who make things. <a href="mailto:amzyst@gmail.com">say hi :)</a></p>
-          <Link href="/" className="quiet-link">Home</Link>
-        </footer>
-    </main>
-  </div>;
+      <SiteFooter />
+    </Page>
+  );
 }

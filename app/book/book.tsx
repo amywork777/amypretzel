@@ -35,6 +35,7 @@ import { registerMesh, registerSurface, releaseSurface, sketch, sketchAt } from 
 import TableDecor from "./table-decor";
 import { useCompactBook } from "./use-compact-book";
 import { TableActions, useTableState, type TableState } from "./table-interactions";
+import { Button } from "../_ui/button";
 
 type StoryPage = {
   text: string;
@@ -1079,9 +1080,9 @@ export default function StoryBook({ onExit, onReady }: { onExit?: () => void; on
       </div>
       <div className="storybook-controls">
         <div className="storybook-pagination">
-          <button type="button" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
-          <span aria-live="polite">{page === 0 ? "" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
-          <button type="button" aria-label={atBackCover ? "Go to the website" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Go to the website" : "Next"}</button>
+          <Button variant="text" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</Button>
+          <span className="ui-meta" aria-live="polite">{page === 0 ? "" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
+          <Button variant="text" aria-label={atBackCover ? "Go to the website" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Go to the website" : "Next"}</Button>
         </div>
       </div>
       <TableActions table={table} />

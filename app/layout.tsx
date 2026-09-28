@@ -97,7 +97,7 @@ export default function RootLayout({
       <head>
         <ThemeFlashScript />
       </head>
-      <body className="font-body antialiased text-ink bg-paper">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import SiteNav from "../../site-nav";
+import { Page, PageIntro } from "../../_ui/layout";
+import { LinkList } from "../../_ui/link";
+import { PrevNext } from "../../_ui/detail";
 import { renderBody } from "../../lib/render-body";
 import { splitLinks, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
@@ -70,38 +71,25 @@ export default async function SoftwareProjectPage({
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-paper">
+    <Page active="software" width="narrow">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SiteNav active="software" />
+      <PageIntro title={project.title} meta={project.section}>{project.summary}</PageIntro>
 
-      <main id="main-content" className="flex-1 project-detail">
-        <section className="detail-head">
-          <h1 className="display">{project.title}</h1>
-          <span className="meta">{project.section}</span>
-        </section>
-        <p className="detail-summary">{project.summary}</p>
+      <section className="ui-prose ui-detail-body">
+        <div>{renderBody(project.body)}</div>
+        {otherLinks.length > 0 && <LinkList label="Links" links={otherLinks.map(l => ({ href: l.url, label: l.label }))} />}
+      </section>
 
-        <section className="detail-body">
-          <div>{renderBody(project.body)}</div>
-          {otherLinks.length > 0 && (
-            <nav className="detail-links" aria-label="Links">
-              {otherLinks.map((l) => (
-                <a key={l.url} href={l.url} target={l.url.startsWith("http") ? "_blank" : undefined} rel={l.url.startsWith("http") ? "noopener noreferrer" : undefined}>{l.label}</a>
-              ))}
-            </nav>
-          )}
-        </section>
+      <Embeds embeds={[...demoEmbeds, ...embeds]} />
 
-        <Embeds embeds={[...demoEmbeds, ...embeds]} />
-
-        <nav className="detail-nav" aria-label="More software">
-          <Link href={`/software/${prev.slug}`}><small>Previous</small>{prev.title}</Link>
-          <Link href={`/software/${next.slug}`} className="text-right"><small>Next</small>{next.title}</Link>
-        </nav>
-      </main>
-    </div>
+      <PrevNext
+        label="More software"
+        prev={{ href: `/software/${prev.slug}`, title: prev.title }}
+        next={{ href: `/software/${next.slug}`, title: next.title }}
+      />
+    </Page>
   );
 }

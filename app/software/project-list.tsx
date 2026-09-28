@@ -1,16 +1,12 @@
-import Link from "next/link";
+import { Row, RowGroup } from "../_ui/items";
 import { softwareSections } from "./projects";
 
 export default function SoftwareProjectList() {
   return <>{softwareSections.map(section => (
-    <div className="software-group" key={section.title}>
-      <h3>{section.title}</h3>
-      <div>{section.projects.map(project => (
-        <Link key={project.slug} href={`/software/${project.slug}`} className="software-row">
-          <h4>{project.title}</h4>
-          <p>{project.summary}</p>
-        </Link>
-      ))}</div>
-    </div>
+    <RowGroup key={section.title} title={section.title}>
+      {section.projects.map(project => (
+        <Row key={project.slug} href={`/software/${project.slug}`} title={project.title} text={project.summary} as="h4" />
+      ))}
+    </RowGroup>
   ))}</>;
 }
