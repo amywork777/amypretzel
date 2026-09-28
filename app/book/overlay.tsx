@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadBook } from "./load-book";
 import BookPoster from "./poster";
+import { Button } from "../_ui/button";
 
 const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Opening the book…</p> });
 
@@ -82,9 +83,9 @@ export default function BookOverlay() {
   return (
     <div ref={dialogRef} className="book-overlay" tabIndex={-1} data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="Amy's making diary">
       <BookPoster hidden={sceneReady} />
-      <button type="button" className="book-overlay-enter" onClick={close}>
+      <Button variant="pill" className="book-overlay-enter" onClick={close}>
         Skip the book
-      </button>
+      </Button>
       <StoryBook onExit={close} onReady={handleReady} />
     </div>
   );

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SafeTweet } from "../../lib/safe-tweet";
 import { splitLinks } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { renderBody } from "../../lib/render-body";
-import SiteNav from "../../site-nav";
+import { Page, PageIntro } from "../../_ui/layout";
+import { LinkList } from "../../_ui/link";
+import { PrevNext } from "../../_ui/detail";
 import { projects } from "../projects";
 import "react-tweet/theme.css";
 
@@ -87,74 +88,60 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-paper">
+    <Page active="portfolio" width="narrow">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SiteNav active="portfolio" />
+      <PageIntro title={project.title} meta={project.year}>{project.role}</PageIntro>
 
-      <main id="main-content" className="flex-1 project-detail">
-        <section className="detail-head">
-          <h1 className="display">{project.title}</h1>
-          {project.year && <span className="meta">{project.year}</span>}
+      {/* === LEAD IMAGE === */}
+      {lead && (
+        <section className="ui-media-stack">
+          <Image src={lead} alt={project.title} width={1600} height={1200} priority />
         </section>
-        {project.role && <p className="detail-summary">{project.role}</p>}
+      )}
 
-        {/* === LEAD IMAGE === */}
-        {lead && (
-          <section className="detail-media">
-            <Image src={lead} alt={project.title} width={1600} height={1200} priority />
-          </section>
-        )}
+      {/* === TWEET EMBED (with launch video) === */}
+      {project.tweetId && (
+        <section className="ui-media-stack">
+          <div data-theme="light" className="tweet-host">
+            <SafeTweet id={project.tweetId} />
+          </div>
+        </section>
+      )}
 
-        {/* === TWEET EMBED (with launch video) === */}
-        {project.tweetId && (
-          <section className="detail-media">
-            <div data-theme="light" className="tweet-host">
-              <SafeTweet id={project.tweetId} />
-            </div>
-          </section>
-        )}
+      {(project.body || otherLinks.length > 0) && (
+        <section className="ui-prose ui-detail-body">
+          {project.body && <div>{renderBody(project.body)}</div>}
+          {otherLinks.length > 0 && <LinkList label="References" links={otherLinks.map(l => ({ href: l.url, label: l.label }))} />}
+        </section>
+      )}
 
-        {(project.body || otherLinks.length > 0) && (
-          <section className="detail-body">
-            {project.body && <div>{renderBody(project.body)}</div>}
-            {otherLinks.length > 0 && (
-              <nav className="detail-links" aria-label="References">
-                {otherLinks.map((l) => (
-                  <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}</a>
-                ))}
-              </nav>
-            )}
-          </section>
-        )}
+      <Embeds embeds={embeds} />
 
-        <Embeds embeds={embeds} />
+      {/* === PDF VIEWER === */}
+      {project.pdfPreview && (
+        <section className="ui-media-stack">
+          <iframe src={project.pdfPreview} title={`${project.title} document preview`} className="h-[70vh] sm:h-[85vh]" loading="lazy" />
+          <p className="ui-meta">If the viewer doesn&apos;t load on your device, open the PDF from the references above.</p>
+        </section>
+      )}
 
-        {/* === PDF VIEWER === */}
-        {project.pdfPreview && (
-          <section className="detail-media">
-            <iframe src={project.pdfPreview} title={`${project.title} document preview`} className="h-[70vh] sm:h-[85vh]" loading="lazy" />
-            <p className="meta">If the viewer doesn&apos;t load on your device, open the PDF from the references above.</p>
-          </section>
-        )}
+      {/* === REMAINING GALLERY === */}
+      {rest.length > 0 && (
+        <section className="ui-media-stack">
+          {rest.map((src, i) => (
+            <Image key={src} src={src} alt={`${project.title}, ${i + 2}`} width={1600} height={1200} />
+          ))}
+        </section>
+      )}
 
-        {/* === REMAINING GALLERY === */}
-        {rest.length > 0 && (
-          <section className="detail-media">
-            {rest.map((src, i) => (
-              <Image key={src} src={src} alt={`${project.title}, ${i + 2}`} width={1600} height={1200} />
-            ))}
-          </section>
-        )}
-
-        <nav className="detail-nav" aria-label="More objects">
-          <Link href={`/portfolio/${prev.slug}`}><small>Previous</small>{prev.title}</Link>
-          <Link href={`/portfolio/${next.slug}`} className="text-right"><small>Next</small>{next.title}</Link>
-        </nav>
-      </main>
-
-    </div>
+      <PrevNext
+        label="More objects"
+        prev={{ href: `/portfolio/${prev.slug}`, title: prev.title }}
+        next={{ href: `/portfolio/${next.slug}`, title: next.title }}
+      />
+    </Page>
   );
 }

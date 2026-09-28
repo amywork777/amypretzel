@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 import { clearSketch, sketch } from "./sketch";
+import { Button } from "../_ui/button";
 
 export const PRETZEL_COUNT = 9;
 
@@ -86,14 +87,14 @@ export function TableActions({ table }: { table: TableState }) {
     <summary>Table</summary>
     <div className="table-actions-panel">
       <p>Tap the cup to tip it. Tap a pretzel to take it off the pile; tap it again to put it back. Pick up the pencil and draw on the last page.</p>
-      <button type="button" onClick={() => table.setPencil(!table.pencilHeld)}>{table.pencilHeld ? "Put the pencil down" : "Pick up the pencil"}</button>
-      <button type="button" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</button>
+      <Button onClick={() => table.setPencil(!table.pencilHeld)}>{table.pencilHeld ? "Put the pencil down" : "Pick up the pencil"}</Button>
+      <Button onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</Button>
       <div className="flower-actions">
-        <button type="button" disabled={count === PRETZEL_COUNT} onClick={() => table.setCookie(table.cookiesTaken.lastIndexOf(false), true)}>Take a pretzel</button>
-        <button type="button" disabled={count === 0} onClick={() => table.setCookie(table.cookiesTaken.indexOf(true), false)}>Put one back</button>
+        <Button disabled={count === PRETZEL_COUNT} onClick={() => table.setCookie(table.cookiesTaken.lastIndexOf(false), true)}>Take a pretzel</Button>
+        <Button disabled={count === 0} onClick={() => table.setCookie(table.cookiesTaken.indexOf(true), false)}>Put one back</Button>
       </div>
       <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of {PRETZEL_COUNT} pretzels taken</p>
-      <button type="button" className="table-reset" onClick={table.reset}>Reset table</button>
+      <Button variant="text" onClick={table.reset}>Reset table</Button>
     </div>
   </details>;
 }
