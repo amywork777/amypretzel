@@ -198,6 +198,24 @@ The dataset is on Hugging Face and the generation code is on GitHub.`,
       "Small public tools and side projects.",
     projects: [
       {
+        slug: "lipflow",
+        title: "Lipflow",
+        meta: "Silent dictation",
+        summary:
+          "Dictation without sound: hold a key, silently mouth the words, and a local lip reader types them at your cursor.",
+        body: `Lipflow is Wispr Flow for your lips. Hold a key, silently mouth what you want to say, let go, and the text appears at your cursor in whatever app you're in. It uses the webcam, not the microphone, and everything runs locally on a Mac, Windows PC, or Linux machine.
+
+Voice dictation is fast, but you can't use it in an open office, on a train, or next to someone sleeping. Lip reading works anywhere you can sit in front of a camera.
+
+While you mouth the words, it tracks your face, crops your mouth 25 times a second, and runs a visual speech model on the Mac's GPU, with a live preview as you go. A language model and an optional LLM pass then fix the words lip reading gets wrong. Setup takes about eight minutes: you mouth 24 practice sentences, and it fine-tunes the lip reader on your face and the language model on your own phrasing, keeping the face model only if it reads held-out sentences better than the stock one.
+
+It's open source, and other people have contributed Linux support and new cleanup backends.`,
+        tags: ["Python", "Computer vision", "macOS"],
+        links: [
+          { label: "GitHub", href: "https://github.com/amywork777/lipflow" },
+        ],
+      },
+      {
         slug: "sf-rats",
         title: "SF Rats",
         meta: "Community map",
