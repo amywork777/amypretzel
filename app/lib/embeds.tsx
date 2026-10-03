@@ -23,6 +23,9 @@ export function Embeds({ embeds }: { embeds: Embed[] }) {
               <div data-theme="light" className="tweet-host"><SafeTweet id={embed.id} /></div>
             ) : embed.kind === "image" ? (
               <Image src={embed.src} alt={embed.label} width={1200} height={600} unoptimized />
+            ) : embed.kind === "video" ? (
+              // #t=0.1 makes the browser paint a first frame instead of an empty box.
+              <video src={`${embed.src}#t=0.1`} aria-label={embed.label} controls muted loop playsInline preload="metadata" />
             ) : (<>
               <span className="ui-embed-loading" aria-hidden="true">Loading {embed.domain}</span>
               <iframe

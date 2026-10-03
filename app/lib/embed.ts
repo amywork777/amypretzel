@@ -7,7 +7,8 @@
 export type Embed =
   | { kind: "tweet"; id: string; label: string; href: string }
   | { kind: "frame"; src: string; height: number; label: string; href: string; domain: string }
-  | { kind: "image"; src: string; label: string; href: string; domain: string };
+  | { kind: "image"; src: string; label: string; href: string; domain: string }
+  | { kind: "video"; src: string; label: string; href: string; domain: string };
 
 // Amy's own sites, which set no framing headers, so they can run live in the page.
 const LIVE_SITES = [
