@@ -97,9 +97,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {/* === LEAD IMAGE === */}
       {lead && (
-        <section className="ui-media-stack">
-          <Image src={lead} alt={project.title} width={1600} height={1200} priority />
-        </section>
+        <div className="ui-media ui-lead">
+          <Image src={lead} alt={project.title} fill sizes="(min-width: 860px) 764px, 100vw" priority />
+        </div>
       )}
 
       {/* === TWEET EMBED (with launch video) === */}
