@@ -40,13 +40,19 @@ export const softwareSections: SoftwareSection[] = [
 
 Colorways are decided part by part: this strap in leather, that shell in matte black, the trim in brass. Before, that meant exporting the render and painting it somewhere else. Now the render stays live, and every part has its own controls.
 
-I built the whole feature at Vizcom, from splitting the render into regions to the editor for each one: double-click a region to change its material and color, add to or subtract from its mask, and repair texture seams so materials repeat cleanly. The launch video and two short clips are below.`,
+I built the whole feature at Vizcom, from splitting the render into regions to the editor for each one: double-click a region to change its material and color, add to or subtract from its mask, and repair texture seams so materials repeat cleanly. The launch video, a full tutorial and two short clips are below.`,
         tags: ["Product feature", "Color and material", "Canvas UX"],
         demos: [
           {
             label: "Launch",
             src: "https://www.youtube.com/embed/OFmNJiZ4lYQ",
             href: "https://www.youtube.com/watch?v=OFmNJiZ4lYQ",
+            height: 430,
+          },
+          {
+            label: "Tutorial",
+            src: "https://www.youtube.com/embed/jlTEjWh_4V8",
+            href: "https://www.youtube.com/watch?v=jlTEjWh_4V8",
             height: 430,
           },
           {
