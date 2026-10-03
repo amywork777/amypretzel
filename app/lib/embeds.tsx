@@ -23,7 +23,8 @@ export function Embeds({ embeds }: { embeds: Embed[] }) {
               <div data-theme="light" className="tweet-host"><SafeTweet id={embed.id} /></div>
             ) : embed.kind === "image" ? (
               <Image src={embed.src} alt={embed.label} width={1200} height={600} unoptimized />
-            ) : (
+            ) : (<>
+              <span className="ui-embed-loading" aria-hidden="true">Loading {embed.domain}</span>
               <iframe
                 src={embed.src}
                 title={embed.label}
@@ -31,7 +32,7 @@ export function Embeds({ embeds }: { embeds: Embed[] }) {
                 style={{ height: embed.height }}
                 allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture"
               />
-            )}
+            </>)}
           </div>
         </figure>
       ))}

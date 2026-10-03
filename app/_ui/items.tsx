@@ -14,7 +14,7 @@ export function Tile({ href, image, title, text, priority, as = "h2" }: { href: 
   return (
     <Link href={href} className="ui-tile">
       <div className="ui-media ui-tile-media">
-        <Image src={image} alt={title} fill sizes="(max-width: 700px) 100vw, 50vw" priority={priority} />
+        <Image src={image} alt={title} fill sizes="(min-width: 1024px) 360px, 50vw" priority={priority} />
       </div>
       <div className="ui-tile-caption"><ItemText as={as} title={title} text={text} /></div>
     </Link>
