@@ -1,6 +1,10 @@
 export type SoftwareDemo = {
   label: string;
   src: string;
+  /** Where the caption links; defaults to src. */
+  href?: string;
+  /** Frame height in px; defaults to 560, which suits a LinkedIn post. */
+  height?: number;
 };
 
 export type SoftwareProject = {
@@ -26,6 +30,37 @@ export const softwareSections: SoftwareSection[] = [
     summary:
       "Product features for industrial designers. Only public launches with videos are listed.",
     projects: [
+      {
+        slug: "region-maps",
+        title: "Region Maps",
+        meta: "Color and material",
+        summary:
+          "Splits a product render into parts so each one's color, material, and pattern can be edited without re-rendering.",
+        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom.
+
+Colorways are decided part by part: this strap in leather, that shell in matte black, the trim in brass. Before, that meant exporting the render and painting it somewhere else. Now the render stays live, and every part has its own controls.
+
+I built the whole feature at Vizcom, from splitting the render into regions to the editor for each one: double-click a region to change its material and color, add to or subtract from its mask, and repair texture seams so materials repeat cleanly. The launch video and two short clips are below.`,
+        tags: ["Product feature", "Color and material", "Canvas UX"],
+        demos: [
+          {
+            label: "Launch",
+            src: "https://www.youtube.com/embed/OFmNJiZ4lYQ",
+            href: "https://www.youtube.com/watch?v=OFmNJiZ4lYQ",
+            height: 430,
+          },
+          {
+            label: "Splitting a render into regions",
+            src: "/software/region-maps/demo-1.mp4",
+            href: "https://docs.vizcom.com/region-maps",
+          },
+          {
+            label: "Editing a region's color",
+            src: "/software/region-maps/demo-2.mp4",
+            href: "https://docs.vizcom.com/region-maps",
+          },
+        ],
+      },
       {
         slug: "extract",
         title: "Extract",

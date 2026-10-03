@@ -46,16 +46,15 @@ export default async function SoftwareProjectPage({
   const prev = idx > 0 ? softwareProjects[idx - 1] : softwareProjects[softwareProjects.length - 1];
   const next = idx < softwareProjects.length - 1 ? softwareProjects[idx + 1] : softwareProjects[0];
 
-  // Demos are already embed URLs; the rest of the links become embeds where
-  // the destination allows framing.
-  const demoEmbeds: Embed[] = (project.demos ?? []).map(demo => ({
-    kind: "frame" as const,
-    src: demo.src,
-    height: 560,
-    label: demo.label,
-    href: demo.src,
-    domain: "linkedin.com",
-  }));
+  // Demos are already embed URLs or local clips; the rest of the links become
+  // embeds where the destination allows framing.
+  const demoEmbeds: Embed[] = (project.demos ?? []).map(demo => {
+    const href = demo.href ?? demo.src;
+    const domain = new URL(href, SITE_URL).hostname.replace(/^www\./, "");
+    return demo.src.endsWith(".mp4")
+      ? { kind: "video", src: demo.src, label: demo.label, href, domain }
+      : { kind: "frame", src: demo.src, height: demo.height ?? 560, label: demo.label, href, domain };
+  });
   const { embeds, rest: otherLinks } = splitLinks(
     project.links?.map(l => ({ label: l.label, url: l.href })),
     (project.demos ?? []).map(d => d.src)
