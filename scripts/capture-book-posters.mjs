@@ -15,7 +15,7 @@ import { resolve } from 'node:path';
       await page.locator('.book-overlay').waitFor();
       await page.locator('.book-overlay[data-view="table"][data-ready="true"]').waitFor();
       await page.waitForTimeout(2500);
-      await page.addStyleTag({ content: '.book-overlay-heading,.book-overlay-enter,.storybook-controls,.book-reading,.table-actions,.book-poster {visibility:hidden!important}' });
+      await page.addStyleTag({ content: '.book-overlay-enter,.storybook-bar,.book-toys,.book-poster {visibility:hidden!important}' });
       await sharp(await page.screenshot()).webp({ quality: 76 }).toFile(resolve(destination, `scene-${name}.webp`));
       await page.close();
     }

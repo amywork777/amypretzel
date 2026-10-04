@@ -9,7 +9,7 @@ import {
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { easing } from "maath";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ComponentRef, RefObject } from "react";
 import {
   Bone,
@@ -30,26 +30,23 @@ import {
   Vector3,
 } from "three";
 import type { Group, Texture } from "three";
-import { bookChapters, type BookChapter } from "./chapters";
+import { bookChapters, bookEnding, type BookChapter } from "./chapters";
 import { registerMesh, registerSurface, releaseSurface, sketch, sketchAt } from "./sketch";
 import TableDecor from "./table-decor";
 import { useCompactBook } from "./use-compact-book";
-import { TableActions, useTableState, type TableState } from "./table-interactions";
+import { PRETZEL_COUNT, useTableState, type TableState } from "./table-interactions";
+import Link from "next/link";
 import { Button } from "../_ui/button";
-
-type StoryPage = {
-  text: string;
-  title: string;
-  chapter: string;
-  pageNumber: number;
-};
 
 type TexturePage =
   | { kind: "cover" }
   | { kind: "back-cover" }
   | { kind: "blank" }
-  | { kind: "sketch"; id: string }
-  | { kind: "story"; page: StoryPage };
+  | { kind: "text"; title: string; text: string; pageNumber: number }
+  | { kind: "sketch"; hint?: string; pageNumber: number };
+
+// A printed page before it has a number: Omit applied to each kind separately.
+type UnnumberedPage = TexturePage extends infer T ? T extends { pageNumber: number } ? Omit<T, "pageNumber"> : never : never;
 
 type BookSheet = {
   front: TexturePage;
@@ -63,6 +60,9 @@ const PAGE_HEIGHT = 1.9;
 const PAGE_DEPTH = 0.018;
 const COVER_DEPTH = 0.035;
 const PAGE_SEGMENTS = 30;
+const INK = "#1c1c1c";
+const INK_SOFT = "rgba(28,28,28,.62)";
+const PAGE_MARGIN = 104;
 
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS;
 const reducedMotion = typeof window === "undefined" ? null : window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -169,71 +169,77 @@ function drawCover(ctx: CanvasRenderingContext2D, back = false) {
   ctx.fillStyle = hinge;
   ctx.fillRect(back ? TEXTURE_WIDTH - 95 : 0, 0, 95, TEXTURE_HEIGHT);
   ctx.textAlign = "left";
-  ctx.fillStyle = "#1c1c1c";
+  ctx.fillStyle = INK;
   if (back) {
-    ctx.font = printFont(32, "--font-display");
+    ctx.font = printFont(40, "--font-display");
     ctx.fillText("To be continued.", 125, 910);
-    ctx.font = printFont(19);
+    ctx.font = printFont(26);
     ctx.fillText("amypretzel.com", 125, 1050);
   } else {
-    ctx.font = printFont(24);
-    ctx.fillText("AMY ZHOU", 125, 160);
+    ctx.font = printFont(34);
+    ctx.fillText("AMY ZHOU", 125, 170);
     ctx.font = printFont(120, "--font-display");
     ctx.fillText("A little", 120, 380);
     ctx.fillText("book of", 120, 503);
     ctx.fillText("making.", 120, 626);
-    ctx.fillStyle = "rgba(28,28,28,.6)";
-    ctx.font = printFont(23);
+    ctx.fillStyle = INK_SOFT;
+    ctx.font = printFont(30);
     ctx.fillText("Objects, and software to build objects.", 125, 1040);
   }
 }
 
-function drawStoryPage(ctx: CanvasRenderingContext2D, page: StoryPage) {
-  drawPaper(ctx);
-  const margin = 116;
-  const maxWidth = TEXTURE_WIDTH - margin * 2;
-  ctx.textAlign = "left";
-  ctx.fillStyle = "#8e8e93";
-  ctx.font = printFont(18);
-  ctx.fillText(page.chapter, margin, 104);
-  ctx.fillStyle = "#e5e5e7";
-  ctx.fillRect(margin, 130, maxWidth, 1);
-  ctx.fillStyle = "#1d1d1f";
-  ctx.font = printFont(64, "--font-display");
-  const titleWords = page.title.split(" ");
-  let titleLine = "";
-  let y = 280;
-  for (const word of titleWords) {
-    const test = titleLine ? `${titleLine} ${word}` : word;
-    if (ctx.measureText(test).width > maxWidth && titleLine) {
-      ctx.fillText(titleLine, margin, y);
-      titleLine = word; y += 78;
-    } else titleLine = test;
-  }
-  ctx.fillText(titleLine, margin, y);
-  y += 98;
-  ctx.font = printFont(32);
-  const words = page.text.split(/\s+/);
+// Draws wrapped text and returns the baseline after the last line.
+function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {
   let line = "";
-  for (const word of words) {
+  for (const word of text.split(/\s+/)) {
     const test = line ? `${line} ${word}` : word;
     if (ctx.measureText(test).width > maxWidth && line) {
-      ctx.fillText(line, margin, y); line = word; y += 53;
+      ctx.fillText(line, x, y);
+      line = word;
+      y += lineHeight;
     } else line = test;
   }
-  if (line) ctx.fillText(line, margin, y);
-  ctx.fillStyle = "#8e8e93";
-  ctx.font = printFont(18);
-  ctx.fillText("AMY ZHOU", margin, 1090);
-  ctx.textAlign = "right";
-  ctx.fillText(String(page.pageNumber).padStart(2, "0"), TEXTURE_WIDTH - margin, 1090);
+  if (line) ctx.fillText(line, x, y);
+  return y;
+}
+
+// Page numbers sit on the outer corner: left on left-hand (odd) pages.
+function drawFolio(ctx: CanvasRenderingContext2D, pageNumber: number) {
+  ctx.fillStyle = INK_SOFT;
+  ctx.font = printFont(24);
+  ctx.textAlign = pageNumber % 2 ? "left" : "right";
+  ctx.fillText(String(pageNumber), pageNumber % 2 ? PAGE_MARGIN : TEXTURE_WIDTH - PAGE_MARGIN, 1110);
   ctx.textAlign = "left";
 }
 
-function createPageCanvasTexture(content: TexturePage, lowDetail: boolean, reverse?: TexturePage) {
+function drawTextPage(ctx: CanvasRenderingContext2D, page: Extract<TexturePage, { kind: "text" }>) {
+  drawPaper(ctx);
+  const maxWidth = TEXTURE_WIDTH - PAGE_MARGIN * 2;
+  ctx.textAlign = "left";
+  ctx.fillStyle = INK;
+  ctx.font = printFont(78, "--font-display");
+  const y = wrapText(ctx, page.title, PAGE_MARGIN, 230, maxWidth, 88);
+  ctx.font = printFont(42);
+  wrapText(ctx, page.text, PAGE_MARGIN, y + 112, maxWidth, 62);
+  drawFolio(ctx, page.pageNumber);
+}
+
+function drawSketchPage(ctx: CanvasRenderingContext2D, page: Extract<TexturePage, { kind: "sketch" }>) {
+  drawPaper(ctx);
+  ctx.fillStyle = INK_SOFT;
+  ctx.font = printFont(30);
+  if (page.hint) wrapText(ctx, page.hint, PAGE_MARGIN, 1010, TEXTURE_WIDTH - PAGE_MARGIN * 2, 44);
+  drawFolio(ctx, page.pageNumber);
+}
+
+function isDrawable(page: TexturePage) {
+  return page.kind === "text" || page.kind === "sketch";
+}
+
+function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
   const canvas = document.createElement("canvas");
-  canvas.width = lowDetail ? 384 : 768;
-  canvas.height = lowDetail ? 512 : 1024;
+  canvas.width = lowDetail ? 768 : TEXTURE_WIDTH;
+  canvas.height = lowDetail ? 1024 : TEXTURE_HEIGHT;
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     throw new Error("Could not create page texture context");
@@ -242,56 +248,40 @@ function createPageCanvasTexture(content: TexturePage, lowDetail: boolean, rever
   ctx.scale(canvas.width / TEXTURE_WIDTH, canvas.height / TEXTURE_HEIGHT);
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
-  texture.anisotropy = 4;
+  texture.anisotropy = 8;
 
-  if (content.kind === "cover") {
-    drawCover(ctx);
-  } else if (content.kind === "back-cover") {
-    drawCover(ctx, true);
-  } else if (content.kind === "story") {
-    drawStoryPage(ctx, content.page);
-  } else if (content.kind === "sketch") {
-    const paint = () => {
-      drawPaper(ctx);
-      // The invitation sits once, on the left of the spread.
-      if (content.id === "left") {
-        ctx.textAlign = "left";
-        ctx.fillStyle = "#aaaaaa";
-        ctx.font = printFont(18);
-        ctx.fillText("your pages. pick up the pencil and draw something :)", 116, 1080);
-      }
-    };
-    paint();
-    sketch.width = TEXTURE_WIDTH;
-    sketch.height = TEXTURE_HEIGHT;
-    registerSurface(content.id, { ctx, texture, repaint: paint });
-  } else {
-    drawPaper(ctx);
-  }
+  const paint = () => {
+    if (content.kind === "cover") drawCover(ctx);
+    else if (content.kind === "back-cover") drawCover(ctx, true);
+    else if (content.kind === "text") drawTextPage(ctx, content);
+    else if (content.kind === "sketch") drawSketchPage(ctx, content);
+    else drawPaper(ctx);
+  };
+  paint();
 
-  // Thin paper: the printing on the other side of the sheet shows through,
-  // mirrored and faint, the way it does on a real page held to the light.
-  if (reverse?.kind === "story" && content.kind !== "cover" && content.kind !== "back-cover") {
-    ctx.save();
-    ctx.globalAlpha = 0.035;
-    ctx.translate(TEXTURE_WIDTH, 0);
-    ctx.scale(-1, 1);
-    drawStoryPage(ctx, reverse.page);
-    ctx.restore();
-  }
-
-  return texture;
+  // Every printed page takes the pencil; reset repaints it clean.
+  const surface = isDrawable(content) ? { ctx, texture, repaint: paint } : null;
+  return { texture, surface };
 }
 
-function usePageTexture(content: TexturePage, reverse?: TexturePage) {
+function usePageTexture(content: TexturePage, id: string) {
   const lowDetail = useCompactBook();
   // These pages use installed system fonts. Redrawing after fonts.ready only
   // repeated all of the canvas work and uploaded every texture a second time.
-  const texture = useMemo(() => createPageCanvasTexture(content, lowDetail, reverse), [content, lowDetail, reverse]);
-  useEffect(() => () => {
-    texture.dispose();
-    if (content.kind === "sketch") releaseSurface(content.id, texture);
-  }, [texture, content]);
+  const { texture, surface } = useMemo(() => createPageCanvasTexture(content, lowDetail), [content, lowDetail]);
+  // Registered on mount, not when the texture is made: development mounts
+  // twice, and a cleanup would otherwise leave the page undrawable.
+  useEffect(() => {
+    if (surface) {
+      sketch.width = TEXTURE_WIDTH;
+      sketch.height = TEXTURE_HEIGHT;
+      registerSurface(id, surface);
+    }
+    return () => {
+      texture.dispose();
+      releaseSurface(id, texture);
+    };
+  }, [texture, surface, id]);
   return texture;
 }
 
@@ -406,8 +396,8 @@ function AnimatedPage({
 }) {
   const invalidate = useThree(state => state.invalidate);
   const isCover = sheet.front.kind === "cover" || sheet.back.kind === "back-cover";
-  const frontTexture = usePageTexture(sheet.front, sheet.back);
-  const backTexture = usePageTexture(sheet.back, sheet.front);
+  const frontTexture = usePageTexture(sheet.front, `${number}-front`);
+  const backTexture = usePageTexture(sheet.back, `${number}-back`);
   const groupRef = useRef<Group>(null);
   const skinnedMeshRef = useRef<SkinnedMesh>(null);
   const turnedAt = useRef(0);
@@ -436,8 +426,8 @@ function AnimatedPage({
     const mesh = new SkinnedMesh(geometry, materials);
     // Material 4 is the sheet's front face, 5 its back; either can be drawable.
     mesh.userData.sketch = {
-      4: sheet.front.kind === "sketch" ? sheet.front.id : null,
-      5: sheet.back.kind === "sketch" ? sheet.back.id : null,
+      4: isDrawable(sheet.front) ? `${number}-front` : null,
+      5: isDrawable(sheet.back) ? `${number}-back` : null,
     };
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -445,10 +435,10 @@ function AnimatedPage({
     mesh.add(skeleton.bones[0]);
     mesh.bind(skeleton);
     return mesh;
-  }, [frontTexture, backTexture, sheet, isCover]);
+  }, [frontTexture, backTexture, sheet, isCover, number]);
 
   useEffect(() => {
-    if (!sheet.front.kind.startsWith("sketch") && !sheet.back.kind.startsWith("sketch")) return;
+    if (!isDrawable(sheet.front) && !isDrawable(sheet.back)) return;
     return registerMesh(manualSkinnedMesh);
   }, [manualSkinnedMesh, sheet]);
 
@@ -610,24 +600,21 @@ function BookStack({
 }) {
   const [delayedPage, setDelayedPage] = useState(page);
   const invalidate = useThree(state => state.invalidate);
+  const lastStep = useRef(0);
 
+  // Leaves turn one at a time toward the requested page. Each step is
+  // scheduled here rather than inside a state updater: updaters can run twice,
+  // and a stray timer from an old request would walk the book back to it.
   useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    const goToPage = () => {
-      setDelayedPage((currentPage) => {
-        if (page === currentPage) {
-          return currentPage;
-        }
-
-        timeout = setTimeout(goToPage, Math.abs(page - currentPage) > 2 ? 50 : 150);
-        return page > currentPage ? currentPage + 1 : currentPage - 1;
-      });
-    };
-
-    goToPage();
+    if (delayedPage === page) return;
+    const interval = Math.abs(page - delayedPage) > 2 ? 50 : 150;
+    const wait = Math.max(0, interval - (performance.now() - lastStep.current));
+    const timeout = setTimeout(() => {
+      lastStep.current = performance.now();
+      setDelayedPage(current => current + Math.sign(page - current));
+    }, wait);
     return () => clearTimeout(timeout);
-  }, [page]);
+  }, [page, delayedPage]);
 
   const groupRef = useRef<Group>(null);
   const scale = 1;
@@ -787,30 +774,86 @@ function PencilSketcher({ table }: { table: TableState }) {
       aim(event);
     };
     const up = () => { sketch.drawing = false; sketch.last = null; };
-    const key = (event: KeyboardEvent) => { if (event.key === "Escape") table.setPencil(false); };
     el.addEventListener("pointermove", aim);
     el.addEventListener("pointerdown", down);
     window.addEventListener("pointerup", up);
     window.addEventListener("pointercancel", up);
-    window.addEventListener("keydown", key);
     return () => {
       el.removeEventListener("pointermove", aim);
       el.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);
       window.removeEventListener("pointercancel", up);
-      window.removeEventListener("keydown", key);
     };
-  }, [held, gl, camera, raycaster, invalidate, table]);
+  }, [held, gl, camera, raycaster, invalidate]);
 
   return null;
 }
 
+const FOV = 42;
+const TABLE_TARGET = new Vector3(0, 0.04, 0);
+
+// The table view: fits the whole interaction area, including taken pretzels
+// and tipped coffee.
+function tablePosition(aspect: number) {
+  const distance = Math.max(4.9, (aspect < .9 ? 4.8 : 7) / aspect);
+  return new Vector3(distance * 0.2, distance * 0.82, distance * 0.55);
+}
+
+export type ReadingSide = "spread" | "left" | "right";
+
+// The reading view: close and nearly overhead, so the open pages fill the
+// screen and read like a book in your hands. Phones frame one page at a time.
+function readingPose(aspect: number, side: ReadingSide) {
+  const halfFov = MathUtils.degToRad(FOV / 2);
+  const visible = 2 * Math.tan(halfFov); // visible height per unit of distance
+  const width = side === "spread" ? PAGE_WIDTH * 2 : PAGE_WIDTH;
+  // Leave room for the controls along the bottom and a little air at the sides.
+  const distance = Math.max(width / 0.86 / (visible * aspect), PAGE_HEIGHT / 0.74 / visible);
+  const x = side === "left" ? -PAGE_WIDTH / 2 : side === "right" ? PAGE_WIDTH / 2 : 0;
+  const target = new Vector3(x, 0, 0.12);
+  const tilt = 0.2; // radians from straight down, toward the reader
+  return { target, position: target.clone().add(new Vector3(0, distance * Math.cos(tilt), distance * Math.sin(tilt))) };
+}
+
 function ResponsiveCamera() {
   const { size } = useThree();
-  const aspect = size.width / size.height;
-  // Fit the whole interaction area, including taken cookies and tipped coffee.
-  const distance = Math.max(4.9, (aspect < .9 ? 4.8 : 7) / aspect);
-  return <PerspectiveCamera makeDefault position={[distance * 0.2, distance * 0.82, distance * 0.55]} fov={42} />;
+  // A stable position object: a fresh one on every page turn would snap the
+  // camera back to the table view mid-read. The rig takes it from here.
+  const position = useMemo(() => tablePosition(size.width / size.height), [size.width, size.height]);
+  return <PerspectiveCamera makeDefault position={position} fov={FOV} />;
+}
+
+// Glides between the table view and the reading view when the book opens,
+// closes or turns to the other page on a phone, then lets go so the visitor
+// can still look around.
+function CameraRig({ controls, reading, side }: { controls: RefObject<ComponentRef<typeof OrbitControls> | null>; reading: boolean; side: ReadingSide }) {
+  const { camera, size, invalidate } = useThree();
+  const pose = useMemo(() => {
+    const aspect = size.width / size.height;
+    return reading ? readingPose(aspect, side) : { target: TABLE_TARGET.clone(), position: tablePosition(aspect) };
+  }, [reading, side, size.width, size.height]);
+  const moving = useRef(false);
+
+  useEffect(() => { moving.current = true; invalidate(); }, [pose, invalidate]);
+
+  useFrame((_, delta) => {
+    const c = controls.current;
+    if (!moving.current || !c) return;
+    if (reducedMotion?.matches) {
+      camera.position.copy(pose.position);
+      c.target.copy(pose.target);
+      c.update();
+      moving.current = false;
+      return;
+    }
+    delta = Math.min(delta, 0.05);
+    const a = easing.damp3(camera.position, pose.position, 0.45, delta);
+    const b = easing.damp3(c.target, pose.target, 0.45, delta);
+    c.update();
+    if (a || b) invalidate();
+    else moving.current = false;
+  });
+  return null;
 }
 
 function Tabletop() {
@@ -878,11 +921,13 @@ function BookScene({
   page,
   onPageChange,
   table,
+  side,
 }: {
   sheets: BookSheet[];
   page: number;
   onPageChange: (page: number) => void;
   table: TableState;
+  side: ReadingSide;
 }) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const lowDetail = useCompactBook();
@@ -940,13 +985,14 @@ function BookScene({
         enableZoom={false}
         minDistance={2.4}
         maxDistance={20}
-        minPolarAngle={0.25}
+        minPolarAngle={0.2}
         maxPolarAngle={0.95}
         rotateSpeed={0.7}
         enableDamping
         dampingFactor={0.08}
         target={[0, 0.04, 0]}
       />
+      <CameraRig controls={controlsRef} reading={page > 0 && page < sheets.length} side={side} />
       {!lowDetail && <PointerParallax controls={controlsRef} />}
       <PencilSketcher table={table} />
     </>
@@ -958,12 +1004,14 @@ function BookCanvas({
   page,
   onPageChange,
   table,
+  side,
   onReady,
 }: {
   sheets: BookSheet[];
   page: number;
   onPageChange: (page: number) => void;
   table: TableState;
+  side: ReadingSide;
   onReady?: () => void;
 }) {
   const lowDetail = useCompactBook();
@@ -973,15 +1021,17 @@ function BookCanvas({
         className="book-three-canvas"
         shadows="variance"
         frameloop="demand"
-        camera={{ position: [0.82, 3.36, 2.25], fov: 42 }}
-        dpr={lowDetail ? 1 : [1, 1.5]}
+        camera={{ position: [0.82, 3.36, 2.25], fov: FOV }}
+        // Phones read the page up close, so they render at the screen's own
+        // density; at DPR 1 the type was jagged.
+        dpr={lowDetail ? [1, 2] : [1, 1.5]}
         gl={{ alpha: false, antialias: !lowDetail, powerPreference: "high-performance" }}
         // The contact-shadow pass clears its render target with the renderer's
         // clear alpha; on an opaque canvas that is 1, which paints the whole
         // shadow plane dark instead of only where something casts.
         onCreated={({ gl }) => gl.setClearAlpha(0)}
       >
-        <BookScene sheets={sheets} page={page} onPageChange={onPageChange} table={table} />
+        <BookScene sheets={sheets} page={page} onPageChange={onPageChange} table={table} side={side} />
         <SceneReady onReady={onReady} />
       </Canvas>
     </div>
@@ -1003,92 +1053,154 @@ function SceneReady({ onReady }: { onReady?: () => void }) {
 }
 
 function makeBookModel(chapters: BookChapter[]) {
-  let pageNumber = 0;
-  const pages: StoryPage[] = chapters.flatMap((chapter) =>
-    chapter.pages.map((page) => {
-      pageNumber += 1;
-      return { text: page.text, title: page.title, chapter: chapter.kicker, pageNumber };
-    })
-  );
+  // One chapter to a page, then the goodbye, then a blank spread to draw on.
+  const faces: TexturePage[] = [];
+  const add = (face: UnnumberedPage) =>
+    faces.push({ ...face, pageNumber: faces.length + 1 } as TexturePage);
+  for (const chapter of chapters) add({ kind: "text", title: chapter.title, text: chapter.text });
+  add({ kind: "text", title: bookEnding.title, text: bookEnding.text });
+  // The blank spread starts on a left-hand page, so pad to an even count first.
+  if (faces.length % 2) add({ kind: "sketch" });
+  add({ kind: "sketch", hint: bookEnding.sketchHint });
+  add({ kind: "sketch" });
 
-  // pages flow two-up continuously — no chapter breaks, no blank fillers.
-  // sheet 0 is cover/p1, sheet k is p2k/p2k+1, the final back is the cover.
-  const sheets: BookSheet[] = [
-    {
-      front: { kind: "cover" },
-      back: pages[0] ? { kind: "story", page: pages[0] } : { kind: "blank" },
-    },
-  ];
-  for (let i = 1; i < pages.length; i += 2) {
-    sheets.push({
-      front: { kind: "story", page: pages[i] },
-      back: pages[i + 1]
-        ? { kind: "story", page: pages[i + 1] }
-        : { kind: "back-cover" },
-    });
+  // sheet 0 is the cover and page 1; sheet k carries pages 2k and 2k + 1;
+  // the last sheet's back is the back cover.
+  const sheets: BookSheet[] = [{ front: { kind: "cover" }, back: faces[0] ?? { kind: "blank" } }];
+  for (let i = 1; i < faces.length; i += 2) {
+    sheets.push({ front: faces[i], back: faces[i + 1] ?? { kind: "back-cover" } });
   }
-  if (pages.length % 2 === 1) {
-    // odd page count: the last story page sits on a sheet back, so the
-    // back cover needs a final sheet of its own
-    sheets.push({ front: { kind: "blank" }, back: { kind: "back-cover" } });
-  }
-  // A blank spread at the end, both pages drawable, for the reader's own pencil.
-  const last = sheets[sheets.length - 1];
-  if (last.back.kind === "back-cover") last.back = { kind: "blank" };
-  last.back = { kind: "sketch", id: "left" };
-  sheets.push({ front: { kind: "sketch", id: "right" }, back: { kind: "back-cover" } });
+  if (faces.length % 2 === 1) sheets.push({ front: { kind: "blank" }, back: { kind: "back-cover" } });
+  return { sheets };
+}
 
-  return { sheets, spreadCount: Math.ceil((pages.length + 1) / 2) };
+// What a page says, for the screen-reader announcement on each turn.
+function describeFace(face: TexturePage) {
+  switch (face.kind) {
+    case "text": return `${face.title}. ${face.text}`;
+    case "sketch": return face.hint ?? "A blank page.";
+    case "cover": return "A little book of making, by Amy Zhou.";
+    case "back-cover": return "Back cover. To be continued.";
+    default: return "";
+  }
+}
+
+// Spilling the coffee and taking a pretzel, as plain buttons. The props also
+// respond to taps and drags; these make the two easy to find and keyboard-able.
+function TableButtons({ table }: { table: TableState }) {
+  const taken = table.cookiesTaken.filter(Boolean).length;
+  const changed = table.coffeeTipped || table.coffeeSpilled || taken > 0;
+  return <div className="book-toys">
+    <Button variant="pill" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand the cup up" : "Spill coffee"}</Button>
+    <Button variant="pill" disabled={taken === PRETZEL_COUNT} onClick={() => table.setCookie(table.cookiesTaken.lastIndexOf(false), true)}>Take a pretzel</Button>
+    {changed && <Button variant="text" onClick={table.reset}>Reset the table</Button>}
+    <p className="sr-only" role="status">{table.coffeeSpilled ? "Coffee spilled. " : ""}{taken ? `${taken} of ${PRETZEL_COUNT} pretzels taken.` : ""}</p>
+  </div>;
 }
 
 export default function StoryBook({ onExit, onReady }: { onExit?: () => void; onReady?: () => void }) {
   const { sheets } = useMemo(() => makeBookModel(bookChapters), []);
   const table = useTableState();
+  const compact = useCompactBook();
   // page = sheets flipped: 0 is the closed front cover, sheets.length is
   // the closed back cover
   const [page, setPageState] = useState(0);
+  // Phones read one page of an open spread at a time.
+  const [phoneSide, setPhoneSide] = useState<"left" | "right">("left");
   const lastPage = sheets.length;
   const atBackCover = page === lastPage;
+  const open = page > 0 && page < lastPage;
+  const side: ReadingSide = compact ? phoneSide : "spread";
 
-  function setPage(nextPage: number) {
-    if (atBackCover && nextPage > lastPage) {
-      // The forward control leaves the book; previous still opens it again.
-      onExit?.();
-      return;
+  const setPage = useCallback((nextPage: number) => {
+    setPageState(current => {
+      const clamped = Math.min(Math.max(nextPage, 0), lastPage);
+      // Turning back lands on the right-hand page, the one just left behind.
+      setPhoneSide(clamped < current ? "right" : "left");
+      return clamped;
+    });
+  }, [lastPage]);
+
+  const next = useCallback(() => {
+    if (atBackCover) { onExit?.(); return; }
+    if (compact && open && phoneSide === "left") { setPhoneSide("right"); return; }
+    setPage(page + 1);
+  }, [atBackCover, compact, open, phoneSide, page, setPage, onExit]);
+
+  const previous = useCallback(() => {
+    if (compact && open && phoneSide === "right") { setPhoneSide("left"); return; }
+    setPage(page - 1);
+  }, [compact, open, phoneSide, page, setPage]);
+
+  // While the pencil is in hand, the first Escape only puts it down; a second
+  // one leaves the book. This listener lives here, always attached and reading
+  // the current state, because the canvas's own effects attach a beat later
+  // and a quick Escape would otherwise reach the overlay first.
+  const pencilHeld = useRef(table.pencilHeld);
+  useLayoutEffect(() => { pencilHeld.current = table.pencilHeld; }, [table.pencilHeld]);
+  const { setPencil } = table;
+  useEffect(() => {
+    function onEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape" || !pencilHeld.current) return;
+      event.stopImmediatePropagation();
+      pencilHeld.current = false;
+      setPencil(false);
     }
-    setPageState(Math.min(Math.max(nextPage, 0), lastPage));
-  }
+    window.addEventListener("keydown", onEscape, { capture: true });
+    return () => window.removeEventListener("keydown", onEscape, { capture: true });
+  }, [setPencil]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "ArrowRight") {
-        setPageState((current) => Math.min(current + 1, lastPage));
-      } else if (event.key === "ArrowLeft") {
-        setPageState((current) => Math.max(current - 1, 0));
-      } else if (event.key === "Escape") {
-        onExit?.();
-      }
+      if (event.key === "ArrowRight" && !atBackCover) next();
+      else if (event.key === "ArrowLeft") previous();
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [lastPage, onExit]);
+  }, [next, previous, atBackCover]);
+
+  const left = open ? sheets[page - 1].back : null;
+  const right = open ? sheets[page].front : null;
+  const leftNumber = page * 2 - 1;
+  const counter = page === 0 ? "" : atBackCover ? "The end"
+    : compact ? `Page ${phoneSide === "left" ? leftNumber : leftNumber + 1}`
+    : `Pages ${leftNumber} and ${leftNumber + 1}`;
+  const announcement = page === 0 ? describeFace(sheets[0].front)
+    : atBackCover ? describeFace({ kind: "back-cover" })
+    : [compact && phoneSide === "right" ? null : left, compact && phoneSide === "left" ? null : right]
+        .filter((face): face is TexturePage => face !== null).map(describeFace).join(" ");
+  const ending = page >= lastPage - 1;
 
   return (
     <div className="storybook">
       <div className="storybook-canvas" aria-hidden="true">
-        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} onReady={onReady} table={table} />
+        <BookCanvas sheets={sheets} page={page} onPageChange={setPage} onReady={onReady} table={table} side={side} />
       </div>
-      <div className="storybook-controls">
+      <TableButtons table={table} />
+      <p className="sr-only" aria-live="polite">{announcement}</p>
+      <div className="storybook-bar">
         <div className="storybook-pagination">
-          <Button variant="text" aria-label="Previous page" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</Button>
-          <span className="ui-meta" aria-live="polite">{page === 0 ? "" : atBackCover ? "To be continued" : `${String(page * 2 - 1).padStart(2, "0")} — ${String(page * 2).padStart(2, "0")}`}</span>
-          <Button variant="text" aria-label={atBackCover ? "Go to the website" : "Next page"} onClick={() => setPage(page + 1)}>{atBackCover ? "Go to the website" : "Next"}</Button>
+          <Button variant="text" aria-label="Previous page" disabled={page === 0} onClick={previous}>Previous</Button>
+          <span className="ui-meta">{counter}</span>
+          <Button variant="text" aria-label={atBackCover ? "Go to the website" : page === 0 ? "Open the book" : "Next page"} onClick={next}>{atBackCover ? "Go to the website" : page === 0 ? "Open" : "Next"}</Button>
+        </div>
+        <div className="storybook-aside">
+          {ending && <nav className="storybook-links" aria-label="Amy's work">
+            <Link href="/portfolio">Objects</Link>
+            <Link href="/software">Software</Link>
+          </nav>}
+          <details className="book-reading">
+            <summary>Read as text</summary>
+            <div className="book-reading-panel">
+              {bookChapters.map(chapter => <section key={chapter.id}>
+                <h2>{chapter.title}</h2>
+                <p>{chapter.text}</p>
+              </section>)}
+              <section><h2>{bookEnding.title}</h2><p>{bookEnding.text}</p></section>
+            </div>
+          </details>
         </div>
       </div>
-      <TableActions table={table} />
-      <details className="book-reading"><summary>Read as text</summary>
-        {bookChapters.map(chapter => <section key={chapter.id}><h2>{chapter.title}</h2>{chapter.pages.map(p => <p key={p.title}>{p.text}</p>)}</section>)}
-      </details>
     </div>
   );
 }

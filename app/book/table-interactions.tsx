@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 import { clearSketch, sketch } from "./sketch";
-import { Button } from "../_ui/button";
 
 export const PRETZEL_COUNT = 9;
 
@@ -20,7 +19,12 @@ export function useTableState() {
   const setCoffee = useCallback((coffeeTipped: boolean) => setValues(v => ({ ...v, coffeeTipped })), []);
   const spillCoffee = useCallback(() => setValues(v => v.coffeeSpilled ? v : { ...v, coffeeSpilled: true }), []);
   const setCookie = useCallback((index: number, taken: boolean) => setValues(v => ({ ...v, cookiesTaken: v.cookiesTaken.map((value, i) => i === index ? taken : value) })), []);
-  const setPencil = useCallback((pencilHeld: boolean) => setValues(v => ({ ...v, pencilHeld })), []);
+  const setPencil = useCallback((pencilHeld: boolean) => {
+    // Pages read this flag to know a press means drawing, not turning; set it
+    // now rather than when the canvas re-renders a beat later.
+    sketch.held = pencilHeld;
+    setValues(v => ({ ...v, pencilHeld }));
+  }, []);
   const reset = useCallback(() => { clearSketch(); setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), pencilHeld: false, resetVersion: v.resetVersion + 1 })); }, []);
   return { ...values, setCoffee, spillCoffee, setCookie, setPencil, reset };
 }
@@ -79,22 +83,4 @@ export function usePropGesture({ onDraggingChange, onStart, onMove, onEnd, onCan
     window.addEventListener("pointercancel", pointerCancel);
     window.addEventListener("blur", abort);
   };
-}
-
-export function TableActions({ table }: { table: TableState }) {
-  const count = table.cookiesTaken.filter(Boolean).length;
-  return <details className="table-actions">
-    <summary>Table</summary>
-    <div className="table-actions-panel">
-      <p>Tap the cup to tip it. Tap a pretzel to take it off the pile; tap it again to put it back. Pick up the pencil and draw on the last page.</p>
-      <Button onClick={() => table.setPencil(!table.pencilHeld)}>{table.pencilHeld ? "Put the pencil down" : "Pick up the pencil"}</Button>
-      <Button onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand cup up" : "Tip coffee"}</Button>
-      <div className="flower-actions">
-        <Button disabled={count === PRETZEL_COUNT} onClick={() => table.setCookie(table.cookiesTaken.lastIndexOf(false), true)}>Take a pretzel</Button>
-        <Button disabled={count === 0} onClick={() => table.setCookie(table.cookiesTaken.indexOf(true), false)}>Put one back</Button>
-      </div>
-      <p className="table-status" role="status">{table.coffeeSpilled ? "Coffee spilled" : "Coffee full"} · {count} of {PRETZEL_COUNT} pretzels taken</p>
-      <Button variant="text" onClick={table.reset}>Reset table</Button>
-    </div>
-  </details>;
 }
