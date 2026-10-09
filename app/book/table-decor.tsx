@@ -15,6 +15,7 @@ import {
   MeshPhysicalMaterial,
 } from "three";
 
+import { createPretzelGeometry } from "./pretzel-geometry";
 import { useCompactBook } from "./use-compact-book";
 import { sketch } from "./sketch";
 import { usePropGesture, type TableState, type DraggingChange } from "./table-interactions";
@@ -29,7 +30,7 @@ function approach(value: number, target: number, delta: number, reduced: boolean
 // A pile of tiny pretzels: a ring of five lying flat, three leaning on top of
 // them, one on the crown. Each remembers where it lands when taken off the plate.
 const PRETZEL_COUNT = 9;
-const COOKIE_SCALE = .4; // the model is about .84 units across
+const COOKIE_SCALE = .4; // the pretzel is .86 units across
 const COOKIE_LIFT = .044; // laid flat, its thickness is .22 units, so half of that scaled
 const cookieSpots = Array.from({ length: PRETZEL_COUNT }, (_, i) => {
   const layer = i < 5 ? 0 : i < 8 ? 1 : 2;
@@ -85,26 +86,25 @@ function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: In
 
 function CookiePlate(props: InteractionProps & { narrow: boolean }) {
   const lowDetail = useCompactBook();
-  const { scene: pretzelModel } = useGLTF("/book/pretzel.glb");
-  const { cookies, dough, salt, glaze } = useMemo(() => {
+  const { cookies, dough, salt, glaze, shapes } = useMemo(() => {
     const glaze = new MeshPhysicalMaterial({ color: "#f4f4f4", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
-    const dough = new MeshPhysicalMaterial({ color: "#b8642a", roughness: .55, clearcoat: .35, clearcoatRoughness: .45, sheen: .2, sheenColor: "#f0c090" });
-    const salt = new MeshPhysicalMaterial({ color: "#f7f4ee", roughness: .35 });
+    // The bake colour lives in the geometry's vertex colours; the egg wash is the clearcoat.
+    const dough = new MeshPhysicalMaterial({ vertexColors: true, roughness: .5, clearcoat: .8, clearcoatRoughness: .28, sheen: .3, sheenColor: "#f0c090" });
+    const salt = new MeshPhysicalMaterial({ color: "#fbfaf6", roughness: .18, clearcoat: .4, flatShading: true });
+    const shapes = createPretzelGeometry(lowDetail);
     const cookies = cookieSpots.map(() => {
-      const clone = pretzelModel.clone(true);
-      clone.traverse(object => {
-        if (!(object instanceof Mesh)) return;
-        const source = Array.isArray(object.material) ? object.material[0] : object.material;
-        // The model's two materials: an orange one for the dough, a white one for the salt.
-        object.material = (source as MeshPhysicalMaterial).color?.r > .9 ? salt : dough;
-        object.castShadow = true;
-        object.receiveShadow = true;
-      });
-      return clone;
+      const group = new Group();
+      for (const [geometry, material] of [[shapes.dough, dough], [shapes.salt, salt]] as const) {
+        const mesh = new Mesh(geometry, material);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        group.add(mesh);
+      }
+      return group;
     });
-    return { cookies, dough, salt, glaze };
-  }, [pretzelModel]);
-  useEffect(() => () => { glaze.dispose(); dough.dispose(); salt.dispose(); }, [glaze, dough, salt]);
+    return { cookies, dough, salt, glaze, shapes };
+  }, [lowDetail]);
+  useEffect(() => () => { glaze.dispose(); dough.dispose(); salt.dispose(); shapes.dough.dispose(); shapes.salt.dispose(); }, [glaze, dough, salt, shapes]);
   const plateProfile = useMemo(() => [
     [0, 0], [.38, 0], [.38, .012], [.53, .04], [.59, .062], [.595, .07], [.58, .072], [.5, .05], [.37, .024], [0, .022],
   ].map(([x, y]) => new Vector2(x, y)), []);
@@ -241,7 +241,6 @@ function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow
 }
 
 useGLTF.preload("/book/coffee-cup.glb");
-useGLTF.preload("/book/pretzel.glb");
 useGLTF.preload("/book/pencil.glb");
 
 // A plain wooden pencil, lying where a hand would leave it.
