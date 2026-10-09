@@ -116,8 +116,8 @@ const ignoreRaycast = () => null;
 
 function FillerPretzels() {
   const materials = usePretzelMaterials();
-  const a = usePretzelShape("salt", 101);
-  const b = usePretzelShape("salt", 202);
+  const a = usePretzelShape("filler", 101);
+  const b = usePretzelShape("filler", 202);
   return <group name="filler-pretzels">
     {FILLER_POSES.map((pose, i) => {
       const shape = i % 2 ? a : b;

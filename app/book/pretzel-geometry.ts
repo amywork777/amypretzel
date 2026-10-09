@@ -18,18 +18,38 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 // about .86 units across, bottom at x = -.11. Each chapter of the story gets
 // its own kind: a coating, a topping and a slightly different twist.
 
-export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "everything" | "cinnamon" | "mauve";
+export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "everything" | "cinnamon" | "mauve" | "filler";
 
 type Topping = "salt" | "sprinkles" | "everything" | "cinnamon" | "none";
-type Recipe = { coat?: string; dip?: "half" | "full"; topping: Topping };
+type Bake = "pale" | "golden" | "toasty";
+type Recipe = {
+  topping: Topping;
+  coat?: string;
+  dip?: "half" | "full";
+  drizzle?: string; // thin zigzag lines over the top
+  bake?: Bake;
+  rope?: number; // rope thickness, 1 = a classic soft pretzel
+  size?: number; // across, 1 = .86 units
+  wonk?: number; // how roughly it was twisted, 1 = a careful hand
+};
 
+// Six pretzels that should be told apart at a glance from across the bowl:
+// each differs in outline (size, rope, wonk) as well as finish.
 const RECIPES: Record<PretzelKind, Recipe> = {
-  salt: { topping: "salt" },
-  sprinkles: { coat: "#f3efe6", dip: "half", topping: "sprinkles" },
-  chocolate: { coat: "#3a2015", dip: "half", topping: "none" },
-  everything: { topping: "everything" },
-  cinnamon: { topping: "cinnamon" },
-  mauve: { coat: "#b482aa", dip: "half", topping: "salt" },
+  // A kid's pretzel: small, chubby, all white and covered in sprinkles.
+  sprinkles: { topping: "sprinkles", coat: "#f6f1e7", dip: "full", rope: 1.3, size: .82, wonk: 1.6 },
+  // The textbook one: a big soft pretzel, golden, coarse salt.
+  salt: { topping: "salt", bake: "golden", rope: 1.28, size: 1.16, wonk: .5 },
+  // Made a million times over: fully enrobed, perfectly even, a neat drizzle.
+  chocolate: { topping: "none", coat: "#3a2015", dip: "full", drizzle: "#f3efe6", rope: .92, size: 1, wonk: 0 },
+  // Rough, everything seasoning all over, twisted in a hurry.
+  everything: { topping: "everything", bake: "toasty", rope: 1.05, size: 1.02, wonk: 3 },
+  // Thin and crunchy, pale, crusted in cinnamon sugar.
+  cinnamon: { topping: "cinnamon", bake: "pale", rope: .78, size: .96, wonk: 1 },
+  // Amy's colour: half dipped in mauve, flaky salt, a dark drizzle.
+  mauve: { topping: "salt", coat: "#b482aa", dip: "half", drizzle: "#3a2015", rope: 1, size: 1, wonk: .8 },
+  // The bowl's plain filling: small, thin, crunchy, so the chapters stand out.
+  filler: { topping: "salt", bake: "golden", rope: .82, size: .9, wonk: 1 },
 };
 
 const rand = (seed: number) => {
@@ -60,9 +80,12 @@ function thickness(t: number) {
 
 const RADIUS = .1;
 const COAT_DEPTH = 1.08;
-const DARK = new Color("#7a3410");
-const BAKED = new Color("#b0601f");
-const GOLDEN = new Color("#e8b574");
+// [top crust, body, split] per bake.
+const BAKES: Record<Bake, [Color, Color, Color]> = {
+  pale: [new Color("#a8642a"), new Color("#d39a55"), new Color("#f2d6a2")],
+  golden: [new Color("#7a3410"), new Color("#b0601f"), new Color("#e8b574")],
+  toasty: [new Color("#5a2a10"), new Color("#8f4f22"), new Color("#d8a46a")],
+};
 const SPRINKLES = ["#f4a7c3", "#8fc9f0", "#f7dd6b", "#9ad8b4", "#ffffff", "#c9a2c2"].map(c => new Color(c));
 
 function colourise(geometry: BufferGeometry, colour: Color) {
@@ -76,15 +99,25 @@ function colourise(geometry: BufferGeometry, colour: Color) {
 export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "salt", seed = 0) {
   const recipe = RECIPES[kind];
   const coat = recipe.coat ? new Color(recipe.coat) : null;
+  const drizzle = recipe.drizzle ? new Color(recipe.drizzle) : null;
+  const [DARK, BAKED, GOLDEN] = BAKES[recipe.bake ?? "golden"];
+  const rope = RADIUS * (recipe.rope ?? 1);
   // Each pretzel is twisted by hand, so no two quite match.
+  const wonk = .03 * (recipe.wonk ?? 1);
   const curve = new CatmullRomCurve3(ROPE.map(([u, v, h], i) => new Vector3(
     h,
-    v + (rand(seed * 31 + i) - .5) * .03,
-    u + (rand(seed * 17 + i + 5) - .5) * .03,
+    v + (rand(seed * 31 + i) - .5) * wonk,
+    u + (rand(seed * 17 + i + 5) - .5) * wonk,
   )), false, "centripetal");
   const segments = lowDetail ? 140 : 260;
   const radial = lowDetail ? 10 : 18;
-  const tube = new TubeGeometry(curve, segments, RADIUS, radial, false);
+  const tube = new TubeGeometry(curve, segments, rope, radial, false);
+  // Drizzle runs in diagonal zigzag lines across the top of the pretzel.
+  const drizzled = (p: Vector3, up: number) => {
+    if (!drizzle || up < -.15) return false;
+    const d = p.z * .8 + p.y * .6 + Math.sin(p.y * 22 + seed) * .02;
+    return (((d * 10) % 1) + 1) % 1 < .22;
+  };
 
   // Half-dipped pretzels are dipped belly first, up to just below the twist.
   const dipLine = -.04 + (rand(seed + 3) - .5) * .06;
@@ -102,7 +135,11 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
     p.fromBufferAttribute(position, i).sub(centre).multiplyScalar(thickness(t) * (isCoated ? COAT_DEPTH : 1)).add(centre);
     position.setXYZ(i, p.x, p.y, p.z);
     n.fromBufferAttribute(normal, i);
-    if (isCoated) {
+    if (drizzled(p, n.x)) {
+      c.copy(drizzle!);
+      p.addScaledVector(n, rope * .06);
+      position.setXYZ(i, p.x, p.y, p.z);
+    } else if (isCoated) {
       c.copy(coat!).multiplyScalar(.96 + rand(i) * .06);
     } else {
       // Tops bake dark and glossy; the sides of the belly split open pale
@@ -111,7 +148,6 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
       const ring = Math.floor(i / (radial + 1));
       const crack = Math.max(0, 1 - Math.abs(up + .05) / .35) * Math.exp(-(((t - .5) / .22) ** 2)) * (.55 + .45 * rand(ring * .37 + seed));
       c.copy(BAKED).lerp(DARK, Math.max(0, up) * .55).lerp(GOLDEN, crack);
-      if (recipe.topping === "cinnamon") c.lerp(DARK, .25);
       c.multiplyScalar(.92 + rand(i) * .12);
     }
     colors.push(c.r, c.g, c.b);
@@ -122,7 +158,7 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   // Round the two cut ends.
   const caps = [0, 1].map(t => {
     const point = curve.getPointAt(t);
-    const cap = new SphereGeometry(RADIUS * thickness(t) * (coated(point) ? COAT_DEPTH : 1), 12, 8);
+    const cap = new SphereGeometry(rope * thickness(t) * (coated(point) ? COAT_DEPTH : 1), 12, 8);
     cap.translate(point.x, point.y, point.z);
     cap.deleteAttribute("uv");
     return colourise(cap, coated(point) ? coat! : BAKED);
@@ -130,12 +166,12 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   tube.deleteAttribute("uv");
   const dough = mergeGeometries([tube, ...caps])!;
 
-  const toppings = toppingGeometry(recipe, curve, coated, seed, lowDetail);
+  const toppings = toppingGeometry(recipe, curve, coated, seed, lowDetail, rope);
 
-  // Fit to one frame: .86 across, resting on x = -.11.
+  // Fit to one frame: .86 across times the recipe's size, resting on x = -.11.
   dough.computeBoundingBox();
   const box = dough.boundingBox!;
-  const scale = .86 / Math.max(box.max.y - box.min.y, box.max.z - box.min.z);
+  const scale = .86 * (recipe.size ?? 1) / Math.max(box.max.y - box.min.y, box.max.z - box.min.z);
   const mid = box.getCenter(new Vector3());
   for (const g of [dough, toppings]) {
     g.translate(-mid.x, -mid.y, -mid.z);
@@ -151,8 +187,8 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
 
 // Toppings sit on the upper half of the rope. Dipped pretzels only carry them
 // on the coating, where they would stick in a real kitchen.
-function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Vector3) => boolean, seed: number, lowDetail: boolean) {
-  const counts: Record<Topping, number> = { salt: 18, sprinkles: 46, everything: 54, cinnamon: 150, none: 0 };
+function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Vector3) => boolean, seed: number, lowDetail: boolean, rope: number) {
+  const counts: Record<Topping, number> = { salt: 18, sprinkles: 46, everything: 170, cinnamon: 150, none: 0 };
   const count = Math.round(counts[recipe.topping] * (lowDetail ? .6 : 1));
   const pieces: BufferGeometry[] = [];
   const centre = new Vector3(), tangent = new Vector3(), side = new Vector3(), up = new Vector3(1, 0, 0);
@@ -166,7 +202,7 @@ function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Ve
     side.crossVectors(tangent, up).normalize();
     const angle = (r(2) - .5) * (recipe.topping === "salt" ? 1.6 : 2.4);
     dir.copy(up).multiplyScalar(Math.cos(angle)).addScaledVector(side, Math.sin(angle)).normalize();
-    const surface = RADIUS * thickness(t) * (coated(centre) ? COAT_DEPTH : 1);
+    const surface = rope * thickness(t) * (coated(centre) ? COAT_DEPTH : 1);
     p.copy(centre).addScaledVector(dir, surface * .97);
     q.setFromEuler(new Euler(r(3) * 6, r(4) * 6, r(5) * 6));
 
@@ -182,11 +218,11 @@ function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Ve
       piece = new SphereGeometry(1, 6, 4).toNonIndexed();
       // Seeds lie flat on the surface, turned any way round.
       along.setFromUnitVectors(new Vector3(0, 0, 1), dir).multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), r(7) * 6));
-      m.compose(p, along, new Vector3(.022, .013, .006));
+      m.compose(p, along, new Vector3(.03, .018, .008));
       colour = new Color(r(8) < .5 ? "#eadcb4" : "#d9c08a");
     } else if (kind === "poppy") {
       piece = new SphereGeometry(1, 5, 3).toNonIndexed();
-      m.compose(p, q, new Vector3(.008, .008, .008));
+      m.compose(p, q, new Vector3(.011, .011, .011));
       colour = new Color("#1f1d24");
     } else if (kind === "sprinkles") {
       piece = new CylinderGeometry(1, 1, 1, 6).toNonIndexed();
