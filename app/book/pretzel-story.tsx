@@ -1,8 +1,8 @@
 "use client";
 
-// A bowl of pretzels on the table, one for each chapter of Amy's story. The
-// first chapter rises on its own; pick any other and it floats up out of the
-// bowl while its chapter slides in beside it.
+// Six pretzels on the table, one for each chapter of Amy's story, in order.
+// The first chapter rises on its own; pick any other and it floats up off
+// the table while its chapter slides in beside it.
 // After Melike Turgut's site (meliketurgut.com): one object per chapter, the
 // chosen one held up as the hero, its story in a card alongside.
 
@@ -14,6 +14,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import type { ComponentRef, RefObject } from "react";
 import {
   CanvasTexture,
+  DoubleSide,
   Euler,
   Group,
   Mesh,
@@ -23,13 +24,12 @@ import {
   Quaternion,
   RepeatWrapping,
   SRGBColorSpace,
-  Vector2,
   Vector3,
 } from "three";
 
 import { Button } from "../_ui/button";
 import { storyChapters } from "./chapters";
-import { createPretzelGeometry, type PretzelKind } from "./pretzel-geometry";
+import { createPretzelGeometry, pretzelFinish, type PretzelKind } from "./pretzel-geometry";
 import { useCompactBook } from "./use-compact-book";
 
 const FOV = 42;
@@ -47,53 +47,27 @@ const rand = (seed: number) => {
   return x - Math.floor(x);
 };
 
-// ---------------------------------------------------------------- the bowl
-
-const BOWL_PROFILE = [
-  [0, 0], [.34, 0], [.36, .03], [.58, .13], [.76, .3], [.84, .43], [.835, .455], [.8, .455],
-  [.73, .33], [.55, .18], [.33, .09], [0, .08],
-].map(([x, y]) => new Vector2(x, y));
-
-function Bowl() {
-  const lowDetail = useCompactBook();
-  const glaze = useMemo(() => new MeshPhysicalMaterial({ color: "#f4f4f4", roughness: .2, clearcoat: .7, clearcoatRoughness: .12 }), []);
-  useEffect(() => () => glaze.dispose(), [glaze]);
-  return <mesh castShadow receiveShadow material={glaze}>
-    <latheGeometry args={[BOWL_PROFILE, lowDetail ? 40 : 96]} />
-  </mesh>;
-}
+// ---------------------------------------------------------------- the pretzels
 
 type Pose = { position: Vector3; rotation: Euler; scale: number };
 
-// Plain salted pretzels fill the bowl; the chapter pretzels sit on top where
-// a hand would reach for them.
-const FILLER_COUNT = 14;
-const FILLER_POSES: Pose[] = Array.from({ length: FILLER_COUNT }, (_, i) => {
-  const layer = i < 8 ? 0 : 1;
-  const k = layer ? i - 8 : i;
-  const ring = layer ? 6 : 8;
-  const angle = k * (Math.PI * 2 / ring) + layer * .4 + rand(i) * .3;
-  const radius = layer ? .3 : .44;
+// Laid out on the table in story order, left to right, a little uneven, the
+// way you'd set them down by hand. Phones get two rows of three.
+const REST_SCALE = .62;
+function chapterPose(i: number, narrow: boolean): Pose {
+  const count = storyChapters.length;
+  const [x, z] = narrow
+    ? [((i % 3) - 1) * .72, (Math.floor(i / 3) - .5) * .8]
+    : [(i - (count - 1) / 2) * .68, .08 * ((i - (count - 1) / 2) / ((count - 1) / 2)) ** 2 - .04];
   return {
-    position: new Vector3(Math.cos(angle) * radius, .16 + layer * .09 + rand(i + 4) * .02, Math.sin(angle) * radius),
-    // Lying flat (a quarter turn about z), leaning against the bowl's wall.
-    rotation: new Euler(-(.3 + rand(i + 7) * .25) * (layer ? .5 : 1), -angle + rand(i + 2) * 1.2, Math.PI / 2, "YXZ"),
-    scale: .5,
+    // Lying flat: the pretzel's thin axis is x, so a quarter turn about z
+    // stands it on the table; its bottom is at -.11 before scaling.
+    position: new Vector3(x + (rand(i + 40) - .5) * .06, .11 * REST_SCALE + .012, z + (rand(i + 50) - .5) * .08),
+    // Loops away from the viewer, belly toward them, each turned a little.
+    rotation: new Euler(0, -Math.PI / 2 + (rand(i + 11) - .5) * .5, Math.PI / 2, "YXZ"),
+    scale: REST_SCALE,
   };
-});
-
-// In story order: clockwise round the bowl from the front left, as the
-// viewer sees it, with the goodbye in the middle.
-const CHAPTER_POSES: Pose[] = storyChapters.map((_, i) => {
-  const centre = i === storyChapters.length - 1;
-  const angle = i * (Math.PI * 2 / (storyChapters.length - 1)) + 2.2;
-  const radius = centre ? 0 : .3;
-  return {
-    position: new Vector3(Math.cos(angle) * radius, .36 + (centre ? .07 : rand(i + 30) * .03), Math.sin(angle) * radius),
-    rotation: new Euler(centre ? .06 : -.22, -angle + .4 + rand(i + 11), Math.PI / 2, "YXZ"),
-    scale: .5,
-  };
-});
+}
 
 function usePretzelMaterials() {
   const materials = useMemo(() => ({
@@ -105,33 +79,32 @@ function usePretzelMaterials() {
   return materials;
 }
 
+// A dip is glossy and a touch thick; piped icing is satin. Both are real
+// layers over the dough, so they catch the light and cast their own shadow.
+function useFinishMaterials(kind: PretzelKind) {
+  const materials = useMemo(() => {
+    const { coat, drizzle } = pretzelFinish(kind);
+    return {
+      coat: coat ? new MeshPhysicalMaterial({ color: coat, roughness: .3, clearcoat: 1, clearcoatRoughness: .15, side: DoubleSide }) : null,
+      drizzle: drizzle ? new MeshPhysicalMaterial({ color: drizzle, roughness: .38, clearcoat: .6, clearcoatRoughness: .3 }) : null,
+    };
+  }, [kind]);
+  useEffect(() => () => { materials.coat?.dispose(); materials.drizzle?.dispose(); }, [materials]);
+  return materials;
+}
+
 function usePretzelShape(kind: PretzelKind, seed: number) {
   const lowDetail = useCompactBook();
   const shape = useMemo(() => createPretzelGeometry(lowDetail, kind, seed), [lowDetail, kind, seed]);
-  useEffect(() => () => { shape.dough.dispose(); shape.toppings.dispose(); }, [shape]);
+  useEffect(() => () => { shape.dough.dispose(); shape.toppings.dispose(); shape.coat?.dispose(); shape.drizzle?.dispose(); }, [shape]);
   return shape;
 }
 
 const ignoreRaycast = () => null;
 
-function FillerPretzels() {
-  const materials = usePretzelMaterials();
-  const a = usePretzelShape("filler", 101);
-  const b = usePretzelShape("filler", 202);
-  return <group name="filler-pretzels">
-    {FILLER_POSES.map((pose, i) => {
-      const shape = i % 2 ? a : b;
-      return <group key={i} position={pose.position} rotation={pose.rotation} scale={pose.scale}>
-        <mesh geometry={shape.dough} material={materials.dough} castShadow receiveShadow raycast={ignoreRaycast} />
-        <mesh geometry={shape.toppings} material={materials.toppings} castShadow raycast={ignoreRaycast} />
-      </group>;
-    })}
-  </group>;
-}
-
 // Where a chosen pretzel floats: in camera space, centred in the part of the
 // screen the chapter card leaves free, upright and facing the viewer.
-// Close to the camera, so the bowl (about 2.3 away at its front rim) stays behind the veil.
+// Close to the camera, so the table and the other pretzels stay behind the veil.
 const HELD_DEPTH = 1.6;
 function heldPose(width: number, height: number, compact: boolean) {
   const aspect = width / height;
@@ -162,9 +135,11 @@ function ChapterPretzel({ index, selected, onSelect, onHover }: {
   onHover: (index: number | null) => void;
 }) {
   const chapter = storyChapters[index];
-  const rest = CHAPTER_POSES[index];
+  const compactLayout = useCompactBook();
+  const rest = useMemo(() => chapterPose(index, compactLayout), [index, compactLayout]);
   const materials = usePretzelMaterials();
   const shape = usePretzelShape(chapter.pretzel, index + 1);
+  const finish = useFinishMaterials(chapter.pretzel);
   const root = useRef<Group>(null!);
   const { camera, size, invalidate } = useThree();
   const compact = useCompactBook();
@@ -199,7 +174,7 @@ function ChapterPretzel({ index, selected, onSelect, onHover }: {
     scratch.spin.setFromAxisAngle(scratch.up, sway);
     scratch.heldQuat.copy(camera.quaternion).multiply(scratch.spin).multiply(FACE_CAMERA);
 
-    // On the way between bowl and hand, rise in an arc.
+    // On the way between table and hand, rise in an arc.
     scratch.pos.copy(rest.position).lerp(scratch.heldPos, eased);
     scratch.pos.y += Math.sin(Math.PI * eased) * .35 + s.lift * .07;
     root.current.position.copy(scratch.pos);
@@ -220,6 +195,8 @@ function ChapterPretzel({ index, selected, onSelect, onHover }: {
   };
   return <group ref={root} name={`pretzel-${chapter.id}`} onPointerOver={over} onPointerOut={out} onClick={click}>
     <mesh geometry={shape.dough} material={materials.dough} castShadow receiveShadow />
+    {shape.coat && finish.coat && <mesh geometry={shape.coat} material={finish.coat} castShadow receiveShadow />}
+    {shape.drizzle && finish.drizzle && <mesh geometry={shape.drizzle} material={finish.drizzle} castShadow receiveShadow />}
     <mesh geometry={shape.toppings} material={materials.toppings} castShadow />
   </group>;
 }
@@ -279,10 +256,11 @@ function Tabletop() {
   </RoundedBox>;
 }
 
-// The table view: just the bowl, in the middle.
+// The table view: wide enough for the whole row (or both rows on a phone).
 function tablePosition(aspect: number) {
-  const distance = Math.max(3.2, 2.5 / aspect);
-  return new Vector3(distance * 0.12, distance * 0.84, distance * 0.53);
+  const rowWidth = aspect < .9 ? 2.5 : 4.4;
+  const distance = Math.max(2.6, rowWidth / (2 * HALF_FOV_TAN * aspect));
+  return new Vector3(0, distance * 0.8, distance * 0.6);
 }
 
 function ResponsiveCamera() {
@@ -412,8 +390,6 @@ function PretzelScene({ selected, onSelect, onHover }: {
       <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />
       <Lightformer form="ring" intensity={.5} color="#ffffff" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
     </Environment>
-    <Bowl />
-    <FillerPretzels />
     <Scrim open={selected !== null} />
     {storyChapters.map((chapter, i) =>
       <ChapterPretzel key={chapter.id} index={i} selected={selected === i} onSelect={onSelect} onHover={onHover} />)}
@@ -426,7 +402,7 @@ function PretzelScene({ selected, onSelect, onHover }: {
       rotateSpeed={0.6}
       enableDamping
       dampingFactor={0.08}
-      target={[0, 0.2, 0]}
+      target={[0, 0, 0]}
     />
     {!lowDetail && <PointerParallax controls={controls} />}
   </>;
@@ -434,7 +410,7 @@ function PretzelScene({ selected, onSelect, onHover }: {
 
 // ---------------------------------------------------------------- the page
 
-// After the bowl has been on screen for a moment, the first chapter rises by
+// After the pretzels have been on screen for a moment, the first chapter rises by
 // itself so the story starts at the beginning.
 const FIRST_CHAPTER_DELAY = 900;
 
@@ -530,7 +506,7 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
       <section className="pretzel-card" data-open={open || undefined} aria-hidden={!open} aria-live="polite" aria-label={chapter.title} inert={!open}>
         <div className="pretzel-card-head">
           <span className="ui-meta">Chapter {shown + 1} of {storyChapters.length}</span>
-          <Button variant="text" onClick={() => select(null)}>Back to the bowl</Button>
+          <Button variant="text" onClick={() => select(null)}>Put it back</Button>
         </div>
         <h2 className="pretzel-card-title">{chapter.title}</h2>
         <p className="pretzel-card-text">{chapter.text}</p>

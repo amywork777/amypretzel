@@ -6,7 +6,7 @@ import { loadBook } from "./load-book";
 import BookPoster from "./poster";
 import { Button } from "../_ui/button";
 
-const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Filling the bowl…</p> });
+const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Setting out the pretzels…</p> });
 
 export const OPEN_BOOK_EVENT = "amypretzel:open-book";
 const SEEN_KEY = "amypretzel:book-seen";
@@ -28,7 +28,7 @@ export default function BookOverlay() {
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 701px)").matches;
     const hash = window.location.hash;
-    // The pretzel bowl opens by itself once, on a first desktop visit. After that the
+    // The pretzels open by themselves once, on a first desktop visit. After that the
     // homepage is the homepage, including when Home is clicked from a project;
     // the Pretzels link or /#book still opens it on any device. Deep links to
     // other anchors (/#software etc.) are never hijacked.
@@ -94,7 +94,7 @@ export default function BookOverlay() {
   if (!open) return null;
 
   return (
-    <div ref={dialogRef} className="book-overlay" tabIndex={-1} data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="A bowl of pretzels, one for each chapter">
+    <div ref={dialogRef} className="book-overlay" tabIndex={-1} data-ready={sceneReady} data-view="table" role="dialog" aria-modal="true" aria-label="Six pretzels, one for each chapter">
       <BookPoster hidden={sceneReady} />
       <Button variant="pill" className="book-overlay-enter" onClick={close}>
         Go to the website

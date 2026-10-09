@@ -96,10 +96,14 @@ function colourise(geometry: BufferGeometry, colour: Color) {
   return geometry;
 }
 
+// The colours a chapter's coating and drizzle are made in, for their materials.
+export function pretzelFinish(kind: PretzelKind) {
+  const { coat, drizzle } = RECIPES[kind];
+  return { coat, drizzle };
+}
+
 export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "salt", seed = 0) {
   const recipe = RECIPES[kind];
-  const coat = recipe.coat ? new Color(recipe.coat) : null;
-  const drizzle = recipe.drizzle ? new Color(recipe.drizzle) : null;
   const [DARK, BAKED, GOLDEN] = BAKES[recipe.bake ?? "golden"];
   const rope = RADIUS * (recipe.rope ?? 1);
   // Each pretzel is twisted by hand, so no two quite match.
@@ -111,18 +115,13 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   )), false, "centripetal");
   const segments = lowDetail ? 140 : 260;
   const radial = lowDetail ? 10 : 18;
-  const tube = new TubeGeometry(curve, segments, rope, radial, false);
-  // Drizzle runs in diagonal zigzag lines across the top of the pretzel.
-  const drizzled = (p: Vector3, up: number) => {
-    if (!drizzle || up < -.15) return false;
-    const d = p.z * .8 + p.y * .6 + Math.sin(p.y * 22 + seed) * .02;
-    return (((d * 10) % 1) + 1) % 1 < .22;
-  };
 
   // Half-dipped pretzels are dipped belly first, up to just below the twist.
   const dipLine = -.04 + (rand(seed + 3) - .5) * .06;
-  const coated = (p: Vector3) => !!coat && (recipe.dip === "full" || p.y < dipLine);
+  const coated = (p: Vector3) => !!recipe.coat && (recipe.dip === "full" || p.y < dipLine);
 
+  // The dough, baked. Coatings and drizzle are separate layers on top.
+  const tube = new TubeGeometry(curve, segments, rope, radial, false);
   const position = tube.getAttribute("position");
   const normal = tube.getAttribute("normal");
   const uv = tube.getAttribute("uv");
@@ -131,41 +130,33 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   for (let i = 0; i < position.count; i++) {
     const t = uv.getX(i);
     curve.getPointAt(t, centre);
-    const isCoated = coated(centre);
-    p.fromBufferAttribute(position, i).sub(centre).multiplyScalar(thickness(t) * (isCoated ? COAT_DEPTH : 1)).add(centre);
+    p.fromBufferAttribute(position, i).sub(centre).multiplyScalar(thickness(t)).add(centre);
     position.setXYZ(i, p.x, p.y, p.z);
     n.fromBufferAttribute(normal, i);
-    if (drizzled(p, n.x)) {
-      c.copy(drizzle!);
-      p.addScaledVector(n, rope * .06);
-      position.setXYZ(i, p.x, p.y, p.z);
-    } else if (isCoated) {
-      c.copy(coat!).multiplyScalar(.96 + rand(i) * .06);
-    } else {
-      // Tops bake dark and glossy; the sides of the belly split open pale
-      // where the dough stretched in the oven.
-      const up = n.x;
-      const ring = Math.floor(i / (radial + 1));
-      const crack = Math.max(0, 1 - Math.abs(up + .05) / .35) * Math.exp(-(((t - .5) / .22) ** 2)) * (.55 + .45 * rand(ring * .37 + seed));
-      c.copy(BAKED).lerp(DARK, Math.max(0, up) * .55).lerp(GOLDEN, crack);
-      c.multiplyScalar(.92 + rand(i) * .12);
-    }
+    // Tops bake dark and glossy; the sides of the belly split open pale
+    // where the dough stretched in the oven.
+    const up = n.x;
+    const ring = Math.floor(i / (radial + 1));
+    const crack = Math.max(0, 1 - Math.abs(up + .05) / .35) * Math.exp(-(((t - .5) / .22) ** 2)) * (.55 + .45 * rand(ring * .37 + seed));
+    c.copy(BAKED).lerp(DARK, Math.max(0, up) * .55).lerp(GOLDEN, crack);
+    c.multiplyScalar(.92 + rand(i) * .12);
     colors.push(c.r, c.g, c.b);
   }
   // Normals are kept from the even tube: recomputing them would show the seam.
   tube.setAttribute("color", new Float32BufferAttribute(colors, 3));
-
+  tube.deleteAttribute("uv");
   // Round the two cut ends.
   const caps = [0, 1].map(t => {
     const point = curve.getPointAt(t);
-    const cap = new SphereGeometry(rope * thickness(t) * (coated(point) ? COAT_DEPTH : 1), 12, 8);
+    const cap = new SphereGeometry(rope * thickness(t), 12, 8);
     cap.translate(point.x, point.y, point.z);
     cap.deleteAttribute("uv");
-    return colourise(cap, coated(point) ? coat! : BAKED);
+    return colourise(cap, BAKED);
   });
-  tube.deleteAttribute("uv");
   const dough = mergeGeometries([tube, ...caps])!;
 
+  const coat = recipe.coat ? coatGeometry(curve, coated, rope, segments, radial) : null;
+  const drizzle = recipe.drizzle ? drizzleGeometry(curve, coated, rope, seed, lowDetail) : null;
   const toppings = toppingGeometry(recipe, curve, coated, seed, lowDetail, rope);
 
   // Fit to one frame: .86 across times the recipe's size, resting on x = -.11.
@@ -173,16 +164,116 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   const box = dough.boundingBox!;
   const scale = .86 * (recipe.size ?? 1) / Math.max(box.max.y - box.min.y, box.max.z - box.min.z);
   const mid = box.getCenter(new Vector3());
-  for (const g of [dough, toppings]) {
+  const layers = [dough, toppings, coat, drizzle].filter((g): g is BufferGeometry => !!g);
+  for (const g of layers) {
     g.translate(-mid.x, -mid.y, -mid.z);
     g.scale(scale, scale, scale);
   }
   dough.computeBoundingBox();
   const lift = -.11 - dough.boundingBox!.min.x;
-  dough.translate(lift, 0, 0);
-  toppings.translate(lift, 0, 0);
+  for (const g of layers) g.translate(lift, 0, 0);
   for (const g of [tube, ...caps]) g.dispose();
-  return { dough, toppings };
+  return { dough, toppings, coat, drizzle };
+}
+
+// The dip: a shell over the coated stretches of rope, standing proud of the
+// dough. Where the dip stops it thins to a rounded lip instead of a step.
+function coatGeometry(curve: CatmullRomCurve3, coated: (p: Vector3) => boolean, rope: number, segments: number, radial: number) {
+  const shell = new TubeGeometry(curve, segments, 1, radial, false);
+  const rings = Array.from({ length: segments + 1 }, (_, i) => coated(curve.getPointAt(i / segments)));
+  // Rings from the nearest bare one: the lip swells over the first few.
+  const edge = rings.map((_, i) => {
+    let k = 0;
+    while (k < 4 && rings[i - k - 1] !== false && rings[i + k + 1] !== false) k++;
+    return k;
+  });
+  const position = shell.getAttribute("position");
+  const centre = new Vector3(), p = new Vector3();
+  for (let i = 0; i < position.count; i++) {
+    const ring = Math.floor(i / (radial + 1));
+    const t = ring / segments;
+    curve.getPointAt(t, centre);
+    const swell = COAT_DEPTH - .05 * (1 - edge[ring] / 4);
+    p.fromBufferAttribute(position, i).sub(centre).multiplyScalar(rope * thickness(t) * swell).add(centre);
+    position.setXYZ(i, p.x, p.y, p.z);
+  }
+  // Keep only the faces between two coated rings.
+  const index = shell.getIndex()!;
+  const kept: number[] = [];
+  for (let f = 0; f < index.count; f += 3) {
+    const a = index.getX(f), b = index.getX(f + 1), d = index.getX(f + 2);
+    const ring = Math.min(a, b, d) / (radial + 1) | 0;
+    if (rings[ring] && rings[ring + 1]) kept.push(a, b, d);
+  }
+  shell.setIndex(kept);
+  shell.deleteAttribute("uv");
+  const parts: BufferGeometry[] = [shell];
+  for (const t of [0, 1]) {
+    const point = curve.getPointAt(t);
+    if (!coated(point)) continue;
+    const cap = new SphereGeometry(rope * thickness(t) * COAT_DEPTH, 14, 10);
+    cap.translate(point.x, point.y, point.z);
+    cap.deleteAttribute("uv");
+    parts.push(cap);
+  }
+  return mergeGeometries(parts)!;
+}
+
+// Drizzle: thin strands of icing piped back and forth across the pretzel.
+// Each strand follows the top of whatever rope is under it and breaks where
+// it would cross a hole, the way icing does when it falls through.
+function drizzleGeometry(curve: CatmullRomCurve3, coated: (p: Vector3) => boolean, rope: number, seed: number, lowDetail: boolean) {
+  const samples = Array.from({ length: 500 }, (_, i) => {
+    const t = i / 499;
+    const point = curve.getPointAt(t);
+    return { point, radius: rope * thickness(t) * (coated(point) ? COAT_DEPTH : 1) };
+  });
+  // Height of the pretzel's top surface over a point in its plane, if any.
+  const top = (y: number, z: number) => {
+    let best = -Infinity;
+    for (const { point, radius } of samples) {
+      const d2 = (y - point.y) ** 2 + (z - point.z) ** 2;
+      const r = radius * .82; // stay on the crown, not down the sides
+      if (d2 < r * r) best = Math.max(best, point.x + Math.sqrt(radius * radius - d2));
+    }
+    return best;
+  };
+  const strand = .011;
+  const strands: BufferGeometry[] = [];
+  const lines = 9;
+  for (let l = 0; l < lines; l++) {
+    // Diagonal passes, each a little uneven, like a hand with a piping bag.
+    const offset = -.5 + (l + .5) / lines + (rand(seed * 13 + l) - .5) * .04;
+    const tilt = .9 + (rand(seed * 7 + l) - .5) * .25;
+    let run: Vector3[] = [];
+    const flush = () => {
+      if (run.length >= 4) {
+        const path = new CatmullRomCurve3(run);
+        const tube = new TubeGeometry(path, run.length * 2, strand, lowDetail ? 5 : 7, false);
+        for (const end of [run[0], run[run.length - 1]]) {
+          const blob = new SphereGeometry(strand * 1.1, 8, 6);
+          blob.translate(end.x, end.y, end.z);
+          strands.push(blob);
+        }
+        strands.push(tube);
+      }
+      run = [];
+    };
+    for (let k = 0; k <= 90; k++) {
+      const s = -.6 + k / 90 * 1.2;
+      const z = offset + s * Math.cos(tilt) + Math.sin(s * 9 + l) * .012;
+      const y = s * Math.sin(tilt);
+      const h = top(y, z);
+      if (h === -Infinity) { flush(); continue; }
+      run.push(new Vector3(h + strand * .4, y, z));
+    }
+    flush();
+  }
+  if (!strands.length) return null;
+  for (const g of strands) g.deleteAttribute("uv");
+  const merged = mergeGeometries(strands)!;
+  for (const g of strands) g.dispose();
+  return merged;
 }
 
 // Toppings sit on the upper half of the rope. Dipped pretzels only carry them

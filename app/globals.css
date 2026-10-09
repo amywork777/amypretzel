@@ -270,7 +270,7 @@ button:disabled { cursor: default; }
 .book-three-frame { position: absolute !important; inset: 0; z-index: 1; display: block; width: 100% !important; height: 100% !important; cursor: pointer; pointer-events: auto; touch-action: none; }
 .book-three-frame > div, .book-three-frame canvas, .book-three-canvas { display: block; width: 100% !important; height: 100% !important; touch-action: none; }
 /* The chapter card: slides in from the right while a pretzel is held up.
-   Light, like a page set down beside the bowl; its width is CARD_WIDTH in
+   Light, like a page set down beside the pretzels; its width is CARD_WIDTH in
    pretzel-story.tsx, which the held pretzel centres itself against. */
 .pretzel-hint { color: var(--color-ink-soft); }
 .pretzel-card {
