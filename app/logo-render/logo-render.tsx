@@ -2,57 +2,55 @@
 
 import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useMemo, useState } from "react";
-import { MeshPhysicalMaterial, NeutralToneMapping } from "three";
+import { useMemo } from "react";
+import { MeshPhysicalMaterial, NeutralToneMapping, Vector3 } from "three";
+import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { createPretzelGeometry } from "../book/pretzel-geometry";
 
-// The pretzel mark: the same rope as the 3D chapters, inflated and in
-// polished chrome, like a charm. Transparent background, square.
+// Gentle hand-made unevenness: a few overlapping waves through space, so the
+// rope swells and dents a little the way rolled clay does.
+function lump(p: Vector3) {
+  return Math.sin(p.x * 23 + p.y * 7) * Math.sin(p.y * 19 - p.z * 11) * .5
+    + Math.sin(p.z * 31 + p.x * 13) * .3
+    + Math.sin((p.x + p.y + p.z) * 57) * .2;
+}
+
+// The pretzel mark: the same rope as the 3D chapters, chubby, in matte
+// clay with little balls of clay salt. Transparent background, square.
 function Mark() {
-  const { dough } = useMemo(() => createPretzelGeometry(false, "logo"), []);
-  const chrome = useMemo(() => new MeshPhysicalMaterial({ color: "#f3f5f8", metalness: 1, roughness: .05, clearcoat: 1, clearcoatRoughness: .03 }), []);
+  const { dough, toppings } = useMemo(() => {
+    const shape = createPretzelGeometry(false, "logo");
+    // Weld the tube's seam so the dents don't crack it open, then dent.
+    shape.dough.deleteAttribute("color");
+    const dough = mergeVertices(shape.dough, 1e-4);
+    const position = dough.getAttribute("position");
+    dough.computeVertexNormals();
+    const normal = dough.getAttribute("normal");
+    const p = new Vector3(), n = new Vector3();
+    for (let i = 0; i < position.count; i++) {
+      p.fromBufferAttribute(position, i);
+      n.fromBufferAttribute(normal, i);
+      p.addScaledVector(n, lump(p) * .006);
+      position.setXYZ(i, p.x, p.y, p.z);
+    }
+    dough.computeVertexNormals();
+    return { dough, toppings: shape.toppings };
+  }, []);
+  const materials = useMemo(() => ({
+    // Clay is matte with a soft sheen where it turns from the light.
+    clay: new MeshPhysicalMaterial({ color: "#b8692e", roughness: .74, sheen: .6, sheenRoughness: .6, sheenColor: "#ffe3c2" }),
+    salt: new MeshPhysicalMaterial({ vertexColors: true, roughness: .7, sheen: .4, sheenColor: "#ffffff" }),
+  }), []);
   // Face the camera, lobes up, leaning back a touch so it reads as an object.
-  return <group rotation={[-.28, 0, 0]}>
+  return <group rotation={[-.32, 0, 0]}>
     <group rotation={[0, -Math.PI / 2, 0]}>
-      <mesh geometry={dough} material={chrome} position={[0, -0.01, 0]} />
+      <mesh geometry={dough} material={materials.clay} />
+      <mesh geometry={toppings} material={materials.salt} />
     </group>
   </group>;
 }
 
-// Chrome is only its reflections, so each background gets its own studio.
-// The silhouette edge reflects what's behind the pretzel, and faces turned
-// to the viewer reflect what's behind the camera.
-function OnWhite() {
-  // Dark all round, so the outline and the undersides read crisp on paper;
-  // a soft grey sky and a few hard strips for the shine.
-  return <Environment resolution={1024} frames={1}>
-    <color attach="background" args={["#08090b"]} />
-    <Lightformer form="rect" intensity={2} color="#d6dce4" position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[13, 13, 1]} />
-    <Lightformer form="rect" intensity={1.8} color="#e4eaf1" position={[0, 1.2, 6]} scale={[20, 2.4, 1]} target={[0, 0, 0]} />
-    <Lightformer form="rect" intensity={1.2} color="#c3cad3" position={[0, 0, -6]} scale={[6, 3, 1]} />
-    <Lightformer form="rect" intensity={5} position={[-3, 2.5, 3]} scale={[.35, 4, 1]} target={[0, 0, 0]} />
-    <Lightformer form="rect" intensity={4} position={[3.2, 1.5, 2.5]} scale={[.25, 3, 1]} target={[0, 0, 0]} />
-    <Lightformer form="rect" intensity={1} color="#7d8794" position={[0, -5, 1]} rotation-x={-Math.PI / 2} scale={[7, 7, 1]} />
-  </Environment>;
-}
-
-function OnBlack() {
-  // A bright backdrop behind the pretzel lights its outline against black;
-  // a dark band low in front keeps the chrome contrast across its body.
-  return <Environment resolution={1024} frames={1}>
-    <color attach="background" args={["#4a5058"]} />
-    <Lightformer form="rect" intensity={2.4} color="#f4f7fb" position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[20, 20, 1]} />
-    <Lightformer form="rect" intensity={1.8} color="#e8eef5" position={[0, 0, -6]} scale={[20, 8, 1]} />
-    <Lightformer form="rect" intensity={1} color="#0b0c0e" position={[0, -.6, 6]} scale={[20, 1.8, 1]} target={[0, 0, 0]} />
-    <Lightformer form="rect" intensity={5} position={[-3, 2.5, 3]} scale={[.35, 4, 1]} target={[0, 0, 0]} />
-    <Lightformer form="rect" intensity={4} position={[3.2, 1.5, 2.5]} scale={[.25, 3, 1]} target={[0, 0, 0]} />
-    <Lightformer form="rect" intensity={2} color="#9aa4b1" position={[0, -5, 1]} rotation-x={-Math.PI / 2} scale={[9, 9, 1]} />
-  </Environment>;
-}
-
 export default function LogoRender() {
-  // ?on=black renders the version for dark backgrounds; anything else, white.
-  const [onBlack] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("on") === "black");
   return <div style={{ width: 1024, height: 1024, background: "transparent" }}>
     <Canvas
       id="logo"
@@ -62,7 +60,15 @@ export default function LogoRender() {
       gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); gl.toneMapping = NeutralToneMapping; }}
     >
-      {onBlack ? <OnBlack /> : <OnWhite />}
+      {/* A soft studio: one big window up and to the left, a gentle fill. */}
+      <ambientLight intensity={.12} />
+      <directionalLight position={[-2.5, 3.5, 3]} intensity={3} />
+      <directionalLight position={[3, -1.5, 2]} intensity={.35} />
+      <Environment resolution={256} frames={1}>
+        <color attach="background" args={["#3a3a3a"]} />
+        <Lightformer form="rect" intensity={1.1} position={[-2, 3, 4]} scale={[5, 4, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={.35} position={[3, 0, 3]} scale={[4, 6, 1]} target={[0, 0, 0]} />
+      </Environment>
       <Mark />
     </Canvas>
   </div>;

@@ -67,12 +67,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    // The chrome mark is lit for the tab bar's own colour.
     icon: [
-      { url: "/favicon-32x32-on-white.png", sizes: "32x32", type: "image/png", media: "(prefers-color-scheme: light)" },
-      { url: "/favicon-16x16-on-white.png", sizes: "16x16", type: "image/png", media: "(prefers-color-scheme: light)" },
-      { url: "/favicon-32x32-on-black.png", sizes: "32x32", type: "image/png", media: "(prefers-color-scheme: dark)" },
-      { url: "/favicon-16x16-on-black.png", sizes: "16x16", type: "image/png", media: "(prefers-color-scheme: dark)" },
+      { url: "/favicon-clay-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-clay-16.png", sizes: "16x16", type: "image/png" },
     ],
     apple: "/apple-touch-icon.png",
   },

@@ -20,7 +20,7 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 
 export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "everything" | "cinnamon" | "matcha" | "filler" | "logo";
 
-type Topping = "salt" | "sprinkles" | "everything" | "cinnamon" | "none";
+type Topping = "salt" | "sprinkles" | "everything" | "cinnamon" | "clay" | "none";
 type Bake = "pale" | "golden" | "toasty";
 type Recipe = {
   topping: Topping;
@@ -52,7 +52,8 @@ const RECIPES: Record<PretzelKind, Recipe> = {
   // The bowl's plain filling: small, thin, crunchy, so the chapters stand out.
   filler: { topping: "salt", bake: "golden", rope: .82, size: .9, wonk: 1 },
   // The site's mark: a perfectly even, inflated pretzel (rendered by app/logo-render).
-  logo: { topping: "none", rope: 1.45, size: 1, wonk: 0, lift: 2.6 },
+  // The site's mark: a chubby clay pretzel, rolled by hand, with clay salt.
+  logo: { topping: "clay", rope: 1.5, size: 1, wonk: 1.2, lift: 2.2 },
 };
 
 const rand = (seed: number) => {
@@ -282,7 +283,7 @@ function drizzleGeometry(curve: CatmullRomCurve3, coated: (p: Vector3) => boolea
 // Toppings sit on the upper half of the rope. Dipped pretzels only carry them
 // on the coating, where they would stick in a real kitchen.
 function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Vector3) => boolean, seed: number, lowDetail: boolean, rope: number) {
-  const counts: Record<Topping, number> = { salt: 18, sprinkles: 46, everything: 170, cinnamon: 150, none: 0 };
+  const counts: Record<Topping, number> = { salt: 18, sprinkles: 46, everything: 170, cinnamon: 150, clay: 13, none: 0 };
   const count = Math.round(counts[recipe.topping] * (lowDetail ? .6 : 1));
   const pieces: BufferGeometry[] = [];
   const centre = new Vector3(), tangent = new Vector3(), side = new Vector3(), up = new Vector3(1, 0, 0);
@@ -294,7 +295,7 @@ function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Ve
     if (recipe.dip && !coated(centre)) continue;
     curve.getTangentAt(t, tangent);
     side.crossVectors(tangent, up).normalize();
-    const angle = (r(2) - .5) * (recipe.topping === "salt" ? 1.6 : 2.4);
+    const angle = (r(2) - .5) * (recipe.topping === "salt" || recipe.topping === "clay" ? 1.6 : 2.4);
     dir.copy(up).multiplyScalar(Math.cos(angle)).addScaledVector(side, Math.sin(angle)).normalize();
     const surface = rope * thickness(t) * (coated(centre) ? COAT_DEPTH : 1);
     p.copy(centre).addScaledVector(dir, surface * .97);
@@ -303,7 +304,14 @@ function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Ve
     let piece: BufferGeometry;
     let colour: Color;
     const kind = recipe.topping === "everything" ? (r(6) < .45 ? "sesame" : r(6) < .85 ? "poppy" : "salt") : recipe.topping;
-    if (kind === "salt") {
+    if (kind === "clay") {
+      // Soft pinched-off balls of white clay, pressed flat onto the rope.
+      piece = new SphereGeometry(1, 14, 10);
+      along.setFromUnitVectors(new Vector3(0, 1, 0), dir);
+      const size = .026 + r(7) * .012;
+      m.compose(p, along, new Vector3(size, size * .62, size * (.85 + r(8) * .3)));
+      colour = new Color("#fbf8f2");
+    } else if (kind === "salt") {
       const size = .02 + r(7) * .014;
       piece = new IcosahedronGeometry(1, 0);
       m.compose(p, q, new Vector3(size, size * (.7 + r(8) * .5), size * (.8 + r(9) * .4)));
