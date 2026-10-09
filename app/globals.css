@@ -207,10 +207,10 @@ button:disabled { cursor: default; }
 
 /* === SITE HEADER === */
 .site-header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding-top: 22px; padding-bottom: var(--space-2); }
-/* The mark is a single-colour line drawing, painted in ink so it flips with the theme. */
-/* The mark is a chrome balloon pretzel (rendered by scripts/render-logo.mjs to /pretzel-mark.png).
-   It's silver, so it reads on paper and in dark mode alike; hovering
-   squishes it like a jelly charm. */
+/* The mark is a chrome balloon pretzel (scripts/render-logo.mjs writes
+   /pretzel-chrome.png). It skips the image optimiser, whose cache kept
+   serving an older mark under the same name. Silver reads on paper and in
+   dark mode alike; hovering squishes it like a jelly charm. */
 .site-mark { display: inline-flex; width: 44px; height: 44px; }
 .site-mark img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18)); transform-origin: 50% 85%; }
 .site-mark:hover img, .site-mark:focus-visible img { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
@@ -255,26 +255,10 @@ button:disabled { cursor: default; }
 .book-overlay-enter { position: absolute; top: 26px; right: 32px; z-index: 5; }
 .storybook { position: relative; height: 100%; width: 100%; }
 .storybook-canvas { position: absolute; inset: 0; }
-/* One bar along the bottom: turning pages on the left, reading and links on the right. */
-/* Centered with margins, not a transform: a transform would trap the fixed Read as text panel. */
-.storybook-bar { position: absolute; z-index: 4; left: 0; right: 0; margin-inline: auto; bottom: 28px; width: min(100% - 48px, 760px); display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); font-size: var(--text-sm); }
-.storybook-pagination { display: flex; align-items: center; gap: var(--space-5); }
-.storybook-pagination .ui-button { min-height: 44px; }
-.storybook-pagination .ui-meta { min-width: 120px; text-align: center; color: var(--color-ink-soft); }
-.storybook-aside { display: flex; align-items: center; gap: var(--space-5); }
 .storybook-links { display: flex; gap: var(--space-5); }
 .storybook-links a { color: var(--color-ink); text-decoration-line: underline; text-underline-offset: .2em; transition: color var(--ease); }
 .storybook-links a:hover { color: var(--color-ink-soft); }
 /* The table's two toys, top left, opposite the exit. */
-.book-reading { position: relative; color: var(--color-ink-soft); }
-.book-reading > summary { display: flex; align-items: center; min-height: 44px; list-style: none; cursor: pointer; transition: color var(--ease); }
-.book-reading > summary::-webkit-details-marker { display: none; }
-.book-reading > summary:hover, .book-reading[open] > summary { color: var(--color-ink); }
-.book-reading-panel { position: fixed; z-index: 6; top: 96px; right: 36px; bottom: 96px; width: min(430px, calc(100% - 72px)); overflow: auto; padding: var(--space-5); background: var(--color-surface); color: var(--color-ink); border-radius: var(--radius); box-shadow: 0 10px 50px rgba(0, 0, 0, .5); }
-.book-reading-panel h2 { font-family: var(--font-display); font-size: var(--text-display); letter-spacing: var(--tracking-display); line-height: 1.15; margin: var(--space-6) 0 var(--space-3); }
-.book-reading-panel section:first-child h2 { margin-top: 0; }
-.book-reading-panel p { font-size: var(--text-base); line-height: 1.7; color: var(--color-ink-soft); margin-bottom: var(--space-2); }
-.book-reading-panel .ui-meta { font-size: var(--text-sm); color: var(--color-ink-muted); }
 .book-loading { position: absolute; inset: auto 0 50px; z-index: 2; text-align: center; color: var(--color-ink-muted); font-size: var(--text-sm); }
 .book-poster { position: absolute; inset: 0; pointer-events: none; z-index: 1; transition: opacity .18s; }
 .book-poster img { width: 100%; height: 100%; object-fit: cover; }
@@ -285,7 +269,10 @@ button:disabled { cursor: default; }
 /* The chapter card: slides in from the right while a pretzel is held up.
    Light, like a page set down beside the pretzels; its width is CARD_WIDTH in
    pretzel-story.tsx, which the held pretzel centres itself against. */
-.pretzel-hint { color: var(--color-ink-soft); }
+/* A pretzel's name under it on hover, and the keyboard-only way in. */
+.pretzel-label { display: block; white-space: nowrap; padding: 6px 11px; border-radius: var(--radius-pill); font-size: var(--text-sm); letter-spacing: var(--tracking-body); color: #fff; background: rgba(20, 20, 20, .72); backdrop-filter: blur(6px); pointer-events: none; animation: pretzel-label-in .18s ease-out; }
+@keyframes pretzel-label-in { from { opacity: 0; transform: translateY(-4px); } }
+.pretzel-start:focus { position: absolute; z-index: 5; left: 50%; bottom: 32px; transform: translateX(-50%); }
 .pretzel-card {
   --color-paper: #ffffff;
   --color-ink: #1c1c1c;
@@ -301,9 +288,11 @@ button:disabled { cursor: default; }
   border-radius: 20px;
   box-shadow: 0 20px 80px rgba(0, 0, 0, .45);
   transform: translateX(calc(100% + 32px));
-  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+  /* Hidden outright once it has slid away, so no edge or shadow peeks in. */
+  visibility: hidden;
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1), visibility 0s .6s;
 }
-.pretzel-card[data-open] { transform: none; }
+.pretzel-card[data-open] { transform: none; visibility: visible; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
 .pretzel-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); font-size: var(--text-sm); }
 .pretzel-card-title { margin: auto 0 var(--space-5); padding-top: var(--space-6); font-family: var(--font-display); font-size: clamp(40px, 4.6vw, 68px); font-weight: 400; line-height: 1.02; letter-spacing: -.045em; }
 .pretzel-card-text { font-size: 20px; line-height: 1.5; letter-spacing: var(--tracking-body); color: var(--color-ink); max-width: 30em; }
@@ -314,17 +303,12 @@ button:disabled { cursor: default; }
 .book-overlay:has(.pretzel-card[data-open]) .book-overlay-enter { opacity: 0; pointer-events: none; }
 .book-overlay-enter { transition: opacity var(--ease); }
 @media (max-width: 700px) {
-  .pretzel-card { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 56vh; padding: 20px 22px max(16px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0; transform: translateY(100%); }
+  .pretzel-card { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 52vh; padding: 20px 22px max(16px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0; transform: translateY(calc(100% + 32px)); }
   .pretzel-card-title { font-size: 38px; margin: var(--space-4) 0 var(--space-3); padding-top: 0; }
   .pretzel-card-text { font-size: 17px; }
 }
 @media (max-width: 700px) {
   .book-overlay-enter { top: 18px; right: 16px; }
-  .storybook-bar { bottom: max(14px, env(safe-area-inset-bottom)); width: calc(100% - 32px); flex-direction: column; gap: var(--space-2); text-align: center; }
-  .storybook-pagination { flex-direction: column; gap: var(--space-1); }
-  .storybook-pagination .ui-meta { min-width: 72px; }
-  /* Read as text rises from the bottom, above the bar, so its summary stays reachable. */
-  .book-reading-panel { top: auto; left: 12px; right: 12px; bottom: 112px; width: auto; max-height: 62vh; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -6,7 +6,7 @@
 // After Melike Turgut's site (meliketurgut.com): one object per chapter, the
 // chosen one held up as the hero, its story in a card alongside.
 
-import { ContactShadows, Environment, Lightformer, OrbitControls, PerspectiveCamera, RoundedBox, useCursor } from "@react-three/drei";
+import { ContactShadows, Environment, Html, Lightformer, OrbitControls, PerspectiveCamera, RoundedBox, useCursor } from "@react-three/drei";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { easing } from "maath";
 import Link from "next/link";
@@ -40,7 +40,7 @@ const reducedMotion = typeof window === "undefined" ? null : window.matchMedia("
 // column on wide screens, a bottom sheet on phones. The held pretzel centres
 // itself in whatever the card leaves free.
 const CARD_WIDTH = (width: number) => Math.min(560, width * .46);
-const SHEET_HEIGHT = .56;
+const SHEET_HEIGHT = .52;
 
 const rand = (seed: number) => {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
@@ -51,21 +51,22 @@ const rand = (seed: number) => {
 
 type Pose = { position: Vector3; rotation: Euler; scale: number };
 
-// Laid out on the table in story order, left to right, a little uneven, the
-// way you'd set them down by hand. Phones get two rows of three.
-const REST_SCALE = .62;
+// Laid out on the table in story order, a little uneven, the way you'd set
+// them down by hand: one row left to right on wide screens; on a phone, two
+// big columns read left to right and down, filling the tall screen.
 function chapterPose(i: number, narrow: boolean): Pose {
   const count = storyChapters.length;
+  const scale = narrow ? .82 : .62;
   const [x, z] = narrow
-    ? [((i % 3) - 1) * .72, (Math.floor(i / 3) - .5) * .8]
+    ? [((i % 2) - .5) * .92, (Math.floor(i / 2) - 1) * .98]
     : [(i - (count - 1) / 2) * .68, .08 * ((i - (count - 1) / 2) / ((count - 1) / 2)) ** 2 - .04];
   return {
     // Lying flat: the pretzel's thin axis is x, so a quarter turn about z
     // stands it on the table; its bottom is at -.11 before scaling.
-    position: new Vector3(x + (rand(i + 40) - .5) * .06, .11 * REST_SCALE + .012, z + (rand(i + 50) - .5) * .08),
+    position: new Vector3(x + (rand(i + 40) - .5) * .06, .11 * scale + .012, z + (rand(i + 50) - .5) * .08),
     // Loops away from the viewer, belly toward them, each turned a little.
     rotation: new Euler(0, -Math.PI / 2 + (rand(i + 11) - .5) * .5, Math.PI / 2, "YXZ"),
-    scale: REST_SCALE,
+    scale,
   };
 }
 
@@ -128,11 +129,10 @@ const FACE_CAMERA = new Quaternion().setFromEuler(new Euler(0, -Math.PI / 2, 0))
 // Shared by every pretzel's frame callback, which run one after another.
 const scratch = { heldQuat: new Quaternion(), spin: new Quaternion(), heldPos: new Vector3(), pos: new Vector3(), up: new Vector3(0, 1, 0) };
 
-function ChapterPretzel({ index, selected, onSelect, onHover }: {
+function ChapterPretzel({ index, selected, onSelect }: {
   index: number;
   selected: boolean;
   onSelect: (index: number) => void;
-  onHover: (index: number | null) => void;
 }) {
   const chapter = storyChapters[index];
   const compactLayout = useCompactBook();
@@ -185,20 +185,27 @@ function ChapterPretzel({ index, selected, onSelect, onHover }: {
     if (!settled || (selected && !reduced)) invalidate();
   });
 
-  const over = (e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); setHovered(true); onHover(index); };
-  const out = () => { setHovered(false); onHover(null); };
+  const over = (e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); setHovered(true); };
+  const out = () => setHovered(false);
   const click = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     // An orbit drag that ends over a pretzel isn't a pick.
     if (e.delta > 6) return;
     onSelect(index);
   };
-  return <group ref={root} name={`pretzel-${chapter.id}`} onPointerOver={over} onPointerOut={out} onClick={click}>
+  const labelAt = useMemo(() => rest.position.clone().add(new Vector3(0, .02, .36)), [rest]);
+  return <>
+  {/* The chapter's name, just under the pretzel while the pointer is on it. */}
+  {hovered && !selected && <Html position={labelAt} center pointerEvents="none" zIndexRange={[3, 3]}>
+    <span className="pretzel-label">{chapter.title}</span>
+  </Html>}
+  <group ref={root} name={`pretzel-${chapter.id}`} onPointerOver={over} onPointerOut={out} onClick={click}>
     <mesh geometry={shape.dough} material={materials.dough} castShadow receiveShadow />
     {shape.coat && finish.coat && <mesh geometry={shape.coat} material={finish.coat} castShadow receiveShadow />}
     {shape.drizzle && finish.drizzle && <mesh geometry={shape.drizzle} material={finish.drizzle} castShadow receiveShadow />}
     <mesh geometry={shape.toppings} material={materials.toppings} castShadow />
-  </group>;
+  </group>
+  </>;
 }
 
 // A dark veil between the held pretzel and the table, so the chosen one
@@ -258,7 +265,7 @@ function Tabletop() {
 
 // The table view: wide enough for the whole row (or both rows on a phone).
 function tablePosition(aspect: number) {
-  const rowWidth = aspect < .9 ? 2.5 : 4.4;
+  const rowWidth = aspect < .9 ? 2.05 : 4.4;
   const distance = Math.max(2.6, rowWidth / (2 * HALF_FOV_TAN * aspect));
   return new Vector3(0, distance * 0.8, distance * 0.6);
 }
@@ -350,10 +357,9 @@ function SceneReady({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
-function PretzelScene({ selected, onSelect, onHover }: {
+function PretzelScene({ selected, onSelect }: {
   selected: number | null;
   onSelect: (index: number) => void;
-  onHover: (index: number | null) => void;
 }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const lowDetail = useCompactBook();
@@ -392,7 +398,7 @@ function PretzelScene({ selected, onSelect, onHover }: {
     </Environment>
     <Scrim open={selected !== null} />
     {storyChapters.map((chapter, i) =>
-      <ChapterPretzel key={chapter.id} index={i} selected={selected === i} onSelect={onSelect} onHover={onHover} />)}
+      <ChapterPretzel key={chapter.id} index={i} selected={selected === i} onSelect={onSelect} />)}
     <OrbitControls
       ref={controls}
       enablePan={false}
@@ -418,7 +424,6 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
   const [selected, setSelected] = useState<number | null>(null);
   // The card keeps showing the last chapter while it slides away.
   const [shown, setShown] = useState(0);
-  const [hovered, setHovered] = useState<number | null>(null);
   const last = storyChapters.length - 1;
   const chapter = storyChapters[shown];
 
@@ -464,7 +469,6 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
   useEffect(() => { if (selected !== null) touched.current = true; }, [selected]);
 
   const open = selected !== null;
-  const hint = hovered !== null ? storyChapters[hovered].title : "Pick a pretzel. Each one is a chapter.";
 
   return (
     <div className="storybook" data-open={open || undefined}>
@@ -484,24 +488,19 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
               gl.toneMapping = NeutralToneMapping;
             }}
           >
-            <PretzelScene selected={selected} onSelect={select} onHover={setHovered} />
+            <PretzelScene selected={selected} onSelect={select} />
             <SceneReady onReady={handleReady} />
           </Canvas>
         </div>
       </div>
 
-      {!open && <div className="storybook-bar">
-        <div className="storybook-pagination">
-          <span className="pretzel-hint">{hint}</span>
-          <Button variant="text" onClick={() => select(0)}>Start at the beginning</Button>
-        </div>
-        <details className="book-reading">
-          <summary>Read as text</summary>
-          <div className="book-reading-panel">
-            {storyChapters.map(c => <section key={c.id}><h2>{c.title}</h2><p>{c.text}</p></section>)}
-          </div>
-        </details>
-      </div>}
+      {/* No words on the table: chapter one rises by itself and the pretzels
+          name themselves on hover. Keyboard and screen-reader visitors still
+          get a way in and the whole story as text. */}
+      {!open && <Button variant="pill" className="pretzel-start sr-only focus:not-sr-only" onClick={() => select(0)}>Start at the beginning</Button>}
+      <div className="sr-only">
+        {storyChapters.map(c => <section key={c.id}><h2>{c.title}</h2><p>{c.text}</p></section>)}
+      </div>
 
       <section className="pretzel-card" data-open={open || undefined} aria-hidden={!open} aria-live="polite" aria-label={chapter.title} inert={!open}>
         <div className="pretzel-card-head">

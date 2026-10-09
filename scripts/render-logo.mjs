@@ -39,7 +39,8 @@ function ico(images) {
     const raw = await page.locator('#logo canvas').screenshot({ omitBackground: true });
     const mark = await sharp(raw).trim({ threshold: 1 }).extend({ top: 24, bottom: 24, left: 24, right: 24, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
     const square = size => sharp(mark).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
-    await writeFile(out('pretzel-mark.png'), await square(400));
+    // The nav shows it at 44px; 192 keeps it sharp at 4x without the image optimiser.
+    await writeFile(out('pretzel-chrome.png'), await square(192));
     const [p16, p32] = [await square(16), await square(32)];
     await writeFile(out('favicon-16x16.png'), p16);
     await writeFile(out('favicon-32x32.png'), p32);

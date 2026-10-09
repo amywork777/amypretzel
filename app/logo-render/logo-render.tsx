@@ -10,7 +10,7 @@ import { createPretzelGeometry } from "../book/pretzel-geometry";
 // polished chrome, like a charm. Transparent background, square.
 function Mark() {
   const { dough } = useMemo(() => createPretzelGeometry(false, "logo"), []);
-  const chrome = useMemo(() => new MeshPhysicalMaterial({ color: "#e4e6ea", metalness: 1, roughness: .14, clearcoat: 1, clearcoatRoughness: .06 }), []);
+  const chrome = useMemo(() => new MeshPhysicalMaterial({ color: "#f3f5f8", metalness: 1, roughness: .05, clearcoat: 1, clearcoatRoughness: .03 }), []);
   // Face the camera, lobes up, leaning back a touch so it reads as an object.
   return <group rotation={[-.28, 0, 0]}>
     <group rotation={[0, -Math.PI / 2, 0]}>
@@ -29,15 +29,17 @@ export default function LogoRender() {
       gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); gl.toneMapping = NeutralToneMapping; }}
     >
-      {/* Chrome is only its reflections. Silver reads as a bright studio with
-          a few dark bands for the edges and the horizon to fall into. */}
-      <Environment resolution={512} frames={1}>
-        <color attach="background" args={["#b9bcc2"]} />
-        <Lightformer form="rect" intensity={2.2} position={[0, 5, 1]} scale={[10, 3, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={3} position={[-3, 2, 3]} scale={[2.5, 3, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={1} color="#0d0d10" position={[0, -1.6, 4]} scale={[12, 1.4, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={1} color="#0d0d10" position={[4, 1, 1]} scale={[.8, 6, 1]} target={[0, 0, 0]} />
-        <Lightformer form="rect" intensity={1} color="#1c1d21" position={[-4, -1, -2]} scale={[3, 3, 1]} target={[0, 0, 0]} />
+      {/* Chrome is only its reflections. A classic chrome studio: bright sky
+          overhead, dark ground below, a hard horizon between them, and a few
+          strip lights for the sharp highlights. */}
+      <Environment resolution={1024} frames={1}>
+        <color attach="background" args={["#0a0a0c"]} />
+        <Lightformer form="rect" intensity={2.2} color="#f4f7fb" position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[20, 20, 1]} />
+        <Lightformer form="rect" intensity={1.6} color="#dfe6ef" position={[0, 1.2, -6]} scale={[20, 2.6, 1]} />
+        <Lightformer form="rect" intensity={1.2} color="#dfe6ef" position={[0, 1.2, 6]} scale={[20, 2.2, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={5} position={[-3, 2.5, 3]} scale={[.35, 4, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={4} position={[3.2, 1.5, 2.5]} scale={[.25, 3, 1]} target={[0, 0, 0]} />
+        <Lightformer form="rect" intensity={1.5} color="#7d8794" position={[0, -5, 1]} rotation-x={-Math.PI / 2} scale={[9, 9, 1]} />
       </Environment>
       <Mark />
     </Canvas>
