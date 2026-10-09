@@ -18,7 +18,7 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 // about .86 units across, bottom at x = -.11. Each chapter of the story gets
 // its own kind: a coating, a topping and a slightly different twist.
 
-export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "everything" | "cinnamon" | "mauve" | "filler";
+export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "everything" | "cinnamon" | "matcha" | "filler" | "logo";
 
 type Topping = "salt" | "sprinkles" | "everything" | "cinnamon" | "none";
 type Bake = "pale" | "golden" | "toasty";
@@ -31,6 +31,7 @@ type Recipe = {
   rope?: number; // rope thickness, 1 = a classic soft pretzel
   size?: number; // across, 1 = .86 units
   wonk?: number; // how roughly it was twisted, 1 = a careful hand
+  lift?: number; // how far the crossing rides over the rope beneath, 1 = baked flat
 };
 
 // Six pretzels that should be told apart at a glance from across the bowl:
@@ -46,10 +47,12 @@ const RECIPES: Record<PretzelKind, Recipe> = {
   everything: { topping: "everything", bake: "toasty", rope: 1.05, size: 1.02, wonk: 3 },
   // Thin and crunchy, pale, crusted in cinnamon sugar.
   cinnamon: { topping: "cinnamon", bake: "pale", rope: .78, size: .96, wonk: 1 },
-  // Amy's colour: half dipped in mauve, flaky salt, a dark drizzle.
-  mauve: { topping: "salt", coat: "#b482aa", dip: "half", drizzle: "#3a2015", rope: 1, size: 1, wonk: .8 },
+  // Half dipped in matcha white chocolate, flaky salt, a white drizzle.
+  matcha: { topping: "salt", coat: "#9bb46a", dip: "half", drizzle: "#f6f1e7", rope: 1, size: 1, wonk: .8 },
   // The bowl's plain filling: small, thin, crunchy, so the chapters stand out.
   filler: { topping: "salt", bake: "golden", rope: .82, size: .9, wonk: 1 },
+  // The site's mark: a perfectly even, inflated pretzel (rendered by app/logo-render).
+  logo: { topping: "none", rope: 1.45, size: 1, wonk: 0, lift: 2.6 },
 };
 
 const rand = (seed: number) => {
@@ -86,7 +89,7 @@ const BAKES: Record<Bake, [Color, Color, Color]> = {
   golden: [new Color("#7a3410"), new Color("#b0601f"), new Color("#e8b574")],
   toasty: [new Color("#5a2a10"), new Color("#8f4f22"), new Color("#d8a46a")],
 };
-const SPRINKLES = ["#f4a7c3", "#8fc9f0", "#f7dd6b", "#9ad8b4", "#ffffff", "#c9a2c2"].map(c => new Color(c));
+const SPRINKLES = ["#f4a7c3", "#8fc9f0", "#f7dd6b", "#9ad8b4", "#ffffff", "#f6a35c"].map(c => new Color(c));
 
 function colourise(geometry: BufferGeometry, colour: Color) {
   const count = geometry.getAttribute("position").count;
@@ -109,7 +112,7 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   // Each pretzel is twisted by hand, so no two quite match.
   const wonk = .03 * (recipe.wonk ?? 1);
   const curve = new CatmullRomCurve3(ROPE.map(([u, v, h], i) => new Vector3(
-    h,
+    h * (recipe.lift ?? 1),
     v + (rand(seed * 31 + i) - .5) * wonk,
     u + (rand(seed * 17 + i + 5) - .5) * wonk,
   )), false, "centripetal");

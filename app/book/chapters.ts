@@ -45,7 +45,7 @@ export const bookChapters: BookChapter[] = [
 
 export const bookEnding: BookChapter = {
   id: "hi",
-  pretzel: "mauve",
+  pretzel: "matcha",
   title: "say hi",
   text: "that's the short version. everything else lives on the website: objects, and software to build objects. i love meeting people who make things.",
 };
