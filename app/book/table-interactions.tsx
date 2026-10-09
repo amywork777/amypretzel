@@ -2,31 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
-import { clearSketch, sketch } from "./sketch";
-
-export const PRETZEL_COUNT = 9;
 
 type TableValues = {
   coffeeTipped: boolean;
   coffeeSpilled: boolean;
-  cookiesTaken: boolean[];
-  pencilHeld: boolean;
   resetVersion: number;
 };
 
 export function useTableState() {
-  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), pencilHeld: false, resetVersion: 0 });
+  const [values, setValues] = useState<TableValues>({ coffeeTipped: false, coffeeSpilled: false, resetVersion: 0 });
   const setCoffee = useCallback((coffeeTipped: boolean) => setValues(v => ({ ...v, coffeeTipped })), []);
   const spillCoffee = useCallback(() => setValues(v => v.coffeeSpilled ? v : { ...v, coffeeSpilled: true }), []);
-  const setCookie = useCallback((index: number, taken: boolean) => setValues(v => ({ ...v, cookiesTaken: v.cookiesTaken.map((value, i) => i === index ? taken : value) })), []);
-  const setPencil = useCallback((pencilHeld: boolean) => {
-    // Pages read this flag to know a press means drawing, not turning; set it
-    // now rather than when the canvas re-renders a beat later.
-    sketch.held = pencilHeld;
-    setValues(v => ({ ...v, pencilHeld }));
-  }, []);
-  const reset = useCallback(() => { clearSketch(); setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, cookiesTaken: Array<boolean>(PRETZEL_COUNT).fill(false), pencilHeld: false, resetVersion: v.resetVersion + 1 })); }, []);
-  return { ...values, setCoffee, spillCoffee, setCookie, setPencil, reset };
+  const reset = useCallback(() => setValues(v => ({ coffeeTipped: false, coffeeSpilled: false, resetVersion: v.resetVersion + 1 })), []);
+  return { ...values, setCoffee, spillCoffee, reset };
 }
 
 export type TableState = ReturnType<typeof useTableState>;
@@ -46,7 +34,6 @@ export function usePropGesture({ onDraggingChange, onStart, onMove, onEnd, onCan
   useEffect(() => () => cancel.current?.(), [resetVersion]);
 
   return (event: ThreeEvent<PointerEvent>) => {
-    if (sketch.held) return;
     event.stopPropagation();
     if (!event.nativeEvent.isPrimary || event.button !== 0) return;
     // The canvas uses touch-action: none; R3F pointer listeners are passive.

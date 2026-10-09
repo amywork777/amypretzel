@@ -4,20 +4,16 @@ import { Environment, Lightformer, useGLTF, useCursor } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Euler,
   Group,
   Shape,
   CanvasTexture,
   SRGBColorSpace,
-  Vector2,
   Vector3,
   Mesh,
   MeshPhysicalMaterial,
 } from "three";
 
-import { createPretzelGeometry } from "./pretzel-geometry";
 import { useCompactBook } from "./use-compact-book";
-import { sketch } from "./sketch";
 import { usePropGesture, type TableState, type DraggingChange } from "./table-interactions";
 
 type InteractionProps = { table: TableState; onDraggingChange: DraggingChange };
@@ -25,95 +21,6 @@ const smooth = (n: number) => { const t = Math.max(0, Math.min(1, n)); return t 
 function approach(value: number, target: number, delta: number, reduced: boolean) {
   const next = reduced ? target : value + (target - value) * (1 - Math.exp(-Math.min(delta, .05) * 10));
   return Math.abs(next - target) < .0001 ? target : next;
-}
-
-// A pile of tiny pretzels: a ring of five lying flat, three leaning on top of
-// them, one on the crown. Each remembers where it lands when taken off the plate.
-const PRETZEL_COUNT = 9;
-const COOKIE_SCALE = .4; // the pretzel is .86 units across
-const COOKIE_LIFT = .044; // laid flat, its thickness is .22 units, so half of that scaled
-const cookieSpots = Array.from({ length: PRETZEL_COUNT }, (_, i) => {
-  const layer = i < 5 ? 0 : i < 8 ? 1 : 2;
-  const k = layer === 0 ? i : layer === 1 ? i - 5 : 0;
-  const angle = layer === 0 ? k * (Math.PI * 2 / 5) + .3 : layer === 1 ? k * (Math.PI * 2 / 3) + 1.2 : 0;
-  const radius = layer === 0 ? .3 : layer === 1 ? .17 : 0;
-  return {
-    plate: [Math.cos(angle) * radius, .022 + COOKIE_LIFT + layer * .075, Math.sin(angle) * radius] as [number, number, number],
-    tilt: layer === 0 ? .08 : layer === 1 ? .34 : .15,
-    // Taken pretzels land in front of the plate, toward the viewer, clear of the book.
-    taken: [-.3 + (i % 3) * .4 + (i % 2) * .05, COOKIE_LIFT, .9 + Math.floor(i / 3) * .38 + ((i * 7) % 3) * .05] as [number, number, number],
-    turn: i * 2.4,
-  };
-});
-
-function InteractiveCookie({ index, narrow, table, onDraggingChange, model }: InteractionProps & { index: number; narrow: boolean; model: Group }) {
-  const root = useRef<Group>(null!);
-  const progress = useRef(0);
-  const preview = useRef<number | null>(null);
-  const { invalidate } = useThree();
-  const [hovered, setHovered] = useState(false);
-  useCursor(hovered, "grab");
-  const taken = table.cookiesTaken[index];
-  const spot = cookieSpots[index];
-  const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
-  const gesture = usePropGesture({
-    onDraggingChange, resetVersion: table.resetVersion,
-    onStart: () => { preview.current = progress.current; invalidate(); },
-    onMove: (_dx, dy) => { if (!taken) preview.current = Math.min(.3, Math.max(0, -dy / 240)); invalidate(); },
-    onEnd: (moved, _dx, dy) => { preview.current = null; if (!moved || dy < -20 || taken) table.setCookie(index, !taken); invalidate(); },
-    onCancel: () => { preview.current = null; invalidate(); },
-  });
-  useFrame((_, delta) => {
-    const target = preview.current ?? (taken ? 1 : 0);
-    progress.current = approach(progress.current, target, delta, reduced);
-    const p = progress.current;
-    const lift = smooth(p / .35), move = smooth((p - .25) / .45), lower = smooth((p - .7) / .3);
-    const from = spot.plate, to = spot.taken;
-    const sideways = narrow ? -1 : 1;
-    root.current.position.set(
-      from[0] + (to[0] * sideways - from[0]) * move,
-      from[1] + (to[1] - from[1]) * lower + .32 * lift * (1 - lower),
-      from[2] + (to[2] - from[2]) * move,
-    );
-    // The model is thin along x, so a quarter turn about z lays it flat; the tilt leans it on the pile.
-    root.current.rotation.set(spot.tilt * (1 - move), spot.turn + .7 * move, Math.PI / 2, "YXZ");
-    if (p !== target) invalidate();
-  });
-  return <group ref={root} name={`interactive-cookie-${index}`} onPointerDown={gesture} onPointerOver={e => { e.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}>
-    <primitive object={model} scale={COOKIE_SCALE} />
-  </group>;
-}
-
-function CookiePlate(props: InteractionProps & { narrow: boolean }) {
-  const lowDetail = useCompactBook();
-  const { cookies, dough, salt, glaze, shapes } = useMemo(() => {
-    const glaze = new MeshPhysicalMaterial({ color: "#f4f4f4", roughness: .22, clearcoat: .65, clearcoatRoughness: .13 });
-    // The bake colour lives in the geometry's vertex colours; the egg wash is the clearcoat.
-    const dough = new MeshPhysicalMaterial({ vertexColors: true, roughness: .5, clearcoat: .8, clearcoatRoughness: .28, sheen: .3, sheenColor: "#f0c090" });
-    const salt = new MeshPhysicalMaterial({ color: "#fbfaf6", roughness: .18, clearcoat: .4, flatShading: true });
-    const shapes = createPretzelGeometry(lowDetail);
-    const cookies = cookieSpots.map(() => {
-      const group = new Group();
-      for (const [geometry, material] of [[shapes.dough, dough], [shapes.salt, salt]] as const) {
-        const mesh = new Mesh(geometry, material);
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        group.add(mesh);
-      }
-      return group;
-    });
-    return { cookies, dough, salt, glaze, shapes };
-  }, [lowDetail]);
-  useEffect(() => () => { glaze.dispose(); dough.dispose(); salt.dispose(); shapes.dough.dispose(); shapes.salt.dispose(); }, [glaze, dough, salt, shapes]);
-  const plateProfile = useMemo(() => [
-    [0, 0], [.38, 0], [.38, .012], [.53, .04], [.59, .062], [.595, .07], [.58, .072], [.5, .05], [.37, .024], [0, .022],
-  ].map(([x, y]) => new Vector2(x, y)), []);
-  return <group name="pretzel-plate">
-    <mesh castShadow receiveShadow material={glaze}>
-      <latheGeometry args={[plateProfile, lowDetail ? 32 : 80]} />
-    </mesh>
-    {cookies.map((model, i) => <InteractiveCookie key={i} index={i} model={model} {...props} />)}
-  </group>;
 }
 
 function Coffee({ table, onDraggingChange, narrow }: InteractionProps & { narrow: boolean }) {
@@ -252,12 +159,7 @@ const pencilFinishes: Record<string, MeshPhysicalMaterial> = {
   mat7: new MeshPhysicalMaterial({ color: "#d98a90", roughness: .7 }),
 };
 
-function Pencil({ rest, table }: { rest: [number, number, number]; table: TableState }) {
-  const root = useRef<Group>(null!);
-  const { invalidate } = useThree();
-  const [hovered, setHovered] = useState(false);
-  useCursor(hovered && !table.pencilHeld, "grab");
-  const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
+function Pencil({ rest }: { rest: [number, number, number] }) {
   const { scene: pencilModel } = useGLTF("/book/pencil.glb");
   const pencil = useMemo(() => {
     const clone = pencilModel.clone(true);
@@ -270,40 +172,7 @@ function Pencil({ rest, table }: { rest: [number, number, number]; table: TableS
     });
     return clone;
   }, [pencilModel]);
-  // Lying down: along the table. In hand: tip down, leaning back toward the writer.
-  const poses = useMemo(() => ({
-    lying: new Euler(Math.PI / 2, 0, -.28),
-    held: new Euler(.42, .2, -.5),
-    tip: new Vector3(0, -.58 * .6, 0),
-  }), []);
-  const target = useMemo(() => ({ position: new Vector3(), rotation: new Euler() }), []);
-  useFrame((_, delta) => {
-    const group = root.current;
-    const held = table.pencilHeld && sketch.hasPointer;
-    if (held) {
-      const tip = poses.tip.clone().applyEuler(poses.held);
-      target.position.copy(sketch.pointer).sub(tip);
-      target.rotation.copy(poses.held);
-    } else {
-      target.position.set(rest[0], rest[1], rest[2]);
-      target.rotation.copy(poses.lying);
-    }
-    const k = reduced ? 1 : 1 - Math.exp(-Math.min(delta, .05) * 14);
-    group.position.lerp(target.position, k);
-    group.rotation.x += (target.rotation.x - group.rotation.x) * k;
-    group.rotation.y += (target.rotation.y - group.rotation.y) * k;
-    group.rotation.z += (target.rotation.z - group.rotation.z) * k;
-    if (group.position.distanceToSquared(target.position) > 1e-7 || Math.abs(group.rotation.x - target.rotation.x) > 1e-4) invalidate();
-  });
-  return <group
-    ref={root}
-    name="pencil"
-    position={rest}
-    rotation={[Math.PI / 2, 0, -.28]}
-    onPointerDown={e => { if (table.pencilHeld) return; e.stopPropagation(); table.setPencil(true); }}
-    onPointerOver={e => { e.stopPropagation(); setHovered(true); }}
-    onPointerOut={() => setHovered(false)}
-  >
+  return <group name="pencil" position={rest} rotation={[Math.PI / 2, 0, -.28]}>
     <primitive object={pencil} scale={.6} />
   </group>;
 }
@@ -321,8 +190,7 @@ export default function TableDecor({ table, onDraggingChange }: InteractionProps
       <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />
       <Lightformer form="ring" intensity={.5} color="#ffffff" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
     </Environment>
-    <group position={narrow ? [-.95, 0, -1.65] : [-2.03, 0, -.35]} scale={.75}><CookiePlate table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
-    <group position={narrow ? [.93, 0, -1.5] : [1.78, 0, -.35]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
-    <Pencil rest={narrow ? [.6, .023, 1.65] : [1.65, .023, .56]} table={table} />
+    <group position={narrow ? [.62, 0, -1.55] : [1.62, 0, -.55]}><Coffee table={table} onDraggingChange={onDraggingChange} narrow={narrow} /></group>
+    <Pencil rest={narrow ? [-.45, .023, 1.35] : [-1.55, .023, .5]} />
   </>;
 }

@@ -270,15 +270,50 @@ button:disabled { cursor: default; }
 .book-poster-hidden { opacity: 0; }
 .book-overlay[data-ready="false"] .book-three-frame { opacity: 0; }
 .book-three-frame { position: absolute !important; inset: 0; z-index: 1; display: block; width: 100% !important; height: 100% !important; cursor: pointer; pointer-events: auto; touch-action: none; }
-.book-three-frame[data-pencil] { cursor: crosshair; }
 .book-three-frame > div, .book-three-frame canvas, .book-three-canvas { display: block; width: 100% !important; height: 100% !important; touch-action: none; }
+/* The chapter card: slides in from the right while a pretzel is held up.
+   Light, like a page set down beside the bowl; its width is CARD_WIDTH in
+   pretzel-story.tsx, which the held pretzel centres itself against. */
+.pretzel-hint { color: var(--color-ink-soft); }
+.pretzel-card {
+  --color-paper: #ffffff;
+  --color-ink: #1c1c1c;
+  --color-ink-soft: rgba(28, 28, 28, .6);
+  --color-ink-muted: #aaaaaa;
+  --color-rule: rgba(28, 28, 28, .16);
+  color-scheme: light;
+  position: absolute; z-index: 6; top: 16px; right: 16px; bottom: 16px;
+  width: min(560px, 46vw); overflow: auto;
+  display: flex; flex-direction: column;
+  padding: 28px 40px 24px;
+  background: var(--color-paper); color: var(--color-ink);
+  border-radius: 20px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, .45);
+  transform: translateX(calc(100% + 32px));
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+.pretzel-card[data-open] { transform: none; }
+.pretzel-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); font-size: var(--text-sm); }
+.pretzel-card-title { margin: auto 0 var(--space-5); padding-top: var(--space-6); font-family: var(--font-display); font-size: clamp(40px, 4.6vw, 68px); font-weight: 400; line-height: 1.02; letter-spacing: -.045em; }
+.pretzel-card-text { font-size: 20px; line-height: 1.5; letter-spacing: var(--tracking-body); color: var(--color-ink); max-width: 30em; }
+.pretzel-card .storybook-links { margin-top: var(--space-5); font-size: var(--text-base); }
+.pretzel-card-nav { display: flex; justify-content: space-between; margin-top: auto; padding-top: var(--space-6); border-top: var(--line) solid var(--color-rule); font-size: var(--text-sm); }
+.pretzel-card-nav .ui-button { min-height: 44px; }
+/* The card takes the top-right corner, so the exit pill steps aside. */
+.book-overlay:has(.pretzel-card[data-open]) .book-overlay-enter { opacity: 0; pointer-events: none; }
+.book-overlay-enter, .book-toys { transition: opacity var(--ease); }
+.storybook[data-open] .book-toys { opacity: 0; pointer-events: none; }
+@media (max-width: 700px) {
+  .pretzel-card { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 56vh; padding: 20px 22px max(16px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0; transform: translateY(100%); }
+  .pretzel-card-title { font-size: 38px; margin: var(--space-4) 0 var(--space-3); padding-top: 0; }
+  .pretzel-card-text { font-size: 17px; }
+}
 @media (max-width: 700px) {
   .book-overlay-enter { top: 18px; right: 16px; }
-  /* Up close the plate reaches the top edge, so phones keep the toys down by the thumbs. */
-  .book-toys { top: auto; left: 16px; right: 16px; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 64px); max-width: none; justify-content: center; gap: var(--space-2); }
+  .book-toys { top: 18px; left: 16px; gap: var(--space-2); }
   .book-toys .ui-button--pill { padding: 9px 13px; }
-  .storybook-bar { bottom: max(14px, env(safe-area-inset-bottom)); width: calc(100% - 32px); flex-wrap: wrap; justify-content: center; gap: 0 var(--space-5); }
-  .storybook-pagination { gap: var(--space-3); }
+  .storybook-bar { bottom: max(14px, env(safe-area-inset-bottom)); width: calc(100% - 32px); flex-direction: column; gap: var(--space-2); text-align: center; }
+  .storybook-pagination { flex-direction: column; gap: var(--space-1); }
   .storybook-pagination .ui-meta { min-width: 72px; }
   /* Read as text rises from the bottom, above the bar, so its summary stays reachable. */
   .book-reading-panel { top: auto; left: 12px; right: 12px; bottom: 112px; width: auto; max-height: 62vh; }
