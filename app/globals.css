@@ -10,8 +10,8 @@
 
 /* === TOKENS === */
 @theme {
-  --font-display: Arial, Helvetica, sans-serif;
-  --font-body: Arial, Helvetica, sans-serif;
+  --font-display: "Areal", "Areal Fallback", Arial, Helvetica, sans-serif;
+  --font-body: "Areal", "Areal Fallback", Arial, Helvetica, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
   --font-pixel: var(--font-pixel), monospace; /* /fishing only */
 
@@ -60,6 +60,26 @@ html[data-theme="dark"] {
   --color-ink-soft: rgba(255, 255, 255, .6);
   --color-rule: rgba(255, 255, 255, .18);
   --color-selection: rgba(255, 255, 255, .22);
+}
+
+/* === FONT ===
+  Areal, Dinamo's Arial revival for Are.na (abcdinamo.com/free/areal), one
+  variable file with wght, slnt, MONO and DRKM axes. The fallback is Arial
+  sized to Areal's metrics (values from are.al.are.na) so the swap doesn't
+  shift the layout. */
+@font-face {
+  font-family: "Areal";
+  src: url("/fonts/areal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Areal Fallback";
+  src: local("Arial");
+  ascent-override: 87.13%;
+  descent-override: 20.84%;
+  line-gap-override: 0%;
+  size-adjust: 100.76%;
 }
 
 /* === BASE === */

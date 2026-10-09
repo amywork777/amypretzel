@@ -96,6 +96,7 @@ export default function RootLayout({
     >
       <head>
         <ThemeFlashScript />
+        <link rel="preload" href="/fonts/areal.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
       <body>{children}</body>
     </html>

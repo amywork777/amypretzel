@@ -20,6 +20,7 @@ import {
   MathUtils,
   RepeatWrapping,
   MeshStandardMaterial,
+  NeutralToneMapping,
   MeshPhysicalMaterial,
   Skeleton,
   SkinnedMesh,
@@ -55,6 +56,7 @@ type BookSheet = {
 
 const TEXTURE_WIDTH = 900;
 const TEXTURE_HEIGHT = 1200;
+const PRINT_SCALE = 1.5;
 const PAGE_WIDTH = 1.34;
 const PAGE_HEIGHT = 1.9;
 const PAGE_DEPTH = 0.018;
@@ -121,8 +123,8 @@ function seededJitter(seed: number) {
 
 function printFont(size: number, family = "--font-body") {
   return family === "--font-display"
-    ? `600 ${size}px "Helvetica Neue", Helvetica, Arial, sans-serif`
-    : `400 ${size}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+    ? `600 ${size}px Areal, Arial, sans-serif`
+    : `400 ${size}px Areal, Arial, sans-serif`;
 }
 
 let paperBase: HTMLCanvasElement | undefined;
@@ -238,8 +240,12 @@ function isDrawable(page: TexturePage) {
 
 function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
   const canvas = document.createElement("canvas");
-  canvas.width = lowDetail ? 768 : TEXTURE_WIDTH;
-  canvas.height = lowDetail ? 1024 : TEXTURE_HEIGHT;
+  // Pages are laid out in TEXTURE_WIDTH units and printed denser than that:
+  // an open spread on a Retina laptop shows each page ~1300px wide, and a
+  // 900px texture stretched over it read as blurry type.
+  const scale = lowDetail ? 1 : PRINT_SCALE;
+  canvas.width = TEXTURE_WIDTH * scale;
+  canvas.height = TEXTURE_HEIGHT * scale;
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     throw new Error("Could not create page texture context");
@@ -248,7 +254,8 @@ function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
   ctx.scale(canvas.width / TEXTURE_WIDTH, canvas.height / TEXTURE_HEIGHT);
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
-  texture.anisotropy = 8;
+  // Clamped to the GPU's maximum; keeps type sharp on pages seen at a slant.
+  texture.anisotropy = 16;
 
   const paint = () => {
     if (content.kind === "cover") drawCover(ctx);
@@ -266,8 +273,9 @@ function createPageCanvasTexture(content: TexturePage, lowDetail: boolean) {
 
 function usePageTexture(content: TexturePage, id: string) {
   const lowDetail = useCompactBook();
-  // These pages use installed system fonts. Redrawing after fonts.ready only
-  // repeated all of the canvas work and uploaded every texture a second time.
+  // loadBook() waits for Areal before this module renders, so one paint is
+  // enough. Redrawing after fonts.ready repeated all the canvas work and
+  // uploaded every texture a second time.
   const { texture, surface } = useMemo(() => createPageCanvasTexture(content, lowDetail), [content, lowDetail]);
   // Registered on mount, not when the texture is made: development mounts
   // twice, and a cleanup would otherwise leave the page undrawable.
@@ -1022,14 +1030,19 @@ function BookCanvas({
         shadows="variance"
         frameloop="demand"
         camera={{ position: [0.82, 3.36, 2.25], fov: FOV }}
-        // Phones read the page up close, so they render at the screen's own
-        // density; at DPR 1 the type was jagged.
-        dpr={lowDetail ? [1, 2] : [1, 1.5]}
+        // Render at the screen's own density, up to 2x. Desktop was capped at
+        // 1.5x, which Retina screens upscaled into a soft, blurry book.
+        dpr={[1, 2]}
         gl={{ alpha: false, antialias: !lowDetail, powerPreference: "high-performance" }}
         // The contact-shadow pass clears its render target with the renderer's
         // clear alpha; on an opaque canvas that is 1, which paints the whole
         // shadow plane dark instead of only where something casts.
-        onCreated={({ gl }) => gl.setClearAlpha(0)}
+        onCreated={({ gl }) => {
+          gl.setClearAlpha(0);
+          // ACES (the default) greys whites out; Neutral keeps the paper white
+          // and the black table black, so the book reads crisp, not muddy.
+          gl.toneMapping = NeutralToneMapping;
+        }}
       >
         <BookScene sheets={sheets} page={page} onPageChange={onPageChange} table={table} side={side} />
         <SceneReady onReady={onReady} />
