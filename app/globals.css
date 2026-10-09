@@ -63,14 +63,15 @@ html[data-theme="dark"] {
 }
 
 /* === FONT ===
-  Areal, Dinamo's Arial revival for Are.na (abcdinamo.com/free/areal), one
-  variable file with wght, slnt, MONO and DRKM axes. The fallback is Arial
-  sized to Areal's metrics (values from are.al.are.na) so the swap doesn't
-  shift the layout. */
+  ABC Areal, Dinamo's Arial revival for Are.na, under Dinamo's free fonts
+  licence (abcdinamo.com/free/areal): self-hosting is allowed, sharing the
+  file is not, which is why this repo is private. One variable file with
+  wght 400-700, slnt and DRKM axes. The fallback is Arial sized to Areal's
+  metrics (values from are.al.are.na) so the swap doesn't shift the layout. */
 @font-face {
   font-family: "Areal";
   src: url("/fonts/areal.woff2") format("woff2");
-  font-weight: 100 900;
+  font-weight: 400 700;
   font-display: swap;
 }
 @font-face {
