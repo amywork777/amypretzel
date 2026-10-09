@@ -207,12 +207,16 @@ button:disabled { cursor: default; }
 
 /* === SITE HEADER === */
 .site-header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding-top: 22px; padding-bottom: var(--space-2); }
-/* The mark is a chrome balloon pretzel (scripts/render-logo.mjs writes
-   /pretzel-chrome.png). It skips the image optimiser, whose cache kept
-   serving an older mark under the same name. Silver reads on paper and in
-   dark mode alike; hovering squishes it like a jelly charm. */
+/* The mark is a chrome balloon pretzel (scripts/render-logo.mjs). Chrome
+   shows what it reflects, so it's rendered twice, lit to stand out on white
+   and on black, and the theme picks one. Served directly: the image
+   optimiser's cache kept serving older marks. Hovering squishes it like a
+   jelly charm. */
 .site-mark { display: inline-flex; width: 44px; height: 44px; }
+.site-mark-dark, html[data-theme="dark"] .site-mark-light { display: none; }
+html[data-theme="dark"] .site-mark-dark { display: block; }
 .site-mark img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18)); transform-origin: 50% 85%; }
+html[data-theme="dark"] .site-mark img { filter: none; }
 .site-mark:hover img, .site-mark:focus-visible img { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
 @keyframes mark-squish {
   0% { transform: scale(1, 1); }

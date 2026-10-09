@@ -28,28 +28,38 @@ function ico(images) {
   return Buffer.concat([header, ...images.map(image => image.png)]);
 }
 
+async function photograph(page, on) {
+  await page.goto(`${url}?on=${on}`, { waitUntil: 'networkidle' });
+  // Keep the dev-mode badge out of the photo, and the page's paper colour.
+  await page.addStyleTag({ content: 'nextjs-portal { display: none !important; } html, body { background: transparent !important; }' });
+  await page.waitForTimeout(2500);
+  const raw = await page.locator('#logo canvas').screenshot({ omitBackground: true });
+  await writeFile(resolve('tmp', `logo-raw-${on}.png`), raw);
+  return sharp(raw).trim({ threshold: 1 }).extend({ top: 24, bottom: 24, left: 24, right: 24, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+}
+
+// Chrome shows what it reflects, so the mark is rendered twice: lit to stand
+// out on white pages and lit to stand out on black ones.
 (async () => {
   const browser = await chromium.launch({ channel: 'chrome', args: ['--use-gl=angle', '--use-angle=metal', '--ignore-gpu-blocklist'] });
   try {
     const page = await browser.newPage({ viewport: { width: 1024, height: 1024 } });
-    await page.goto(url, { waitUntil: 'networkidle' });
-    // Keep the dev-mode badge out of the photo.
-    await page.addStyleTag({ content: 'nextjs-portal { display: none !important; } html, body { background: transparent !important; }' });
-    await page.waitForTimeout(2500);
-    const raw = await page.locator('#logo canvas').screenshot({ omitBackground: true });
-    const mark = await sharp(raw).trim({ threshold: 1 }).extend({ top: 24, bottom: 24, left: 24, right: 24, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
-    const square = size => sharp(mark).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
-    // The nav shows it at 44px; 192 keeps it sharp at 4x without the image optimiser.
-    await writeFile(out('pretzel-chrome.png'), await square(192));
-    const [p16, p32] = [await square(16), await square(32)];
-    await writeFile(out('favicon-16x16.png'), p16);
-    await writeFile(out('favicon-32x32.png'), p32);
-    await writeFile(resolve('app', 'favicon.ico'), ico([{ size: 16, png: p16 }, { size: 32, png: p32 }]));
-    // iOS fills transparency with black, so the home-screen icon sits on white.
-    const inner = await sharp(mark).resize(140, 140, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
-    await sharp({ create: { width: 180, height: 180, channels: 4, background: '#ffffff' } })
-      .composite([{ input: inner, gravity: 'center' }]).png().toFile(out('apple-touch-icon.png'));
-    await writeFile(resolve('tmp', 'logo-raw.png'), raw);
+    for (const on of ['white', 'black']) {
+      const mark = await photograph(page, on);
+      const square = size => sharp(mark).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+      // The nav shows it at 44px; 192 keeps it sharp at 4x without the image optimiser.
+      await writeFile(out(`pretzel-chrome-on-${on}.png`), await square(192));
+      const [p16, p32] = [await square(16), await square(32)];
+      await writeFile(out(`favicon-16x16-on-${on}.png`), p16);
+      await writeFile(out(`favicon-32x32-on-${on}.png`), p32);
+      if (on === 'white') {
+        await writeFile(resolve('app', 'favicon.ico'), ico([{ size: 16, png: p16 }, { size: 32, png: p32 }]));
+        // iOS fills transparency with black, so the home-screen icon sits on white.
+        const inner = await sharp(mark).resize(140, 140, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+        await sharp({ create: { width: 180, height: 180, channels: 4, background: '#ffffff' } })
+          .composite([{ input: inner, gravity: 'center' }]).png().toFile(out('apple-touch-icon.png'));
+      }
+    }
   } finally {
     await browser.close();
   }
