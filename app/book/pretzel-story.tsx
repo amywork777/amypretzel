@@ -1,11 +1,12 @@
 "use client";
 
-// A bowl of pretzels on the table, one for each chapter of Amy's story. Pick
-// one and it floats up out of the bowl while its chapter slides in beside it.
+// A bowl of pretzels on the table, one for each chapter of Amy's story. The
+// first chapter rises on its own; pick any other and it floats up out of the
+// bowl while its chapter slides in beside it.
 // After Melike Turgut's site (meliketurgut.com): one object per chapter, the
 // chosen one held up as the hero, its story in a card alongside.
 
-import { ContactShadows, OrbitControls, PerspectiveCamera, RoundedBox, useCursor } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, OrbitControls, PerspectiveCamera, RoundedBox, useCursor } from "@react-three/drei";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { easing } from "maath";
 import Link from "next/link";
@@ -29,8 +30,6 @@ import {
 import { Button } from "../_ui/button";
 import { storyChapters } from "./chapters";
 import { createPretzelGeometry, type PretzelKind } from "./pretzel-geometry";
-import TableDecor from "./table-decor";
-import { useTableState, type TableState } from "./table-interactions";
 import { useCompactBook } from "./use-compact-book";
 
 const FOV = 42;
@@ -83,6 +82,8 @@ const FILLER_POSES: Pose[] = Array.from({ length: FILLER_COUNT }, (_, i) => {
   };
 });
 
+// In story order: clockwise round the bowl from the front left, as the
+// viewer sees it, with the goodbye in the middle.
 const CHAPTER_POSES: Pose[] = storyChapters.map((_, i) => {
   const centre = i === storyChapters.length - 1;
   const angle = i * (Math.PI * 2 / (storyChapters.length - 1)) + 2.2;
@@ -130,7 +131,8 @@ function FillerPretzels() {
 
 // Where a chosen pretzel floats: in camera space, centred in the part of the
 // screen the chapter card leaves free, upright and facing the viewer.
-const HELD_DEPTH = 2.2;
+// Close to the camera, so the bowl (about 2.3 away at its front rim) stays behind the veil.
+const HELD_DEPTH = 1.6;
 function heldPose(width: number, height: number, compact: boolean) {
   const aspect = width / height;
   const halfHeight = HELD_DEPTH * HALF_FOV_TAN;
@@ -236,7 +238,7 @@ function Scrim({ open }: { open: boolean }) {
     const m = mesh.current;
     (m.material as MeshBasicMaterial).opacity = opacity.current;
     m.visible = opacity.current > .002;
-    m.position.set(0, 0, -(HELD_DEPTH + .25));
+    m.position.set(0, 0, -(HELD_DEPTH + .2));
     camera.localToWorld(m.position);
     m.quaternion.copy(camera.quaternion);
     if (Math.abs(opacity.current - target) > .002) invalidate();
@@ -277,9 +279,9 @@ function Tabletop() {
   </RoundedBox>;
 }
 
-// The table view: the bowl in the middle, the cup and pencil around it.
+// The table view: just the bowl, in the middle.
 function tablePosition(aspect: number) {
-  const distance = Math.max(3.7, 3 / aspect);
+  const distance = Math.max(3.2, 2.5 / aspect);
   return new Vector3(distance * 0.12, distance * 0.84, distance * 0.53);
 }
 
@@ -370,17 +372,13 @@ function SceneReady({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
-function PretzelScene({ selected, onSelect, onHover, table }: {
+function PretzelScene({ selected, onSelect, onHover }: {
   selected: number | null;
   onSelect: (index: number) => void;
   onHover: (index: number | null) => void;
-  table: TableState;
 }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const lowDetail = useCompactBook();
-  const onDraggingChange = useCallback((dragging: boolean) => {
-    if (controls.current) controls.current.enabled = !dragging;
-  }, []);
   return <>
     <CanvasSizer />
     <ResponsiveCamera />
@@ -406,7 +404,14 @@ function PretzelScene({ selected, onSelect, onHover, table }: {
     <directionalLight position={[1.5, 4, 5]} intensity={0.9} color="#ffffff" />
     <Tabletop />
     <ContactShadows position={[0, 0.0015, 0]} opacity={lowDetail ? 0.3 : 0.42} scale={[7.5, 6]} blur={2.4} far={1.3} resolution={lowDetail ? 256 : 512} color="#000000" frames={Infinity} />
-    <TableDecor table={table} onDraggingChange={onDraggingChange} />
+    {/* Reflection cards live only in the environment, outside the visible scene. */}
+    <Environment resolution={lowDetail ? 64 : 256} frames={1} environmentIntensity={.55}>
+      <color attach="background" args={["#0a0a0a"]} />
+      <Lightformer form="rect" intensity={3} position={[-3, 4, 2]} scale={[3, 4, 1]} target={[0, 0, 0]} />
+      <Lightformer form="rect" intensity={2} position={[-1, 3, -3]} scale={[3, 2, 1]} target={[0, 0, 0]} />
+      <Lightformer form="rect" intensity={1.5} position={[4, 3, -3]} scale={[1, 4, 1]} target={[0, 0, 0]} />
+      <Lightformer form="ring" intensity={.5} color="#ffffff" position={[0, 6, 0]} scale={5} rotation-x={Math.PI / 2} />
+    </Environment>
     <Bowl />
     <FillerPretzels />
     <Scrim open={selected !== null} />
@@ -429,16 +434,11 @@ function PretzelScene({ selected, onSelect, onHover, table }: {
 
 // ---------------------------------------------------------------- the page
 
-function TableButtons({ table }: { table: TableState }) {
-  return <div className="book-toys">
-    <Button variant="pill" onClick={() => table.setCoffee(!table.coffeeTipped)}>{table.coffeeTipped ? "Stand the cup up" : "Spill coffee"}</Button>
-    {table.coffeeSpilled && <Button variant="text" onClick={table.reset}>Wipe the table</Button>}
-    <p className="sr-only" role="status">{table.coffeeSpilled ? "Coffee spilled." : ""}</p>
-  </div>;
-}
+// After the bowl has been on screen for a moment, the first chapter rises by
+// itself so the story starts at the beginning.
+const FIRST_CHAPTER_DELAY = 900;
 
 export default function PretzelStory({ onExit, onReady }: { onExit?: () => void; onReady?: () => void }) {
-  const table = useTableState();
   const [selected, setSelected] = useState<number | null>(null);
   // The card keeps showing the last chapter while it slides away.
   const [shown, setShown] = useState(0);
@@ -477,6 +477,16 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
     return () => window.removeEventListener("keydown", onKey);
   }, [next, previous]);
 
+  const startTimer = useRef<number | null>(null);
+  const touched = useRef(false);
+  useEffect(() => () => { if (startTimer.current !== null) clearTimeout(startTimer.current); }, []);
+  const handleReady = useCallback(() => {
+    onReady?.();
+    startTimer.current = window.setTimeout(() => { if (!touched.current) select(0); }, FIRST_CHAPTER_DELAY);
+  }, [onReady, select]);
+  // Anything the visitor picks first wins over the automatic start.
+  useEffect(() => { if (selected !== null) touched.current = true; }, [selected]);
+
   const open = selected !== null;
   const hint = hovered !== null ? storyChapters[hovered].title : "Pick a pretzel. Each one is a chapter.";
 
@@ -498,12 +508,11 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
               gl.toneMapping = NeutralToneMapping;
             }}
           >
-            <PretzelScene selected={selected} onSelect={select} onHover={setHovered} table={table} />
-            <SceneReady onReady={onReady} />
+            <PretzelScene selected={selected} onSelect={select} onHover={setHovered} />
+            <SceneReady onReady={handleReady} />
           </Canvas>
         </div>
       </div>
-      <TableButtons table={table} />
 
       {!open && <div className="storybook-bar">
         <div className="storybook-pagination">
