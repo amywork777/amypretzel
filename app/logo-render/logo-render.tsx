@@ -3,59 +3,14 @@
 import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMemo } from "react";
-import { Float32BufferAttribute, MeshPhysicalMaterial, NeutralToneMapping, Vector3 } from "three";
-import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { MeshPhysicalMaterial, NeutralToneMapping } from "three";
 import { createPretzelGeometry } from "../book/pretzel-geometry";
-
-// Low, broad swells along the rope: real dough rises a little unevenly.
-function lump(p: Vector3) {
-  return Math.sin(p.x * 23 + p.y * 7) * Math.sin(p.y * 19 - p.z * 11) * .5
-    + Math.sin(p.z * 31 + p.x * 13) * .3
-    + Math.sin((p.x + p.y + p.z) * 57) * .2;
-}
-
-// Bake mottling: the crust browns in patches, darker where it rose highest.
-function mottle(p: Vector3) {
-  return Math.sin(p.y * 41 + p.z * 17) * Math.sin(p.z * 37 - p.x * 23) * .6 + Math.sin((p.y - p.z) * 89) * .4;
-}
-
-const key = (p: Vector3) => `${p.x.toFixed(4)},${p.y.toFixed(4)},${p.z.toFixed(4)}`;
 
 // The pretzel mark: the same rope as the 3D chapters, baked like a real soft
 // pretzel: a glossy lye-dark crust, a pale split belly, coarse salt.
 // Transparent background, square.
 function Mark() {
-  const { dough, toppings } = useMemo(() => {
-    const shape = createPretzelGeometry(false, "logo");
-    // Weld the tube's seam so the swells don't crack it open. The bake colours
-    // differ across the seam, so set them aside by position and restore them.
-    const raw = shape.dough;
-    const rawPosition = raw.getAttribute("position"), rawColor = raw.getAttribute("color");
-    const colours = new Map<string, [number, number, number]>();
-    const p = new Vector3(), n = new Vector3();
-    for (let i = 0; i < rawPosition.count; i++) {
-      const k = key(p.fromBufferAttribute(rawPosition, i));
-      if (!colours.has(k)) colours.set(k, [rawColor.getX(i), rawColor.getY(i), rawColor.getZ(i)]);
-    }
-    raw.deleteAttribute("color");
-    const dough = mergeVertices(raw, 1e-4);
-    const position = dough.getAttribute("position");
-    dough.computeVertexNormals();
-    const normal = dough.getAttribute("normal");
-    const colour = new Float32Array(position.count * 3);
-    for (let i = 0; i < position.count; i++) {
-      p.fromBufferAttribute(position, i);
-      n.fromBufferAttribute(normal, i);
-      const [r, g, b] = colours.get(key(p)) ?? [.56, .31, .13];
-      const shade = 1 + mottle(p) * .1;
-      colour.set([r * shade, g * shade, b * shade], i * 3);
-      p.addScaledVector(n, lump(p) * .0035);
-      position.setXYZ(i, p.x, p.y, p.z);
-    }
-    dough.setAttribute("color", new Float32BufferAttribute(colour, 3));
-    dough.computeVertexNormals();
-    return { dough, toppings: shape.toppings };
-  }, []);
+  const { dough, toppings } = useMemo(() => createPretzelGeometry(false, "logo"), []);
   const materials = useMemo(() => ({
     // The lye bath leaves a thin glossy skin over a slightly rough crust.
     crust: new MeshPhysicalMaterial({ vertexColors: true, roughness: .62, clearcoat: .35, clearcoatRoughness: .45 }),

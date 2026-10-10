@@ -1,8 +1,8 @@
 "use client";
 
 // Six pretzels on the table, one for each chapter of Amy's story, in order.
-// The first chapter rises on its own; pick any other and it floats up off
-// the table while its chapter slides in beside it.
+// They all lie on the table at first; pick one and it floats up off the
+// table while its chapter slides in beside it.
 // After Melike Turgut's site (meliketurgut.com): one object per chapter, the
 // chosen one held up as the hero, its story in a card alongside.
 
@@ -72,21 +72,22 @@ function chapterPose(i: number, narrow: boolean): Pose {
 
 function usePretzelMaterials() {
   const materials = useMemo(() => ({
-    // The bake colour lives in the geometry's vertex colours; the egg wash is the clearcoat.
-    dough: new MeshPhysicalMaterial({ vertexColors: true, roughness: .5, clearcoat: .8, clearcoatRoughness: .28, sheen: .3, sheenColor: "#f0c090" }),
-    toppings: new MeshPhysicalMaterial({ vertexColors: true, roughness: .3, clearcoat: .4, flatShading: true }),
+    // The bake colour lives in the geometry's vertex colours. The egg wash is a
+    // thin, soft clearcoat: a sheen on a slightly rough crust, not a glaze.
+    dough: new MeshPhysicalMaterial({ vertexColors: true, roughness: .6, clearcoat: .4, clearcoatRoughness: .42, sheen: .35, sheenColor: "#f0c090" }),
+    toppings: new MeshPhysicalMaterial({ vertexColors: true, roughness: .28, clearcoat: .4, flatShading: true }),
   }), []);
   useEffect(() => () => { materials.dough.dispose(); materials.toppings.dispose(); }, [materials]);
   return materials;
 }
 
-// A dip is glossy and a touch thick; piped icing is satin. Both are real
+// A dip is a soft chocolate shine, not a candy shell; piped icing is satin. Both are real
 // layers over the dough, so they catch the light and cast their own shadow.
 function useFinishMaterials(kind: PretzelKind) {
   const materials = useMemo(() => {
     const { coat, drizzle } = pretzelFinish(kind);
     return {
-      coat: coat ? new MeshPhysicalMaterial({ color: coat, roughness: .3, clearcoat: 1, clearcoatRoughness: .15, side: DoubleSide }) : null,
+      coat: coat ? new MeshPhysicalMaterial({ color: coat, roughness: .38, clearcoat: .7, clearcoatRoughness: .22, sheen: .4, sheenColor: "#ffffff", side: DoubleSide }) : null,
       drizzle: drizzle ? new MeshPhysicalMaterial({ color: drizzle, roughness: .38, clearcoat: .6, clearcoatRoughness: .3 }) : null,
     };
   }, [kind]);
@@ -368,10 +369,12 @@ function PretzelScene({ selected, onSelect }: {
     <ResponsiveCamera />
     <color attach="background" args={["#000000"]} />
     <ambientLight intensity={0.18} />
-    <hemisphereLight args={["#ffffff", "#2a2a2a", 0.55]} />
+    {/* Warm, like the light in a bakery window. */}
+    <hemisphereLight args={["#fff4e6", "#2a2a2a", 0.55]} />
     <directionalLight
       position={[-3, 6, -3]}
       intensity={2.8}
+      color="#fff0dc"
       castShadow
       shadow-mapSize-width={lowDetail ? 512 : 2048}
       shadow-mapSize-height={lowDetail ? 512 : 2048}
@@ -416,10 +419,6 @@ function PretzelScene({ selected, onSelect }: {
 
 // ---------------------------------------------------------------- the page
 
-// After the pretzels have been on screen for a moment, the first chapter rises by
-// itself so the story starts at the beginning.
-const FIRST_CHAPTER_DELAY = 900;
-
 export default function PretzelStory({ onExit, onReady }: { onExit?: () => void; onReady?: () => void }) {
   const [selected, setSelected] = useState<number | null>(null);
   // The card keeps showing the last chapter while it slides away.
@@ -458,15 +457,7 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
     return () => window.removeEventListener("keydown", onKey);
   }, [next, previous]);
 
-  const startTimer = useRef<number | null>(null);
-  const touched = useRef(false);
-  useEffect(() => () => { if (startTimer.current !== null) clearTimeout(startTimer.current); }, []);
-  const handleReady = useCallback(() => {
-    onReady?.();
-    startTimer.current = window.setTimeout(() => { if (!touched.current) select(0); }, FIRST_CHAPTER_DELAY);
-  }, [onReady, select]);
-  // Anything the visitor picks first wins over the automatic start.
-  useEffect(() => { if (selected !== null) touched.current = true; }, [selected]);
+  const handleReady = useCallback(() => onReady?.(), [onReady]);
 
   const open = selected !== null;
 
@@ -494,9 +485,9 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
         </div>
       </div>
 
-      {/* No words on the table: chapter one rises by itself and the pretzels
-          name themselves on hover. Keyboard and screen-reader visitors still
-          get a way in and the whole story as text. */}
+      {/* No words on the table: the pretzels all lie on it until one is picked,
+          and name themselves on hover. Keyboard and screen-reader visitors
+          still get a way in and the whole story as text. */}
       {!open && <Button variant="pill" className="pretzel-start sr-only focus:not-sr-only" onClick={() => select(0)}>Start at the beginning</Button>}
       <div className="sr-only">
         {storyChapters.map(c => <section key={c.id}><h2>{c.title}</h2><p>{c.text}</p></section>)}
