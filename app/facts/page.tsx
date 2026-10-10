@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Page, PageIntro, SectionHeading, SiteFooter } from "../_ui/layout";
 import { facts } from "./facts";
-import { FoldFigure } from "./fold-figures";
+import { FactFigure } from "./figures";
 
 export const metadata: Metadata = {
   title: "Cool facts",
@@ -25,13 +25,13 @@ export default function FactsPage() {
             </header>
             <div className="ui-prose">
               {f.body.map((p, i) => <p key={i}>{p}</p>)}
-              {f.figure && <figure className="fact-figure"><FoldFigure {...f.figure} scale={1.7} /></figure>}
+              {f.figure && <figure className="fact-figure"><FactFigure {...f.figure} scale={1.7} /></figure>}
               {f.toolbox && <>
                 <h4>{f.toolbox.title}</h4>
                 <div className="fact-toolbox">
                   {f.toolbox.techniques.map(t => (
                     <figure key={t.name} className="fact-figure">
-                      <FoldFigure {...t.figure} />
+                      <FactFigure {...t.figure} />
                       <figcaption><strong>{t.name}</strong> {t.text}</figcaption>
                     </figure>
                   ))}

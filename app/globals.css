@@ -190,14 +190,14 @@ button:disabled { cursor: default; }
 .fact-figure figcaption strong { color: var(--color-ink); font-weight: 500; }
 .fact-toolbox .fact-figure { margin: 0; }
 .fact-toolbox { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-5); }
-.fold-figure { display: grid; place-items: center; padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); }
-.fact-toolbox .fold-figure { height: 168px; }
-.fold-figure svg { display: block; max-width: 100%; height: auto; overflow: visible; }
-.fold-panel { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: var(--line); stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.fold-ghost { fill: none; stroke: var(--color-ink-muted); stroke-width: var(--line); stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
-.fold-skin { fill: none; stroke: var(--color-ink-soft); stroke-width: var(--line); vector-effect: non-scaling-stroke; }
-.fold-hinge { fill: var(--color-ink); }
-.fold-label, .fold-caption { font-family: var(--font-body); font-size: 11px; fill: var(--color-ink-soft); }
+.fig { display: grid; place-items: center; padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); }
+.fact-toolbox .fig { height: 168px; }
+.fig svg { display: block; max-width: 100%; height: auto; overflow: visible; }
+.fig-panel { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: var(--line); stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.fig-ghost { fill: none; stroke: var(--color-ink-muted); stroke-width: var(--line); stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.fig-skin { fill: none; stroke: var(--color-ink-soft); stroke-width: var(--line); vector-effect: non-scaling-stroke; }
+.fig-hinge { fill: var(--color-ink); }
+.fig-label, .fig-caption { font-family: var(--font-body); font-size: 11px; fill: var(--color-ink-soft); }
 @media (max-width: 640px) { .fact-toolbox { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .ui-fact { grid-template-columns: 1fr; gap: var(--space-3); } }
 

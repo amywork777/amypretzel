@@ -1,6 +1,6 @@
-import type { FoldFigureKind } from "./fold-figures";
+import type { FigureKind } from "./figures";
 
-type Figure = { kind: FoldFigureKind; label: string };
+type Figure = { kind: FigureKind; label: string };
 type Technique = { name: string; text: string; figure: Figure };
 export type Fact = {
   slug: string;
@@ -13,6 +13,26 @@ export type Fact = {
 
 /* Newest first. Each paragraph in body renders as its own <p>. */
 export const facts: Fact[] = [
+  {
+    slug: "bias",
+    title: "Fabric stretches on the diagonal",
+    subject: "Fabric",
+    body: [
+      "Pull a woven fabric along its threads and it barely stretches. Pull it diagonally, on the bias, and it stretches a lot.",
+      "The threads themselves don't stretch. But the little squares between them can lean over into diamonds, so the fabric gets longer one way and narrower the other. That's why bias-cut dresses drape and cling to the body.",
+    ],
+    figure: { kind: "bias", label: "A woven square turned 45 degrees. Pulled sideways, its square cells lean into diamonds: wider and shorter, with every thread the same length." },
+  },
+  {
+    slug: "seam-allowance",
+    title: "Seam allowance",
+    subject: "Sewing",
+    body: [
+      "Every CAD model of a sewn product is wrong by about 10mm. That's seam allowance, the strip of fabric tucked inside every stitch.",
+      "CAD shows the finished shape, but the factory has to cut each flat piece bigger, with that extra strip all the way round. Most designers learn this when their first prototype comes back too small.",
+    ],
+    figure: { kind: "seam", label: "A cut fabric piece with a dashed stitch line 10mm inside its edge. Sewn, that 10mm folds inside the seam where you can't see it." },
+  },
   {
     slug: "thickness-accommodation",
     title: "Thickness accommodation",
