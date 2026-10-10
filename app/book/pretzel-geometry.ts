@@ -21,7 +21,7 @@ import { mergeGeometries, mergeVertices } from "three/examples/jsm/utils/BufferG
 export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "funfetti" | "ube" | "matcha" | "filler" | "logo" | "secret";
 
 type Topping = "salt" | "sprinkles" | "nonpareils" | "none";
-type Bake = "golden" | "lye";
+type Bake = "golden";
 type Recipe = {
   topping: Topping;
   coat?: string;
@@ -54,9 +54,9 @@ const RECIPES: Record<PretzelKind, Recipe> = {
   matcha: { topping: "salt", coat: "#9bb46a", dip: "half", drizzle: "#f6f1e7", rope: 1, size: 1, wonk: .8 },
   // The bowl's plain filling: small, thin, crunchy, so the chapters stand out.
   filler: { topping: "salt", bake: "golden", rope: .82, size: .9, wonk: 1 },
-  // The site's mark (rendered by app/logo-render): a real soft pretzel, lye-baked
-  // dark with a pale split belly and coarse salt.
-  logo: { topping: "salt", bake: "lye", rope: 1.3, size: 1, wonk: .9, lift: 1.4, score: true, salt: 1.8 },
+  // The site's mark (rendered by app/logo-render): glazed purple, covered in
+  // rainbow sprinkles.
+  logo: { topping: "sprinkles", coat: "#a98ae6", dip: "full", rope: 1.3, size: 1, wonk: .9, lift: 1.4, salt: 3.2 },
   // The stray pretzel that leads to the secret facts page: strawberry glaze,
   // covered in rainbow sprinkles.
   secret: { topping: "sprinkles", coat: "#ff9cc4", dip: "full", rope: 1.3, size: 1, wonk: .9, lift: 1.4, salt: 3.2 },
@@ -93,7 +93,6 @@ const COAT_DEPTH = 1.08;
 // [top crust, body, split] per bake.
 const BAKES: Record<Bake, [Color, Color, Color]> = {
   golden: [new Color("#5e2408"), new Color("#9c4c18"), new Color("#ebbb7c")],
-  lye: [new Color("#2e1104"), new Color("#8a4618"), new Color("#ecc996")],
 };
 const SPRINKLES = ["#f4a7c3", "#8fc9f0", "#f7dd6b", "#9ad8b4", "#ffffff", "#f6a35c", "#e8505b", "#b48be0"].map(c => new Color(c));
 

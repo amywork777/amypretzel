@@ -6,25 +6,26 @@ import { useMemo } from "react";
 import { MeshPhysicalMaterial, NeutralToneMapping } from "three";
 import { createPretzelGeometry, pretzelFinish, type PretzelKind } from "../book/pretzel-geometry";
 
-// The pretzel mark: the same rope as the 3D chapters, baked like a real soft
-// pretzel: a glossy lye-dark crust, a pale split belly, coarse salt. Also
-// renders the secret page's pink sprinkled pretzel (?kind=secret).
+// The pretzel mark: the same rope as the 3D chapters, glazed purple and
+// covered in rainbow sprinkles. Also renders the secret page's pink one
+// (?kind=secret).
 // Transparent background, square.
 function Mark({ kind }: { kind: PretzelKind }) {
-  const { dough, toppings, coat } = useMemo(() => createPretzelGeometry(false, kind), [kind]);
+  // A different twist and scatter for the secret one, so the two aren't twins.
+  const { dough, toppings, coat } = useMemo(() => createPretzelGeometry(false, kind, kind === "secret" ? 4 : 0), [kind]);
   const materials = useMemo(() => ({
     // A glaze: a soft shine, like the dips on the pretzel table.
     coat: new MeshPhysicalMaterial({ color: pretzelFinish(kind).coat, roughness: .38, clearcoat: .7, clearcoatRoughness: .22, sheen: .4, sheenColor: "#ffffff" }),
-    // The lye bath leaves a thin glossy skin over a slightly rough crust.
+    // The baked dough, where it shows past the glaze.
     crust: new MeshPhysicalMaterial({ vertexColors: true, roughness: .62, clearcoat: .35, clearcoatRoughness: .45 }),
-    // Coarse salt: faceted, bright, a little glassy.
-    salt: new MeshPhysicalMaterial({ vertexColors: true, roughness: .28, clearcoat: .4, flatShading: true }),
+    // Sprinkles: bright, a little glossy.
+    toppings: new MeshPhysicalMaterial({ vertexColors: true, roughness: .28, clearcoat: .4, flatShading: true }),
   }), [kind]);
   // Face the camera, lobes up, leaning back a touch so it reads as an object.
   return <group rotation={[-.32, 0, 0]}>
     <group rotation={[0, -Math.PI / 2, 0]}>
       <mesh geometry={dough} material={materials.crust} />
-      <mesh geometry={toppings} material={materials.salt} />
+      <mesh geometry={toppings} material={materials.toppings} />
       {coat && <mesh geometry={coat} material={materials.coat} />}
     </group>
   </group>;
@@ -40,9 +41,9 @@ export default function LogoRender({ kind }: { kind: PretzelKind }) {
       gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); gl.toneMapping = NeutralToneMapping; }}
     >
-      {/* A bakery window up and to the left (warm for the baked mark only), a gentle fill. */}
+      {/* A window up and to the left, a gentle fill. */}
       <ambientLight intensity={.12} />
-      <directionalLight position={[-2.5, 3.5, 3]} intensity={3} color={kind === "logo" ? "#fff4e6" : "#ffffff"} />
+      <directionalLight position={[-2.5, 3.5, 3]} intensity={3} color="#ffffff" />
       <directionalLight position={[3, -1.5, 2]} intensity={.35} />
       <Environment resolution={256} frames={1}>
         <color attach="background" args={["#3a3a3a"]} />
