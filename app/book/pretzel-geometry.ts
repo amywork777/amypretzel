@@ -18,10 +18,10 @@ import { mergeGeometries, mergeVertices } from "three/examples/jsm/utils/BufferG
 // about .86 units across, bottom at x = -.11. Each chapter of the story gets
 // its own kind: a coating, a topping and a slightly different twist.
 
-export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "everything" | "cinnamon" | "matcha" | "filler" | "logo";
+export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "funfetti" | "ube" | "matcha" | "filler" | "logo" | "secret";
 
-type Topping = "salt" | "sprinkles" | "everything" | "cinnamon" | "none";
-type Bake = "pale" | "golden" | "toasty" | "lye";
+type Topping = "salt" | "sprinkles" | "nonpareils" | "none";
+type Bake = "golden" | "lye";
 type Recipe = {
   topping: Topping;
   coat?: string;
@@ -43,12 +43,13 @@ const RECIPES: Record<PretzelKind, Recipe> = {
   sprinkles: { topping: "sprinkles", coat: "#f4ecdc", dip: "full", rope: 1.3, size: .82, wonk: 1.6, salt: 1.7 },
   // The textbook one: a big soft pretzel, golden, scored belly, coarse salt.
   salt: { topping: "salt", bake: "golden", rope: 1.28, size: 1.16, wonk: .5, score: true, salt: 1.6 },
-  // Made a million times over: fully enrobed, perfectly even, a neat drizzle.
-  chocolate: { topping: "none", coat: "#3a2015", dip: "full", drizzle: "#f3efe6", rope: .92, size: 1, wonk: 0 },
-  // Rough, everything seasoning all over, twisted in a hurry.
-  everything: { topping: "everything", bake: "toasty", rope: 1.05, size: 1.02, wonk: 3 },
-  // Thin and crunchy, pale, crusted in cinnamon sugar.
-  cinnamon: { topping: "cinnamon", bake: "pale", rope: .78, size: .96, wonk: 1, salt: 1.4 },
+  // Made a million times over: fully enrobed, perfectly even, a neat pink drizzle.
+  chocolate: { topping: "none", coat: "#3a2015", dip: "full", drizzle: "#f4a7c3", rope: .92, size: .94, wonk: 0 },
+  // A bit of everything, twisted in a hurry: big and wonky, half dipped in white
+  // chocolate, a chocolate drizzle, rainbow nonpareils.
+  funfetti: { topping: "nonpareils", coat: "#f6f1e7", dip: "half", drizzle: "#3a2015", rope: 1.12, size: 1.1, wonk: 3, salt: 1.2 },
+  // Small and thin, fully dipped in lilac ube, a white drizzle.
+  ube: { topping: "none", coat: "#b9a2e0", dip: "full", drizzle: "#f6f1e7", rope: .8, size: .86, wonk: 1 },
   // Half dipped in matcha white chocolate, flaky salt, a white drizzle.
   matcha: { topping: "salt", coat: "#9bb46a", dip: "half", drizzle: "#f6f1e7", rope: 1, size: 1, wonk: .8 },
   // The bowl's plain filling: small, thin, crunchy, so the chapters stand out.
@@ -56,6 +57,9 @@ const RECIPES: Record<PretzelKind, Recipe> = {
   // The site's mark (rendered by app/logo-render): a real soft pretzel, lye-baked
   // dark with a pale split belly and coarse salt.
   logo: { topping: "salt", bake: "lye", rope: 1.3, size: 1, wonk: .9, lift: 1.4, score: true, salt: 1.8 },
+  // The stray pretzel that leads to the secret facts page: strawberry glaze,
+  // covered in rainbow sprinkles.
+  secret: { topping: "sprinkles", coat: "#ff9cc4", dip: "full", rope: 1.3, size: 1, wonk: .9, lift: 1.4, salt: 3.2 },
 };
 
 const rand = (seed: number) => {
@@ -88,12 +92,10 @@ const RADIUS = .1;
 const COAT_DEPTH = 1.08;
 // [top crust, body, split] per bake.
 const BAKES: Record<Bake, [Color, Color, Color]> = {
-  pale: [new Color("#a8642a"), new Color("#d39a55"), new Color("#f2d6a2")],
   golden: [new Color("#5e2408"), new Color("#9c4c18"), new Color("#ebbb7c")],
-  toasty: [new Color("#5a2a10"), new Color("#8f4f22"), new Color("#d8a46a")],
   lye: [new Color("#2e1104"), new Color("#8a4618"), new Color("#ecc996")],
 };
-const SPRINKLES = ["#f4a7c3", "#8fc9f0", "#f7dd6b", "#9ad8b4", "#ffffff", "#f6a35c"].map(c => new Color(c));
+const SPRINKLES = ["#f4a7c3", "#8fc9f0", "#f7dd6b", "#9ad8b4", "#ffffff", "#f6a35c", "#e8505b", "#b48be0"].map(c => new Color(c));
 
 function colourise(geometry: BufferGeometry, colour: Color) {
   const count = geometry.getAttribute("position").count;
@@ -186,7 +188,8 @@ export function createPretzelGeometry(lowDetail: boolean, kind: PretzelKind = "s
   const lift = -.11 - dough.boundingBox!.min.x;
   for (const g of layers) g.translate(lift, 0, 0);
   for (const g of [tube, ...caps]) g.dispose();
-  const baked = bakeDough(dough);
+  // Under a coating the swells would poke through a thin rope, and nobody sees them.
+  const baked = bakeDough(dough, recipe.coat ? 0 : 1);
   dough.dispose();
   return { dough: baked, toppings, coat, drizzle };
 }
@@ -208,7 +211,7 @@ const key = (p: Vector3) => `${p.x.toFixed(4)},${p.y.toFixed(4)},${p.z.toFixed(4
 // The oven's last touch, on the fitted dough: weld the tube's seam so the
 // swells don't crack it open, then swell it and brown it in patches. The bake
 // colours differ across the seam, so they're set aside by position and restored.
-function bakeDough(raw: BufferGeometry) {
+function bakeDough(raw: BufferGeometry, swell: number) {
   const rawPosition = raw.getAttribute("position"), rawColor = raw.getAttribute("color");
   const colours = new Map<string, [number, number, number]>();
   const p = new Vector3(), n = new Vector3();
@@ -230,7 +233,7 @@ function bakeDough(raw: BufferGeometry) {
     const [r, g, b] = colours.get(key(p)) ?? [.56, .31, .13];
     const shade = 1 + mottle(p) * .1;
     colour.set([r * shade, g * shade, b * shade], i * 3);
-    p.addScaledVector(n, lump(p) * .0035);
+    p.addScaledVector(n, lump(p) * .0035 * swell);
     position.setXYZ(i, p.x, p.y, p.z);
   }
   dough.setAttribute("color", new Float32BufferAttribute(colour, 3));
@@ -341,7 +344,7 @@ function drizzleGeometry(curve: CatmullRomCurve3, coated: (p: Vector3) => boolea
 // Toppings sit on the upper half of the rope. Dipped pretzels only carry them
 // on the coating, where they would stick in a real kitchen.
 function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Vector3) => boolean, seed: number, lowDetail: boolean, rope: number) {
-  const counts: Record<Topping, number> = { salt: 30, sprinkles: 46, everything: 170, cinnamon: 150, none: 0 };
+  const counts: Record<Topping, number> = { salt: 30, sprinkles: 46, nonpareils: 170, none: 0 };
   const count = Math.round(counts[recipe.topping] * (recipe.salt ?? 1) * (lowDetail ? .6 : 1));
   const pieces: BufferGeometry[] = [];
   const centre = new Vector3(), tangent = new Vector3(), side = new Vector3(), up = new Vector3(1, 0, 0);
@@ -361,23 +364,13 @@ function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Ve
 
     let piece: BufferGeometry;
     let colour: Color;
-    const kind = recipe.topping === "everything" ? (r(6) < .45 ? "sesame" : r(6) < .85 ? "poppy" : "salt") : recipe.topping;
+    const kind = recipe.topping;
     if (kind === "salt") {
       // Coarse pretzel salt: lots of small chips, a few bigger, not quite white.
       const size = .012 + r(7) ** 2 * .018;
       piece = new IcosahedronGeometry(1, 0);
       m.compose(p, q, new Vector3(size, size * (.6 + r(8) * .5), size * (.8 + r(9) * .4)));
       colour = new Color("#fbfaf6").lerp(new Color("#ddd6c8"), r(10));
-    } else if (kind === "sesame") {
-      piece = new SphereGeometry(1, 6, 4).toNonIndexed();
-      // Seeds lie flat on the surface, turned any way round.
-      along.setFromUnitVectors(new Vector3(0, 0, 1), dir).multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), r(7) * 6));
-      m.compose(p, along, new Vector3(.03, .018, .008));
-      colour = new Color(r(8) < .5 ? "#eadcb4" : "#d9c08a");
-    } else if (kind === "poppy") {
-      piece = new SphereGeometry(1, 5, 3).toNonIndexed();
-      m.compose(p, q, new Vector3(.011, .011, .011));
-      colour = new Color("#1f1d24");
     } else if (kind === "sprinkles") {
       piece = new CylinderGeometry(1, 1, 1, 6).toNonIndexed();
       // Lying on the coating: the stick's axis is perpendicular to the surface normal.
@@ -386,10 +379,11 @@ function toppingGeometry(recipe: Recipe, curve: CatmullRomCurve3, coated: (p: Ve
       m.compose(p.addScaledVector(dir, .004), along, new Vector3(.008, .045, .008));
       colour = SPRINKLES[Math.floor(r(8) * SPRINKLES.length)];
     } else {
-      const size = .006 + r(7) * .006;
-      piece = new IcosahedronGeometry(1, 0);
-      m.compose(p, q, new Vector3(size, size, size));
-      colour = new Color(r(8) < .55 ? "#f6efe2" : "#8a4b22");
+      // Nonpareils: tiny round balls, every colour.
+      const size = .009 + r(7) * .003;
+      piece = new SphereGeometry(1, 6, 4).toNonIndexed();
+      m.compose(p.addScaledVector(dir, size * .4), q, new Vector3(size, size, size));
+      colour = SPRINKLES[Math.floor(r(8) * SPRINKLES.length)];
     }
     piece.applyMatrix4(m);
     if (piece.hasAttribute("uv")) piece.deleteAttribute("uv");

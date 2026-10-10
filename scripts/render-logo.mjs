@@ -1,12 +1,14 @@
 // Photographs the pretzel mark from the dev-only /logo-render page and writes
 // the site's logo and icons. Run against `next dev -p 3002`:
 //   node scripts/render-logo.mjs
+// KIND=secret writes only the homepage's stray pink pretzel, pretzel-secret.png.
 import { chromium } from 'playwright';
 import sharp from 'sharp';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const url = `${process.env.LOGO_RENDER_URL || 'http://localhost:3002'}/logo-render`;
+const kind = process.env.KIND;
+const url = `${process.env.LOGO_RENDER_URL || 'http://localhost:3002'}/logo-render${kind ? `?kind=${kind}` : ''}`;
 const out = file => resolve('public', file);
 
 // A PNG-in-ICO holding the 16 and 32 pixel icons.
@@ -45,6 +47,7 @@ async function photograph(page) {
     const mark = await photograph(page);
     const square = size => sharp(mark).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
     // The nav shows it at 44px; 192 keeps it sharp at 4x without the image optimiser.
+    if (kind) { await writeFile(out(`pretzel-${kind}.png`), await square(192)); return; }
     await writeFile(out('pretzel.png'), await square(192));
     const [p16, p32] = [await square(16), await square(32)];
     await writeFile(out('favicon-16.png'), p16);

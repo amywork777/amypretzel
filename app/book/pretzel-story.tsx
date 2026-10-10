@@ -369,12 +369,11 @@ function PretzelScene({ selected, onSelect }: {
     <ResponsiveCamera />
     <color attach="background" args={["#000000"]} />
     <ambientLight intensity={0.18} />
-    {/* Warm, like the light in a bakery window. */}
-    <hemisphereLight args={["#fff4e6", "#2a2a2a", 0.55]} />
+    <hemisphereLight args={["#ffffff", "#2a2a2a", 0.55]} />
     <directionalLight
       position={[-3, 6, -3]}
       intensity={2.8}
-      color="#fff0dc"
+      color="#ffffff"
       castShadow
       shadow-mapSize-width={lowDetail ? 512 : 2048}
       shadow-mapSize-height={lowDetail ? 512 : 2048}

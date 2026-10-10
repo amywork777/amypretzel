@@ -31,13 +31,13 @@ export const bookChapters: BookChapter[] = [
   },
   {
     id: "building",
-    pretzel: "everything",
+    pretzel: "funfetti",
     title: "building end to end",
     text: "then i wanted to build things end to end: a materials recycling startup, an ai concept-to-cad tool, and a wearable ai journal disguised as jewelry.",
   },
   {
     id: "now",
-    pretzel: "cinnamon",
+    pretzel: "ube",
     title: "now",
     text: "now i'm at vizcom in san francisco, building ai tools for industrial designers. off hours i'm still making maps, terminals, crochet animals and pretzel-shaped objects.",
   },
