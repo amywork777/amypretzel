@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import SiteNav from "../site-nav";
-import { QuietLink, TextLink } from "./link";
+import { TextLink } from "./link";
 
 type Section = "portfolio" | "software" | null;
 
@@ -37,7 +37,7 @@ export function SiteFooter() {
   return (
     <footer className="ui-footer">
       <p className="ui-display ui-footer-signoff">i love meeting people who make things. <TextLink href="mailto:amzyst@gmail.com">say hi :)</TextLink></p>
-      <QuietLink href="/">Home</QuietLink>
+      <TextLink href="/" standalone>Home</TextLink>
     </footer>
   );
 }

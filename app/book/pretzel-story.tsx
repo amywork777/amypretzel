@@ -9,7 +9,6 @@
 import { ContactShadows, Environment, Html, Lightformer, OrbitControls, PerspectiveCamera, RoundedBox, useCursor } from "@react-three/drei";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { easing } from "maath";
-import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ComponentRef, RefObject } from "react";
 import {
@@ -28,6 +27,7 @@ import {
 } from "three";
 
 import { Button } from "../_ui/button";
+import { TextLink } from "../_ui/link";
 import { storyChapters } from "./chapters";
 import { createPretzelGeometry, pretzelFinish, type PretzelKind } from "./pretzel-geometry";
 import { useCompactBook } from "./use-compact-book";
@@ -496,19 +496,19 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
       <section className="pretzel-card" data-open={open || undefined} aria-hidden={!open} aria-live="polite" aria-label={chapter.title} inert={!open}>
         <div className="pretzel-card-head">
           <span className="ui-meta">Chapter {shown + 1} of {storyChapters.length}</span>
-          <Button variant="text" onClick={() => select(null)}>Put it back</Button>
+          <Button variant="pill" onClick={() => select(null)}>Put it back</Button>
         </div>
         <h2 className="pretzel-card-title">{chapter.title}</h2>
         <p className="pretzel-card-text">{chapter.text}</p>
         {shown === last && <nav className="storybook-links" aria-label="Amy's work">
-          <Link href="/portfolio">Objects</Link>
-          <Link href="/software">Software</Link>
+          <TextLink href="/portfolio" standalone>Objects</TextLink>
+          <TextLink href="/software" standalone>Software</TextLink>
         </nav>}
         <div className="pretzel-card-nav">
-          <Button variant="text" disabled={shown === 0} onClick={previous}>Previous</Button>
+          <Button variant="pill" disabled={shown === 0} onClick={previous}>Previous</Button>
           {shown === last
-            ? <Button variant="text" onClick={onExit}>Go to the website</Button>
-            : <Button variant="text" onClick={next}>Next</Button>}
+            ? <Button variant="pill" onClick={onExit}>Go to the website</Button>
+            : <Button variant="pill" onClick={next}>Next</Button>}
         </div>
       </section>
     </div>

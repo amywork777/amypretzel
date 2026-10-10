@@ -120,21 +120,20 @@ button:disabled { cursor: default; }
 .ui-prose strong { color: var(--color-ink); font-weight: 500; }
 
 /* === LINKS === */
-.ui-link { color: var(--color-ink); text-decoration-line: underline; text-decoration-thickness: var(--line); text-decoration-color: currentColor; text-underline-offset: .2em; transition: color var(--ease); }
-.ui-link:hover { color: var(--color-ink-soft); }
-.ui-quiet-link { font-size: var(--text-sm); color: var(--color-ink-soft); text-decoration: none; transition: color var(--ease); }
-.ui-quiet-link:hover { color: var(--color-ink); }
-.ui-link-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-5); margin-top: var(--space-5); font-size: var(--text-sm); }
+/* Every link is the pill button, sized to the text around it so it can sit
+   inside a sentence. */
+.ui-link { display: inline-block; padding: .14em .6em .18em; line-height: 1.1; color: var(--color-ink); text-decoration: none; border: var(--line) solid var(--color-rule); border-radius: var(--radius-pill); transition: color var(--ease), background-color var(--ease), border-color var(--ease); }
+@media (hover: hover) { .ui-link:hover { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); } }
+.ui-link-list { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); margin-top: var(--space-5); font-size: var(--text-sm); }
 
 /* === BUTTONS === */
 .ui-button { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 7px 12px; font: inherit; font-size: var(--text-sm); line-height: 1; letter-spacing: var(--tracking-body); color: var(--color-ink); background: transparent; border: var(--line) solid transparent; transition: color var(--ease), background-color var(--ease), border-color var(--ease); }
+a.ui-button { text-decoration: none; }
 .ui-button:disabled { opacity: .3; }
 .ui-button--outline { border-color: var(--color-rule); border-radius: var(--radius); }
 .ui-button--outline:hover:not(:disabled), .ui-button--outline[aria-pressed="true"] { background: var(--color-surface); }
 .ui-button--pill { padding: 11px 16px; border-color: var(--color-rule); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--color-paper) 50%, transparent); backdrop-filter: blur(6px); }
 @media (hover: hover) { .ui-button--pill:hover:not(:disabled) { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); } }
-.ui-button--text { padding-inline: 0; color: var(--color-ink-soft); }
-.ui-button--text:hover:not(:disabled) { color: var(--color-ink); }
 .ui-icon-button { display: inline-flex; align-items: center; color: var(--color-ink-muted); transition: color var(--ease); }
 .ui-icon-button:hover { color: var(--color-ink); }
 .ui-icon-button svg { width: 16px; height: 16px; }
@@ -153,9 +152,9 @@ button:disabled { cursor: default; }
 @media (min-width: 768px) { .ui-footer { margin-top: var(--space-9); } }
 .ui-footer-signoff { max-width: 16em; color: var(--color-ink-soft); }
 .ui-prev-next { display: flex; justify-content: space-between; gap: var(--space-5); margin-top: var(--space-8); padding: var(--space-5) 0 var(--space-7); border-top: var(--line) solid var(--color-rule); }
-.ui-prev-next a { color: var(--color-ink); text-decoration: none; min-width: 0; transition: color var(--ease); }
+.ui-prev-next a { min-width: 0; padding: var(--space-3) var(--space-4); color: var(--color-ink); text-decoration: none; border: var(--line) solid var(--color-rule); border-radius: var(--radius); transition: background-color var(--ease); }
 .ui-prev-next a:last-child { text-align: right; }
-.ui-prev-next a:hover { color: var(--color-ink-soft); }
+.ui-prev-next a:hover { background: var(--color-surface); }
 .ui-prev-next small { display: block; font-size: var(--text-sm); color: var(--color-ink-soft); margin-bottom: 2px; }
 
 /* === ITEMS: tiles and rows share one caption === */
@@ -281,9 +280,7 @@ button:disabled { cursor: default; }
 .book-overlay-enter { position: absolute; top: 26px; right: 32px; z-index: 5; }
 .storybook { position: relative; height: 100%; width: 100%; }
 .storybook-canvas { position: absolute; inset: 0; }
-.storybook-links { display: flex; gap: var(--space-5); }
-.storybook-links a { color: var(--color-ink); text-decoration-line: underline; text-underline-offset: .2em; transition: color var(--ease); }
-.storybook-links a:hover { color: var(--color-ink-soft); }
+.storybook-links { display: flex; gap: var(--space-3); }
 /* The table's two toys, top left, opposite the exit. */
 .book-loading { position: absolute; inset: auto 0 50px; z-index: 2; text-align: center; color: var(--color-ink-muted); font-size: var(--text-sm); }
 .book-poster { position: absolute; inset: 0; pointer-events: none; z-index: 1; transition: opacity .18s; }
