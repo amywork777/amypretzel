@@ -45,10 +45,10 @@ async function photograph(page) {
     const mark = await photograph(page);
     const square = size => sharp(mark).resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
     // The nav shows it at 44px; 192 keeps it sharp at 4x without the image optimiser.
-    await writeFile(out('pretzel-clay.png'), await square(192));
+    await writeFile(out('pretzel.png'), await square(192));
     const [p16, p32] = [await square(16), await square(32)];
-    await writeFile(out('favicon-clay-16.png'), p16);
-    await writeFile(out('favicon-clay-32.png'), p32);
+    await writeFile(out('favicon-16.png'), p16);
+    await writeFile(out('favicon-32.png'), p32);
     await writeFile(resolve('app', 'favicon.ico'), ico([{ size: 16, png: p16 }, { size: 32, png: p32 }]));
     // iOS fills transparency with black, so the home-screen icon sits on white.
     const inner = await sharp(mark).resize(140, 140, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();

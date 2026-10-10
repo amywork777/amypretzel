@@ -181,6 +181,26 @@ button:disabled { cursor: default; }
   .ui-row { grid-template-columns: 1fr; gap: var(--space-1); }
 }
 
+/* === FACTS: title in the margin, prose beside it === */
+.ui-fact { display: grid; grid-template-columns: 180px minmax(0, 36em); gap: var(--space-4); padding: var(--space-4) 0 var(--space-2); border-bottom: var(--line) solid var(--color-rule); }
+.ui-fact .ui-prose p { font-size: var(--text-base); line-height: 1.5; }
+.ui-fact .ui-prose h4 { font-size: inherit; font-weight: 500; color: var(--color-ink); margin: 2.4em 0 .8em; }
+.fact-figure { margin: 0 0 1.6em; }
+.fact-figure figcaption { font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); margin-top: var(--space-2); }
+.fact-figure figcaption strong { color: var(--color-ink); font-weight: 500; }
+.fact-toolbox .fact-figure { margin: 0; }
+.fact-toolbox { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-5); }
+.fold-figure { display: grid; place-items: center; padding: var(--space-3); border-radius: var(--radius); background: var(--color-surface); }
+.fact-toolbox .fold-figure { height: 168px; }
+.fold-figure svg { display: block; max-width: 100%; height: auto; overflow: visible; }
+.fold-panel { fill: var(--color-paper); stroke: var(--color-ink); stroke-width: var(--line); stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.fold-ghost { fill: none; stroke: var(--color-ink-muted); stroke-width: var(--line); stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.fold-skin { fill: none; stroke: var(--color-ink-soft); stroke-width: var(--line); vector-effect: non-scaling-stroke; }
+.fold-hinge { fill: var(--color-ink); }
+.fold-label, .fold-caption { font-family: var(--font-body); font-size: 11px; fill: var(--color-ink-soft); }
+@media (max-width: 640px) { .fact-toolbox { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .ui-fact { grid-template-columns: 1fr; gap: var(--space-3); } }
+
 /* === DETAIL PAGES === */
 .ui-detail-body { padding-top: var(--space-7); max-width: 40em; }
 @media (min-width: 768px) { .ui-detail-body { padding-top: var(--space-8); } }
@@ -207,10 +227,10 @@ button:disabled { cursor: default; }
 
 /* === SITE HEADER === */
 .site-header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding-top: 22px; padding-bottom: var(--space-2); }
-/* The mark is a chubby clay pretzel (scripts/render-logo.mjs writes
-   /pretzel-clay.png). Mid-tone clay reads on paper and in dark mode alike.
+/* The mark is a real salted soft pretzel (scripts/render-logo.mjs writes
+   /pretzel.png). Its mid-brown crust reads on paper and in dark mode alike.
    Served directly: the image optimiser's cache kept serving older marks.
-   Hovering squishes it like soft clay. */
+   Hovering squishes it like soft dough. */
 .site-mark { display: inline-flex; width: 44px; height: 44px; }
 .site-mark img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18)); transform-origin: 50% 85%; }
 .site-mark:hover img, .site-mark:focus-visible img { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
@@ -237,6 +257,12 @@ button:disabled { cursor: default; }
 @media (min-width: 768px) { .personal-intro { grid-template-columns: 110px 1fr; gap: 40px; margin-top: 64px; } }
 .personal-portrait { width: 110px; height: 110px; object-fit: cover; border-radius: var(--radius); }
 .personal-copy p { margin-bottom: 1em; }
+/* The stray pretzel by the contact links: small, knocked askew, wiggles when found. */
+.secret-pretzel { display: inline-flex; width: 30px; height: 30px; margin-top: var(--space-5); transform: rotate(-24deg); }
+.secret-pretzel img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2)); }
+.secret-pretzel:hover img, .secret-pretzel:focus-visible img { animation: secret-wiggle .5s ease-in-out; }
+@keyframes secret-wiggle { 25% { transform: rotate(14deg) scale(1.1); } 60% { transform: rotate(-8deg) scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .secret-pretzel:hover img, .secret-pretzel:focus-visible img { animation: none; } }
 
 /* === BOOK ===
    The overlay is always dark: it re-declares the dark tokens so the same

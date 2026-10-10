@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import SiteNav from "./site-nav";
 import { LinkList, TextLink } from "./_ui/link";
 import BookOverlay from "./book/overlay";
@@ -60,6 +61,8 @@ export default function Home() {
               <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <LinkList label="Contact Amy" links={contactLinks} />
+              {/* A second pretzel, left lying here, leads to the secret facts page. */}
+              <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel.png" alt="" width={192} height={192} unoptimized /></Link>
             </div>
           </div>
         </section>
