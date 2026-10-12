@@ -356,7 +356,6 @@ export default function FishingGame() {
   // Fish swimming up on bite (bottom to top)
   const fishAnimRef = useRef<number>(0);
   useEffect(() => {
-    if (state !== "bite" && state !== "reeling") { setFishY(60); return; }
     if (state === "bite") {
       let y = 60;
       const swim = () => {
@@ -386,6 +385,7 @@ export default function FishingGame() {
       timerRef.current = setTimeout(() => {
         const fish = pickFish();
         setCurrentFish(fish);
+        setFishY(60);
         setState("bite");
         setMessage("!! reel it in!");
         showSpeech("!", 800);
@@ -463,16 +463,6 @@ export default function FishingGame() {
   const bgFish2Y = Math.sin(bgFishTime * 0.4 + 1) * 2 + 78;
   const bgFish3X = (Math.sin(bgFishTime * 0.6 + 4) * 0.5 + 0.5) * 25 + 15;
   const bgFish3Y = Math.sin(bgFishTime * 0.35 + 3) * 2 + 85;
-
-  // Butterfly positions
-  const bf1X = Math.sin(bgFishTime * 0.8) * 15 + 20;
-  const bf1Y = Math.sin(bgFishTime * 1.2) * 8 + 15;
-  const bf2X = Math.sin(bgFishTime * 0.6 + 3) * 12 + 55;
-  const bf2Y = Math.sin(bgFishTime * 0.9 + 1) * 6 + 10;
-
-  // Lily pad bob
-  const lilyBob1 = Math.sin(bgFishTime * 1.5) * 1.5;
-  const lilyBob2 = Math.sin(bgFishTime * 1.2 + 2) * 1.5;
 
   return (
     <div className="min-h-screen flex flex-col relative">

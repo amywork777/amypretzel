@@ -62,7 +62,7 @@ export default function Home() {
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <LinkList label="Contact Amy" links={contactLinks} />
               {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
-              <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} unoptimized /></Link>
+              <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} sizes="30px" /></Link>
             </div>
           </div>
         </section>

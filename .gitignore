@@ -46,6 +46,8 @@ next-env.d.ts
 /tmp
 
 # local tool output
+/.impeccable
+/.playwright-mcp
 .rivet/
 
 # ABC Areal: licensed, must never be committed (see scripts/fetch-font.mjs)
