@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
@@ -8,16 +8,19 @@ type Theme = "light" | "dark";
    the user's choice in localStorage("theme"). The initial theme is set
    by an inline script in layout.tsx (see ThemeFlashScript) before
    hydration so there's no flash of the wrong palette on load. */
-export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => observer.disconnect();
+}
 
-  // Sync local state with whatever the inline script applied.
-  useEffect(() => {
-    const current =
-      (document.documentElement.getAttribute("data-theme") as Theme | null) ??
-      "light";
-    setTheme(current);
-  }, []);
+function getTheme(): Theme {
+  return (document.documentElement.getAttribute("data-theme") as Theme | null) ?? "light";
+}
+
+export function ThemeToggle() {
+  // null on the server; the client reads whatever the inline script applied.
+  const theme = useSyncExternalStore<Theme | null>(subscribe, getTheme, () => null);
 
   function toggle() {
     const next: Theme = theme === "dark" ? "light" : "dark";
@@ -27,7 +30,6 @@ export function ThemeToggle() {
     } catch {
       /* ignore quota / private-mode errors */
     }
-    setTheme(next);
   }
 
   // Render a placeholder before mount so the button doesn't flicker
