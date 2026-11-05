@@ -64,10 +64,11 @@ html[data-theme="dark"] {
 
 /* === FONT ===
   ABC Areal, Dinamo's Arial revival for Are.na, under Dinamo's free fonts
-  licence (abcdinamo.com/free/areal): self-hosting is allowed, sharing the
-  file is not, which is why this repo is private. One variable file with
-  wght 400-700, slnt and DRKM axes. The fallback is Arial sized to Areal's
-  metrics (values from are.al.are.na) so the swap doesn't shift the layout. */
+  licence (abcdinamo.com/free/areal): self-hosting is allowed, but the file
+  can't go in a public repo, so it isn't in this one. scripts/fetch-font.mjs
+  pulls it into public/fonts at build time. One variable file with wght
+  400-700, slnt and DRKM axes. The fallback is Arial sized to Areal's metrics
+  (values from are.al.are.na) so the swap doesn't shift the layout. */
 @font-face {
   font-family: "Areal";
   src: url("/fonts/areal.woff2") format("woff2");

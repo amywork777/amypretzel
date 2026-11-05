@@ -44,3 +44,9 @@ yarn-error.log*
 next-env.d.ts
 
 /tmp
+
+# local tool output
+.rivet/
+
+# ABC Areal: licensed, must never be committed (see scripts/fetch-font.mjs)
+/public/fonts/

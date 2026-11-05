@@ -1,36 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# amypretzel
 
-## Getting Started
-
-First, run the development server:
+The source of [amypretzel.com](https://amypretzel.com), Amy Zhou's site: objects, and software to build objects. It's a Next.js app, and the pretzels are React Three Fiber.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The design system is written down in [DESIGN.md](DESIGN.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## The font
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The site is set in [ABC Areal](https://abcdinamo.com/free/areal) by Dinamo. Its licence doesn't allow the font in a public repository, so it isn't in this one, and you'll need your own copy if you want it. Without the file the site uses Arial, sized to match.
 
-## Learn More
+To use Areal, put `areal.woff2` in `public/fonts/`, or set `AREAL_FONT_URL` and the build will fetch it (see `scripts/fetch-font.mjs`).
 
-To learn more about Next.js, take a look at the following resources:
+## Using this code
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+There's no open source licence here. The code is public to read and learn from, and the photos, writing and project work are Amy's. The 3D models that used to be on the site keep their own licences, recorded beside them in the history.
