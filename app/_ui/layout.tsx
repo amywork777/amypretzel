@@ -36,7 +36,7 @@ export function SectionHeading({ id, children }: { id?: string; children: ReactN
 export function SiteFooter() {
   return (
     <footer className="ui-footer">
-      <p className="ui-display ui-footer-signoff">i love meeting people who make things. <TextLink href="mailto:amzyst@gmail.com">say hi :)</TextLink></p>
+      <p className="ui-display ui-footer-signoff">I love meeting people who make things. <TextLink href="mailto:amzyst@gmail.com">Email me</TextLink></p>
       <TextLink href="/" standalone>Home</TextLink>
     </footer>
   );

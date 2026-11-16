@@ -182,7 +182,7 @@ One centred column, at most 1120px wide for indexes and 860px for reading, with 
 - **Software** is compact text rows grouped under a label in a 130px left margin, with no images. Rows stack at 640px and below.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage** leads with the statement, then the portrait, bio and contact links, then **Selected work**: a short list of rows, each with where it was made in a 130px margin (Vizcom, Apple, Founder, Open source), the title, and one line that carries the proof (shipped, patent, stars, press). It aligns with the software page's columns. Proof first, so a visitor sees the strongest work without clicking.
+- **The homepage** leads with the statement, then the portrait, bio and contact links, then **Selected work**: a short list of rows, newest first, each with where it was made in the left margin (Vizcom, Apple, Founder, Open source), the title, one line that carries the proof (shipped, patent, stars, press), and the launch year at the right edge in tabular figures. Years come from a real source (launch post, repo, patent), never a guess. Proof first, so a visitor sees the strongest work without clicking.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
 
@@ -226,7 +226,7 @@ Both share one caption: a title with a single line of soft description.
 
 - **Tile:** a framed image, then the caption. On hover the image grows 2.5% and the title softens.
 - **Row:** text only, on a bottom hairline. On hover the title softens.
-- **Selected work row:** a row with a context label in front of the title, used only on the homepage.
+- **Selected work row:** a row with a context label in front of the title and the year at the end, used only on the homepage. On phones the context and year share the first line.
 
 ### Section Heading
 
