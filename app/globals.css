@@ -409,6 +409,4 @@ a.ui-button { text-decoration: none; }
 
 /* === SECONDARY WORK: studies and crafts sit in a smaller grid under the selected work === */
 .ui-section-heading + .ui-tile-grid { margin-top: var(--space-3); }
-@media (min-width: 768px) { .ui-tile-grid--compact { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 1024px) { .ui-tile-grid--compact { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 16px; } }
-.ui-tile-grid + .ui-section-heading { margin-top: var(--space-8); }
+.ui-tile-grid + .objects-earlier .ui-section-heading, .ui-tile-grid + .ui-section-heading { margin-top: var(--space-8); }

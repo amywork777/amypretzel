@@ -306,7 +306,7 @@ The collection runs through the standard injection-molding pipeline: a metal mol
   {
     slug: "harp-instrument",
     title: "Harp instrument",
-    role: "Stanford, music + design",
+    role: "Stanford, music and product design",
     cover: "/portfolio/harp-instrument/white-bg.webp",
     coverHover: "/portfolio/harp-instrument/in-hands.webp",
     gallery: [
@@ -333,7 +333,7 @@ Designing for sound is its own kind of discipline. You can't simulate timbre the
   {
     slug: "membrane-whistle",
     title: "Lil membrane whistle",
-    role: "Stanford, music + design",
+    role: "Stanford, music and product design",
     cover: "/portfolio/woodwind-mouthpiece.png",
     gallery: [
       "/portfolio/woodwind-mouthpiece.png",
@@ -359,7 +359,7 @@ The body is a turned aluminum tube; the membrane is a thin polymer film stretche
   {
     slug: "lil-spider-maze",
     title: "Lil spider maze",
-    role: "Stanford, CNC art project",
+    role: "Stanford, CNC machining",
     cover: "/portfolio/cnc-spider-web.png",
     coverHover: "/portfolio/lil-spider-maze/in-use.webp",
     gallery: [
@@ -386,7 +386,7 @@ The build was a study in two pipelines at once. The metal base needed careful CN
   {
     slug: "injection-molded-fabric",
     title: "Injection-molded fabric",
-    role: "Stanford, ME 325 Injection Molding",
+    role: "Stanford, injection molding",
     cover: "/portfolio/injection-molded-fabric/bag-white.webp",
     coverHover: "/portfolio/injection-molded-fabric/dress.webp",
     gallery: [
@@ -409,7 +409,7 @@ The interesting outputs aren't really parts, they're material studies. They show
   {
     slug: "crocheting",
     title: "Crocheting",
-    role: "Personal craft + class instructor",
+    role: "Personal craft, and a class I taught at Stanford",
     cover: "/portfolio/patchwork-cardigan.webp",
     coverHover: "/portfolio/crocheting/photoshoot.webp",
     gallery: [
@@ -470,7 +470,7 @@ The studies explored ceramic and silicone variants. Ceramic gave the object weig
   {
     slug: "clarinet-tuning-barrel",
     title: "Clarinet tuning barrel",
-    role: "Stanford, music + design",
+    role: "Stanford, music and product design",
     cover: "/portfolio/clarinet-barrel.png",
     coverHover: "/portfolio/clarinet-tuning-barrel/playing.webp",
     gallery: [
@@ -560,7 +560,7 @@ The form went through many iterations: FDM 3D prints to validate the snap-closur
   {
     slug: "raccoon-poker-chip",
     title: "Raccoon poker chip",
-    role: "Stanford, ME 325 Injection Molding",
+    role: "Stanford, injection molding",
     cover: "/portfolio/tbd-panda-soap.webp",
     coverHover: "/portfolio/raccoon-poker-chip/hero-many-colors.webp",
     gallery: [
@@ -618,6 +618,44 @@ export const selectedSlugs = [
 
 const bySlug = new Map(projects.map((p) => [p.slug, p]));
 export const selectedProjects = selectedSlugs.map((slug) => bySlug.get(slug)!);
-export const studyProjects = projects.filter((p) => !selectedSlugs.includes(p.slug));
+/* Everything else, as a text list under "Earlier work", grouped by the kind of making
+   rather than by class. Each line says what the thing is and where it was made. */
+export const earlierGroups: { title: string; items: { slug: string; text: string }[] }[] = [
+  {
+    title: "Instruments",
+    items: [
+      { slug: "harp-instrument", text: "A CNC-machined aluminum tabletop harp. Stanford." },
+      { slug: "membrane-whistle", text: "A turned aluminum whistle voiced by a stretched film. Stanford." },
+      { slug: "clarinet-tuning-barrel", text: "A telescoping barrel for fine-tuning a clarinet's pitch. Stanford." },
+    ],
+  },
+  {
+    title: "Molding",
+    items: [
+      { slug: "injection-molded-fabric", text: "Plastic that looks and drapes like textile, shot from a machined multi-cavity mold. Stanford." },
+      { slug: "raccoon-poker-chip", text: "A chip taken through the whole injection-molding pipeline, tool included. Stanford." },
+      { slug: "pretzels-favorite-food", text: "Injection-molded pretzels in a dozen colors. Personal." },
+    ],
+  },
+  {
+    title: "Machining and mechanisms",
+    items: [
+      { slug: "lil-spider-maze", text: "A CNC-milled metal maze under a laser-cut acrylic window. Stanford." },
+      { slug: "quarter-bending-press", text: "A fixture for bending quarters cleanly on an arbor press. Stanford." },
+      { slug: "grasper-analysis", text: "A teardown of an Intuitive Surgical grasping retractor." },
+    ],
+  },
+  {
+    title: "Things to use and wear",
+    items: [
+      { slug: "sushi-eating-accessory", text: "Chopstick rest, soy well and plate in one piece. Personal." },
+      { slug: "dough-roller", text: "A single-skin roller for dumpling wrappers." },
+      { slug: "tampon-case", text: "A reusable case with a one-handed snap closure. Personal." },
+      { slug: "crocheting", text: "Garments, and a crochet class I taught at Stanford in 2020." },
+    ],
+  },
+];
+const earlierSlugs = earlierGroups.flatMap((g) => g.items.map((i) => i.slug));
+export const studyProjects = earlierSlugs.map((slug) => bySlug.get(slug)!);
 /* Index order, used for previous and next on detail pages. */
 export const orderedProjects = [...selectedProjects, ...studyProjects];
