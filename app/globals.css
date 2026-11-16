@@ -247,11 +247,12 @@ a.ui-button { text-decoration: none; }
 /* === HOME === */
 .home-intro { padding: 34px 0 var(--space-6); }
 @media (min-width: 768px) { .home-intro { padding: 60px 0 var(--space-8); } }
-/* Selected work: where it was made in the margin, then the same title and line as a software row. */
+/* The two halves of the work, Objects then Software: four full tiles, then a fold grid. */
 .home-work { padding-bottom: var(--space-8); }
 .home-work .ui-section-heading { margin-top: 0; }
-.home-more .ui-thumb-grid { margin-top: var(--space-5); }
-/* Selected work: two across on phones, four from 768px, so eight items make even rows. */
+.home-work .ui-fold { margin-top: var(--space-7); }
+.home-work .ui-fold .ui-thumb-grid { margin-top: 0; }
+/* Each section's top four: two across on phones, four from 768px, so they make even rows. */
 .home-work-grid { margin-top: var(--space-5); }
 @media (min-width: 768px) { .home-work-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 16px; } }
 .home-work-grid .ui-item-text { font-size: 13px; line-height: 1.4; }
