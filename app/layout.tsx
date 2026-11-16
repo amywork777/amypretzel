@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeFlashScript } from "./theme-toggle";
+import { ModeScript } from "./mode-switch";
 
 const SITE_URL = "https://amypretzel.com";
 const SITE_DESC =
@@ -96,6 +97,7 @@ export default function RootLayout({
     >
       <head>
         <ThemeFlashScript />
+        <ModeScript />
         <link rel="preload" href="/fonts/areal.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
       <body>{children}</body>

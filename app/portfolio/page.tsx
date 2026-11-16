@@ -1,7 +1,7 @@
 import { Page, PageIntro, SectionHeading, SiteFooter } from "../_ui/layout";
 import { Tile, TileGrid } from "../_ui/items";
 import { FoldGrid } from "../_ui/fold";
-import { selectedProjects, studyProjects } from "./projects";
+import { selectedProjects, studyProjects, workStudyProjects } from "./projects";
 
 import type { Metadata } from "next";
 
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   return (
     <Page active="portfolio">
-      <PageIntro title="Objects.">Products I designed and engineered, at Apple, at Vizcom and at my own companies. Below them, earlier studies from Stanford and my own projects.</PageIntro>
+      <PageIntro title="Objects.">Products I designed and engineered, at Apple, at Vizcom and at my own companies. Below them, <span className="work-only">earlier studies from Stanford.</span><span className="personal-only">earlier studies from Stanford and things I make for fun.</span></PageIntro>
       <SectionHeading>Selected</SectionHeading>
       <TileGrid label="Selected objects">
         {selectedProjects.map((p, i) => (
@@ -37,11 +37,20 @@ export default function PortfolioPage() {
       </TileGrid>
       <section className="objects-earlier" aria-labelledby="earlier-work-title">
         <SectionHeading id="earlier-work-title">Earlier work</SectionHeading>
-        <FoldGrid label="Earlier work" total={studyProjects.length}>
-          {studyProjects.map(p => (
-            <Tile key={p.slug} href={`/portfolio/${p.slug}`} image={p.cover} title={p.title} text={p.role} small as="h3" />
-          ))}
-        </FoldGrid>
+        <div className="work-only">
+          <FoldGrid label="Earlier work" total={workStudyProjects.length}>
+            {workStudyProjects.map(p => (
+              <Tile key={p.slug} href={`/portfolio/${p.slug}`} image={p.cover} title={p.title} text={p.role} small as="h3" />
+            ))}
+          </FoldGrid>
+        </div>
+        <div className="personal-only">
+          <FoldGrid label="Earlier work and crafts" total={studyProjects.length}>
+            {studyProjects.map(p => (
+              <Tile key={p.slug} href={`/portfolio/${p.slug}`} image={p.cover} title={p.title} text={p.role} small as="h3" />
+            ))}
+          </FoldGrid>
+        </div>
       </section>
       <SiteFooter />
     </Page>
