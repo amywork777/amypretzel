@@ -168,7 +168,10 @@ a.ui-button { text-decoration: none; }
 .ui-tile-media img { object-fit: contain; padding: 7%; mix-blend-mode: multiply; transition: transform .2s; }
 .ui-tile:hover img { transform: scale(1.025); }
 .ui-tile-caption { padding-top: var(--space-3); }
-.ui-tile-meta { margin-top: 4px; font-size: 13px; line-height: 1.35; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
+.ui-item-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.ui-item-year { flex: none; font-size: 13px; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
+/* On phones the year follows the title inline, so a long title wraps naturally instead of squeezing. */
+@media (max-width: 639px) { .ui-item-head { display: block; } .ui-item-head .ui-item-title { display: inline; } .ui-item-year { margin-left: 6px; } }
 .ui-tile-media--fill img { object-fit: cover; padding: 0; mix-blend-mode: normal; }
 @media (min-width: 1024px) { .ui-tile-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 20px; } }
 .ui-tile:hover .ui-item-title { color: var(--color-ink-soft); }
@@ -415,8 +418,6 @@ a.ui-button { text-decoration: none; }
 @media (min-width: 1024px) { .ui-thumb-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px 16px; } }
 .ui-thumb-grid .ui-tile-caption { padding-top: var(--space-2); }
 .ui-thumb-grid .ui-item-title { font-size: var(--text-sm); line-height: 1.35; }
-.ui-thumb-grid .ui-item-text { margin-top: 2px; font-size: 13px; line-height: 1.35; }
-@media (max-width: 639px) { .ui-thumb-grid .ui-item-text { display: none; } }
 .ui-fold:not([data-open]) .ui-thumb-grid > :nth-child(n+7) { display: none; }
 @media (min-width: 640px) and (max-width: 1023px) { .ui-fold:not([data-open]) .ui-thumb-grid > :nth-child(-n+8) { display: block; } }
 .ui-fold-toggle { margin-top: var(--space-6); }
