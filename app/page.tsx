@@ -56,7 +56,7 @@ const selectedWork = [
   { href: "/software/studio", image: "/home/studio.webp", fill: true, context: "Open source", year: "2026", title: "Studio", text: "Open-source AI CAD for mechanical engineers." },
   { href: "/portfolio/folding-yoga-mat", image: cover("folding-yoga-mat"), context: "Vizcom", year: "2026", title: "Folding yoga mat", text: "From a creator's render to a manufactured mat." },
   { href: "/software/region-maps", image: "/home/region-maps.webp", fill: true, context: "Vizcom", year: "2026", title: "Region Maps", text: "Shipped: per-part color and material edits." },
-  { href: "/software/lipflow", image: "/home/lipflow.webp", context: "Open source", year: "2026", title: "Lipflow", text: "Silent dictation by lip reading. 700+ stars." },
+  { href: "/software/lipflow", image: "/home/lipflow.webp", fill: true, context: "Open source", year: "2026", title: "Lipflow", text: "Silent dictation by lip reading. 700+ stars." },
   { href: "/portfolio/taya-pendant", image: cover("taya-pendant"), context: "Founder", year: "2025", title: "Taya", text: "A wearable AI journal designed as jewelry." },
   { href: "/portfolio/ai-jewelry", image: cover("ai-jewelry"), context: "Founder", year: "2025", title: "Taiyaki Jewelry", text: "Sketches turned into cast silver and gold." },
   { href: "/portfolio/taiyaki-3d", image: cover("taiyaki-3d"), context: "Founder", year: "2025", title: "Taiyaki 3D", text: "AI concept-to-CAD, covered by Fabbaloo." },
