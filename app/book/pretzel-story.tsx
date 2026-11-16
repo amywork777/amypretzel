@@ -27,7 +27,6 @@ import {
 } from "three";
 
 import { Button } from "../_ui/button";
-import { TextLink } from "../_ui/link";
 import { storyChapters } from "./chapters";
 import { createPretzelGeometry, pretzelFinish, type PretzelKind } from "./pretzel-geometry";
 import { useCompactBook } from "./use-compact-book";
@@ -501,10 +500,6 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
         </div>
         <h2 className="pretzel-card-title">{chapter.title}</h2>
         <p className="pretzel-card-text">{chapter.text}</p>
-        {shown === last && <nav className="storybook-links" aria-label="Amy's work">
-          <TextLink href="/portfolio" standalone>Objects</TextLink>
-          <TextLink href="/software" standalone>Software</TextLink>
-        </nav>}
         <div className="pretzel-card-nav">
           <Button variant="pill" disabled={shown === 0} onClick={previous}>Previous</Button>
           {shown === last

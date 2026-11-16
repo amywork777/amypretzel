@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
 type Heading = "h2" | "h3" | "h4";
 
@@ -22,18 +21,4 @@ export function Tile({ href, image, title, text, meta, priority, small, fill, as
       <div className="ui-tile-caption"><ItemText as={as} title={title} text={text} />{meta && <p className="ui-tile-meta">{meta}</p>}</div>
     </Link>
   );
-}
-
-export function TileGrid({ label, children }: { label: string; children: ReactNode }) {
-  return <section className="ui-tile-grid" aria-label={label}>{children}</section>;
-}
-
-/* A text-only list entry sitting on a hairline. */
-export function Row({ href, title, text, as = "h3" }: { href: string; title: string; text?: string; as?: Heading }) {
-  return <Link href={href} className="ui-row"><ItemText as={as} title={title} text={text} /></Link>;
-}
-
-/* Rows under a label in the left margin. */
-export function RowGroup({ title, children }: { title: string; children: ReactNode }) {
-  return <div className="ui-row-group"><h3 className="ui-row-group-title">{title}</h3><div>{children}</div></div>;
 }

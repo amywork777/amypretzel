@@ -171,16 +171,9 @@ a.ui-button { text-decoration: none; }
 .ui-tile-meta { margin-top: 4px; font-size: 13px; line-height: 1.35; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
 .ui-tile-media--fill img { object-fit: cover; padding: 0; mix-blend-mode: normal; }
 @media (min-width: 1024px) { .ui-tile-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 20px; } }
-.ui-tile:hover .ui-item-title, .ui-row:hover .ui-item-title { color: var(--color-ink-soft); }
-.ui-row-group { display: grid; grid-template-columns: 130px 1fr; gap: 18px; margin-bottom: 18px; }
-.ui-row-group-title { font-size: var(--text-sm); font-weight: 400; color: var(--color-ink-soft); padding-top: 15px; }
-.ui-row { display: grid; grid-template-columns: 180px 1fr; gap: var(--space-4); align-items: baseline; padding: 14px 0; border-bottom: var(--line) solid var(--color-rule); color: inherit; text-decoration: none; }
-.ui-row .ui-item-text { margin-top: 0; }
+.ui-tile:hover .ui-item-title { color: var(--color-ink-soft); }
 @media (max-width: 640px) {
   .ui-tile-grid { gap: 22px 12px; }
-  .ui-row-group { grid-template-columns: 1fr; gap: 0; }
-  .ui-row-group-title { padding: var(--space-2) 0 2px; }
-  .ui-row { grid-template-columns: 1fr; gap: var(--space-1); }
 }
 
 /* === FACTS: title in the margin, prose beside it === */
@@ -257,6 +250,7 @@ a.ui-button { text-decoration: none; }
 /* Selected work: where it was made in the margin, then the same title and line as a software row. */
 .home-work { padding-bottom: var(--space-8); }
 .home-work .ui-section-heading { margin-top: 0; }
+.home-more .ui-thumb-grid { margin-top: var(--space-5); }
 /* Selected work: two across on phones, four from 768px, so eight items make even rows. */
 .home-work-grid { margin-top: var(--space-5); }
 @media (min-width: 768px) { .home-work-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 16px; } }
@@ -290,7 +284,6 @@ a.ui-button { text-decoration: none; }
 .book-overlay-enter { position: absolute; top: 26px; right: 32px; z-index: 5; }
 .storybook { position: relative; height: 100%; width: 100%; }
 .storybook-canvas { position: absolute; inset: 0; }
-.storybook-links { display: flex; gap: var(--space-3); }
 /* The table's two toys, top left, opposite the exit. */
 .book-loading { position: absolute; inset: auto 0 50px; z-index: 2; text-align: center; color: var(--color-ink-muted); font-size: var(--text-sm); }
 .book-poster { position: absolute; inset: 0; pointer-events: none; z-index: 1; transition: opacity .18s; }
@@ -333,7 +326,6 @@ a.ui-button { text-decoration: none; }
 .pretzel-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); font-size: var(--text-sm); }
 .pretzel-card-title { margin: auto 0 var(--space-5); padding-top: var(--space-6); font-family: var(--font-display); font-size: clamp(40px, 4.6vw, 68px); font-weight: 400; line-height: 1.02; letter-spacing: -.045em; }
 .pretzel-card-text { font-size: 20px; line-height: 1.5; letter-spacing: var(--tracking-body); color: var(--color-ink); max-width: 30em; }
-.pretzel-card .storybook-links { margin-top: var(--space-5); font-size: var(--text-base); }
 .pretzel-card-nav { display: flex; justify-content: space-between; margin-top: auto; padding-top: var(--space-6); border-top: var(--line) solid var(--color-rule); font-size: var(--text-sm); }
 .pretzel-card-nav .ui-button { min-height: 44px; }
 /* The card takes the top-right corner, so the exit pill steps aside. */
@@ -414,7 +406,7 @@ a.ui-button { text-decoration: none; }
 
 /* === SECONDARY WORK: studies and crafts sit in a smaller grid under the selected work === */
 .ui-section-heading + .ui-tile-grid { margin-top: var(--space-3); }
-.ui-tile-grid + .objects-earlier .ui-section-heading, .ui-tile-grid + .ui-section-heading { margin-top: var(--space-8); }
+.ui-tile-grid + .ui-section-heading { margin-top: var(--space-8); }
 /* Thumbnail grid: three across on phones, four from 640px, six from 1024px.
    Folded, it shows two rows on phones and tablets and one row on wide screens. */
 .ui-thumb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 12px; margin-top: var(--space-6); }

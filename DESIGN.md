@@ -163,7 +163,7 @@ The font file is licensed and deliberately not in this repository. See the READM
 ### Hierarchy
 
 - **Display** (`display`): page titles, the homepage statement, the footer sign-off. Weight 400, always. Size does the work, and it stays modest.
-- **Title** (`title`): item names under tiles and in rows, prose subheads. The one place weight 500 appears.
+- **Title** (`title`): item names under tiles, prose subheads. The one place weight 500 appears.
 - **Body** (`body`, 18px from 768px up and 16px below): prose in soft ink, kept to a measure of 30 to 40em.
 - **Label** (`label`): nav, captions, metadata, section headings, every control.
 - **Chapter** (`chapter`): the title on the chapter card, and nowhere else. The only large type on the site, because it sits beside a pretzel held up to the camera.
@@ -178,11 +178,11 @@ The font file is licensed and deliberately not in this repository. See the READM
 
 One centred column, at most 1120px wide for indexes and 860px for reading, with a 20px gutter that becomes 48px from 768px. Vertical rhythm comes from the nine-step spacing scale, and spacing stays tight on purpose.
 
-- **Objects** opens with **Selected**, an image grid of professional work (Vizcom, Apple, the companies Amy founded) with every frame the same 4:3 box, never staggered: two columns on phones, three from 1024px. Below it, **Earlier work** is a grid of small thumbnails, picture over title and one line (the line is dropped on phones), never a text list (Amy is a designer and always prefers a little picture to words). It is folded: one row shows on wide screens (six across) and two rows on phones (three across) and tablets (four across), with a "Show all 13" pill under it. The strongest pictures go first so the folded rows lead with them. Labels say where a thing was made (Stanford, Personal), never a course number. `selectedSlugs` and `earlierSlugs` in `app/portfolio/projects.ts` set both lists, and that order drives previous and next on detail pages.
-- **Software** is compact text rows grouped under a label in a 130px left margin, with no images. Rows stack at 640px and below.
+- **One page.** The whole site is the homepage. There is no Objects or Software index: `/portfolio` and `/software` redirect to `/#work`, and only the project pages live under them. Amy wants it as simple as possible, so don't add index pages, tabs or a work/personal switch back.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage** leads with the statement, then the portrait, bio and contact links, then **Selected work**: eight thumbnail tiles, newest first, two across on phones and four from 768px. Each tile is a picture, the title, one short line of proof (shipped, patent, stars, press) and a soft line with where it was made and the launch year ("Vizcom, 2026"). Years come from a real source (launch post, repo, patent), never a guess. Objects reuse their Objects cover; software uses a real frame from the app in a `fill` tile, which covers the frame because it is a screenshot, not an object. Proof first, so a visitor sees the strongest work without clicking.
+- **The homepage** leads with the statement (plain text, no links, since everything is below it), then the portrait, bio and contact links, then **Selected work**: eight thumbnail tiles, newest first, two across on phones and four from 768px. Each tile is a picture, the title, one short line of proof (shipped, patent, stars, press) and a soft line with where it was made and the launch year ("Vizcom, 2026"). Years come from a real source (launch post, repo, patent), never a guess. Objects use their cover; software uses a real frame of the app in use in a `fill` tile, never a GitHub card. Proof first, so a visitor sees the strongest work without clicking.
+- **More work** follows: every other project, objects and software together, as small thumbnails in a fold grid (picture over title and one line; the line is dropped on phones), never a text list (Amy is a designer and always prefers a little picture to words). Recent software first, then Apple, then the earlier studies from Stanford and home, so older work sits folded away. One row shows on wide screens (six across), two rows on phones (three across) and tablets (four across), with a "Show all 22" pill. Software thumbnails live in `public/work/<slug>.webp`. Labels say where a thing was made (Vizcom, Stanford, Personal), never a course number. The page ends with the sign-off footer.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
 
@@ -211,7 +211,7 @@ The one drawn silhouette is the pretzel. It is rendered from the same geometry a
 
 ### Links
 
-Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can sit inside a sentence, with a 1px rule border that fills with ink on hover. Standalone links use the full-size pill button. External links open in a new tab. The exceptions are structural: the header nav, tiles, rows, and previous/next.
+Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can sit inside a sentence, with a 1px rule border that fills with ink on hover. Standalone links use the full-size pill button. External links open in a new tab. The exceptions are structural: the header nav, tiles, and previous/next.
 
 ### Buttons
 
@@ -220,12 +220,11 @@ Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can
 - **Icon button:** a bare 16px icon in muted ink that goes to ink on hover. The theme toggle is the only one that matters.
 - **Focus:** a 1px outline in the current colour, offset 4px, on every interactive element.
 
-### Tiles and Rows
+### Tiles
 
-Both share one caption: a title with a single line of soft description.
+One caption everywhere: a title with a single line of soft description.
 
 - **Tile:** a framed image, then the caption. On hover the image grows 2.5% and the title softens.
-- **Row:** text only, on a bottom hairline. On hover the title softens.
 - **Fold grid:** `FoldGrid` in `app/_ui/fold.tsx`, a thumbnail grid that folds to its first rows behind a pill (`aria-expanded`). CSS sets how many tiles stay visible per breakpoint so a folded grid ends on a full row.
 - **Tile options:** `fill` covers the frame for screenshots (no padding, no multiply); `meta` adds a soft line after the text; `small` is the FoldGrid thumbnail size.
 
@@ -235,7 +234,7 @@ A label-size title sitting under a hairline, above a group of items. It is the s
 
 ### Navigation
 
-The 44px pretzel mark sits left; label-size links sit right in soft ink, with the theme toggle. The current page is ink with a thin underline offset 5px. Hovering the mark squishes it like soft dough.
+The 44px pretzel mark sits left and goes home; on the right sit only the Pretzels link and the theme toggle, in soft ink. Hovering the mark squishes it like soft dough.
 
 ### Pretzel Table
 

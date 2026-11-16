@@ -2,13 +2,11 @@ import type { ReactNode } from "react";
 import SiteNav from "../site-nav";
 import { TextLink } from "./link";
 
-type Section = "portfolio" | "software" | null;
-
 /* Every page: the header, then one centred column. "wide" for indexes, "narrow" for reading. */
-export function Page({ active = null, width = "wide", children }: { active?: Section; width?: "wide" | "narrow"; children: ReactNode }) {
+export function Page({ width = "wide", children }: { width?: "wide" | "narrow"; children: ReactNode }) {
   return (
     <div className="ui-page">
-      <SiteNav active={active} />
+      <SiteNav />
       <main id="main-content" className={width === "wide" ? "ui-column" : "ui-column ui-column--narrow"}>{children}</main>
     </div>
   );
@@ -32,12 +30,12 @@ export function SectionHeading({ id, children }: { id?: string; children: ReactN
   return <header className="ui-section-heading"><h2 id={id}>{children}</h2></header>;
 }
 
-/* Sign-off at the bottom of the index pages. */
-export function SiteFooter() {
+/* Sign-off at the bottom of the page. The homepage leaves out the link home. */
+export function SiteFooter({ home = true }: { home?: boolean }) {
   return (
     <footer className="ui-footer">
       <p className="ui-display ui-footer-signoff">I love meeting people who make things. <TextLink href="mailto:amzyst@gmail.com">Email me</TextLink></p>
-      <TextLink href="/" standalone>Home</TextLink>
+      {home && <TextLink href="/" standalone>Home</TextLink>}
     </footer>
   );
 }

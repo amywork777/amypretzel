@@ -88,7 +88,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   );
 
   return (
-    <Page active="portfolio" width="narrow">
+    <Page width="narrow">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

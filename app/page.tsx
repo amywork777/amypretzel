@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
-import { LinkList, TextLink } from "./_ui/link";
-import { SectionHeading } from "./_ui/layout";
+import { LinkList } from "./_ui/link";
+import { SectionHeading, SiteFooter } from "./_ui/layout";
 import BookOverlay from "./book/overlay";
 import { Tile } from "./_ui/items";
-import { projects } from "./portfolio/projects";
+import { FoldGrid } from "./_ui/fold";
+import { projects, studyProjects } from "./portfolio/projects";
+import { softwareProjects } from "./software/projects";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -56,12 +58,24 @@ const selectedWork = [
   { href: "/software/studio", image: "/home/studio.webp", fill: true, context: "Open source", year: "2026", title: "Studio", text: "Open-source AI CAD for mechanical engineers." },
   { href: "/portfolio/folding-yoga-mat", image: cover("folding-yoga-mat"), context: "Vizcom", year: "2026", title: "Folding yoga mat", text: "From a creator's render to a manufactured mat." },
   { href: "/software/region-maps", image: "/home/region-maps.webp", fill: true, context: "Vizcom", year: "2026", title: "Region Maps", text: "Shipped: per-part color and material edits." },
-  { href: "/software/lipflow", image: "/home/lipflow.webp", fill: true, context: "Open source", year: "2026", title: "Lipflow", text: "Silent dictation by lip reading. 700+ stars." },
+  { href: "/software/lipflow", image: "/home/lipflow-in-use.webp", fill: true, context: "Open source", year: "2026", title: "Lipflow", text: "Silent dictation by lip reading. 700+ stars." },
   { href: "/portfolio/taya-pendant", image: cover("taya-pendant"), context: "Founder", year: "2025", title: "Taya", text: "A wearable AI journal designed as jewelry." },
   { href: "/portfolio/ai-jewelry", image: cover("ai-jewelry"), context: "Founder", year: "2025", title: "Taiyaki Jewelry", text: "Sketches turned into cast silver and gold." },
   { href: "/portfolio/taiyaki-3d", image: cover("taiyaki-3d"), context: "Founder", year: "2025", title: "Taiyaki 3D", text: "AI concept-to-CAD, covered by Fabbaloo." },
   { href: "/portfolio/iphone-finewoven", image: cover("iphone-finewoven"), context: "Apple", year: "2023", title: "iPhone FineWoven case", text: "Led materials and integration. Patent co-inventor." },
 ];
+
+/* Everything else, as small thumbnails folded behind one pill: recent software
+   first, then Apple, then the earlier studies from Stanford and home. */
+const software = (slug: string) => softwareProjects.find(p => p.slug === slug)!;
+const moreSoftware = ["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "cute-ghostty", "screenie", "selfie-booth"].map(slug => {
+  const p = software(slug);
+  return { href: `/software/${slug}`, image: `/work/${slug}.webp`, fill: true, title: p.title, text: p.section === "Vizcom" ? "Vizcom" : p.meta };
+});
+const moreObjects = [projects.find(p => p.slug === "ipad-smart-folio")!, ...studyProjects].map(p => ({
+  href: `/portfolio/${p.slug}`, image: p.cover, fill: false, title: p.title, text: p.role,
+}));
+const moreWork = [...moreSoftware, ...moreObjects];
 
 export default function Home() {
   return (
@@ -72,7 +86,7 @@ export default function Home() {
       <main id="main-content" className="ui-column">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
           <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
-          <p className="ui-display home-statement">I like building <TextLink href="/portfolio">objects</TextLink>, and <TextLink href="/software">software</TextLink> to build objects.</p>
+          <p className="ui-display home-statement">I like building objects, and software to build objects.</p>
           <div className="personal-intro">
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
             <div className="personal-copy ui-prose">
@@ -84,7 +98,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="home-work" aria-labelledby="selected-work-title">
+        <section id="work" className="home-work" aria-labelledby="selected-work-title">
           <SectionHeading id="selected-work-title">Selected work</SectionHeading>
           <div className="ui-tile-grid home-work-grid">
             {selectedWork.map(item => (
@@ -92,6 +106,15 @@ export default function Home() {
             ))}
           </div>
         </section>
+        <section className="home-more" aria-labelledby="more-work-title">
+          <SectionHeading id="more-work-title">More work</SectionHeading>
+          <FoldGrid label="More work" total={moreWork.length}>
+            {moreWork.map(item => (
+              <Tile key={item.href} href={item.href} image={item.image} fill={item.fill} title={item.title} text={item.text} small as="h3" />
+            ))}
+          </FoldGrid>
+        </section>
+        <SiteFooter home={false} />
       </main>
     </div>
   );
