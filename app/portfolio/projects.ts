@@ -618,44 +618,23 @@ export const selectedSlugs = [
 
 const bySlug = new Map(projects.map((p) => [p.slug, p]));
 export const selectedProjects = selectedSlugs.map((slug) => bySlug.get(slug)!);
-/* Everything else, as a text list under "Earlier work", grouped by the kind of making
-   rather than by class. Each line says what the thing is and where it was made. */
-export const earlierGroups: { title: string; items: { slug: string; text: string }[] }[] = [
-  {
-    title: "Instruments",
-    items: [
-      { slug: "harp-instrument", text: "A CNC-machined aluminum tabletop harp. Stanford." },
-      { slug: "membrane-whistle", text: "A turned aluminum whistle voiced by a stretched film. Stanford." },
-      { slug: "clarinet-tuning-barrel", text: "A telescoping barrel for fine-tuning a clarinet's pitch. Stanford." },
-    ],
-  },
-  {
-    title: "Molding",
-    items: [
-      { slug: "injection-molded-fabric", text: "Plastic that looks and drapes like textile, shot from a machined multi-cavity mold. Stanford." },
-      { slug: "raccoon-poker-chip", text: "A chip taken through the whole injection-molding pipeline, tool included. Stanford." },
-      { slug: "pretzels-favorite-food", text: "Injection-molded pretzels in a dozen colors. Personal." },
-    ],
-  },
-  {
-    title: "Machining and mechanisms",
-    items: [
-      { slug: "lil-spider-maze", text: "A CNC-milled metal maze under a laser-cut acrylic window. Stanford." },
-      { slug: "quarter-bending-press", text: "A fixture for bending quarters cleanly on an arbor press. Stanford." },
-      { slug: "grasper-analysis", text: "A teardown of an Intuitive Surgical grasping retractor." },
-    ],
-  },
-  {
-    title: "Things to use and wear",
-    items: [
-      { slug: "sushi-eating-accessory", text: "Chopstick rest, soy well and plate in one piece. Personal." },
-      { slug: "dough-roller", text: "A single-skin roller for dumpling wrappers." },
-      { slug: "tampon-case", text: "A reusable case with a one-handed snap closure. Personal." },
-      { slug: "crocheting", text: "Garments, and a crochet class I taught at Stanford in 2020." },
-    ],
-  },
+/* Everything else, under "Earlier work": small thumbnails, the strongest pictures
+   first so the folded grid's visible rows lead with them. */
+const earlierSlugs = [
+  "injection-molded-fabric",
+  "harp-instrument",
+  "raccoon-poker-chip",
+  "crocheting",
+  "clarinet-tuning-barrel",
+  "lil-spider-maze",
+  "pretzels-favorite-food",
+  "membrane-whistle",
+  "sushi-eating-accessory",
+  "quarter-bending-press",
+  "tampon-case",
+  "dough-roller",
+  "grasper-analysis",
 ];
-const earlierSlugs = earlierGroups.flatMap((g) => g.items.map((i) => i.slug));
 export const studyProjects = earlierSlugs.map((slug) => bySlug.get(slug)!);
 /* Index order, used for previous and next on detail pages. */
 export const orderedProjects = [...selectedProjects, ...studyProjects];
