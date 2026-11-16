@@ -163,7 +163,7 @@ The font file is licensed and deliberately not in this repository. See the READM
 ### Hierarchy
 
 - **Display** (`display`): page titles, the homepage statement, the footer sign-off. Weight 400, always. Size does the work, and it stays modest.
-- **Title** (`title`): item names under tiles, prose subheads. The one place weight 500 appears.
+- **Title** (`title`): fact titles, prose subheads. The one place weight 500 appears.
 - **Body** (`body`, 18px from 768px up and 16px below): prose in soft ink, kept to a measure of 30 to 40em.
 - **Label** (`label`): nav, captions, metadata, section headings, every control.
 - **Chapter** (`chapter`): the title on the chapter card, and nowhere else. The only large type on the site, because it sits beside a pretzel held up to the camera.
@@ -181,9 +181,10 @@ One centred column, at most 1120px wide for indexes and 860px for reading, with 
 - **One page.** The whole site is the homepage. There is no Objects or Software index: `/portfolio` redirects to `/#objects` and `/software` to `/#software`, and only the project pages live under them. Amy wants it as simple as possible, so don't add index pages, tabs or a work/personal switch back.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage** leads with the statement, whose "objects" and "software" pills jump to the two sections below, then the portrait, a one-line bio and the contact links. Keep the bio to one line: the tiles below already name the companies. Then the work, in two halves that match the statement: **Objects**, then **Software**. Amy chose this split by medium over grouping by interest (2026-11-16).
-- **Each half** opens with four full tiles, two across on phones and four from 768px: a picture, the title with the launch year soft beside it (inline after the title on phones), and one short line of proof (shipped, patent, stars, press) that says where it was made only when that matters ("Shipped at Vizcom", "At Apple"). Two lines, never three. Manufacturing leads Objects (the yoga mat, Taya, Taiyaki Jewelry, FineWoven) and the CAD tools lead Software (Studio, Taiyaki 3D, then Region Maps and Lipflow). Years come from a real source (launch post, repo, patent), never a guess. Objects use their cover; software uses a real frame of the app in use in a `fill` tile, never a GitHub card.
-- **Under the four**, the rest of that half sits in a fold grid of small thumbnails, picture over title only, never a text list (Amy is a designer and always prefers a little picture to words). Objects: iPad accessories, then the Stanford and personal studies. Software: CAD-Steps, the Vizcom features, then the side projects. One row shows on wide screens (six across), two rows on phones and tablets, with a "Show all N" pill. Software thumbnails live in `public/work/<slug>.webp`. Where a thing was made lives on its own page, never a course number. The page ends with the sign-off footer.
+- **The homepage** leads with the statement, whose "objects" and "software" pills jump to the two groups below, then the portrait, a one-line bio and the contact links. Keep the bio to one line.
+- **The work is a shelf, not a portfolio.** Amy found framed cards with captions and years "portfolio-y" (2026-11-16), so every object sits straight on the page with no frame, caption or section heading, the way the pretzels sit on their table. Manufacturing comes first (the yoga mat, Taya, Taiyaki Jewelry, FineWoven, iPad accessories), then the Stanford and personal studies. Six across on wide screens, four on tablets, three on phones, and keep the count a multiple of six so rows end full.
+- **Software follows** under one soft line, "And software to build them", as a row of rounded screenshots of each app in use (never a GitHub card), CAD tools first: Studio, Taiyaki 3D, Region Maps, Lipflow, CAD-Steps, then the Vizcom features and side projects. Thumbnails live in `public/work/<slug>.webp`.
+- Details (role, year, proof, where it was made) live on each project's own page, not on the homepage. The page ends with the sign-off footer.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
 
@@ -212,7 +213,7 @@ The one drawn silhouette is the pretzel. It is rendered from the same geometry a
 
 ### Links
 
-Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can sit inside a sentence, with a 1px rule border that fills with ink on hover. Standalone links use the full-size pill button. External links open in a new tab. The exceptions are structural: the header nav, tiles, and previous/next.
+Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can sit inside a sentence, with a 1px rule border that fills with ink on hover. Standalone links use the full-size pill button. External links open in a new tab. The exceptions are structural: the header nav, the shelf, and previous/next.
 
 ### Buttons
 
@@ -221,13 +222,13 @@ Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can
 - **Icon button:** a bare 16px icon in muted ink that goes to ink on hover. The theme toggle is the only one that matters.
 - **Focus:** a 1px outline in the current colour, offset 4px, on every interactive element.
 
-### Tiles
+### Shelf
 
-One caption everywhere: a title with a single line of soft description.
+`Shelf` in `app/_ui/shelf.tsx`: a grid of things with no frames or captions. `objects` are cut-out product shots, square cells, `contain` with multiply so the white ground disappears; `screens` are app frames, 4:3, `cover`, rounded on the surface tone.
 
-- **Tile:** a framed image, then the caption. On hover the image grows 2.5% and the title softens.
-- **Fold grid:** `FoldGrid` in `app/_ui/fold.tsx`, a thumbnail grid that folds to its first rows behind a pill (`aria-expanded`). CSS sets how many tiles stay visible per breakpoint so a folded grid ends on a full row.
-- **Tile options:** `fill` covers the frame for screenshots (no padding, no multiply); `year` sits soft beside the title; `small` is the FoldGrid thumbnail size.
+- **Name:** a small solid ink pill (paper text) that rises in on hover or keyboard focus. Touch screens have no hover, so there the name sits under each thing in soft 12px text.
+- **Hover:** objects grow 6% and tip 2 degrees, like being picked up; screens grow 4%. No motion with reduced motion.
+- **Dark mode:** multiplied objects vanish on black, so the objects shelf becomes one lit panel on the media tone.
 
 ### Section Heading
 
