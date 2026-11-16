@@ -10,20 +10,19 @@ function ItemText({ as: H, title, text }: { as: Heading; title: string; text?: s
 }
 
 /* An image on the media surface with a caption, linking to its page. */
-export function Tile({ href, image, title, text, priority, compact, as = "h2" }: { href: string; image: string; title: string; text?: string; priority?: boolean; compact?: boolean; as?: Heading }) {
+export function Tile({ href, image, title, text, priority, as = "h2" }: { href: string; image: string; title: string; text?: string; priority?: boolean; as?: Heading }) {
   return (
     <Link href={href} className="ui-tile">
       <div className="ui-media ui-tile-media">
-        <Image src={image} alt={title} fill sizes={compact ? "(min-width: 1024px) 260px, (min-width: 768px) 33vw, 50vw" : "(min-width: 1024px) 360px, 50vw"} priority={priority} />
+        <Image src={image} alt={title} fill sizes="(min-width: 1024px) 360px, 50vw" priority={priority} />
       </div>
       <div className="ui-tile-caption"><ItemText as={as} title={title} text={text} /></div>
     </Link>
   );
 }
 
-/* "compact" is the smaller grid for secondary work: four across on wide screens instead of three. */
-export function TileGrid({ label, compact, children }: { label: string; compact?: boolean; children: ReactNode }) {
-  return <section className={compact ? "ui-tile-grid ui-tile-grid--compact" : "ui-tile-grid"} aria-label={label}>{children}</section>;
+export function TileGrid({ label, children }: { label: string; children: ReactNode }) {
+  return <section className="ui-tile-grid" aria-label={label}>{children}</section>;
 }
 
 /* A text-only list entry sitting on a hairline. */
