@@ -637,8 +637,4 @@ const earlierSlugs = [
 ];
 export const studyProjects = earlierSlugs.map((slug) => bySlug.get(slug)!);
 /* Index order, used for previous and next on detail pages. */
-/* Studies shown only in the personal version of the site. The rest are Stanford
-   and engineering studies, shown in both. */
-const personalSlugs = ["pretzels-favorite-food", "crocheting", "sushi-eating-accessory", "tampon-case", "dough-roller"];
-export const workStudyProjects = studyProjects.filter((p) => !personalSlugs.includes(p.slug));
 export const orderedProjects = [...selectedProjects, ...studyProjects];

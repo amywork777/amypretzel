@@ -237,15 +237,6 @@ A label-size title sitting under a hairline, above a group of items. It is the s
 
 The 44px pretzel mark sits left; label-size links sit right in soft ink, with the theme toggle. The current page is ink with a thin underline offset 5px. Hovering the mark squishes it like soft dough.
 
-### Work and Personal
-
-The site has two versions in one build, switched by a two-button pill ("Work", "Personal") beside the pretzel mark, 13px, with the chosen side filled in ink. On phones (480px and below) the switch drops to its own line under the mark in both versions, so toggling never reflows the header.
-
-- **Work** is the default, and what a visitor with no script, no saved choice or no `?mode=` sees. It is for people deciding whether to hire Amy: no pretzel table opening by itself, no Pretzels link, no hidden pink pretzel, only the Stanford and engineering studies under Earlier work, and the sentence-case footer ("Email me").
-- **Personal** brings all of that back: the pretzel table on a first desktop visit, the Pretzels link and the secret pretzel to `/facts`, every craft under Earlier work, and the lowercase "say hi :)" sign-off.
-- **Mechanics:** `ModeScript` (in `app/mode-switch.tsx`, rendered in `<head>`) sets `html[data-mode]` before paint from `?mode=`, then the visitor's saved choice, then work. Mark anything with `.personal-only` or `.work-only`; CSS hides the other. `?mode=personal` is a shareable link to that version. Which studies are personal is `personalSlugs` in `app/portfolio/projects.ts`.
-- Both versions share the hero sentence, the bio, Selected work and every project page. The switch changes emphasis, never facts.
-
 ### Pretzel Table
 
 The signature, built in WebGL under `app/book/`. The code still says "book" because that is what this scene used to be. Six pretzels rest on black in a row, and each has its own recipe, so they differ in shape as well as topping.
