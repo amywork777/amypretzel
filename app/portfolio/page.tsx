@@ -1,6 +1,7 @@
 import { Page, PageIntro, SectionHeading, SiteFooter } from "../_ui/layout";
-import { Row, RowGroup, Tile, TileGrid } from "../_ui/items";
-import { earlierGroups, projects, selectedProjects } from "./projects";
+import { Tile, TileGrid } from "../_ui/items";
+import { FoldGrid } from "../_ui/fold";
+import { selectedProjects, studyProjects } from "./projects";
 
 import type { Metadata } from "next";
 
@@ -24,8 +25,6 @@ export const metadata: Metadata = {
   },
 };
 
-const titleOf = Object.fromEntries(projects.map(p => [p.slug, p.title]));
-
 export default function PortfolioPage() {
   return (
     <Page active="portfolio">
@@ -38,13 +37,11 @@ export default function PortfolioPage() {
       </TileGrid>
       <section className="objects-earlier" aria-labelledby="earlier-work-title">
         <SectionHeading id="earlier-work-title">Earlier work</SectionHeading>
-        {earlierGroups.map(group => (
-          <RowGroup key={group.title} title={group.title}>
-            {group.items.map(item => (
-              <Row key={item.slug} href={`/portfolio/${item.slug}`} title={titleOf[item.slug]} text={item.text} as="h4" />
-            ))}
-          </RowGroup>
-        ))}
+        <FoldGrid label="Earlier work" total={studyProjects.length}>
+          {studyProjects.map(p => (
+            <Tile key={p.slug} href={`/portfolio/${p.slug}`} image={p.cover} title={p.title} text={p.role} small as="h3" />
+          ))}
+        </FoldGrid>
       </section>
       <SiteFooter />
     </Page>

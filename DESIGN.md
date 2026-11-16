@@ -178,7 +178,7 @@ The font file is licensed and deliberately not in this repository. See the READM
 
 One centred column, at most 1120px wide for indexes and 860px for reading, with a 20px gutter that becomes 48px from 768px. Vertical rhythm comes from the nine-step spacing scale, and spacing stays tight on purpose.
 
-- **Objects** opens with **Selected**, an image grid of professional work (Vizcom, Apple, the companies Amy founded) with every frame the same 4:3 box, never staggered: two columns on phones, three from 1024px. Below it, **Earlier work** is text rows only, grouped by kind of making (Instruments, Molding, Machining and mechanisms, Things to use and wear) under labels in the left margin, the same pattern as Software. Each row's line says what the thing is and where it was made (Stanford, Personal), never a course number. Studies get less space than shipped work, never hidden, the way Bret Victor's site files early work under "Earlier work.". `selectedSlugs` and `earlierGroups` in `app/portfolio/projects.ts` set both lists, and that order drives previous and next on detail pages.
+- **Objects** opens with **Selected**, an image grid of professional work (Vizcom, Apple, the companies Amy founded) with every frame the same 4:3 box, never staggered: two columns on phones, three from 1024px. Below it, **Earlier work** is a grid of small thumbnails, picture over title and one line (the line is dropped on phones), never a text list (Amy is a designer and always prefers a little picture to words). It is folded: one row shows on wide screens (six across) and two rows on phones (three across) and tablets (four across), with a "Show all 13" pill under it. The strongest pictures go first so the folded rows lead with them. Labels say where a thing was made (Stanford, Personal), never a course number. `selectedSlugs` and `earlierSlugs` in `app/portfolio/projects.ts` set both lists, and that order drives previous and next on detail pages.
 - **Software** is compact text rows grouped under a label in a 130px left margin, with no images. Rows stack at 640px and below.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
@@ -226,6 +226,7 @@ Both share one caption: a title with a single line of soft description.
 
 - **Tile:** a framed image, then the caption. On hover the image grows 2.5% and the title softens.
 - **Row:** text only, on a bottom hairline. On hover the title softens.
+- **Fold grid:** `FoldGrid` in `app/_ui/fold.tsx`, a thumbnail grid that folds to its first rows behind a pill (`aria-expanded`). CSS sets how many tiles stay visible per breakpoint so a folded grid ends on a full row.
 - **Selected work row:** a row with a context label in front of the title and the year at the end, used only on the homepage. On phones the context and year share the first line.
 
 ### Section Heading
