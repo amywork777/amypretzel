@@ -26,16 +26,20 @@ export const projects: Project[] = [
     slug: "folding-yoga-mat",
     title: "Folding yoga mat",
     role: "Vizcom, from a creator's render to a manufactured mat",
-    cover: "/portfolio/folding-yoga-mat/concept.webp",
-    coverHover: "/portfolio/folding-yoga-mat/two-patterns.webp",
+    cover: "/portfolio/folding-yoga-mat/final-mat.webp",
+    coverHover: "/portfolio/folding-yoga-mat/concept.webp",
     gallery: [
+      "/portfolio/folding-yoga-mat/final-mat.webp",
       "/portfolio/folding-yoga-mat/concept.webp",
       "/portfolio/folding-yoga-mat/two-patterns.webp",
-      "/portfolio/folding-yoga-mat/folded.webp",
+      "/portfolio/folding-yoga-mat/fold-sequence.webp",
+    ],
+    links: [
+      { label: "Tara's original reel", url: "https://www.instagram.com/reels/DcBtdArysMc/" },
     ],
     body: `**A full-size yoga mat that folds like origami into a square you can carry in a backpack, taken from a Vizcom render to a manufactured sample.**
 
-Tara Harcombe designed the mat in Vizcom: a triangulated crease pattern that folds the whole mat flat into a small stack. At Vizcom, Jordan Taylor and I set out to make it real, as the first test of taking a creator's render all the way to a product.
+Tara Harcombe designed the mat in Vizcom and shared it in a reel that reached tens of thousands of people: a triangulated crease pattern that folds the whole mat flat into a small stack. At Vizcom, Jordan Taylor and I set out to make it real, as the first test of taking a creator's render all the way to a product.
 
 I ran it as an experiment in AI-driven manufacturing. The CAD, the engineering drawings and the simulations were made by AI agents, and so were finding suppliers, reaching out to them and working with the factory, with me checking every step.
 
@@ -47,7 +51,7 @@ Paper folds at zero thickness. Mat panels are several millimetres thick, so ever
 
 - The crease pattern and fold sequence are parametric CAD, with a fold check run on every change
 - Two crease patterns were sampled side by side, and the one that folded flat without jamming was chosen
-- The sample was tested at the office with a push-up competition, and the feedback (smaller gaps, a grippier rubber between panels, a slightly bigger mat) went into the next round
+- The finished prototype (top) arrived at the San Francisco office, where we tested it with a push-up competition, and the feedback (smaller gaps, a grippier rubber between panels, a slightly bigger mat) went into the next round
 
 Next is a finished-quality run in the new material and size, with packaging and a launch video from Tara.`,
   },
