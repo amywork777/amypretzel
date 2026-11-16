@@ -182,7 +182,7 @@ One centred column, at most 1120px wide for indexes and 860px for reading, with 
 - **Software** is compact text rows grouped under a label in a 130px left margin, with no images. Rows stack at 640px and below.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage** leads with the statement, then the portrait, bio and contact links, then **Selected work**: a short list of rows, newest first, each with where it was made in the left margin (Vizcom, Apple, Founder, Open source), the title, one line that carries the proof (shipped, patent, stars, press), and the launch year at the right edge in tabular figures. Years come from a real source (launch post, repo, patent), never a guess. Proof first, so a visitor sees the strongest work without clicking.
+- **The homepage** leads with the statement, then the portrait, bio and contact links, then **Selected work**: eight thumbnail tiles, newest first, two across on phones and four from 768px. Each tile is a picture, the title, one short line of proof (shipped, patent, stars, press) and a soft line with where it was made and the launch year ("Vizcom, 2026"). Years come from a real source (launch post, repo, patent), never a guess. Objects reuse their Objects cover; software uses a real frame from the app in a `fill` tile, which covers the frame because it is a screenshot, not an object. Proof first, so a visitor sees the strongest work without clicking.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
 
@@ -227,7 +227,7 @@ Both share one caption: a title with a single line of soft description.
 - **Tile:** a framed image, then the caption. On hover the image grows 2.5% and the title softens.
 - **Row:** text only, on a bottom hairline. On hover the title softens.
 - **Fold grid:** `FoldGrid` in `app/_ui/fold.tsx`, a thumbnail grid that folds to its first rows behind a pill (`aria-expanded`). CSS sets how many tiles stay visible per breakpoint so a folded grid ends on a full row.
-- **Selected work row:** a row with a context label in front of the title and the year at the end, used only on the homepage. On phones the context and year share the first line.
+- **Tile options:** `fill` covers the frame for screenshots (no padding, no multiply); `meta` adds a soft line after the text; `small` is the FoldGrid thumbnail size.
 
 ### Section Heading
 
