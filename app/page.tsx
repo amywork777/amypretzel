@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
 import { LinkList, TextLink } from "./_ui/link";
+import { SectionHeading } from "./_ui/layout";
 import BookOverlay from "./book/overlay";
 
 const personJsonLd = {
@@ -45,6 +46,18 @@ const contactLinks = [
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
 ];
 
+/* The short list a visitor sees first: where each thing was made, what it is, and the proof. */
+const selectedWork = [
+  { href: "/software/studio", context: "Open source", title: "Studio", text: "A free AI CAD app for mechanical engineers. Describe a part, get a real feature-tree model, test it and send it to be made." },
+  { href: "/software/region-maps", context: "Vizcom", title: "Region Maps", text: "Shipped: edit each part's color, material and pattern in a product render without re-rendering." },
+  { href: "/portfolio/folding-yoga-mat", context: "Vizcom", title: "Folding yoga mat", text: "A creator's render taken to a manufactured origami mat, with AI agents doing the CAD, drawings and supplier work." },
+  { href: "/portfolio/iphone-finewoven", context: "Apple", title: "iPhone FineWoven case", text: "Led materials development and mechanical integration. Co-inventor on the patent." },
+  { href: "/software/lipflow", context: "Open source", title: "Lipflow", text: "Silent dictation by lip reading, running locally. 700+ stars on GitHub." },
+  { href: "/portfolio/taiyaki-3d", context: "Founder", title: "Taiyaki 3D", text: "AI concept-to-CAD for hardware teams, covered by Fabbaloo and 3Printr." },
+  { href: "/portfolio/taya-pendant", context: "Founder", title: "Taya", text: "A wearable AI journal designed as jewelry: enclosure, audio hardware and app." },
+  { href: "/portfolio/ai-jewelry", context: "Founder", title: "Taiyaki Jewelry", text: "Sketches and photos turned into cast silver and gold pieces, for real customers." },
+];
+
 export default function Home() {
   return (
     <div className="home-page">
@@ -65,6 +78,20 @@ export default function Home() {
               <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} sizes="30px" /></Link>
             </div>
           </div>
+        </section>
+        <section className="home-work" aria-labelledby="selected-work-title">
+          <SectionHeading id="selected-work-title">Selected work</SectionHeading>
+          <ul>
+            {selectedWork.map(item => (
+              <li key={item.href}>
+                <Link href={item.href} className="home-work-row">
+                  <span className="home-work-context">{item.context}</span>
+                  <h3 className="ui-item-title">{item.title}</h3>
+                  <p className="ui-item-text">{item.text}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
     </div>

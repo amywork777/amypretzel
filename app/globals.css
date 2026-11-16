@@ -250,8 +250,16 @@ a.ui-button { text-decoration: none; }
 .skip-link:focus { transform: none; }
 
 /* === HOME === */
-.home-intro { padding: 34px 0 60px; }
-@media (min-width: 768px) { .home-intro { padding: 60px 0 100px; } }
+.home-intro { padding: 34px 0 var(--space-6); }
+@media (min-width: 768px) { .home-intro { padding: 60px 0 var(--space-8); } }
+/* Selected work: where it was made in the margin, then the same title and line as a software row. */
+.home-work { padding-bottom: var(--space-8); }
+.home-work .ui-section-heading { margin-top: 0; }
+.home-work-row { display: grid; grid-template-columns: 130px 180px 1fr; gap: var(--space-4) 18px; align-items: baseline; padding: 14px 0; border-bottom: var(--line) solid var(--color-rule); color: inherit; text-decoration: none; }
+.home-work-row .ui-item-text { margin-top: 0; }
+.home-work-context { font-size: var(--text-sm); color: var(--color-ink-soft); }
+.home-work-row:hover .ui-item-title { color: var(--color-ink-soft); }
+@media (max-width: 640px) { .home-work-row { grid-template-columns: 1fr; gap: var(--space-1); } }
 .home-statement { max-width: 20em; }
 .personal-intro { display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: var(--space-7); max-width: 900px; }
 @media (min-width: 768px) { .personal-intro { grid-template-columns: 110px 1fr; gap: 40px; margin-top: 64px; } }
@@ -396,3 +404,9 @@ a.ui-button { text-decoration: none; }
 .animate-ripple      { animation: ripple 3s ease-out infinite; }
 .animate-twinkle     { animation: twinkle 3s ease-in-out infinite; }
 
+
+/* === SECONDARY WORK: studies and crafts sit in a smaller grid under the selected work === */
+.ui-section-heading + .ui-tile-grid { margin-top: var(--space-3); }
+@media (min-width: 768px) { .ui-tile-grid--compact { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .ui-tile-grid--compact { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 16px; } }
+.ui-tile-grid + .ui-section-heading { margin-top: var(--space-8); }
