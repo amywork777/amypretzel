@@ -8,7 +8,7 @@ import { renderBody } from "../../lib/render-body";
 import { Page, PageIntro } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
-import { projects } from "../projects";
+import { orderedProjects as projects } from "../projects";
 import "react-tweet/theme.css";
 
 const SITE_URL = "https://amypretzel.com";

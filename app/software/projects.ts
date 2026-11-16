@@ -140,6 +140,24 @@ I shipped both as product features at Vizcom. The launch demo is below.`,
       "Turning sketches, references, and manufacturing rules into geometry you can actually use.",
     projects: [
       {
+        slug: "studio",
+        title: "Studio",
+        meta: "AI CAD app",
+        summary:
+          "A free, open-source AI CAD app for mechanical engineers: describe a part, get a real feature-tree model, then test it and send it to be made.",
+        body: `Studio is a free, open-source CAD app for mechanical engineers, on Mac and Windows. Describe a part and the AI builds a real CAD model with a feature tree, so you can change any step by hand, test it, and send it to be made.
+
+Most AI apps are built for code. Studio puts the part beside the chat: the model and its feature history, a toolbar with the CAD tools engineers already know, engineering drawings, strength and fit checks, and manufacturability checks for CNC, 3D printing, molding and sheet metal. It runs on your own Claude or ChatGPT account, so there's no extra AI bill, and every project is an ordinary folder on your computer with each change saved as a version.
+
+Studio's CAD tools come from text-to-cad, open-source skills for AI agents by Jake (earthtojake on GitHub). We build Studio together, in the open.`,
+        tags: ["AI CAD", "Desktop app", "Open source"],
+        links: [
+          { label: "texttocad.studio", href: "https://texttocad.studio" },
+          { label: "GitHub", href: "https://github.com/amywork777/studio" },
+          { label: "text-to-cad", href: "https://github.com/earthtojake/text-to-cad" },
+        ],
+      },
+      {
         slug: "taiyaki-3d",
         title: "Taiyaki 3D",
         meta: "Concept-to-CAD",
@@ -202,14 +220,14 @@ The dataset is on Hugging Face and the generation code is on GitHub.`,
         title: "Lipflow",
         meta: "Silent dictation",
         summary:
-          "Dictation without sound: hold a key, silently mouth the words, and a local lip reader types them at your cursor.",
+          "Dictation without sound: hold a key, silently mouth the words, and a local lip reader types them at your cursor. 700+ stars on GitHub.",
         body: `Lipflow is Wispr Flow for your lips. Hold a key, silently mouth what you want to say, let go, and the text appears at your cursor in whatever app you're in. It uses the webcam, not the microphone, and everything runs locally on a Mac, Windows PC, or Linux machine.
 
 Voice dictation is fast, but you can't use it in an open office, on a train, or next to someone sleeping. Lip reading works anywhere you can sit in front of a camera.
 
 While you mouth the words, it tracks your face, crops your mouth 25 times a second, and runs a visual speech model on the Mac's GPU, with a live preview as you go. A language model and an optional LLM pass then fix the words lip reading gets wrong. Setup takes about eight minutes: you mouth 24 practice sentences, and it fine-tunes the lip reader on your face and the language model on your own phrasing, keeping the face model only if it reads held-out sentences better than the stock one.
 
-It's open source, and other people have contributed Linux support and new cleanup backends.`,
+It's open source, with over 700 stars on GitHub, and other people have contributed Linux support and new cleanup backends.`,
         tags: ["Python", "Computer vision", "macOS"],
         links: [
           { label: "GitHub", href: "https://github.com/amywork777/lipflow" },
@@ -264,6 +282,22 @@ Website and source below.`,
         links: [
           { label: "Website", href: "https://landing-two-phi-66.vercel.app" },
           { label: "GitHub", href: "https://github.com/amywork777/Screenie" },
+        ],
+      },
+      {
+        slug: "selfie-booth",
+        title: "Selfie booth",
+        meta: "Event photo booth",
+        summary:
+          "An iPad selfie booth that prints on a thermal label printer: pick a pattern, add a caption or a doodle, pose, and walk away with a print.",
+        body: `An iPad selfie booth that prints on a 4x6 thermal label printer. Guests pick how many photos and a pattern, add a caption or a doodle, pose, and walk away with a print.
+
+An iPad can't drive a USB printer, so a small Mac or Raspberry Pi sits in the middle. The iPad page does everything people see, from the camera and countdown to turning the photo into printer dots. The server only passes the finished label to the printer over USB, with no printer driver.
+
+It's built for someone who isn't technical to run at an event: double-click Start Booth on the Mac, open one address on the iPad, and lock it to the booth.`,
+        tags: ["Python", "iPad", "Thermal printing"],
+        links: [
+          { label: "GitHub", href: "https://github.com/amywork777/selfie-booth" },
         ],
       },
     ],

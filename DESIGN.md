@@ -178,11 +178,11 @@ The font file is licensed and deliberately not in this repository. See the READM
 
 One centred column, at most 1120px wide for indexes and 860px for reading, with a 20px gutter that becomes 48px from 768px. Vertical rhythm comes from the nine-step spacing scale, and spacing stays tight on purpose.
 
-- **Objects** are an image grid: two columns on phones, three from 1024px, with every frame the same 4:3 box. The grid is never staggered.
+- **Objects** are two image grids, each with every frame the same 4:3 box and never staggered. **Selected** holds professional work (Vizcom, Apple, the companies Amy founded): two columns on phones, three from 1024px. **Studies and crafts** follows under its own heading in a compact grid: two columns on phones, three from 768px, four from 1024px. Which projects are selected is the `selectedSlugs` list in `app/portfolio/projects.ts`, and that order also drives previous and next on detail pages.
 - **Software** is compact text rows grouped under a label in a 130px left margin, with no images. Rows stack at 640px and below.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage** leads with the statement, then the portrait, bio and contact links.
+- **The homepage** leads with the statement, then the portrait, bio and contact links, then **Selected work**: a short list of rows, each with where it was made in a 130px margin (Vizcom, Apple, Founder, Open source), the title, and one line that carries the proof (shipped, patent, stars, press). It aligns with the software page's columns. Proof first, so a visitor sees the strongest work without clicking.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
 
@@ -226,6 +226,7 @@ Both share one caption: a title with a single line of soft description.
 
 - **Tile:** a framed image, then the caption. On hover the image grows 2.5% and the title softens.
 - **Row:** text only, on a bottom hairline. On hover the title softens.
+- **Selected work row:** a row with a context label in front of the title, used only on the homepage.
 
 ### Section Heading
 
