@@ -239,9 +239,10 @@ The 44px pretzel mark sits left; label-size links sit right in soft ink, with th
 
 The signature, built in WebGL under `app/book/`. The code still says "book" because that is what this scene used to be. Six pretzels rest on black in a row, and each has its own recipe, so they differ in shape as well as topping.
 
-- **Rest:** hovering lifts a pretzel and shows its name in a dark pill below it. The camera drifts slightly with the pointer on devices that have one.
+- **Rest:** hovering lifts a pretzel and shows its name in a dark pill below it. The camera drifts slightly with the pointer on devices that have one. Touch screens have no hover, so while no pretzel is picked they show one line in the same dark pill, bottom centre: "Tap a pretzel".
 - **Held:** a selected pretzel rises and centres in the space left by the card, swaying gently.
-- **Chapter card:** slides in from the right over .6s on `cubic-bezier(.2, .8, .2, 1)`, 560px wide or 46vw at most. On phones (700px and below) it becomes a bottom sheet at 52vh.
+- **Chapter card:** slides in from the right over .6s on `cubic-bezier(.2, .8, .2, 1)`, 560px wide or 46vw at most. On phones (700px and below) it becomes a bottom sheet at 52vh; a longer chapter scrolls inside the sheet while Previous and Next stay pinned to its bottom.
+- **Why pretzels:** the last chapter, "say hi", says why the site is pretzels, so the motif explains itself.
 - **Exit:** a pill reading "Go to the website" sits top right, and steps aside while the card is open.
 - **Loading:** a captured still of the real scene paints first and fades after the first rendered frame. The scene only draws while something is moving.
 - **Accessibility:** a focus-trapped dialog, closed with Escape, with a keyboard-only way in.

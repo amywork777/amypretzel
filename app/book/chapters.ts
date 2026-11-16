@@ -47,7 +47,7 @@ export const bookEnding: BookChapter = {
   id: "hi",
   pretzel: "matcha",
   title: "say hi",
-  text: "that's the short version. everything else lives on the website: objects, and software to build objects. i love meeting people who make things.",
+  text: "that's the short version. why pretzels? a pretzel is one line tied into a knot, simple enough to spot at a glance and tricky enough that making one by hand feels like a small win. that's what i love in objects too. everything else lives on the website: objects, and software to build objects. i love meeting people who make things.",
 };
 
 export const storyChapters = [...bookChapters, bookEnding];

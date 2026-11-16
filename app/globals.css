@@ -297,6 +297,10 @@ a.ui-button { text-decoration: none; }
 .pretzel-label { display: block; white-space: nowrap; padding: 6px 11px; border-radius: var(--radius-pill); font-size: var(--text-sm); letter-spacing: var(--tracking-body); color: #fff; background: rgba(20, 20, 20, .72); backdrop-filter: blur(6px); pointer-events: none; animation: pretzel-label-in .18s ease-out; }
 @keyframes pretzel-label-in { from { opacity: 0; transform: translateY(-4px); } }
 .pretzel-start:focus { position: absolute; z-index: 5; left: 50%; bottom: 32px; transform: translateX(-50%); }
+.pretzel-tap-hint { display: none; }
+@media (hover: none) {
+  .pretzel-tap-hint { display: block; position: absolute; z-index: 4; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translateX(-50%); margin: 0; white-space: nowrap; padding: 6px 11px; border-radius: var(--radius-pill); font-size: var(--text-sm); letter-spacing: var(--tracking-body); color: #fff; background: rgba(20, 20, 20, .72); backdrop-filter: blur(6px); pointer-events: none; animation: pretzel-label-in .4s ease-out .6s both; }
+}
 .pretzel-card {
   --color-paper: #ffffff;
   --color-ink: #1c1c1c;
@@ -330,6 +334,8 @@ a.ui-button { text-decoration: none; }
   .pretzel-card { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 52vh; padding: 20px 22px max(16px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0; transform: translateY(calc(100% + 32px)); }
   .pretzel-card-title { font-size: 38px; margin: var(--space-4) 0 var(--space-3); padding-top: 0; }
   .pretzel-card-text { font-size: 17px; }
+  /* Longer chapters scroll inside the sheet; the way on stays in reach. */
+  .pretzel-card-nav { --pad: max(16px, env(safe-area-inset-bottom)); position: sticky; bottom: calc(-1 * var(--pad)); margin-bottom: calc(-1 * var(--pad)); padding: var(--space-4) 0 var(--pad); background: var(--color-paper); }
 }
 @media (max-width: 700px) {
   .book-overlay-enter { top: 18px; right: 16px; }

@@ -485,8 +485,10 @@ export default function PretzelStory({ onExit, onReady }: { onExit?: () => void;
       </div>
 
       {/* No words on the table: the pretzels all lie on it until one is picked,
-          and name themselves on hover. Keyboard and screen-reader visitors
-          still get a way in and the whole story as text. */}
+          and name themselves on hover. Touch screens have no hover, so they get
+          one quiet line instead. Keyboard and screen-reader visitors still get
+          a way in and the whole story as text. */}
+      {!open && <p className="pretzel-tap-hint" aria-hidden>Tap a pretzel</p>}
       {!open && <Button variant="pill" className="pretzel-start sr-only focus:not-sr-only" onClick={() => select(0)}>Start at the beginning</Button>}
       <div className="sr-only">
         {storyChapters.map(c => <section key={c.id}><h2>{c.title}</h2><p>{c.text}</p></section>)}
