@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { loadBook } from "./load-book";
 import BookPoster from "./poster";
 import { Button } from "../_ui/button";
-import { getMode } from "../mode-switch";
 
 const StoryBook = dynamic(loadBook, { ssr: false, loading: () => <p className="book-loading" role="status">Setting out the pretzels…</p> });
 
@@ -33,8 +32,7 @@ export default function BookOverlay() {
     // homepage is the homepage, including when Home is clicked from a project;
     // the Pretzels link or /#book still opens it on any device. Deep links to
     // other anchors (/#software etc.) are never hijacked.
-    // Only in the personal version: the work version is for people deciding whether to hire.
-    const autoOpen = desktop && hash === "" && !hasSeenBook() && getMode() === "personal";
+    const autoOpen = desktop && hash === "" && !hasSeenBook();
     if (hash === "#book" || autoOpen) {
       // the open decision must run after hydration; the server renders null
       // eslint-disable-next-line react-hooks/set-state-in-effect
