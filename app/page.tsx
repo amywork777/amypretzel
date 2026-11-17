@@ -5,6 +5,7 @@ import { LinkList } from "./_ui/link";
 import { SiteFooter } from "./_ui/layout";
 import { OpenOnHash } from "./_ui/open-on-hash";
 import { KindFilter } from "./_ui/kind-filter";
+import { GroupMark, GroupMarksDefs } from "./_ui/group-marks";
 import { Earlier, Group, List } from "./_ui/list";
 import { workGroups } from "./work";
 
@@ -75,7 +76,7 @@ export default function Home() {
         </section>
         <div id="work" className="home-groups">
           {workGroups.map(g => (
-            <Group key={g.id} id={g.id} title={g.title} note={g.note} items={g.items}>
+            <Group key={g.id} id={g.id} title={g.title} note={g.note} items={g.items} mark={<GroupMark id={g.id} />}>
               <List items={g.items} label={g.title} />
               {g.earlier && (
                 <Earlier title="Earlier, at Stanford and home">
@@ -86,6 +87,7 @@ export default function Home() {
           ))}
         </div>
         <OpenOnHash />
+        <GroupMarksDefs />
         <SiteFooter />
       </main>
     </div>

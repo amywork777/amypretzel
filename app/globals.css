@@ -371,6 +371,16 @@ a.ui-button { text-decoration: none; }
    straightens them into a neat row. Each picture is cut out of
    the one beneath by a ring of page colour, not a line. It steps aside once
    the group is open, since the list shows the pictures properly. */
+/* The group's hand-drawn mark (GroupMark), boiling in soft ink; it inks in and tips a little when the line is hovered or open. */
+.ui-group-markwrap { display: block; width: 76px; padding-right: 6px; color: var(--color-ink-soft); transition: color var(--ease); }
+.ui-group-mark { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 50% 70%; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.ui-group[open] .ui-group-markwrap { color: var(--color-ink); }
+@media (hover: hover) {
+  .ui-group > summary:hover .ui-group-markwrap { color: var(--color-ink); }
+  .ui-group > summary:hover .ui-group-mark { transform: rotate(-6deg); }
+}
+@media (prefers-reduced-motion: reduce) { .ui-group-mark { transition: none; } }
+@media (max-width: 480px) { .ui-group-markwrap { width: 60px; padding-right: 0; } }
 .ui-group-strip { display: flex; justify-content: flex-end; width: 220px; padding-right: 4px; transition: opacity .3s cubic-bezier(.2, .8, .2, 1), transform .3s cubic-bezier(.2, .8, .2, 1); }
 .ui-group-pic { position: relative; display: block; flex: none; width: 56px; aspect-ratio: 4 / 3; border-radius: 5px; overflow: hidden; background: var(--color-media); outline: 2px solid var(--color-paper); transition: margin .4s cubic-bezier(.2, .8, .2, 1), transform .4s cubic-bezier(.2, .8, .2, 1); }
 .ui-group-pic + .ui-group-pic { margin-left: -16px; }

@@ -47,11 +47,12 @@ export function List({ items, label, small }: { items: ListItem[]; label: string
 
 /* A kind of work, closed to one line so the homepage stays short: the
    group's name as a pill (the line's one control, filled while open), one
-   sentence under it, and a strip of its first pictures. It opens in place
+   sentence under it, and its hand-drawn mark (GroupMark), or a strip of its
+   first pictures when it has none. It opens in place
    to the full list. Native details/summary, so
    it works without script and find-in-page opens it; OpenOnHash opens it when
    a link jumps to it. */
-export function Group({ id, title, note, items, children }: { id: string; title: string; note?: string; items: ListItem[]; children: ReactNode }) {
+export function Group({ id, title, note, items, mark, children }: { id: string; title: string; note?: string; items: ListItem[]; mark?: ReactNode; children: ReactNode }) {
   return (
     <details id={id} className="ui-group">
       <summary>
@@ -59,13 +60,15 @@ export function Group({ id, title, note, items, children }: { id: string; title:
           <h2 className="ui-group-title">{title}</h2>
           {note && <span className="ui-group-note">{note}</span>}
         </span>
-        <span className="ui-group-strip" aria-hidden="true">
-          {items.slice(0, 5).map(item => (
-            <span key={item.href} className={item.cutout ? "ui-group-pic ui-cutout" : "ui-group-pic"}>
-              <Image src={item.image} alt="" fill sizes="48px" />
-            </span>
-          ))}
-        </span>
+        {mark ?? (
+          <span className="ui-group-strip" aria-hidden="true">
+            {items.slice(0, 5).map(item => (
+              <span key={item.href} className={item.cutout ? "ui-group-pic ui-cutout" : "ui-group-pic"}>
+                <Image src={item.image} alt="" fill sizes="48px" />
+              </span>
+            ))}
+          </span>
+        )}
       </summary>
       <div className="ui-group-body">{children}</div>
     </details>
