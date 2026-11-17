@@ -1,0 +1,29 @@
+/* The CAD stepper (cad-stepper.tsx): the shared .ui-try frame, plus a scrub row
+   and a line of words on the stage. The stage is the light media surface in
+   both themes, so its words use the light ink, not the token that inverts. */
+
+.ui-try-stage.cad-stepper-stage canvas { touch-action: pan-y; cursor: grab; outline: none; }
+.ui-try-stage.cad-stepper-stage canvas:active { cursor: grabbing; }
+.ui-try-stage.cad-stepper-stage canvas:focus-visible + .cad-stepper-ring { opacity: 1; }
+.cad-stepper-ring { position: absolute; inset: 0; border: var(--line) solid #1c1c1c; border-radius: var(--radius); opacity: 0; pointer-events: none; }
+
+.cad-stepper-label { position: absolute; left: 14px; bottom: 11px; right: 14px; font-size: var(--text-sm); line-height: 1.3; color: rgba(28, 28, 28, .6); pointer-events: none; }
+.cad-stepper-label b { font-weight: 500; color: #1c1c1c; }
+
+.cad-stepper-scrub { flex: 1 1 100%; flex-wrap: nowrap; gap: var(--space-3); }
+.cad-stepper-count { flex: none; min-width: 3.4em; text-align: right; font-size: var(--text-sm); color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
+
+.cad-stepper-range { flex: 1 1 auto; min-width: 0; height: 32px; margin: 0; background: transparent; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.cad-stepper-range::-webkit-slider-runnable-track { height: var(--line); background: var(--color-rule); }
+.cad-stepper-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; margin-top: -6.5px; border: 0; border-radius: 50%; background: var(--color-ink); transition: transform var(--ease); }
+.cad-stepper-range::-moz-range-track { height: var(--line); background: var(--color-rule); }
+.cad-stepper-range::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--color-ink); }
+.cad-stepper-range:focus-visible { outline: var(--line) solid currentColor; outline-offset: 4px; }
+@media (hover: hover) { .cad-stepper-range:hover::-webkit-slider-thumb { transform: scale(1.15); } }
+.cad-stepper-range:disabled { opacity: .35; cursor: default; }
+
+.cad-stepper-steps { flex: 1 1 100%; }
+
+@media (max-width: 560px) {
+  .cad-stepper-label { left: 10px; bottom: 8px; font-size: 13px; }
+}
