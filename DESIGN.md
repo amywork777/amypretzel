@@ -181,7 +181,7 @@ One centred column, at most 1120px wide for indexes and 860px for reading, with 
 - **One page.** The whole site is the homepage. There is no Objects or Software index: `/portfolio` redirects to `/#products` and `/software` to `/#ai-tools`, and only the project pages live under them. Amy wants it as simple as possible, so don't add index pages, tabs or a work/personal switch back.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage is plain stacked lists**, after Felix Rieseberg's site (felixrieseberg.com), which Amy picked after rejecting framed cards ("portfolio-y") and a captionless shelf ("format is a bit weird") on 2026-11-16. It opens with "Hi, I'm Amy.", a two-sentence lede and the contact pills, with no portrait. Then a short **Work** list (company and role only, no pictures), and the things grouped by kind, each under a Section Heading with an optional soft note on the right: **Physical products** (Manufactured), **AI tools for designers** (At Vizcom), **3D and CAD**, **Tools and toys** (Side projects). Amy chose grouping by kind over grouping by company (2026-11-16) because it keeps the Vizcom tools together and the 3D work together, with manufacturing first.
+- **The homepage is plain stacked lists**, after Felix Rieseberg's site (felixrieseberg.com), which Amy picked after rejecting framed cards ("portfolio-y") and a captionless shelf ("format is a bit weird") on 2026-11-16. It opens with Amy's own statement ("I like building objects, and software to build objects", the two words as pills that jump to the groups), her portrait beside a two-paragraph bio, and the contact pills. Keep her bio wording; don't condense it. There is no separate Work list: the bio already says where she has worked, so the things follow straight after, grouped by kind, each under a Section Heading with an optional soft note on the right: **Physical products** (Manufactured), **AI tools for designers** (At Vizcom), **3D and CAD**, **Tools and toys** (Side projects). Amy chose grouping by kind over grouping by company (2026-11-16) because it keeps the Vizcom tools together and the 3D work together, with manufacturing first.
 - **Every row in a group has a small picture** (Amy is a designer and wants pictures over text rows), then the title, one soft line and the year. A new thing goes in the group for what it is, not where it was made. App thumbnails are screenshots of the app in use (never a GitHub card), in `public/work/<slug>.webp`.
 - **Older work folds away.** The 13 Stanford and home studies sit closed under one "Earlier, at Stanford and home" line, so less is on the page. Keep new secondary work in the fold, not in the main lists.
 - Longer details (proof, process, where it was made) live on each project's own page; the homepage keeps one line per thing. The page ends with the sign-off footer.
@@ -234,7 +234,7 @@ A label-size title sitting under a hairline, above a group of items. It is the s
 
 ### Navigation
 
-The 44px pretzel mark sits left and goes home; on the right sit Work and Things (jumps to the Work list and the first group), the Pretzels link and the theme toggle, in soft ink. Hovering the mark squishes it like soft dough.
+The 44px pretzel mark sits left and goes home; on the right sit Things (jumps to the first group), the Pretzels link and the theme toggle, in soft ink. Hovering the mark squishes it like soft dough.
 
 ### Pretzel Table
 

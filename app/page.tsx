@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
-import { LinkList } from "./_ui/link";
+import { LinkList, TextLink } from "./_ui/link";
 import { SectionHeading, SiteFooter } from "./_ui/layout";
 import BookOverlay from "./book/overlay";
 import { Earlier, List, type ListItem } from "./_ui/list";
@@ -49,20 +49,11 @@ const contactLinks = [
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
 ];
 
-/* Plain lists, like Felix Rieseberg's site: a short Work list of names and
-   roles, then the things grouped by kind. Each row is a small picture, a
+/* Amy's own bio and portrait, then plain lists like Felix Rieseberg's site,
+   the things grouped by kind. Each row is a small picture, a
    title, one line and a year. Physical products lead, since manufacturing is
    what Amy is most into; the earlier studies fold away under one line. Years
    come from a real source (launch post, repo, patent). */
-const work = [
-  { name: "Vizcom", role: "Now" },
-  { name: "Taiyaki", role: "Founder" },
-  { name: "Taya", role: "Founder" },
-  { name: "Mobius", role: "Founder" },
-  { name: "Apple", role: "Product design engineer" },
-  { name: "Stanford", role: "Student" },
-];
-
 const cover = (slug: string) => projects.find(p => p.slug === slug)!;
 const object = (slug: string, text: string, year?: string): ListItem => ({ href: `/portfolio/${slug}`, image: cover(slug).cover, title: cover(slug).title, text, year });
 const objects: ListItem[] = [
@@ -106,22 +97,18 @@ export default function Home() {
       <SiteNav />
       <main id="main-content" className="ui-column ui-column--list">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
-          <h1 id="intro-title" className="ui-display home-hello">Hi, I&apos;m Amy.</h1>
-          <p className="home-lede">I build objects, and software to build objects. Right now I work on AI tools for industrial designers at Vizcom in San Francisco.</p>
-          <LinkList label="Contact Amy" links={contactLinks} />
-          {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
-          <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} sizes="30px" /></Link>
-        </section>
-        <section id="work" className="home-list" aria-labelledby="work-title">
-          <SectionHeading id="work-title">Work</SectionHeading>
-          <ul className="ui-list ui-list--plain">
-            {work.map(w => (
-              <li key={w.name} className="ui-list-row">
-                <span className="ui-list-title">{w.name}</span>
-                <span className="ui-list-year">{w.role}</span>
-              </li>
-            ))}
-          </ul>
+          <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
+          <p className="ui-display home-statement">I like building <TextLink href="#products">objects</TextLink>, and <TextLink href="#ai-tools">software</TextLink> to build objects.</p>
+          <div className="personal-intro">
+            <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
+            <div className="personal-copy ui-prose">
+              <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
+              <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
+              <LinkList label="Contact Amy" links={contactLinks} />
+              {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
+              <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} sizes="30px" /></Link>
+            </div>
+          </div>
         </section>
         <section id="products" className="home-list" aria-labelledby="products-title">
           <SectionHeading id="products-title" note="Manufactured">Physical products</SectionHeading>

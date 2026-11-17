@@ -12,8 +12,6 @@ export default function SiteNav() {
         <nav aria-label="Main navigation">
           {/* Native fragments so the links also work from project pages. */}
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/#work">Work</a>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/#products">Things</a>
           <BookNavLink />
           <ThemeToggle />

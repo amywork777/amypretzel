@@ -236,15 +236,17 @@ a.ui-button { text-decoration: none; }
 @media (min-width: 768px) { .home-intro { padding: 60px 0 var(--space-8); } }
 /* === LISTS: the homepage is plain stacked lists, like Felix Rieseberg's site === */
 .ui-column--list { max-width: calc(680px + 2 * var(--gutter, 20px)); }
-.home-hello { margin: 0 0 var(--space-3); }
-.home-lede { margin: 0 0 var(--space-5); max-width: 34em; font-size: var(--text-lg, 18px); line-height: 1.5; color: var(--color-ink-soft); }
+.home-statement { max-width: 20em; }
+.personal-intro { display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: var(--space-7); }
+@media (min-width: 768px) { .personal-intro { grid-template-columns: 110px 1fr; gap: 40px; margin-top: 56px; } }
+.personal-portrait { width: 110px; height: 110px; object-fit: cover; border-radius: var(--radius); }
+.personal-copy p { margin-bottom: 1em; }
 .home-list { padding-bottom: var(--space-7); scroll-margin-top: 80px; }
 @media (max-width: 420px) { .site-header nav { gap: 14px; } }
 .home-list .ui-section-heading { margin-top: 0; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); }
 .ui-section-note { font-size: 13px; color: var(--color-ink-soft); }
 .ui-list { list-style: none; margin: 0; padding: 0; }
 .ui-list-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3) var(--space-4); align-items: center; padding: 10px 0; border-bottom: var(--line) solid var(--color-rule); color: inherit; text-decoration: none; }
-.ui-list--plain .ui-list-row { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; padding: 12px 0; }
 .ui-list-thumb { position: relative; display: block; width: 56px; aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; background: var(--color-media); }
 .ui-list-thumb img { object-fit: contain; padding: 3px; mix-blend-mode: multiply; }
 .ui-list-thumb--screen img { object-fit: cover; padding: 0; mix-blend-mode: normal; }
