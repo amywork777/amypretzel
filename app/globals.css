@@ -241,6 +241,7 @@ a.ui-button { text-decoration: none; }
 @media (min-width: 768px) { .personal-intro { grid-template-columns: 110px 1fr; gap: 40px; margin-top: 56px; } }
 .personal-portrait { width: 110px; height: 110px; object-fit: cover; border-radius: var(--radius); }
 .personal-copy p { margin-bottom: 1em; }
+.personal-copy strong { font-weight: 500; color: var(--color-ink); }
 .home-list { padding-bottom: var(--space-7); scroll-margin-top: 80px; }
 @media (max-width: 420px) { .site-header nav { gap: 14px; } }
 .home-list .ui-section-heading { margin-top: 0; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); }

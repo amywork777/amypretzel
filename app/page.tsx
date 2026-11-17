@@ -102,7 +102,7 @@ export default function Home() {
           <div className="personal-intro">
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
             <div className="personal-copy ui-prose">
-              <p>Now at Vizcom, building AI tools for industrial designers. Before that I started a few things: Taiyaki, an AI concept-to-CAD tool; Taya, a wearable AI journal as jewelry; and Mobius, materials trading and recycling. Earlier, product design engineering at Apple, and product design and mechanical engineering at Stanford.</p>
+              <p>Now at <strong>Vizcom</strong>. Founded <strong>Taiyaki</strong>, <strong>Taya</strong> and <strong>Mobius</strong>. Before that, <strong>Apple</strong> and <strong>Stanford</strong>.</p>
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <LinkList label="Contact Amy" links={contactLinks} />
               {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
