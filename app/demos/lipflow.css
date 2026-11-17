@@ -1,0 +1,59 @@
+/* Lipflow mini demo: the camera (or, before it, the reference face) on the
+   left, and the crop the model reads on the right. The stage is near-black
+   like the site's phone recordings, since it holds a camera picture. */
+
+.lf-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32%;
+  background: #111;
+}
+@media (max-width: 560px) { .lf-stage { aspect-ratio: 4 / 3; grid-template-columns: minmax(0, 1fr) 38%; } }
+
+.lf-frame { position: relative; overflow: hidden; border-right: var(--line) solid rgba(255, 255, 255, .12); }
+.lf-frame .lf-diagram { position: absolute; inset: 8% 6%; width: 88%; height: 84%; }
+
+/* The camera is shown mirrored, like a selfie view and like Lipflow's own
+   preview; the overlay is drawn in the camera's pixels and mirrored with it. */
+.ui-try-stage .lf-video, .ui-try-stage .lf-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.lf-stage[data-live] .lf-video, .lf-stage[data-live] .lf-overlay { opacity: 1; }
+.lf-stage[data-live] .lf-diagram { visibility: hidden; }
+
+.lf-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  min-width: 0;
+}
+.lf-crop { position: relative; width: min(100%, 176px); aspect-ratio: 1; background: #000; outline: var(--line) solid rgba(255, 255, 255, .18); }
+.lf-crop .lf-diagram { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ui-try-stage .lf-crop canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  image-rendering: pixelated;
+  transform: scaleX(-1);
+  transition: none;
+}
+
+.lf-label { margin: 0; font-size: 12px; line-height: 1.4; text-align: center; color: rgba(255, 255, 255, .85); }
+.lf-label span { color: rgba(255, 255, 255, .55); font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { .lf-side { padding: var(--space-3) var(--space-2); gap: var(--space-2); } .lf-label { font-size: 11px; } }
+
+.lf-status { margin: 0 0 0 var(--space-2); font-size: var(--text-sm); color: var(--color-ink-soft); }
+@media (max-width: 560px) { .lf-status { margin: 0; flex-basis: 100%; } }
+
+@media (prefers-reduced-motion: reduce) { .ui-try-stage .lf-video, .ui-try-stage .lf-overlay { transition: none; } }
