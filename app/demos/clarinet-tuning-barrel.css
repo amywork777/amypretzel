@@ -1,0 +1,35 @@
+/* Clarinet barrel mini demo (app/demos/clarinet-tuning-barrel.tsx). The
+   stage is the media box, which stays light in dark mode, so the drawing and
+   the text on it keep the light ink. */
+
+.clar-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-select: none; }
+.clar-svg path, .clar-svg circle, .clar-svg line { fill: none; vector-effect: non-scaling-stroke; stroke-width: 1px; }
+.clar-line { stroke: #1c1c1c; }
+.clar-faint { stroke: rgba(28, 28, 28, .32); }
+.clar-hidden { stroke: rgba(28, 28, 28, .45); stroke-dasharray: 6 4; }
+.clar-centre { stroke: rgba(28, 28, 28, .3); stroke-dasharray: 18 4 3 4; }
+.clar-needle { stroke: #1c1c1c; transition: transform .25s cubic-bezier(.3, .7, .3, 1); }
+.clar-hit { fill: transparent; cursor: ew-resize; touch-action: pan-y; }
+
+.clar-label { position: absolute; margin: 0; font-size: var(--text-sm); line-height: 1.35; color: #1c1c1c; font-variant-numeric: tabular-nums; pointer-events: none; white-space: nowrap; }
+.clar-label span { display: block; }
+.clar-soft { color: rgba(28, 28, 28, .6); }
+.clar-dim { left: 50%; transform: translate(-50%, -50%); }
+.clar-left { right: 63.5%; bottom: 4.5%; text-align: right; }
+.clar-right { left: 63.5%; bottom: 4.5%; }
+
+.clar-length { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); color: var(--color-ink-soft); }
+.clar-slider { -webkit-appearance: none; appearance: none; width: 200px; height: 32px; margin: 0; background: transparent; cursor: pointer; }
+.clar-slider::-webkit-slider-runnable-track { height: 1px; background: var(--color-ink-soft); }
+.clar-slider::-moz-range-track { height: 1px; background: var(--color-ink-soft); }
+.clar-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-top: -8.5px; border-radius: 50%; background: var(--color-paper); border: var(--line) solid var(--color-ink); }
+.clar-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--color-paper); border: var(--line) solid var(--color-ink); }
+.clar-slider:focus-visible { outline: var(--line) solid currentColor; outline-offset: 4px; }
+
+@media (max-width: 560px) {
+  .clar-label { font-size: 12px; line-height: 1.3; }
+  .clar-left { right: 62%; bottom: 3%; }
+  .clar-right { left: 62%; bottom: 3%; }
+  .clar-length { flex: 1; }
+  .clar-slider { flex: 1; width: auto; }
+}
