@@ -1,0 +1,190 @@
+{
+ "source": "cad-steps",
+ "sample": "00079619",
+ "bounds": {
+  "centre": [
+   0.0,
+   -0.0,
+   0.002081
+  ],
+  "half": 0.002081,
+  "extent": [
+   0.00254,
+   0.003175,
+   0.004163
+  ]
+ },
+ "bytes": 159540,
+ "steps": [
+  {
+   "name": "Sketch 1",
+   "kind": "Sketch",
+   "detail": "4 lines",
+   "vertices": 0,
+   "triangles": 0,
+   "fresh": 0,
+   "wide": false,
+   "at": {
+    "positions": 0,
+    "indices": 0,
+    "edges": 0,
+    "sketch": 0
+   },
+   "edges": 0,
+   "sketch": 4
+  },
+  {
+   "name": "Extrude 1",
+   "kind": "Extrude",
+   "detail": "new body, one side",
+   "vertices": 24,
+   "triangles": 12,
+   "fresh": 12,
+   "wide": false,
+   "at": {
+    "positions": 48,
+    "indices": 192,
+    "edges": 264,
+    "sketch": 408
+   },
+   "edges": 12,
+   "sketch": 0
+  },
+  {
+   "name": "Sketch 2",
+   "kind": "Sketch",
+   "detail": "1 circle",
+   "vertices": 24,
+   "triangles": 12,
+   "fresh": 12,
+   "wide": false,
+   "at": {
+    "positions": 408,
+    "indices": 552,
+    "edges": 624,
+    "sketch": 768
+   },
+   "edges": 12,
+   "sketch": 64
+  },
+  {
+   "name": "Extrude 2",
+   "kind": "Extrude",
+   "detail": "join, symmetric",
+   "vertices": 1624,
+   "triangles": 1602,
+   "fresh": 27,
+   "wide": false,
+   "at": {
+    "positions": 1536,
+    "indices": 11280,
+    "edges": 20892,
+    "sketch": 25740
+   },
+   "edges": 404,
+   "sketch": 0
+  },
+  {
+   "name": "Sketch 3",
+   "kind": "Sketch",
+   "detail": "4 lines",
+   "vertices": 1624,
+   "triangles": 1602,
+   "wide": false,
+   "edges": 404,
+   "fresh": 1602,
+   "at": {
+    "positions": 1536,
+    "indices": 11280,
+    "edges": 20892,
+    "sketch": 25740
+   },
+   "sketch": 4
+  },
+  {
+   "name": "Extrude 3",
+   "kind": "Extrude",
+   "detail": "join, one side",
+   "vertices": 1340,
+   "triangles": 1306,
+   "fresh": 1281,
+   "wide": false,
+   "at": {
+    "positions": 25788,
+    "indices": 33828,
+    "edges": 41664,
+    "sketch": 46464
+   },
+   "edges": 400,
+   "sketch": 0
+  },
+  {
+   "name": "Sketch 4",
+   "kind": "Sketch",
+   "detail": "2 circles",
+   "vertices": 1340,
+   "triangles": 1306,
+   "wide": false,
+   "edges": 400,
+   "fresh": 1306,
+   "at": {
+    "positions": 25788,
+    "indices": 33828,
+    "edges": 41664,
+    "sketch": 46464
+   },
+   "sketch": 128
+  },
+  {
+   "name": "Extrude 4",
+   "kind": "Extrude",
+   "detail": "cut, symmetric",
+   "vertices": 3588,
+   "triangles": 3546,
+   "fresh": 1312,
+   "wide": false,
+   "at": {
+    "positions": 48000,
+    "indices": 69528,
+    "edges": 90804,
+    "sketch": 100860
+   },
+   "edges": 838,
+   "sketch": 0
+  },
+  {
+   "name": "Sketch 5",
+   "kind": "Sketch",
+   "detail": "1 circle",
+   "vertices": 3588,
+   "triangles": 3546,
+   "wide": false,
+   "edges": 838,
+   "fresh": 3546,
+   "at": {
+    "positions": 48000,
+    "indices": 69528,
+    "edges": 90804,
+    "sketch": 100860
+   },
+   "sketch": 22
+  },
+  {
+   "name": "Extrude 5",
+   "kind": "Extrude",
+   "detail": "cut, one side",
+   "vertices": 4006,
+   "triangles": 3966,
+   "fresh": 3755,
+   "wide": false,
+   "at": {
+    "positions": 101124,
+    "indices": 125160,
+    "edges": 148956,
+    "sketch": 159540
+   },
+   "edges": 882,
+   "sketch": 0
+  }
+ ]
+}
