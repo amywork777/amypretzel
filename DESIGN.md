@@ -181,10 +181,10 @@ One centred column, at most 1120px wide for indexes and 860px for reading, with 
 - **One page.** The whole site is the homepage. There is no Objects or Software index: `/portfolio` redirects to `/#objects` and `/software` to `/#software`, and only the project pages live under them. Amy wants it as simple as possible, so don't add index pages, tabs or a work/personal switch back.
 - **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage** leads with the statement, whose "objects" and "software" pills jump to the two groups below, then the portrait, a one-line bio and the contact links. Keep the bio to one line.
-- **The work is a shelf, not a portfolio.** Amy found framed cards with captions and years "portfolio-y" (2026-11-16), so every object sits straight on the page with no frame, caption or section heading, the way the pretzels sit on their table. Manufacturing comes first (the yoga mat, Taya, Taiyaki Jewelry, FineWoven, iPad accessories), then the Stanford and personal studies. Six across on wide screens, four on tablets, three on phones, and keep the count a multiple of six so rows end full.
-- **Software follows** under one soft line, "And software to build them", as a row of rounded screenshots of each app in use (never a GitHub card), CAD tools first: Studio, Taiyaki 3D, Region Maps, Lipflow, CAD-Steps, then the Vizcom features and side projects. Thumbnails live in `public/work/<slug>.webp`.
-- Details (role, year, proof, where it was made) live on each project's own page, not on the homepage. The page ends with the sign-off footer.
+- **The homepage is plain stacked lists**, after Felix Rieseberg's site (felixrieseberg.com), which Amy picked after rejecting framed cards ("portfolio-y") and a captionless shelf ("format is a bit weird") on 2026-11-16. It opens with "Hi, I'm Amy.", a two-sentence lede and the contact pills, with no portrait. Then three lists, each under a Section Heading: **Work** (company, one line, role on the right, no pictures), **Objects** and **Software**.
+- **Every Objects and Software row has a small picture** (Amy is a designer and wants pictures over text rows), then the title, one soft line and the year. Manufacturing leads Objects (the yoga mat, Taya, Taiyaki Jewelry, FineWoven, iPad accessories). CAD tools lead Software (Studio, Taiyaki 3D, Region Maps, Lipflow, CAD-Steps), then the Vizcom features and side projects. App thumbnails are screenshots of the app in use (never a GitHub card), in `public/work/<slug>.webp`.
+- **Older work folds away.** The 13 Stanford and home studies sit closed under one "Earlier, at Stanford and home" line, so less is on the page. Keep new secondary work in the fold, not in the main lists.
+- Longer details (proof, process, where it was made) live on each project's own page; the homepage keeps one line per thing. The page ends with the sign-off footer.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
 
@@ -213,7 +213,7 @@ The one drawn silhouette is the pretzel. It is rendered from the same geometry a
 
 ### Links
 
-Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can sit inside a sentence, with a 1px rule border that fills with ink on hover. Standalone links use the full-size pill button. External links open in a new tab. The exceptions are structural: the header nav, the shelf, and previous/next.
+Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can sit inside a sentence, with a 1px rule border that fills with ink on hover. Standalone links use the full-size pill button. External links open in a new tab. The exceptions are structural: the header nav, list rows, and previous/next.
 
 ### Buttons
 
@@ -222,13 +222,11 @@ Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can
 - **Icon button:** a bare 16px icon in muted ink that goes to ink on hover. The theme toggle is the only one that matters.
 - **Focus:** a 1px outline in the current colour, offset 4px, on every interactive element.
 
-### Shelf
+### List
 
-`Shelf` in `app/_ui/shelf.tsx`: a grid of things with no frames or captions. `objects` are cut-out product shots, square cells, `contain` with multiply so the white ground disappears; `screens` are app frames, 4:3, `cover`, rounded on the surface tone.
+`List` in `app/_ui/list.tsx`: rows on hairlines in a 680px column. Each row is a 56px 4:3 thumbnail, the title (500 weight) with one soft line under it, and the year in soft tabular figures on the right; the whole row is the link and the title softens on hover. Objects are cut-outs on the light media tone, `contain` with multiply, so they hold up in dark mode; screens (`screen`) fill the frame with `cover`. The `small` size (44px, regular weight) is for the fold. The last row of a section drops its rule, since the next Section Heading draws one.
 
-- **Name:** a small solid ink pill (paper text) that rises in on hover or keyboard focus. Touch screens have no hover, so there the name sits under each thing in soft 12px text.
-- **Hover:** objects grow 6% and tip 2 degrees, like being picked up; screens grow 4%. No motion with reduced motion.
-- **Dark mode:** multiplied objects vanish on black, so the objects shelf becomes one lit panel on the media tone.
+`Earlier` is a native `details` fold: one soft line with a count and Show/Hide on the right.
 
 ### Section Heading
 
@@ -236,7 +234,7 @@ A label-size title sitting under a hairline, above a group of items. It is the s
 
 ### Navigation
 
-The 44px pretzel mark sits left and goes home; on the right sit only the Pretzels link and the theme toggle, in soft ink. Hovering the mark squishes it like soft dough.
+The 44px pretzel mark sits left and goes home; on the right sit Work, Objects and Software (jumps to each list), the Pretzels link and the theme toggle, in soft ink. Hovering the mark squishes it like soft dough.
 
 ### Pretzel Table
 

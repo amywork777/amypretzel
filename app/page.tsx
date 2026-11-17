@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
-import { LinkList, TextLink } from "./_ui/link";
-import { SiteFooter } from "./_ui/layout";
+import { LinkList } from "./_ui/link";
+import { SectionHeading, SiteFooter } from "./_ui/layout";
 import BookOverlay from "./book/overlay";
-import { Shelf, type ShelfItem } from "./_ui/shelf";
+import { Earlier, List, type ListItem } from "./_ui/list";
 import { projects, studyProjects } from "./portfolio/projects";
 import { softwareProjects } from "./software/projects";
 
@@ -49,26 +49,49 @@ const contactLinks = [
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
 ];
 
-/* The work, as a shelf: every object straight on the page, manufacturing first
-   (what Amy cares most about now), then Apple, then the earlier studies from
-   Stanford and home. Software follows as one quiet row of screenshots of each
-   app in use, CAD tools first. Names show on hover; details live on each
-   project's page. */
-const object = (slug: string): ShelfItem => {
-  const p = projects.find(p => p.slug === slug)!;
-  return { href: `/portfolio/${slug}`, image: p.cover, title: p.title };
-};
-const objects: ShelfItem[] = [
-  ...["folding-yoga-mat", "taya-pendant", "ai-jewelry", "iphone-finewoven", "ipad-smart-folio"].map(object),
-  ...studyProjects.map(p => object(p.slug)),
+/* Plain lists, like Felix Rieseberg's site: Work, then Objects, then Software,
+   each row a small picture, a title, one line and a year. Manufacturing leads
+   Objects and the CAD tools lead Software; the earlier studies fold away under
+   one line. Years come from a real source (launch post, repo, patent). */
+const work = [
+  { name: "Vizcom", role: "Now", text: "Building AI tools for industrial designers: Region Maps, Extract, Smart Dropper, voice input, and a yoga mat taken from render to production." },
+  { name: "Taiyaki", role: "Founder", text: "AI concept-to-CAD for hardware teams, and sketch-to-jewelry cast in silver and gold." },
+  { name: "Taya", role: "Founder", text: "A wearable AI journal designed as jewelry." },
+  { name: "Mobius", role: "Founder", text: "Materials trading and recycling." },
+  { name: "Apple", role: "Product design engineer", text: "Materials and integration for the iPhone FineWoven case, patent co-inventor. iPad accessories." },
+  { name: "Stanford", role: "Student", text: "Product design and mechanical engineering, with a minor in music." },
 ];
 
-const screenshot: Record<string, string> = { studio: "/home/studio.webp", "taiyaki-3d": projects.find(p => p.slug === "taiyaki-3d")!.cover, "region-maps": "/home/region-maps.webp", lipflow: "/home/lipflow-in-use.webp" };
-const software: ShelfItem[] = ["studio", "taiyaki-3d", "region-maps", "lipflow", "cad-steps", "extract", "smart-dropper", "voice-input", "sf-rats", "cute-ghostty", "screenie", "selfie-booth"].map(slug => ({
-  href: `/software/${slug}`,
-  image: screenshot[slug] ?? `/work/${slug}.webp`,
-  title: softwareProjects.find(p => p.slug === slug)!.title,
-}));
+const cover = (slug: string) => projects.find(p => p.slug === slug)!;
+const object = (slug: string, text: string, year?: string): ListItem => ({ href: `/portfolio/${slug}`, image: cover(slug).cover, title: cover(slug).title, text, year });
+const objects: ListItem[] = [
+  object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026"),
+  object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025"),
+  object("ai-jewelry", "Sketches cast in silver and gold.", "2025"),
+  object("iphone-finewoven", "Led materials and integration. Patent co-inventor.", "2023"),
+  object("ipad-smart-folio", "Apple accessories."),
+];
+const earlier: ListItem[] = studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, image: p.cover, title: p.title, text: p.role }));
+
+const screenshot: Record<string, string> = { studio: "/home/studio.webp", "taiyaki-3d": cover("taiyaki-3d").cover, "region-maps": "/home/region-maps.webp", lipflow: "/home/lipflow-in-use.webp" };
+const app = (slug: string, text: string, year: string): ListItem => ({
+  href: `/software/${slug}`, image: screenshot[slug] ?? `/work/${slug}.webp`, screen: slug !== "taiyaki-3d",
+  title: softwareProjects.find(p => p.slug === slug)!.title, text, year,
+});
+const software: ListItem[] = [
+  app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
+  app("taiyaki-3d", "AI concept-to-CAD for hardware teams.", "2025"),
+  app("region-maps", "Edit each part's color and material in a render.", "2026"),
+  app("lipflow", "Silent dictation by lip reading. 700+ stars.", "2026"),
+  app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
+  app("extract", "Pull colors, materials and parts out of an image.", "2026"),
+  app("smart-dropper", "Copy one image's style onto another.", "2026"),
+  app("voice-input", "Speak prompts, in any language.", "2026"),
+  app("sf-rats", "A live map of free Bay Area events.", "2024"),
+  app("cute-ghostty", "A pastel terminal setup.", "2026"),
+  app("screenie", "A screen recorder that edits while you record.", "2026"),
+  app("selfie-booth", "An iPad photo booth that prints stickers.", "2026"),
+];
 
 export default function Home() {
   return (
@@ -76,27 +99,35 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <BookOverlay />
       <SiteNav />
-      <main id="main-content" className="ui-column">
+      <main id="main-content" className="ui-column ui-column--list">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
-          <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
-          <p className="ui-display home-statement">I like building <TextLink href="#objects">objects</TextLink>, and <TextLink href="#software">software</TextLink> to build objects.</p>
-          <div className="personal-intro">
-            <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
-            <div className="personal-copy ui-prose">
-              <p>Now at Vizcom, building AI tools for industrial designers. Before that, my own startups, Apple and Stanford.</p>
-              <LinkList label="Contact Amy" links={contactLinks} />
-              {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
-              <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} sizes="30px" /></Link>
-            </div>
-          </div>
+          <h1 id="intro-title" className="ui-display home-hello">Hi, I&apos;m Amy.</h1>
+          <p className="home-lede">I build objects, and software to build objects. Right now I work on AI tools for industrial designers at Vizcom in San Francisco.</p>
+          <LinkList label="Contact Amy" links={contactLinks} />
+          {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
+          <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><Image src="/pretzel-secret.png" alt="" width={192} height={192} sizes="30px" /></Link>
         </section>
-        <section id="objects" className="home-shelf" aria-labelledby="objects-title">
-          <h2 id="objects-title" className="sr-only">Objects</h2>
-          <Shelf items={objects} label="Objects" />
+        <section id="work" className="home-list" aria-labelledby="work-title">
+          <SectionHeading id="work-title">Work</SectionHeading>
+          <ul className="ui-list ui-list--plain">
+            {work.map(w => (
+              <li key={w.name} className="ui-list-row">
+                <span className="ui-list-text"><span className="ui-list-title">{w.name}</span><span className="ui-list-line">{w.text}</span></span>
+                <span className="ui-list-year">{w.role}</span>
+              </li>
+            ))}
+          </ul>
         </section>
-        <section id="software" className="home-shelf" aria-labelledby="software-title">
-          <h2 id="software-title" className="home-shelf-title">And software to build them</h2>
-          <Shelf items={software} variant="screens" label="Software" />
+        <section id="objects" className="home-list" aria-labelledby="objects-title">
+          <SectionHeading id="objects-title">Objects</SectionHeading>
+          <List items={objects} label="Objects" />
+          <Earlier title="Earlier, at Stanford and home" count={earlier.length}>
+            <List items={earlier} label="Earlier objects" small />
+          </Earlier>
+        </section>
+        <section id="software" className="home-list" aria-labelledby="software-title">
+          <SectionHeading id="software-title">Software</SectionHeading>
+          <List items={software} label="Software" />
         </section>
         <SiteFooter home={false} />
       </main>
