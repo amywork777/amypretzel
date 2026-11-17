@@ -102,7 +102,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.role}</PageIntro>
+      <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.role}{item?.proof && <> <span className="ui-proof">{item.proof}</span></>}</PageIntro>
 
       {/* === LEAD IMAGE ===
           A cut-out is trimmed and centred in a 16:9 frame (scripts/make-thumbs.mjs)

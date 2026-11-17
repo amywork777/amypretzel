@@ -40,12 +40,27 @@ export const softwareSections: SoftwareSection[] = [
         meta: "Color and material",
         summary:
           "Splits a product render into parts so each one's color, material, and pattern can be edited without re-rendering.",
-        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom.
+        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom. The boot above is a small version you can try, made from a frame of the launch video.
 
-Colorways are decided part by part: this strap in leather, that shell in matte black, the trim in brass. Before, that meant exporting the render and painting it somewhere else. Now the render stays live, and every part has its own controls.
+Colorways are decided part by part: this strap in leather, that shell in matte black, the trim in brass. Before, that meant exporting the render and painting it somewhere else, then painting it again for every option. I built Region Maps at Vizcom together with our designer, from splitting the render into regions to the editor for each one.
 
-I built it at Vizcom together with our designer, from splitting the render into regions to the editor for each one: double-click a region to change its material and color, add to or subtract from its mask, and repair texture seams so materials repeat cleanly. The launch video, a full tutorial and two short clips are below.`,
+## The engineering problem
+
+A render is a picture, not a model. There is no list of parts to recolor, only pixels, and a new color has to keep the folds, highlights and texture the render already has, or it reads as paint on a photo. So the work was in two places: finding the parts, and changing one without disturbing the light on it.
+
+### How it went
+
+- The render is split into regions automatically, and each one gets its own material, color and pattern controls
+- An automatic split is never exactly where a designer would draw the line, so every region's mask can be added to or subtracted from by hand
+- Double-clicking a region opens its editor right on the canvas, so the render stays the thing you're looking at
+- Patterns repeat across a part, so the editor repairs texture seams to keep the repeat clean
+
+It launched publicly with a video and a full tutorial, both below, with two short clips of the steps.`,
         tags: ["Product feature", "Color and material", "Canvas UX"],
+        links: [
+          { label: "Try it in Vizcom", href: "https://app.vizcom.com" },
+          { label: "Docs", href: "https://docs.vizcom.com/region-maps" },
+        ],
         demos: [
           {
             label: "Launch",
@@ -83,6 +98,10 @@ Designers collect reference constantly, but a reference image is frozen. The lea
 
 I designed and shipped it at Vizcom, from concept through launch. The demos below are from the public launch.`,
         tags: ["Product feature", "Industrial design", "AI workflow"],
+        links: [
+          { label: "Try it in Vizcom", href: "https://app.vizcom.com" },
+          { label: "Docs", href: "https://docs.vizcom.com/extract" },
+        ],
         demos: [
           {
             label: "Launch",
@@ -106,6 +125,10 @@ Pick up a reference, paint it onto your own object, and the object's shape and i
 
 I built it at Vizcom as part of the canvas toolset, covering the interaction design and the product engineering.`,
         tags: ["Product feature", "Canvas UX", "Style transfer"],
+        links: [
+          { label: "Try it in Vizcom", href: "https://app.vizcom.com" },
+          { label: "Docs", href: "https://docs.vizcom.com/tools/smart-dropper" },
+        ],
         demos: [
           {
             label: "Demo",
@@ -129,6 +152,9 @@ Speaking a change mid-sketch is faster than typing it, and it keeps your hands f
 
 I shipped both as product features at Vizcom. The launch demo is below.`,
         tags: ["Product feature", "Prompting", "Input UX"],
+        links: [
+          { label: "Try it in Vizcom", href: "https://app.vizcom.com" },
+        ],
         demos: [
           {
             label: "Voice input",
@@ -151,9 +177,20 @@ I shipped both as product features at Vizcom. The launch demo is below.`,
           "A free, open-source AI CAD app for mechanical engineers: describe a part, get a real feature-tree model, then test it and send it to be made.",
         body: `Studio is a free, open-source CAD app for mechanical engineers, on Mac and Windows. Describe a part and the AI builds a real CAD model with a feature tree, so you can change any step by hand, test it, and send it to be made.
 
-Most AI apps are built for code. Studio puts the part beside the chat: the model and its feature history, a toolbar with the CAD tools engineers already know, engineering drawings, strength and fit checks, and manufacturability checks for CNC, 3D printing, molding and sheet metal. It runs on your own Claude or ChatGPT account, so there's no extra AI bill, and every project is an ordinary folder on your computer with each change saved as a version.
+Most AI apps are built for code, and most AI 3D tools make meshes: a shape you can look at but can't dimension, edit or send to a machine shop. Engineers work in feature trees, so that's what Studio makes. Jake (earthtojake on GitHub) and I build it together, in the open, on his text-to-cad skills for AI agents.
 
-Studio's CAD tools come from text-to-cad, open-source skills for AI agents by Jake (earthtojake on GitHub). We build Studio together, in the open.`,
+## The engineering problem
+
+A part that looks right in a chat can still be too thin to machine, collide with the part it mates to, or be impossible to mold. So the AI can't have the last word. Everything it builds has to be something an engineer can read, check and change, the same way they would check a colleague's model.
+
+### How it went
+
+- The part sits beside the chat: the model and its feature history, a toolbar with the CAD tools engineers already know, and engineering drawings
+- Strength and fit checks, and manufacturability checks for CNC, 3D printing, molding and sheet metal, run on the model itself
+- It runs on your own Claude or ChatGPT account, so there's no extra AI bill
+- Every project is an ordinary folder on your computer, with each change saved as a version, so nothing is locked inside the app
+
+The two clips below show a strength check and a drawing.`,
         tags: ["AI CAD", "Desktop app", "Open source"],
         photos: ["/software/studio/simulate.mp4", "/software/studio/drawing.mp4"],
         links: [
@@ -287,7 +324,7 @@ type Picture = {
   video?: { src: string; poster: string; width: number; height: number; sound?: boolean };
 };
 const pictures: Record<string, Picture> = {
-  "region-maps": { image: "/work/region-maps.webp", video: { src: "/software/region-maps/lead.mp4", poster: "/software/region-maps/lead.webp", width: 1280, height: 720 } },
+  "region-maps": { image: "/work/region-maps.webp" },
   studio: { image: "/work/studio.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
   lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
   "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },

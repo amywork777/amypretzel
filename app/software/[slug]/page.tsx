@@ -11,6 +11,7 @@ import { renderBody } from "../../lib/render-body";
 import { splitLinks, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { softwareProjects } from "../projects";
+import { RegionTry } from "../region-try";
 
 const SITE_URL = "https://amypretzel.com";
 
@@ -85,11 +86,14 @@ export default async function SoftwareProjectPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.summary}</PageIntro>
+      <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.summary}{item?.proof && <> <span className="ui-proof">{item.proof}</span></>}</PageIntro>
 
-      {/* A short demo from Amy's post on X when there is one; otherwise the
-          same screenshot as its row on the homepage, whole. */}
-      {picture?.video ? (
+      {/* Region Maps leads with a small working version to play with. Others
+          lead with a short demo from Amy's post on X when there is one;
+          otherwise the same screenshot as its row on the homepage, whole. */}
+      {project.slug === "region-maps" ? (
+        <RegionTry />
+      ) : picture?.video ? (
         <LeadVideo {...picture.video} label={`${project.title} demo`} />
       ) : picture && (picture.lead ? (
         <div className={picture.cutout ? "ui-media ui-lead ui-cutout" : "ui-media ui-lead"}>

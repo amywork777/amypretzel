@@ -2,10 +2,20 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-export type ListItem = { href: string; image: string; title: string; text?: string; year?: string; cutout?: boolean };
+export type ListItem = {
+  href: string;
+  image: string;
+  title: string;
+  text?: string;
+  /** One checkable fact (a patent, money raised, stars), set in ink after
+      the soft line. Only facts with a public source. */
+  proof?: string;
+  year?: string;
+  cutout?: boolean;
+};
 
 /* A plain list on hairlines: a picture, the title with one soft line under
-   it, and the year on the right. Every picture is a 4:3 frame filled edge to
+   it (ending in its proof, in ink, when it has one), and the year on the right. Every picture is a 4:3 frame filled edge to
    edge: screenshots as they are, objects as trimmed cut-outs (see
    scripts/make-thumbs.mjs) multiplied onto the media tone so their white
    disappears. On a wide screen with a pointer, the hovered row's picture
@@ -22,7 +32,7 @@ export function List({ items, label, small }: { items: ListItem[]; label: string
             </span>
             <span className="ui-list-text">
               <span className="ui-list-title">{item.title}</span>
-              {item.text && <span className="ui-list-line">{item.text}</span>}
+              {item.text && <span className="ui-list-line">{item.text}{item.proof && <> <span className="ui-proof">{item.proof}</span></>}</span>}
             </span>
             {item.year && <span className="ui-list-year">{item.year}</span>}
             <span className={item.cutout ? "ui-list-peek ui-cutout" : "ui-list-peek"} aria-hidden="true">

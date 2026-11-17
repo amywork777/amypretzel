@@ -6,13 +6,15 @@ import { softwareProjects } from "./software/projects";
    manufacturing is what Amy is most into; the earlier studies fold away
    under one line inside that group. Years come from a real source (launch
    post, repo, patent). Project pages use groupOf() to say which group they
-   belong to and link back to it. */
+   belong to and link back to it. A proof is one checkable fact with a
+   public source (the body, a patent, a launch post, the repo); rows without
+   one stay without rather than get a soft claim. */
 
 const cover = (slug: string) => projects.find(p => p.slug === slug)!;
-const object = (slug: string, text: string, year?: string): ListItem => ({ href: `/portfolio/${slug}`, ...thumbOf(slug), title: cover(slug).title, text, year });
-const app = (slug: string, text: string, year: string): ListItem => {
+const object = (slug: string, text: string, year?: string, proof?: string): ListItem => ({ href: `/portfolio/${slug}`, ...thumbOf(slug), title: cover(slug).title, text, proof, year });
+const app = (slug: string, text: string, year: string, proof?: string): ListItem => {
   const p = softwareProjects.find(p => p.slug === slug)!;
-  return { href: `/software/${slug}`, image: p.picture!.image, cutout: p.picture!.cutout, title: p.title, text, year };
+  return { href: `/software/${slug}`, image: p.picture!.image, cutout: p.picture!.cutout, title: p.title, text, proof, year };
 };
 
 export type WorkGroup = {
@@ -32,9 +34,9 @@ export const workGroups: WorkGroup[] = [
     short: "Products",
     note: "Things I designed and took from sketch to factory.",
     items: [
-      object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026"),
-      object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025"),
-      object("iphone-finewoven", "Led materials and integration. Patent co-inventor.", "2023"),
+      object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026", "AI agents did the CAD and found the factory."),
+      object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025", "Co-founded; raised about $5M, a16z speedrun."),
+      object("iphone-finewoven", "Led materials and integration.", "2023", "Patent co-inventor."),
       object("ipad-smart-folio", "Apple accessories."),
     ],
     earlier: studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, ...thumbOf(p.slug), title: p.title, text: p.role })),
@@ -68,7 +70,7 @@ export const workGroups: WorkGroup[] = [
     short: "Tools and toys",
     note: "Side projects, mostly made for fun.",
     items: [
-      app("lipflow", "Silent dictation by lip reading. 700+ stars.", "2026"),
+      app("lipflow", "Silent dictation by lip reading.", "2026", "700+ stars on GitHub."),
       app("sf-rats", "A live map of free Bay Area events.", "2024"),
       app("cute-ghostty", "A pastel terminal setup.", "2026"),
       app("screenie", "A screen recorder that edits while you record.", "2026"),

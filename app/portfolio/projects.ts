@@ -70,65 +70,20 @@ Next is a finished-quality run in the new material and size, with packaging and 
       "/portfolio/taya-pendant/worn.png",
       "/portfolio/taya-pendant/hero.png",
     ],
-    body: `Taya is a necklace that captures your thoughts, conversations, and reflections, then organizes them into a private, searchable journal. It's designed to be worn daily and engineered to feel effortless and personal.
+    body: `Taya is a necklace that listens, then turns your conversations and thoughts into a private journal you can search and ask questions of. I co-founded the company behind it. We raised about $5M, went through a16z speedrun, and built the hardware and AI prototype in about six weeks. It launched in September 2025 as jewelry that remembers.
 
-### What Taya does
+## The engineering problem
 
-- Captures and transcribes conversations with high-quality audio
-- Turns moments into searchable insights
-- Builds a private, personal journal that stays in your control
-- Helps you recall information such as names, plans, and ideas
+Something you wear every day has to look like jewelry first, and an always-listening device looks like a gadget. A pendant has room for very little: a microphone that has to hear you and not the room, a battery that has to last the day, seals against water, and a chipset that listens without draining it.
 
-### Features
+### How it went
 
-**Memories**, Taya remembers what matters and keeps your thoughts organized.
+- Jewelry first, technology second: the metal housing and chain were modeled for comfort, weight and everyday movement
+- A custom microphone layout picks up your voice and cuts the background, and the housing and the way it hangs on the chain angle the microphone toward you
+- The pendant filters noise and isolates your voice before anything leaves it, and encrypts the audio on its way to the phone
+- The phone does the transcription and sorts it into memories, a searchable journal and a chat, with local storage and encrypted sync so your data stays yours
 
-**Journal**, Your reflections are searchable and always accessible.
-
-**Chat**, Ask Taya questions and revisit insights instantly.
-
-### Design principles
-
-- Jewelry first, technology second
-- Water resistant and built for daily life
-- All-day battery life
-- Engineered to hear you, not the background
-- Privacy-forward and personal by default
-
-## Technical overview
-
-Taya combines a small hardware stack with on-device processing and a mobile pipeline to capture audio clearly, organize it, and turn it into a private journal that feels natural to use.
-
-### Hardware and audio system
-
-- A custom microphone layout is tuned to pick up the user's voice while reducing background noise
-- The housing and chain placement position the mic at an optimal angle for everyday wear
-- A low-power chipset manages continuous listening and event triggers
-- The battery and charging system are designed for full-day use without adding weight or bulk
-- The enclosure uses water-resistant seals so the device can handle daily conditions
-
-### On-device processing
-
-- The device performs initial noise filtering and voice isolation before sending anything to the phone
-- Wake and capture logic is optimized to reduce power draw
-- Audio packets are encrypted before leaving the device to keep recordings private
-
-### Mobile pipeline
-
-- The phone handles transcription and segmentation so conversations become clear text entries
-- Reflections, names, dates, and action items are grouped into a searchable journal
-- The app uses local storage and encrypted sync so users stay in control of their data
-- A lightweight retrieval system lets the user ask quick questions and surface past moments instantly
-
-### Form and material design
-
-- The metal housing and chain were modeled for comfort, weight distribution, and everyday movement
-- Internal parts are arranged to keep the microphone ports open while protecting them from debris
-- The design balances jewelry aesthetics with practical thermal and acoustic requirements
-
-### Future direction
-
-Taya was designed as a wearable that blends thoughtful hardware engineering with a personal software experience. Work that was actively in progress included improving voice isolation in louder environments, expanding journal organization, and exploring even more efficient on-device processing.`,
+The work in progress was voice isolation in louder rooms, better journal organization and more efficient on-device processing.`,
     links: [
       { label: "tayanecklace.com", url: "https://tayanecklace.com/" },
       { label: "Watch demo", url: "https://www.notion.so/taya-necklace-ai-jewelry-device-2b8fc3fa1d2a80389f99e88d602b8b2c?source=copy_link#2b8fc3fa1d2a80c5837df15630b5739c" },
