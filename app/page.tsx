@@ -1,12 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
 import SiteNav from "./site-nav";
 import { LinkList } from "./_ui/link";
 import { SiteFooter } from "./_ui/layout";
 import { OpenOnHash } from "./_ui/open-on-hash";
 import { KindFilter } from "./_ui/kind-filter";
 import { GroupMark } from "./_ui/group-marks";
-import { PretzelMark } from "./_ui/pretzel-mark";
 import { Earlier, Group, List } from "./_ui/list";
 import { workGroups } from "./work";
 
@@ -70,8 +68,6 @@ export default function Home() {
               <p>Now at <strong>Vizcom</strong>. Before that I had a startup where we explored a few ideas: materials recycling, AI concept-to-CAD, and an AI journal you wear as jewelry. Earlier, <strong>Apple</strong> and <strong>Stanford</strong>.</p>
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <LinkList label="Contact Amy" links={contactLinks} />
-              {/* A second pretzel, a small sketch left lying askew: it leads to the secret facts page. */}
-              <Link href="/facts" className="secret-pretzel" aria-label="Cool facts" title="psst"><PretzelMark weight={1.8} /></Link>
             </div>
           </div>
         </section>

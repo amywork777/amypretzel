@@ -100,7 +100,7 @@ The source of truth is `app/globals.css` (tokens and `ui-*` classes) and `app/_u
 
 Everything has been moved off the table except the work and a pretzel or two. The site is one sans, one ink, one line weight and two corner shapes, set compact and aligned. Nothing on the page competes with the objects, because the objects are the only things with colour in them.
 
-All the warmth is spent on a few small things: a hand-drawn pretzel for a logo that boils like a sketch and squishes like dough, and a smaller one left lying by the contact links. The rest is almost severe by comparison. That contrast is the design: exact everywhere, with a few things that are soft enough to squeeze. (A WebGL table of six pretzels, one per chapter of Amy's life, used to open on a first desktop visit. Amy removed it on 2026-11-16 as unnecessary: it stood between visitors and the work and repeated the bio. Don't bring it back.)
+All the warmth is spent on a few small things: a hand-drawn pretzel for a logo that boils like a sketch and squishes like dough, and a tiny one left lying at the foot of the page. The rest is almost severe by comparison. That contrast is the design: exact everywhere, with a few things that are soft enough to squeeze. (A WebGL table of six pretzels, one per chapter of Amy's life, used to open on a first desktop visit. Amy removed it on 2026-11-16 as unnecessary: it stood between visitors and the work and repeated the bio. Don't bring it back.)
 
 "Cool" on this site means compact, simple, minimal and polished. Earlier drafts were rejected for a staggered image grid, an oversized serif and generous editorial spacing, which read as vibe coded. The Y2K window chrome and glossy pixel look that came before those survives only as the `/fishing` game.
 
@@ -236,7 +236,7 @@ The header sits on the same column as the page under it (the list column on the 
 
 ### Small Pretzels
 
-- **Stray pretzel:** a 30px sketch pretzel in soft ink lies askew by the contact links, leads to the secret facts page, and wiggles when found. Keep it unlabelled. Do not add it to the nav.
+- **Stray pretzel:** an 18px sketch pretzel, faint and askew, lies at the foot of every page (not the facts page). Only one pretzel is in view at a time: Amy moved this one from the contact links to the footer on 2026-11-16. It leads to the secret facts page, and wiggles when found. Keep it unlabelled. Do not add it to the nav.
 
 ## Do's and Don'ts
 

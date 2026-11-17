@@ -149,7 +149,7 @@ a.ui-button { text-decoration: none; }
 .ui-intro .ui-lede { margin-top: var(--space-3); }
 .ui-section-heading { margin-top: var(--space-6); padding: var(--space-3) 0; border-top: var(--line) solid var(--color-rule); }
 .ui-section-heading h2 { font-size: var(--text-sm); font-weight: 500; }
-.ui-footer { height: var(--space-9); }
+.ui-footer { height: var(--space-9); display: flex; align-items: flex-end; padding-bottom: var(--space-5); }
 .ui-prev-next { display: flex; justify-content: space-between; gap: var(--space-5); margin-top: var(--space-8); padding: var(--space-5) 0 var(--space-7); border-top: var(--line) solid var(--color-rule); }
 .ui-prev-next a { display: flex; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); color: var(--color-ink); text-decoration: none; border: var(--line) solid var(--color-rule); border-radius: var(--radius); transition: background-color var(--ease); }
 .ui-prev-next a:last-child { flex-direction: row-reverse; text-align: right; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); }
@@ -446,9 +446,9 @@ a.ui-list-row:hover .ui-list-title { color: var(--color-ink-soft); }
 .ui-earlier .ui-list > li:last-child > .ui-list-row, .ui-earlier:not([open]) summary { border-bottom: 0; }
 @media (max-width: 480px) { .ui-list-row { gap: var(--space-2) var(--space-4); } .ui-list-thumb { width: 72px; } .ui-list--small .ui-list-thumb { width: 48px; } }
 
-/* The stray pretzel by the contact links: small, knocked askew, wiggles when found. */
-.secret-pretzel { display: inline-flex; width: 30px; height: 30px; margin-top: var(--space-5); transform: rotate(-24deg); }
-.secret-pretzel { color: var(--color-ink-soft); }
+/* The stray pretzel at the foot of every page: tiny, faint, knocked askew, wiggles when found. */
+.secret-pretzel { display: inline-flex; width: 18px; height: 18px; transform: rotate(-24deg); color: var(--color-ink-soft); opacity: .6; transition: opacity .2s; }
+.secret-pretzel:hover, .secret-pretzel:focus-visible { opacity: 1; }
 .secret-pretzel svg { width: 100%; height: 100%; overflow: visible; }
 .secret-pretzel:hover svg, .secret-pretzel:focus-visible svg { animation: secret-wiggle .5s ease-in-out; }
 @keyframes secret-wiggle { 25% { transform: rotate(14deg) scale(1.1); } 60% { transform: rotate(-8deg) scale(1.1); } }

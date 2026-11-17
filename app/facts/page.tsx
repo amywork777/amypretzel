@@ -40,7 +40,7 @@ export default function FactsPage() {
           </article>
         ))}
       </section>
-      <SiteFooter />
+      <SiteFooter secret={false} />
     </Page>
   );
 }
