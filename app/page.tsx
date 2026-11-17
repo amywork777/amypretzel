@@ -61,7 +61,6 @@ const object = (slug: string, text: string, year?: string): ListItem => ({ href:
 const objects: ListItem[] = [
   object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026"),
   object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025"),
-  object("ai-jewelry", "Sketches cast in silver and gold.", "2025"),
   object("iphone-finewoven", "Led materials and integration. Patent co-inventor.", "2023"),
   object("ipad-smart-folio", "Apple accessories."),
 ];
@@ -79,7 +78,7 @@ const aiTools: ListItem[] = [
 ];
 const cad: ListItem[] = [
   app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
-  app("taiyaki-3d", "AI concept-to-CAD for hardware teams.", "2025"),
+  object("ai-jewelry", "AI that turns a sketch or photo into cast jewelry.", "2025"),
   app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
 ];
 const tools: ListItem[] = [

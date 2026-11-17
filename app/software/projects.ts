@@ -158,40 +158,6 @@ Studio's CAD tools come from text-to-cad, open-source skills for AI agents by Ja
         ],
       },
       {
-        slug: "taiyaki-3d",
-        title: "Taiyaki 3D",
-        meta: "Concept-to-CAD",
-        summary:
-          "An AI concept-to-CAD system for hardware teams, moving from sketches and references toward editable 3D geometry.",
-        body: `Taiyaki 3D was an AI concept-to-CAD system for hardware teams. Start from a sketch, a render, or a pile of reference images, and end up with editable 3D geometry instead of a static picture.
-
-Most AI design tools stop at images. Hardware teams need geometry with dimensions and features that can survive manufacturing. Taiyaki turned early concepts into 3D starting points a designer could keep working on.
-
-I founded Taiyaki and built the product, the geometry pipeline, and the interface. It seeded the jewelry pipeline and most of my later CAD work.`,
-        tags: ["AI CAD", "3D generation", "Hardware workflows"],
-        links: [
-          { label: "Project page", href: "/portfolio/taiyaki-3d" },
-          { label: "Launch post", href: "https://www.linkedin.com/feed/update/urn:li:activity:7291166105191034880/" },
-        ],
-      },
-      {
-        slug: "taiyaki-jewelry",
-        title: "Taiyaki Jewelry",
-        meta: "AI jewelry pipeline",
-        summary:
-          "A sketch/photo-to-jewelry workflow for turning personal references into castable metal pieces.",
-        body: `Taiyaki Jewelry turned a personal reference (a sketch, a photo, a memory) into a castable metal piece through an AI-assisted design pipeline.
-
-The pipeline went from the customer's reference to a 3D sculpt, through printability and castability checks, to a finished piece in silver or gold. The interesting problems were at the manufacturing end: wall thickness, sprues, and what a caster will actually accept.
-
-I built the pipeline end to end and made real commissioned pieces with it. It is the most literal version of software that makes physical things I have shipped.`,
-        tags: ["AI CAD", "Jewelry", "Manufacturing"],
-        links: [
-          { label: "Project page", href: "/portfolio/ai-jewelry" },
-          { label: "Launch post", href: "https://www.linkedin.com/feed/update/urn:li:activity:7340491665603772416/" },
-        ],
-      },
-      {
         slug: "cad-steps",
         title: "CAD-Steps",
         meta: "CAD dataset",
@@ -305,13 +271,11 @@ It's built for someone who isn't technical to run at an event: double-click Star
 ];
 
 /* The picture for each tool: a screenshot of it in use (never a GitHub
-   card), shown in the homepage list and at the top of its page. Taiyaki 3D
-   is a cut-out of a part it made. */
+   card), shown in the homepage list and at the top of its page. */
 const pictures: Record<string, { image: string; cutout?: boolean; lead?: string }> = {
   "region-maps": { image: "/home/region-maps.webp" },
   studio: { image: "/home/studio.webp" },
   lipflow: { image: "/home/lipflow-in-use.webp" },
-  "taiyaki-3d": { image: "/thumbs/taiyaki-3d.webp", cutout: true, lead: "/thumbs/taiyaki-3d-lead.webp" },
   ...Object.fromEntries(["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "cute-ghostty", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
 };
 
