@@ -269,23 +269,6 @@ Website and GitHub below.`,
         ],
       },
       {
-        slug: "screenie",
-        title: "Screenie",
-        meta: "macOS recorder",
-        summary:
-          "A Swift screen recorder that automatically adds click zooms, cursor tracking, speed ramps, and copies the edited recording to the clipboard.",
-        body: `Screenie is a macOS screen recorder written in Swift that edits the recording for you: automatic click zooms, cursor tracking, speed ramps, and the finished clip copied straight to your clipboard.
-
-A demo video usually means recording, then twenty minutes in an editor adding zooms so people can follow the cursor. Screenie does that during capture. Stop recording and the edited clip is already on your clipboard, ready to paste into Slack or a PR.
-
-Website and source below.`,
-        tags: ["Swift", "macOS", "Video tooling"],
-        links: [
-          { label: "Website", href: "https://landing-two-phi-66.vercel.app" },
-          { label: "GitHub", href: "https://github.com/amywork777/Screenie" },
-        ],
-      },
-      {
         slug: "selfie-booth",
         title: "Selfie booth",
         meta: "Event photo booth",
@@ -329,7 +312,7 @@ const pictures: Record<string, Picture> = {
   "smart-dropper": { image: "/work/smart-dropper.webp", video: { src: "/software/smart-dropper/launch.mp4", poster: "/software/smart-dropper/launch.webp", width: 1146, height: 720, sound: true } },
   "sf-rats": { image: "/work/sf-rats.webp", site: "https://sfrats-map.vercel.app" },
   extract: { image: "/work/extract.webp", video: { src: "/software/extract/parts.mp4", poster: "/software/extract/parts.webp", width: 1280, height: 720 } },
-  ...Object.fromEntries(["cad-steps", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
+  ...Object.fromEntries(["cad-steps", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
 };
 
 export const softwareProjects = softwareSections.flatMap((section) =>

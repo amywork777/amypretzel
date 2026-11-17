@@ -73,7 +73,6 @@ export const workGroups: WorkGroup[] = [
       app("lipflow", "Silent dictation by lip reading.", "2026", "700+ stars on GitHub."),
       app("sf-rats", "A live map of free Bay Area events.", "2024"),
       app("cute-ghostty", "A pastel terminal setup.", "2026"),
-      app("screenie", "A screen recorder that edits while you record.", "2026"),
       app("selfie-booth", "An iPad photo booth that prints stickers.", "2026"),
     ],
   },
