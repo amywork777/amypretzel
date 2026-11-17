@@ -1,0 +1,59 @@
+/* Smart Dropper, to play with: the reference on the left, your image on the
+   right, on the light media ground. The media stays light in dark mode, so
+   anything drawn on it (labels, rings, the compare line) uses fixed ink. */
+.sd-stage {
+  --sd-ink: #1c1c1c;
+  --sd-soft: rgba(28, 28, 28, .6);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 30fr 70fr;
+  gap: 4%;
+  padding: 4.5% 5%;
+}
+.sd-stage *, .sd-stage *::before, .sd-stage *::after { box-sizing: border-box; }
+.ui-try-stage.sd-stage[data-holding] { cursor: crosshair; }
+
+/* Each side fits its picture in whatever room it has, at the picture's own
+   shape, with a small label under it. */
+.sd-fit { container-type: size; min-width: 0; min-height: 0; display: grid; place-items: center; }
+.sd-item { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.sd-box { position: relative; width: min(100cqw, (100cqh - 28px) * var(--ar)); aspect-ratio: var(--ar); border-radius: 4px; }
+.sd-box > img { border-radius: inherit; }
+.sd-label { font-size: var(--text-sm); line-height: 20px; color: var(--sd-soft); }
+
+/* The pictures are buttons until the result is in. A ring shows what the
+   dropper is holding, and what it will land on. */
+.sd-hit { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; border-radius: inherit; background: transparent; cursor: pointer; }
+.sd-stage[data-holding] .sd-hit { cursor: crosshair; }
+.sd-box::after { content: ""; position: absolute; inset: -5px; border-radius: 8px; border: var(--line) solid transparent; pointer-events: none; transition: border-color var(--ease); }
+.sd-box[data-ring]::after { border-color: var(--sd-ink); }
+@media (hover: hover) {
+  .sd-box:has(.sd-hit:hover)::after { border-color: var(--sd-soft); }
+  .sd-box[data-ring]:has(.sd-hit:hover)::after { border-color: var(--sd-ink); }
+}
+.sd-hit:focus-visible { outline: var(--line) solid var(--sd-ink); outline-offset: 4px; }
+
+/* The result sits on top of your image and is cut to the compare line. */
+.ui-try-stage .sd-after { will-change: clip-path; }
+.sd-compare { position: absolute; inset: 0; border-radius: inherit; cursor: ew-resize; touch-action: pan-y; }
+.sd-compare:focus-visible { outline: var(--line) solid var(--sd-ink); outline-offset: 4px; }
+.sd-line { position: absolute; top: 0; bottom: 0; width: 0; border-left: var(--line) solid #fff; pointer-events: none; }
+.sd-knob { position: absolute; top: 50%; left: -14px; width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; border: var(--line) solid rgba(28, 28, 28, .16); background: #fff; }
+.sd-knob::before, .sd-knob::after { content: ""; position: absolute; top: 50%; width: 0; height: 0; margin-top: -4px; border: 4px solid transparent; }
+.sd-knob::before { left: 3px; border-right-color: var(--sd-ink); }
+.sd-knob::after { right: 3px; border-left-color: var(--sd-ink); }
+.sd-tag { position: absolute; top: 8px; padding: 0 .6em; font-size: var(--text-sm); line-height: 22px; color: var(--sd-ink); background: #fff; border-radius: var(--radius-pill); pointer-events: none; transition: opacity .2s ease; }
+.sd-tag[data-side="after"] { left: 8px; }
+.sd-tag[data-side="before"] { right: 8px; }
+
+/* What the dropper holds follows the pointer: a small drop of the reference. */
+.sd-drop { position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; border: var(--line) solid #fff; background-size: cover; background-position: center; pointer-events: none; opacity: 0; transition: opacity .15s ease; }
+.sd-drop[data-show] { opacity: 1; }
+
+.sd-hint { font-size: var(--text-sm); color: var(--color-ink-soft); }
+.sd-reset:disabled { opacity: .35; cursor: default; }
+
+@media (max-width: 560px) {
+  .ui-try-stage.sd-stage { aspect-ratio: 4 / 5; grid-template-columns: minmax(0, 1fr); grid-template-rows: 34fr 66fr; gap: 5%; padding: 6%; }
+  .sd-label { line-height: 18px; }
+}
