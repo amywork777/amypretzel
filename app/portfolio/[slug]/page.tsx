@@ -5,12 +5,12 @@ import { SafeTweet } from "../../lib/safe-tweet";
 import { splitLinks } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { renderBody } from "../../lib/render-body";
-import { Page, PageIntro } from "../../_ui/layout";
+import { Page, PageIntro, SiteFooter } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
 import { ProjectBar } from "../../_ui/project-bar";
-import { groupOf } from "../../work";
-import { orderedProjects as projects, thumbOf } from "../projects";
+import { groupOf, itemOf, neighbours } from "../../work";
+import { orderedProjects as projects } from "../projects";
 import thumbs from "../thumbs.json";
 import "react-tweet/theme.css";
 
@@ -56,9 +56,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
 
-  const idx = projects.findIndex((p) => p.slug === project.slug);
-  const prev = idx > 0 ? projects[idx - 1] : projects[projects.length - 1];
-  const next = idx < projects.length - 1 ? projects[idx + 1] : projects[0];
+  // The page is headed by its homepage row (one line, the year) and walks
+  // the homepage order with Previous and Next.
+  const href = `/portfolio/${project.slug}`;
+  const item = itemOf(href);
+  const around = neighbours(href);
 
   // first image is the lead, rest stack below body
   const [lead, ...rest] = project.gallery;
@@ -91,16 +93,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     [project.tweetId, project.pdfPreview].filter(Boolean) as string[]
   );
 
-  const group = groupOf(`/portfolio/${project.slug}`);
+  const group = groupOf(href);
   const bar = group && { href: `/#${group.id}`, title: group.short };
 
   return (
-    <Page width="narrow" bar={<ProjectBar group={bar} title={project.title} prev={{ href: `/portfolio/${prev.slug}`, title: prev.title }} next={{ href: `/portfolio/${next.slug}`, title: next.title }} />}>
+    <Page width="narrow" bar={around && <ProjectBar group={bar} title={project.title} prev={around.prev} next={around.next} />}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageIntro title={project.title} meta={project.year}>{project.role}</PageIntro>
+      <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.role}</PageIntro>
 
       {/* === LEAD IMAGE ===
           A cut-out is trimmed and centred in a 16:9 frame (scripts/make-thumbs.mjs)
@@ -150,11 +152,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
 
-      <PrevNext
-        label="More objects"
-        prev={{ href: `/portfolio/${prev.slug}`, title: prev.title, ...thumbOf(prev.slug) }}
-        next={{ href: `/portfolio/${next.slug}`, title: next.title, ...thumbOf(next.slug) }}
-      />
+      {around && <PrevNext label="More work" prev={around.prev} next={around.next} />}
+      <SiteFooter />
     </Page>
   );
 }

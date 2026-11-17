@@ -62,12 +62,13 @@ export function Group({ id, title, note, items, children }: { id: string; title:
   );
 }
 
-/* Earlier work folded under one line, so less sits on the page. Native
-   details/summary: no script, keyboard and screen reader friendly. */
-export function Earlier({ title, count, children }: { title: string; count: number; children: ReactNode }) {
+/* Earlier work folded under one small pill, filled while open, like the
+   group names above it. Native details/summary: no script, keyboard and
+   screen reader friendly. */
+export function Earlier({ title, children }: { title: string; children: ReactNode }) {
   return (
     <details className="ui-earlier">
-      <summary>{title} <span className="ui-earlier-count">{count}</span></summary>
+      <summary><span className="ui-earlier-title">{title}</span></summary>
       {children}
     </details>
   );

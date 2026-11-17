@@ -9,7 +9,7 @@ export type Project = {
   year?: string;
   /** Tile image used on the index */
   cover: string;
-  /** Optional second image that cross-fades in on tile hover (showing a "second look" — usually a lifestyle / in-context shot) */
+  /** Optional second image that cross-fades in on tile hover (a "second look", usually a lifestyle or in-context shot) */
   coverHover?: string;
   /** All images for the dedicated project page, in display order. Cover may or may not be the first item. */
   gallery: string[];
@@ -39,7 +39,7 @@ export const projects: Project[] = [
     links: [
       { label: "Tara's original reel", url: "https://www.instagram.com/reels/DcBtdArysMc/" },
     ],
-    body: `**A full-size yoga mat that folds like origami into a square you can carry in a backpack, taken from a Vizcom render to a manufactured sample.**
+    body: `A full-size yoga mat that folds like origami into a square you can carry in a backpack, taken from a Vizcom render to a manufactured sample.
 
 Tara Harcombe designed the mat in Vizcom and shared it in a reel that reached tens of thousands of people: a triangulated crease pattern that folds the whole mat flat into a small stack. At Vizcom, Jordan Taylor and I set out to make it real, as the first test of taking a creator's render all the way to a product.
 
@@ -70,9 +70,7 @@ Next is a finished-quality run in the new material and size, with packaging and 
       "/portfolio/taya-pendant/worn.png",
       "/portfolio/taya-pendant/hero.png",
     ],
-    body: `**A wearable AI journal designed as jewelry.**
-
-Taya is a necklace that captures your thoughts, conversations, and reflections, then organizes them into a private, searchable journal. It's designed to be worn daily and engineered to feel effortless and personal.
+    body: `Taya is a necklace that captures your thoughts, conversations, and reflections, then organizes them into a private, searchable journal. It's designed to be worn daily and engineered to feel effortless and personal.
 
 ### What Taya does
 
@@ -150,7 +148,7 @@ Taya was designed as a wearable that blends thoughtful hardware engineering with
       "/portfolio/ai-jewelry/image-1.png",
       "/portfolio/ai-jewelry/image-2.webp",
     ],
-    body: `**An AI pipeline that turns sketches, photos, and descriptions into finished metal jewelry.**
+    body: `An AI pipeline that turns sketches, photos, and descriptions into finished metal jewelry.
 
 Taiyaki Jewelry pairs image-conditioned 3D generation with a CAD-style geometry cleanup stage and a traditional lost-wax casting workflow. A user's drawing or memory becomes a wearable piece in sterling silver, gold vermeil, or solid 14k gold.
 
@@ -205,9 +203,9 @@ Specifics under NDA. The broader story, replacing a material that had become a q
 
 ## Patent
 
-**"Accessory devices with textile-based walls"** — US20250088581A1, published by the USPTO on March 13, 2025. Filed June 20, 2024, with a priority date of September 11, 2023.
+**“Accessory devices with textile-based walls”**, US20250088581A1, published by the USPTO on March 13, 2025. Filed June 20, 2024, with a priority date of September 11, 2023.
 
-From the abstract: "An accessory device includes multiple walls and textile layers covering the walls. The textile layers may be of the same materials. However, one of the textile layers may include a film that provides protection against stains and fraying."
+From the abstract: “An accessory device includes multiple walls and textile layers covering the walls. The textile layers may be of the same materials. However, one of the textile layers may include a film that provides protection against stains and fraying.”
 
 Listed as one of 19 named inventors on the application, alongside the rest of the Apple softgoods accessory team. The full filing is embedded below; the PDF and Google Patents page are also linked under references.`,
     links: [
@@ -242,10 +240,18 @@ Specifics under NDA. The products are publicly available; the engineering is the
     coverHover: "/portfolio/pretzels-favorite-food/earrings.webp",
     gallery: [
       "/portfolio/pretzel-molds.webp",
-      ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n, i) => {
-        const ids = ["aed652b85a80d88f08df3237c3a2312e2981e2410bc132002b1c0cf17a7cf864", "d1b0380b6194ca4df79fcb338a7d09d5e3ea4e8c9ececedab45eac553b87fc16", "448633f8d16e4166b991a5cc025038387ee77acac58968e36970f5af76ce7ee7", "a9bb2dcb47a492fdd3832f2170ae5997350eaabd28a8a97bc46c0958a8535e9a", "4fdf71cb09914f53f4056dfaec543ed6da6240eac65609b3b0643f8a67f86d18", "435a510c65d9fac69e718be5dc6fa89bbde47fde70ac4d79d4c2cff4fca1257e", "57ade1cfccc83d451713bbf5c934fe443dd356c3ab5aef256eab895b16c68eb8", "b4d4c08e18ef77418e79155529ae646a719682a0845e4f4e3884c7401d5267c4", "f455023cc32c55c248f823337767ff35f41ebd0c6d4e3c1f54f8db1cb373b056", "796730921533c211d9ccf01b43328f636d9533cd3c148fef224a2d2b9af91930", "f4c827e2c8f04a84ae665c430a91216607c777efd4e86d6e245aa070edd27e02", "91028dfd3e036d729e2890ca9247fa3b003c8e0767109ccf0be4090123c79772"];
-        return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.png`;
-      }),
+      "/portfolio/pretzels-favorite-food/1.webp",
+      "/portfolio/pretzels-favorite-food/2.webp",
+      "/portfolio/pretzels-favorite-food/3.webp",
+      "/portfolio/pretzels-favorite-food/4.webp",
+      "/portfolio/pretzels-favorite-food/5.webp",
+      "/portfolio/pretzels-favorite-food/6.webp",
+      "/portfolio/pretzels-favorite-food/7.webp",
+      "/portfolio/pretzels-favorite-food/8.webp",
+      "/portfolio/pretzels-favorite-food/9.webp",
+      "/portfolio/pretzels-favorite-food/10.webp",
+      "/portfolio/pretzels-favorite-food/11.webp",
+      "/portfolio/pretzels-favorite-food/12.webp",
     ],
     body: `The pretzel is the namesake of this site, a personal motif I keep coming back to. The shapes here are injection-molded pretzels in a dozen colors: palm-sized, somewhere between a charm and a craft prop.
 
@@ -265,10 +271,10 @@ The collection runs through the standard injection-molding pipeline: a metal mol
       "/portfolio/harp-instrument/white-bg.webp",
       "/portfolio/harp-instrument/in-hands.webp",
       "/portfolio/harp-instrument/heart-holes.webp",
-      "https://freight.cargo.site/w/1500/q/75/i/5f316e3f1e9b700b78da49b45db204f30925010443616c3b327ba6e81214b2c1/1.png",
-      "https://freight.cargo.site/w/1500/q/75/i/378ab89aba231e5c712248c7e47fcd07c854907d0c4f560dc8c5bdf9a4fde97b/2.png",
-      "https://freight.cargo.site/w/1500/q/75/i/c5a69dd77edf8a1d345da17666dc3c29a9dcd6b3a635f107bd77c5c209e42be7/3.png",
-      "https://freight.cargo.site/w/1500/q/75/i/bdf9931c8b8f6db6272ff1e559b9c169a7a8b4ac2e8aa60168cfd5e6e496e0fd/4.png",
+      "/portfolio/harp-instrument/1.webp",
+      "/portfolio/harp-instrument/2.webp",
+      "/portfolio/harp-instrument/3.webp",
+      "/portfolio/harp-instrument/4.webp",
     ],
     body: `A small CNC-machined harp built for a Stanford music + product design class. Aluminum body, steel strings, tabletop scale rather than concert.
 
@@ -289,12 +295,12 @@ Designing for sound is its own kind of discipline. You can't simulate timbre the
     cover: "/portfolio/woodwind-mouthpiece.png",
     gallery: [
       "/portfolio/woodwind-mouthpiece.png",
-      "https://freight.cargo.site/w/1500/q/75/i/f69f379a0f388cb4b403f89025ef493406e2e05a03bb381f2cdecb9d4e48ef6b/1.png",
-      "https://freight.cargo.site/w/1500/q/75/i/20d279adede103397eea65878d3d5b05670468f66c687452217bae48afbf520b/3.png",
-      "https://freight.cargo.site/w/1500/q/75/i/adc8cc9e18aefbd2935063f7dc4dd26317668621146f053f60623761905521d4/4.png",
-      "https://freight.cargo.site/w/1500/q/75/i/7f3040becb1acfd2a1c4c83aca898385952f3696962a90719b32c2634f3f08f7/5.png",
-      "https://freight.cargo.site/w/1500/q/75/i/23a696a2dd87176aee3fe30899efe53d9395a563976bc5077c00979d3a7624de/6.png",
-      "https://freight.cargo.site/w/1500/q/75/i/664cca511cdc8047f2a73b03cfab3570fa4ab3bf972830ef6f62774cb5bd4888/7.png",
+      "/portfolio/membrane-whistle/1.webp",
+      "/portfolio/membrane-whistle/3.webp",
+      "/portfolio/membrane-whistle/4.webp",
+      "/portfolio/membrane-whistle/5.webp",
+      "/portfolio/membrane-whistle/6.webp",
+      "/portfolio/membrane-whistle/7.webp",
     ],
     body: `A small membrane-driven whistle exploring how a tensioned vibrating film changes the timbre of a simple aerophone. Built for the same Stanford music + product design class as the harp.
 
@@ -317,13 +323,13 @@ The body is a turned aluminum tube; the membrane is a thin polymer film stretche
     gallery: [
       "/portfolio/cnc-spider-web.png",
       "/portfolio/lil-spider-maze/in-use.webp",
-      "https://freight.cargo.site/w/1500/q/75/i/73a3b5a10869285fd3c4bfaf056fd02f57e0ee0a3f143b3cc0727fa9ec4bad60/1.png",
-      "https://freight.cargo.site/w/1500/q/75/i/01344e4367bc898402068538e34f9c91dd4a721d8d6c03680b1355b02824deef/3.png",
-      "https://freight.cargo.site/w/1500/q/75/i/03057e1a72def3a1bc32e782aafc16e8db1e35ff7d29e4061ab5578099cf5841/4.png",
-      "https://freight.cargo.site/w/1500/q/75/i/883d943a980a6324dfd993f22a054355cd5b0a14a734715be1a160ac7694d536/5.png",
-      "https://freight.cargo.site/w/1500/q/75/i/ccc3d6d995c9b7fe6c76d895a558fa76462ae2e24f39167bb68ac90328815fa1/6.png",
-      "https://freight.cargo.site/w/1500/q/75/i/9b5f2144522cf8f3bd0a846ae127c9b016483750599e558e5b59320662832d0f/7.png",
-      "https://freight.cargo.site/w/1920/q/94/i/160a9501ed65260441702b42e39d24b5abd6bfe1fe8abbe725d597ccb5cfb76e/8.png",
+      "/portfolio/lil-spider-maze/1.webp",
+      "/portfolio/lil-spider-maze/3.webp",
+      "/portfolio/lil-spider-maze/4.webp",
+      "/portfolio/lil-spider-maze/5.webp",
+      "/portfolio/lil-spider-maze/6.webp",
+      "/portfolio/lil-spider-maze/7.webp",
+      "/portfolio/lil-spider-maze/8.webp",
     ],
     body: `A small physical puzzle made for a Stanford CNC class. A metal base carries CNC-milled channels in a spider-web pattern; a laser-cut clear acrylic top sheet sits over it as a window; a steel ball navigates the maze beneath the cover.
 
@@ -346,10 +352,14 @@ The build was a study in two pipelines at once. The metal base needed careful CN
       "/portfolio/injection-molded-fabric/bag.webp",
       "/portfolio/injection-molded-fabric/dress.webp",
       "/portfolio/injection-molded-fabric/editorial.webp",
-      ...[1, 2, 3, 4, 5, 6, 7, 8].map((n, i) => {
-        const ids = ["bbc2d7e7c8bbb009533c63c9b00de7ac1aeca430657b7ad9335cc2a68a0ce9c1", "c6cb8a27922c47341752cd4629429467ca263ca66b59924e2e9158c2623cb55f", "331f52e7b5e03d904ad3ce029a8b2ff9ff564d2e79ef6513a84de66849ba6fe7", "209d4d93e62430b2d68a6bc50be1ab1f97a3c894e833658ae46b657fabd10c3e", "94c4c345afc11450270b8b01368624149082b326f07c4013c0baa915c25b20a2", "ba92abe2376a09a380a7c641bf635e3b667a5c1f0a1f055c1071ded32cd94e57", "d803a043cf1fd22eb0e5ed624bca58a6f832b70606597311a57d63c8214902a7", "3722104a91ae8018fbcabb32abe9317a59da8e916b9c77fe6800b1a0ecb56982"];
-        return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
-      }),
+      "/portfolio/injection-molded-fabric/1.webp",
+      "/portfolio/injection-molded-fabric/2.webp",
+      "/portfolio/injection-molded-fabric/3.webp",
+      "/portfolio/injection-molded-fabric/4.webp",
+      "/portfolio/injection-molded-fabric/5.webp",
+      "/portfolio/injection-molded-fabric/6.webp",
+      "/portfolio/injection-molded-fabric/7.webp",
+      "/portfolio/injection-molded-fabric/8.webp",
     ],
     body: `Experiments in injection-molding plastic structures that look and behave like textile, made for Stanford's ME 325 Injection Molding course. The pieces shown are pure plastic, no actual fabric anywhere; the woven appearance comes entirely from the cavity geometry.
 
@@ -369,19 +379,19 @@ The interesting outputs aren't really parts, they're material studies. They show
       "/portfolio/crocheting/casual.webp",
       "/portfolio/crocheting/photoshoot.webp",
       "/portfolio/crocheting/hat.webp",
-      "https://freight.cargo.site/w/900/q/94/i/4dd4f35271cfb627d5c1e2e110fd68297441a354f12ef0004f85c90922262591/image0-1.png",
-      "https://freight.cargo.site/w/900/q/75/i/cec38d88db9d9cef0d50df34ecc406d69a720a980fa747ce0725cb5f16f1745a/IMG_1080.jpg",
-      "https://freight.cargo.site/w/900/q/75/i/5fcaa14c224bd506079a9dc3ff463272297c3703922c09480683df2b20c1a88b/IMG_1075.jpg",
-      "https://freight.cargo.site/w/400/q/75/i/61a0b971a70ef192e5b6967743baf9c7ffe5eb49ae357bd342a6cffe581804aa/Snapchat-157100115.jpg",
-      "https://freight.cargo.site/w/400/q/75/i/b8a992caba1c7bf64bf2faebc89ad8f1c5e977572ec0ce0a3b001e93c0d84c3b/Snapchat-476075781.jpg",
-      "https://freight.cargo.site/w/800/q/75/i/8d2561b5147bbdbdfd8b1c38b4522a773ec73160b2e04ebdcfa9d50e2926e472/image-6.png",
-      "https://freight.cargo.site/w/800/q/75/i/453621a04773c64b3dc3b84d36cdb79a6e824da5d49b73d668ede6c06ccc8ff9/image-4-min.png",
-      "https://freight.cargo.site/w/800/q/75/i/e60f36cddc6cd4c03ef1495a513c8feaae92d2db651c901a43cb5070a146e338/image-8-min.png",
-      "https://freight.cargo.site/w/800/q/75/i/c28bb5442c0d673d2e488660fd5c269785c24aceebbf44731b4844921453e82d/image-7-min.png",
-      "https://freight.cargo.site/w/800/q/75/i/a95e1a384ca03f656e14cf9632be31ec437954850f599f497e7aa26d1c98c80b/image-5-min.png",
-      "https://freight.cargo.site/w/800/q/75/i/e686101f7b58f553a1c2cd6b8d646c24ee4e5e9f0cae1bd7cb2b45dd561175e6/image-3-min.png",
-      "https://freight.cargo.site/w/500/q/75/i/fe019ded734bedcbe249f7605605860b865d0d7b74da4ccd1308ebf1f1b5b978/AF1QipOF2jA6klI-7xCuXn2JDkTDHSu8Yw3HF1hobZkw1536-h2048.jpg",
-      "https://freight.cargo.site/w/1920/q/94/i/1d47478a66fdb6d512b31fb49071009efd837e9f3362af03a9e18c6f535e6760/Screenshot-2020-10-23-121641.png",
+      "/portfolio/crocheting/image0-1.webp",
+      "/portfolio/crocheting/img-1080.webp",
+      "/portfolio/crocheting/img-1075.webp",
+      "/portfolio/crocheting/snapchat-157100115.webp",
+      "/portfolio/crocheting/snapchat-476075781.webp",
+      "/portfolio/crocheting/image-6.webp",
+      "/portfolio/crocheting/image-4-min.webp",
+      "/portfolio/crocheting/image-8-min.webp",
+      "/portfolio/crocheting/image-7-min.webp",
+      "/portfolio/crocheting/image-5-min.webp",
+      "/portfolio/crocheting/image-3-min.webp",
+      "/portfolio/crocheting/af1qipof2ja6kli-7xcuxn2jdktdhsu8yw3hf1hobzkw1536-h2048.webp",
+      "/portfolio/crocheting/screenshot-2020-10-23-121641.webp",
     ],
     body: `Long-running personal craft and one of the things I'd do anywhere if the choice were mine. The patchwork cardigan shown is one of many; each square is an evening, a leftover skein, sometimes a project in itself before it became part of something bigger.
 
@@ -428,10 +438,16 @@ The studies explored ceramic and silicone variants. Ceramic gave the object weig
     gallery: [
       "/portfolio/clarinet-barrel.png",
       "/portfolio/clarinet-tuning-barrel/playing.webp",
-      ...[1, 2, 3, 4, 5, 6, 8, 9, 10, 11].map((n, i) => {
-        const ids = ["7b6b6aa241421defcc385f8ef2503cee16679d8f66cf1cab46f5b94cf0a99fdd", "4875ff1015f289fd7d3e86256d9df3b24be804a67ada4da7962a7e98a7d086ca", "584426c84e46487ce0e4e6e1e9730f259ecfa07291ad97ee3eacbc2310329a05", "ec60be28d82f8edb1ad126fdb7c431a895c978e2f57892accfe7ae7a41fedd59", "886f7b56e699d04283760b3a39c7aeb4416840bd0ad5d582523f1ce0da666f8f", "d44c9ddb3ed6832f4335141f6cb18484d11d60a0ab71b8f14bc62548a34d3c9f", "05f0ba3ee6d3bdb8971c24f0d3bb068f24d18141de6de09baa0425c12f2da9e8", "69d5045ab8c92c539fda3352a8432b41aaaac904916f38c5e72153121a6087a8", "d5abec0d65713976ba041be43dad1a2a169838e34f6d70c6b6fdb7417a3cfe4c", "3989e6a9e07478842eccb055a992f0d156d36ec53ec54a0d117f9969f76d1b7f"];
-        return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
-      }),
+      "/portfolio/clarinet-tuning-barrel/1.webp",
+      "/portfolio/clarinet-tuning-barrel/2.webp",
+      "/portfolio/clarinet-tuning-barrel/3.webp",
+      "/portfolio/clarinet-tuning-barrel/4.webp",
+      "/portfolio/clarinet-tuning-barrel/5.webp",
+      "/portfolio/clarinet-tuning-barrel/6.webp",
+      "/portfolio/clarinet-tuning-barrel/8.webp",
+      "/portfolio/clarinet-tuning-barrel/9.webp",
+      "/portfolio/clarinet-tuning-barrel/10.webp",
+      "/portfolio/clarinet-tuning-barrel/11.webp",
     ],
     body: `A precision-machined telescoping barrel for a clarinet, the short section between the mouthpiece and the upper joint. Adjustable length lets the player fine-tune intonation without swapping out an entire barrel.
 
@@ -451,11 +467,13 @@ Designing for a musician means thinking about the millimeters that affect intona
     gallery: [
       "/portfolio/dumpling-press.webp",
       "/portfolio/dough-roller/dumplings.webp",
-      ...[1, 2, 3, 4, 5, 6].map((n, i) => {
-        const ids = ["ee0c338cbbbf1f2d8f47d2a57698c9a0fb109832aad3d0444175e8752967804e", "333652cacf01770950ee855b2d0324d54b57e0897c5e206de04e102efeac6021", "63a65b873cfb99a101abbd231d8c8b3ca7241c9263e4940e46ef44d56f0d947e", "2e3eb93f0bcd7ca14f848fb74f08fa8fe68d30b620d4f621ecd967da277988f5", "f57cae728e99845bfb03901fbb3175e2545aa2f5da9b9449826ac65d70b2868a", "86cbb0839a699b11be24b101def4fcb03f61859080f744dbdeec6481bcc9a75f"];
-        return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.png`;
-      }),
-      "https://freight.cargo.site/w/1920/q/94/i/605e5b3876096abb69900e778aceaaa537b3d3d075ed47085b5ba85582f6f057/7.png",
+      "/portfolio/dough-roller/1.webp",
+      "/portfolio/dough-roller/2.webp",
+      "/portfolio/dough-roller/3.webp",
+      "/portfolio/dough-roller/4.webp",
+      "/portfolio/dough-roller/5.webp",
+      "/portfolio/dough-roller/6.webp",
+      "/portfolio/dough-roller/7.webp",
     ],
     body: `A kitchen tool designed for making dumpling and gyoza skins. Standard rolling pins are sized for pie crust and pasta sheets; a single-skin roller is a different problem.
 
@@ -471,10 +489,10 @@ The form is a stout hardwood roller with a soft-grip handle, mass-balanced so th
     cover: "/portfolio/arbor-press.png",
     gallery: [
       "/portfolio/arbor-press.png",
-      "https://freight.cargo.site/w/733/q/94/i/6efb3f677cea588b266f8c41fd6e6ffb6903bae11bad005bf1c804a0f2cc9081/1s.png",
-      "https://freight.cargo.site/w/733/q/94/i/e391ac5ac08a4b764d8dbf67180490cc2a493b37ea78b6769364cb280b73249c/3s.png",
-      "https://freight.cargo.site/w/733/q/94/i/c662ee439558eeb46b6e927de7d38a2da06105fb42e8f8330d5058d81fe8cd9b/4s.png",
-      "https://freight.cargo.site/w/733/q/94/i/0670d6afecfa47bbbca86c20a26bc0d35547b3615cf87b952779021cd452f07f/2s.png",
+      "/portfolio/quarter-bending-press/1s.webp",
+      "/portfolio/quarter-bending-press/3s.webp",
+      "/portfolio/quarter-bending-press/4s.webp",
+      "/portfolio/quarter-bending-press/2s.webp",
     ],
     body: `A fixture designed for cleanly bending US quarters on a benchtop arbor press. Built for a Stanford fixture-design exercise, a constrained problem with all the texture of real machine-shop work.
 
@@ -496,11 +514,26 @@ The surprise was how much the fixture geometry mattered relative to the press it
     gallery: [
       "/portfolio/pearl-applicator.png",
       "/portfolio/tampon-case/in-use.webp",
-      ...[1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22].map((n) => {
-        const ids = ["1a07f8182821b3622d40d01042331acfb4a89002e6e99d988701e118379ebdba", "e0057b94f3b051cf5482b18067e33adb7a2f3242a94df7c3ff12639789606246", "259160f7d050247b677776e54909868d2bdaaa8968456a769cea819f20ff5ae8", "ca2577bec0f6f89485e6973a6bc859abfca5af99408e8cd51079425a525a3b21", "75cabc4696d174f8838eb419f2f0e201d26555ba1a01d5b8b009f0130b215f58", "1f1f379e78c93928bc7efb1e3cae51d1ea4def609fe2092f88c635360ddb06c8", "1be3bebde9762f1bfe4ab5a8cfb8ad861f40376fd39394774993ba67c6445520", "23f4aae7caca3969f2561451c3910cb206826f72cf1b56e87164d4308000100e", "82f6a8ea147a4b530662ca3be55df73993802f00473c09e54c30ad18d5552dd2", "9b68bace6ba69ecdf44ab0227e8bdc92dcb3c5e8b41114276a4dcb20f9ff29cd", "84404c5ec9c8ccd49023a080c14af57f936cc0dcc84706e3dacda09dca7d9931", "867f5e40a45ae5a72c61a300aa45582f7dc4f931b5d96c24b4d607ee76ab4fba", "6de2f6e54b67da062fcd863412d7bb185a7ba7db3b82eeaa6e176b9b45b77308", "bdeb049993eeb6c29779a819b2cf62d093c516ae437fdaa2f0243c6c60cfed1f", "412f0de2feb5762e7fb93c667e7e88437b5534b6d0458786a82a5350197c491b", "eaf7d043e29a51cd0fc2024a244abd971d76d83a80dd4571d02b0d7def46854c", "11a3a166b404ed6207c661757065c4fda311126a87319aa03d04dea75579a92b", "59e1c5ead5af9a287e1ce0291c9dad057405530c353f7971c63f358f25d7af2d", "c4e1e80f51599a954c1a7dc80a3bbc20ff05e381ba9919be498a7541b812f3e2", "b6bf5b80bf3fe30515a638a53c81caa17b33d2bed331d227f68cdf2949064aca"];
-        const i = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22].indexOf(n);
-        return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
-      }),
+      "/portfolio/tampon-case/1.webp",
+      "/portfolio/tampon-case/3.webp",
+      "/portfolio/tampon-case/4.webp",
+      "/portfolio/tampon-case/5.webp",
+      "/portfolio/tampon-case/6.webp",
+      "/portfolio/tampon-case/7.webp",
+      "/portfolio/tampon-case/8.webp",
+      "/portfolio/tampon-case/9.webp",
+      "/portfolio/tampon-case/10.webp",
+      "/portfolio/tampon-case/11.webp",
+      "/portfolio/tampon-case/12.webp",
+      "/portfolio/tampon-case/13.webp",
+      "/portfolio/tampon-case/14.webp",
+      "/portfolio/tampon-case/15.webp",
+      "/portfolio/tampon-case/16.webp",
+      "/portfolio/tampon-case/17.webp",
+      "/portfolio/tampon-case/18.webp",
+      "/portfolio/tampon-case/19.webp",
+      "/portfolio/tampon-case/21.webp",
+      "/portfolio/tampon-case/22.webp",
     ],
     body: `A reusable case for menstrual products, a small study in how an everyday personal object can feel intentional rather than disposable.
 
@@ -519,10 +552,18 @@ The form went through many iterations: FDM 3D prints to validate the snap-closur
       "/portfolio/tbd-panda-soap.webp",
       "/portfolio/raccoon-poker-chip/hero-many-colors.webp",
       "/portfolio/raccoon-poker-chip/injection-sequence.webp",
-      ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n, i) => {
-        const ids = ["42d9ef15076f62fab0abee3ee39819bf9d8bff9f697eb0ca533ad18559e22700", "3ec0e0a4adfe4b880ccec020c0edee1f99a7a33bb05943192da6964d5ea76d22", "d2e85ab8bd3ab98866787a2d016ca962ac8bc5f2230826b636b47f53d73a3ab1", "7defddb77c927a28b3ca5f4d8dd9fd9c37a871a5ede54496cb6b6f63e9dda139", "97bd01bbbfb5a12649185b9729cdd00b020184b435d8be8575a2911c332f0562", "d0f6d84e8a91ffeb248e0bf1859b05621ddf36c2491f940cdef7d3c22a141b75", "153d556c89ffeceafda7f223ea4758408ceaf7f62a6d0c9fe918fdbf2b163eb7", "567e91be77e07fbf3ec5b95c8e2600729c5b743c249c34475ee3cc7d6e55ba0e", "d17933e07abae064339eb04e8b63758367602a7424b7866fea572a76fee69e28", "6e90155278aa4a3765beca0dec98f90b047f5ed046fdae7f297001e26adbfb1e", "b503e5500fa7c67feacc258133b69b82f7890aa5ca647586e0e895e51bca71ef", "d1d7c4ed0c8186914b263e4f94686389cb65291d8e1ff199b7fde09aa2420afa"];
-        return `https://freight.cargo.site/w/1500/q/75/i/${ids[i]}/${n}.jpg`;
-      }),
+      "/portfolio/raccoon-poker-chip/1.webp",
+      "/portfolio/raccoon-poker-chip/2.webp",
+      "/portfolio/raccoon-poker-chip/3.webp",
+      "/portfolio/raccoon-poker-chip/4.webp",
+      "/portfolio/raccoon-poker-chip/5.webp",
+      "/portfolio/raccoon-poker-chip/6.webp",
+      "/portfolio/raccoon-poker-chip/7.webp",
+      "/portfolio/raccoon-poker-chip/8.webp",
+      "/portfolio/raccoon-poker-chip/9.webp",
+      "/portfolio/raccoon-poker-chip/10.webp",
+      "/portfolio/raccoon-poker-chip/11.webp",
+      "/portfolio/raccoon-poker-chip/12.webp",
     ],
     body: `A custom-tooled poker chip with a raccoon emboss, designed and produced through the full injection-molding pipeline for Stanford's ME 325. The motif chose itself; the design exercise was the same regardless of subject.
 
@@ -540,9 +581,9 @@ The chips themselves are pigmented LDPE. They stack well, they have a satisfying
     cover: "/portfolio/medical-mechanism.png",
     gallery: [
       "/portfolio/medical-mechanism.png",
-      "https://freight.cargo.site/w/1500/q/75/i/aed4f4ff1596c600a9395e0ccb8ab5a28328ee454c2f299c98c1397b0a712e7c/Retractor-Tear-down--2.jpg",
-      "https://freight.cargo.site/w/1500/q/75/i/5e7e227267ea3a599a1be3f299df5e8fc94782798d36072c69a1eadf7e84c867/Retractor-Tear-down--11.jpg",
-      "https://freight.cargo.site/w/1500/q/75/i/021c76780b2d60f3a4e57c8651b1437ecb2fd328850786a645a1da838ba588b8/Retractor-Tear-down--7.jpg",
+      "/portfolio/grasper-analysis/retractor-tear-down-2.webp",
+      "/portfolio/grasper-analysis/retractor-tear-down-11.webp",
+      "/portfolio/grasper-analysis/retractor-tear-down-7.webp",
     ],
     body: `A teardown and mechanical analysis of an Intuitive Surgical small grasping retractor, the kind of end-effector that lives at the tip of a robotic surgery system's arm and gently holds tissue out of the way for the surgeon.
 

@@ -77,7 +77,7 @@ export default function Home() {
             <Group key={g.id} id={g.id} title={g.title} note={g.note} items={g.items}>
               <List items={g.items} label={g.title} />
               {g.earlier && (
-                <Earlier title="Earlier, at Stanford and home" count={g.earlier.length}>
+                <Earlier title="Earlier, at Stanford and home">
                   <List items={g.earlier} label="Earlier objects" small />
                 </Earlier>
               )}
@@ -85,7 +85,7 @@ export default function Home() {
           ))}
         </div>
         <OpenOnHash />
-        <SiteFooter home={false} />
+        <SiteFooter />
       </main>
     </div>
   );

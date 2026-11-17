@@ -10,25 +10,26 @@ type Place = { href: string; title: string };
    so a long page still says where you are: the pretzel home, the group the
    project sits in (a link back to it, opened) and the project's name, then
    Previous and Next. It steps aside again near the top, where the header is,
-   and at the foot, where the bigger Previous and Next take over. */
+   and at the foot, where the bigger Previous and Next and the sign-off take over. */
 export function ProjectBar({ group, title, prev, next }: { group?: Place; title: string; prev: Place; next: Place }) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const intro = document.querySelector(".ui-intro");
-    const foot = document.querySelector(".ui-prev-next");
     if (!intro) return;
-    let pastTitle = false, atFoot = false;
-    const update = () => setShown(pastTitle && !atFoot);
+    const ends = [...document.querySelectorAll(".ui-prev-next, .ui-footer")];
+    const visibleEnds = new Set<Element>();
+    let pastTitle = false;
     const observer = new IntersectionObserver(entries => {
       for (const e of entries) {
         if (e.target === intro) pastTitle = !e.isIntersecting && e.boundingClientRect.top < 0;
-        else atFoot = e.isIntersecting;
+        else if (e.isIntersecting) visibleEnds.add(e.target);
+        else visibleEnds.delete(e.target);
       }
-      update();
+      setShown(pastTitle && visibleEnds.size === 0);
     });
     observer.observe(intro);
-    if (foot) observer.observe(foot);
+    ends.forEach(el => observer.observe(el));
     return () => { observer.disconnect(); setShown(false); };
   }, [title]);
 

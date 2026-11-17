@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "freight.cargo.site",
-      },
-      {
-        protocol: "https",
         hostname: "patentimages.storage.googleapis.com",
       },
     ],

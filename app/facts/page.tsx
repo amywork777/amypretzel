@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Page, PageIntro, SectionHeading, SiteFooter } from "../_ui/layout";
+import { Page, PageIntro, SiteFooter } from "../_ui/layout";
 import { facts } from "./facts";
 import { FactFigure } from "./figures";
 
@@ -13,10 +13,9 @@ export const metadata: Metadata = {
 
 export default function FactsPage() {
   return (
-    <Page>
+    <Page width="narrow">
       <PageIntro title="Cool facts.">Things about making physical stuff that I think are neat.</PageIntro>
-      <section aria-labelledby="all-facts-title">
-        <SectionHeading id="all-facts-title">All facts</SectionHeading>
+      <section aria-label="All facts" className="ui-facts">
         {facts.map(f => (
           <article key={f.slug} id={f.slug} className="ui-fact" aria-labelledby={`${f.slug}-title`}>
             <header>

@@ -81,3 +81,21 @@ export const workGroups: WorkGroup[] = [
 export function groupOf(href: string): WorkGroup | undefined {
   return workGroups.find(g => [...g.items, ...(g.earlier ?? [])].some(item => item.href === href));
 }
+
+/** Every project in homepage order, the earlier studies after the products
+    they fold under. Previous and Next on project pages walk this order, so
+    browsing them is the same as reading down the homepage. */
+export const workOrder: ListItem[] = workGroups.flatMap(g => [...g.items, ...(g.earlier ?? [])]);
+
+/** A project's homepage row: its one line and year head its page too. */
+export function itemOf(href: string): ListItem | undefined {
+  return workOrder.find(item => item.href === href);
+}
+
+/** The projects before and after this one in homepage order, wrapping round. */
+export function neighbours(href: string): { prev: ListItem; next: ListItem } | undefined {
+  const i = workOrder.findIndex(item => item.href === href);
+  if (i < 0) return undefined;
+  const n = workOrder.length;
+  return { prev: workOrder[(i - 1 + n) % n], next: workOrder[(i + 1) % n] };
+}

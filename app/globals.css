@@ -159,6 +159,11 @@ a.ui-button { text-decoration: none; }
 .ui-prev-next-pic img { object-fit: cover; }
 .ui-prev-next-text { min-width: 0; }
 .ui-prev-next a:hover { background: var(--color-surface); }
+@media (max-width: 560px) {
+  /* On a phone the two links stack, full width, so long titles stay whole. */
+  .ui-prev-next { flex-direction: column; gap: var(--space-3); }
+  .ui-prev-next a { width: 100%; }
+}
 .ui-prev-next small { display: block; font-size: var(--text-sm); color: var(--color-ink-soft); margin-bottom: 2px; }
 
 /* === ITEMS: a title with one soft line under it (facts) === */
@@ -167,6 +172,8 @@ a.ui-button { text-decoration: none; }
 .ui-media { border-radius: var(--radius); background: var(--color-media); overflow: hidden; }
 
 /* === FACTS: title in the margin, prose beside it === */
+.ui-not-found { margin-top: var(--space-6); }
+.ui-facts { margin-top: var(--space-7); border-top: var(--line) solid var(--color-rule); }
 .ui-fact { display: grid; grid-template-columns: 180px minmax(0, 36em); gap: var(--space-4); padding: var(--space-4) 0 var(--space-2); border-bottom: var(--line) solid var(--color-rule); }
 .ui-fact .ui-prose p { font-size: var(--text-base); line-height: 1.5; }
 .ui-fact .ui-prose h4 { font-size: inherit; font-weight: 500; color: var(--color-ink); margin: 2.4em 0 .8em; }
@@ -347,13 +354,14 @@ a.ui-list-row:hover .ui-list-title { color: var(--color-ink-soft); }
   .ui-list-peek { display: block; position: absolute; top: 50%; left: calc(100% + 48px); width: min(280px, calc((100vw - 680px) / 2 - 112px)); aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--color-media); opacity: 0; transform: translate(-6px, -50%) scale(.97); transform-origin: left center; pointer-events: none; transition: opacity .2s ease, transform .35s cubic-bezier(.2, .8, .2, 1); }
   a.ui-list-row:hover .ui-list-peek, a.ui-list-row:focus-visible .ui-list-peek { opacity: 1; transform: translate(0, -50%) scale(1); }
 }
-/* Earlier work folds under one line that opens in place. */
-.ui-earlier summary { display: flex; align-items: center; gap: var(--space-2); padding: 12px 0; border-bottom: var(--line) solid var(--color-rule); font-size: var(--text-sm); color: var(--color-ink-soft); cursor: pointer; list-style: none; }
+/* Earlier work folds under one small pill that opens in place, filled while open. */
+.ui-earlier summary { display: block; padding: 14px 0; border-bottom: var(--line) solid var(--color-rule); cursor: pointer; list-style: none; }
 .ui-earlier summary::-webkit-details-marker { display: none; }
-.ui-earlier summary::after { content: "Show"; margin-left: auto; font-size: 13px; }
-.ui-earlier[open] summary::after { content: "Hide"; }
-.ui-earlier summary:hover { color: var(--color-ink); }
-.ui-earlier-count { font-size: 13px; font-variant-numeric: tabular-nums; }
+.ui-earlier summary:focus-visible { outline: none; }
+.ui-earlier summary:focus-visible .ui-earlier-title { outline: var(--line) solid var(--color-ink); outline-offset: 3px; }
+.ui-earlier-title { display: inline-block; padding: .24em .75em .28em; font-size: var(--text-sm); line-height: 1.2; color: var(--color-ink); border: var(--line) solid var(--color-rule); border-radius: var(--radius-pill); transition: color var(--ease), background-color var(--ease), border-color var(--ease); }
+.ui-earlier[open] .ui-earlier-title { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
+@media (hover: hover) { .ui-earlier summary:hover .ui-earlier-title { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); } }
 /* The group's own rule closes it, so the last row and a closed fold drop theirs. */
 .ui-group-body > :last-child > li:last-child > .ui-list-row,
 .ui-earlier .ui-list > li:last-child > .ui-list-row, .ui-earlier:not([open]) summary { border-bottom: 0; }

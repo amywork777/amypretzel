@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { LeadVideo } from "../../_ui/lead-video";
 import { notFound } from "next/navigation";
-import { Page, PageIntro } from "../../_ui/layout";
+import { Page, PageIntro, SiteFooter } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
 import { ProjectBar } from "../../_ui/project-bar";
-import { groupOf } from "../../work";
+import { groupOf, itemOf, neighbours } from "../../work";
 import { renderBody } from "../../lib/render-body";
 import { splitLinks, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
@@ -47,9 +47,11 @@ export default async function SoftwareProjectPage({
   if (!project) notFound();
 
   const picture = project.picture;
-  const idx = softwareProjects.findIndex((p) => p.slug === project.slug);
-  const prev = idx > 0 ? softwareProjects[idx - 1] : softwareProjects[softwareProjects.length - 1];
-  const next = idx < softwareProjects.length - 1 ? softwareProjects[idx + 1] : softwareProjects[0];
+  // The page is headed by its homepage row (one line, the year) and walks
+  // the homepage order with Previous and Next.
+  const href = `/software/${project.slug}`;
+  const item = itemOf(href);
+  const around = neighbours(href);
 
   // Demos are already embed URLs or local clips; the rest of the links become
   // embeds where the destination allows framing.
@@ -74,16 +76,16 @@ export default async function SoftwareProjectPage({
     creator: { "@type": "Person", name: "Amy Zhou", url: SITE_URL },
   };
 
-  const group = groupOf(`/software/${project.slug}`);
+  const group = groupOf(href);
   const bar = group && { href: `/#${group.id}`, title: group.short };
 
   return (
-    <Page width="narrow" bar={<ProjectBar group={bar} title={project.title} prev={{ href: `/software/${prev.slug}`, title: prev.title }} next={{ href: `/software/${next.slug}`, title: next.title }} />}>
+    <Page width="narrow" bar={around && <ProjectBar group={bar} title={project.title} prev={around.prev} next={around.next} />}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageIntro title={project.title} meta={project.section}>{project.summary}</PageIntro>
+      <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.summary}</PageIntro>
 
       {/* A short demo from Amy's post on X when there is one; otherwise the
           same screenshot as its row on the homepage, whole. */}
@@ -116,11 +118,8 @@ export default async function SoftwareProjectPage({
 
       <Embeds embeds={[...demoEmbeds, ...embeds]} />
 
-      <PrevNext
-        label="More software"
-        prev={{ href: `/software/${prev.slug}`, title: prev.title, ...prev.picture }}
-        next={{ href: `/software/${next.slug}`, title: next.title, ...next.picture }}
-      />
+      {around && <PrevNext label="More work" prev={around.prev} next={around.next} />}
+      <SiteFooter />
     </Page>
   );
 }
