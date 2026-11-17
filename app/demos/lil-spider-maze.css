@@ -1,0 +1,15 @@
+/* Maman's dinner, to play with (app/demos/lil-spider-maze.tsx). The block
+   sits square in the grey stage and leans a few degrees toward where it is
+   tilted. Its shadow is the object's, not the interface's. */
+.spider-stage { perspective: 1100px; }
+.spider-board, .spider-shadow { position: absolute; left: 50%; top: 8%; height: 84%; aspect-ratio: 1; translate: -50% 0; }
+.spider-board { touch-action: none; cursor: grab; border-radius: 3px; will-change: transform; }
+.spider-board:active { cursor: grabbing; }
+.spider-board:focus-visible { outline: var(--line) solid var(--color-ink); outline-offset: 4px; }
+.spider-board svg { display: block; width: 100%; height: 100%; }
+.spider-shadow { background: rgba(30, 34, 38, .22); border-radius: 6px; filter: blur(12px); transform: translate(2%, 3.5%) scale(.98); }
+.spider-status { margin: 0; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
+.spider-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Phones and tablets get the tilt sensor; a mouse drags. */
+.spider-sensor { display: none; }
+@media (hover: none) and (pointer: coarse) { .spider-sensor { display: inline-block; } }
