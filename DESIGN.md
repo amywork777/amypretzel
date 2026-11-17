@@ -108,7 +108,7 @@ All the warmth is spent on a few small things: a hand-drawn pretzel for a logo t
 
 - One family at very few sizes; hierarchy comes from position, weight and ink strength.
 - No accent colour in the interface. Colour belongs to photographs.
-- Only sketch icons. Every mark and icon (the pretzels, the group marks, the favicon) is drawn in ink with the taste kit's boiling line, never a coloured picture. Amy, 2026-11-16: "no more colored things only sketch icons."
+- Only sketch icons. Every mark and icon (the pretzels, the group marks, the favicon, the theme switch's sun and moon) is drawn in ink with the taste kit's boiling line, never a coloured picture. Amy, 2026-11-16: "no more colored things only sketch icons."
 - Every rule, border and focus ring is 1px.
 - Links are pills, including the ones inside sentences.
 - One heavy 3D moment, and quiet everywhere else.

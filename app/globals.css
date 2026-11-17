@@ -136,8 +136,14 @@ a.ui-button { text-decoration: none; }
 .ui-button--pill { padding: 11px 16px; border-color: var(--color-rule); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--color-paper) 50%, transparent); backdrop-filter: blur(6px); }
 @media (hover: hover) { .ui-button--pill:hover:not(:disabled) { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); } }
 .ui-icon-button { display: inline-flex; align-items: center; color: var(--color-ink-muted); transition: color var(--ease); }
-.ui-icon-button:hover { color: var(--color-ink); }
+.ui-icon-button:hover, .ui-icon-button:hover .theme-sketch { color: var(--color-ink); }
 .ui-icon-button svg { width: 16px; height: 16px; }
+/* The theme switch's hand-drawn sun and moon: a little bigger than a UI glyph
+   so the hand shows, and they turn when you reach for them. */
+.ui-icon-button .theme-sketch { width: 22px; height: 22px; color: var(--color-ink-soft); overflow: visible; transition: transform .4s cubic-bezier(.3, .7, .3, 1); }
+.ui-icon-button:hover .theme-sketch--sun, .ui-icon-button:focus-visible .theme-sketch--sun { transform: rotate(30deg); }
+.ui-icon-button:hover .theme-sketch--moon, .ui-icon-button:focus-visible .theme-sketch--moon { transform: rotate(-14deg); }
+@media (prefers-reduced-motion: reduce) { .ui-icon-button .theme-sketch { transition: none; transform: none !important; } }
 
 /* === LAYOUT === */
 .ui-page { min-height: 100vh; display: flex; flex-direction: column; }
