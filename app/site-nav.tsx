@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
-import BookNavLink from "./book/nav-link";
 
 const columns = {
   list: "ui-column ui-column--list",
@@ -23,7 +22,6 @@ export default function SiteNav({ column = "wide" }: { column?: keyof typeof col
           <a href="/#work">Work</a>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/#about">About</a>
-          <BookNavLink />
           <ThemeToggle />
         </nav>
       </div>

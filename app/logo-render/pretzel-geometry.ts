@@ -14,9 +14,11 @@ import {
 } from "three";
 import { mergeGeometries, mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
-// A pretzel built from one rope. Thin along x (x is "up" once laid flat),
-// about .86 units across, bottom at x = -.11. Each chapter of the story gets
-// its own kind: a coating, a topping and a slightly different twist.
+// A pretzel built from one rope, for the site's pretzel marks (the logo and
+// the secret pretzel, photographed by scripts/render-logo.mjs). The other
+// kinds are left from the pretzel table, which was removed on 2026-11-16.
+// Thin along x (x is "up" once laid flat), about .86 units across, bottom at
+// x = -.11. Each kind has its own coating, topping and twist.
 
 export type PretzelKind = "salt" | "sprinkles" | "chocolate" | "funfetti" | "ube" | "matcha" | "filler" | "logo" | "secret";
 

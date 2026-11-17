@@ -4,7 +4,6 @@ import SiteNav from "./site-nav";
 import { LinkList, TextLink } from "./_ui/link";
 import { SiteFooter } from "./_ui/layout";
 import { OpenOnHash } from "./_ui/open-on-hash";
-import BookOverlay from "./book/overlay";
 import { Earlier, Group, List } from "./_ui/list";
 import { workGroups } from "./work";
 
@@ -57,7 +56,6 @@ export default function Home() {
   return (
     <div className="home-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
-      <BookOverlay />
       <SiteNav column="list" />
       <main id="main-content" className="ui-column ui-column--list">
         <section id="about" className="home-intro" aria-labelledby="intro-title">

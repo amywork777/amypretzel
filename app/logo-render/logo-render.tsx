@@ -4,7 +4,7 @@ import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMemo } from "react";
 import { MeshPhysicalMaterial, NeutralToneMapping } from "three";
-import { createPretzelGeometry, pretzelFinish, type PretzelKind } from "../book/pretzel-geometry";
+import { createPretzelGeometry, pretzelFinish, type PretzelKind } from "./pretzel-geometry";
 
 // The pretzel mark: the same rope as the 3D chapters, glazed purple and
 // covered in rainbow sprinkles. Also renders the secret page's pink one
