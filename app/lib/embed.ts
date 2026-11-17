@@ -4,13 +4,14 @@
  * coverage (Medium, Fabbaloo, Google Patents, Notion) sets X-Frame-Options
  * or a frame-ancestors policy, so those stay as plain links.
  */
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { imageSize } from "./image-size";
 import { join } from "node:path";
 export type Embed =
   | { kind: "tweet"; id: string; label: string; href: string }
   | { kind: "frame"; src: string; height: number; label: string; href: string; domain: string; narrow?: boolean }
   | { kind: "image"; src: string; label: string; href: string; domain: string }
-  | { kind: "video"; src: string; label: string; href: string; domain: string; sound?: boolean };
+  | { kind: "video"; src: string; label: string; href: string; domain: string; poster: string; width: number; height: number; sound: boolean };
 
 // Amy's own sites, which set no framing headers, so they can run live in the page.
 const LIVE_SITES = [
@@ -95,9 +96,7 @@ export function toEmbed(url: string, label: string): Embed | null {
   // A recording saved with the site (from Drive, whose player cut tall
   // videos short): its own player, with sound, its poster the .webp of the
   // same name.
-  if (url.startsWith("/") && url.endsWith(".mp4")) {
-    return { kind: "video", src: url, label, href: url, domain: "video", sound: true };
-  }
+  if (url.startsWith("/") && url.endsWith(".mp4")) return localVideo(url, label, url, "recording");
 
   if (url.endsWith(".pdf")) {
     return { kind: "frame", src: url, height: 640, label, href: url, domain: domain || "pdf" };
@@ -131,4 +130,26 @@ export function splitLinks(
     }
   }
   return { embeds, rest };
+}
+
+/** Whether an .mp4 under public/ carries a sound track (an MP4 "soun" handler). */
+function hasSound(src: string) {
+  try {
+    const b = readFileSync(join(process.cwd(), "public", src));
+    for (let i = b.indexOf("hdlr"); i >= 0; i = b.indexOf("hdlr", i + 4)) {
+      if (b.toString("ascii", i + 12, i + 16) === "soun") return true;
+    }
+  } catch {
+    // Unreadable: treat it as silent.
+  }
+  return false;
+}
+
+/** A video saved with the site, shown the way the page's lead video is
+    (Amy, 2026-11-16: every video formatted the same nice way): it plays on
+    its own, muted and looping, opening on its .webp still, at its own shape;
+    one with sound gets controls so it can be unmuted. */
+export function localVideo(src: string, label: string, href: string, domain: string): Embed {
+  const poster = src.replace(/\.mp4$/, ".webp");
+  return { kind: "video", src, label, href, domain, poster, ...imageSize(poster), sound: hasSound(src) };
 }

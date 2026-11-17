@@ -8,7 +8,7 @@ import { PrevNext } from "../../_ui/detail";
 import { ProjectBar } from "../../_ui/project-bar";
 import { groupOf, itemOf, neighbours } from "../../work";
 import { renderBody } from "../../lib/render-body";
-import { splitLinks, type Embed } from "../../lib/embed";
+import { splitLinks, localVideo, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { softwareProjects } from "../projects";
 import { demos, videoFirst } from "../../demos";
@@ -61,7 +61,7 @@ export default async function SoftwareProjectPage({
     const href = demo.href ?? demo.src;
     const domain = new URL(href, SITE_URL).hostname.replace(/^www\./, "");
     return demo.src.endsWith(".mp4")
-      ? { kind: "video", src: demo.src, label: demo.label, href, domain }
+      ? localVideo(demo.src, demo.label, href, domain)
       : { kind: "frame", src: demo.src, height: demo.height ?? 560, label: demo.label, href, domain };
   });
   const { embeds, rest: otherLinks } = splitLinks(
