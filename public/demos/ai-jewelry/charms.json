@@ -1,0 +1,77 @@
+{
+  "dog": {
+    "label": "Dog",
+    "after": "Teddy, the poodle Taiyaki cast from a photo",
+    "vertices": 7141,
+    "triangles": 14282,
+    "vertexBytes": 34154,
+    "indexBytes": 16626,
+    "min": [
+      -9.1012,
+      -8.2083,
+      -3.7203
+    ],
+    "max": [
+      9.688,
+      8.2083,
+      3.7234
+    ],
+    "size": [
+      18.79,
+      16.42,
+      7.44
+    ],
+    "volume": 668.7,
+    "note": "Thickened the tail to 0.8 mm."
+  },
+  "fish": {
+    "label": "Fish",
+    "after": "the faceted goldfish in Taiyaki's photos",
+    "vertices": 6655,
+    "triangles": 13318,
+    "vertexBytes": 30852,
+    "indexBytes": 15605,
+    "min": [
+      -11.6369,
+      -9.5159,
+      -5.2045
+    ],
+    "max": [
+      7.0904,
+      9.5159,
+      5.2034
+    ],
+    "size": [
+      18.73,
+      19.03,
+      10.41
+    ],
+    "volume": 652.2,
+    "note": "Thickened the side fins, the belly fins, the tail fin and the dorsal fin to 0.8 mm."
+  },
+  "duck": {
+    "label": "Duck",
+    "after": "Taiyaki's duck with an umbrella",
+    "vertices": 8676,
+    "triangles": 17352,
+    "vertexBytes": 40300,
+    "indexBytes": 20206,
+    "min": [
+      -6.0217,
+      -10.4698,
+      -4.8714
+    ],
+    "max": [
+      8.0168,
+      10.4698,
+      7.831
+    ],
+    "size": [
+      14.04,
+      20.94,
+      12.7
+    ],
+    "volume": 519.9,
+    "note": "Thickened the feet, the umbrella and the umbrella handle to 0.8 mm."
+  }
+}
