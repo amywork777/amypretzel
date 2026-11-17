@@ -1,0 +1,51 @@
+/* Extract demo. The stage and pills come from the shared .ui-try frame in
+   globals.css; this is only the palette and the marks on the picture. */
+
+/* Product shots are multiplied onto the light media box (the Melted
+   Background Rule), which stays light in dark mode. */
+.ex-stage img { mix-blend-mode: multiply; object-fit: contain; }
+
+/* Where each colour was found: a dot of it, cut out of the picture by a 2px
+   ring of white (a gap, not a line). */
+.ex-mark {
+  position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; background: var(--swatch); border: 2px solid #fff;
+  pointer-events: none; transition: transform var(--ease);
+  animation: ex-pop .32s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(var(--i) * 70ms + 60ms);
+}
+.ex-mark[data-active] { transform: scale(1.5); }
+@keyframes ex-pop { from { transform: scale(0); } }
+
+.ex-palette {
+  list-style: none; margin: var(--space-3) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2) var(--space-3);
+}
+@media (min-width: 640px) { .ex-palette { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+.ex-slot[data-filled] { animation: ex-in .36s ease both; animation-delay: calc(var(--i) * 70ms); }
+@keyframes ex-in { from { opacity: 0; transform: translateY(4px); } }
+
+.ex-swatch {
+  display: flex; align-items: center; gap: var(--space-2); width: 100%; min-height: 40px; padding: 0;
+  font: inherit; font-size: var(--text-sm); line-height: 1.25; text-align: left; color: var(--color-ink);
+  background: none; border: 0; border-radius: var(--radius); cursor: pointer;
+}
+.ex-empty { cursor: default; }
+.ex-chip {
+  position: relative; flex: none; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--swatch, transparent); border: var(--line) solid var(--color-rule);
+}
+.ex-chip::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: var(--line) solid transparent; transition: border-color var(--ease); }
+.ex-swatch:focus-visible .ex-chip::after { border-color: var(--color-ink); }
+@media (hover: hover) { button.ex-swatch:hover .ex-chip::after { border-color: var(--color-ink); } }
+.ex-swatch:focus-visible { outline-offset: 2px; }
+.ex-text { display: flex; flex-direction: column; min-width: 0; }
+.ex-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ex-hex { color: var(--color-ink-soft); }
+
+.ex-go { margin-left: auto; }
+.ex-note { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--color-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ex-mark, .ex-slot[data-filled] { animation: none; }
+}
