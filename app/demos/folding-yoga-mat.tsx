@@ -25,13 +25,23 @@ import "./folding-yoga-mat.css";
      page checks again live, panel against panel. Its T4 moves the whole
      stack onto the last square; here the last square moves instead (the
      same relative motion, as the rev D CAD shows it), so the stack stays put.
-   - Paper hinges: the same five folds done the way paper folds, about the
+   - Triangle folds: the three options in the hardcore-cases fold study
+     (docs/three-connected-fold-options.md: twin pinch, two sweeps,
+     alternating zipper), each end rolling in to the centre square along its
+     diagonals and cross creases. Two changes from the study, both because it
+     is zero-thickness: it folds in half last, which on a joined mat tears
+     the long hinge (vz-origami-01's 14 Sep audit), so here that comes first,
+     as on the sample; and it leaves each crease's direction open, so here
+     diagonals tuck under and cross creases roll over, the alternation that
+     keeps every hinge wrap within 22 mm (CP-01's square-fold directions
+     would need up to 64 mm). The moves use the square study's method.
+   - Paper hinges: the same folds done the way paper folds, about the
      crease lines with no gap. Thick panels can't do that, and the live check
      marks every panel that passes through another.
 
-   Simplified: the diagonals stay flat (on the real mat they flex to help it
-   collapse, which no model here solves), and the green web between panels
-   is drawn as a smooth bend rather than solved. */
+   Simplified: in the square fold the diagonals stay flat (on the real mat
+   they flex to help it collapse, which no model here solves), and the green
+   web between panels is drawn as a smooth bend rather than solved. */
 
 // ---------------------------------------------------------------- the mat
 
@@ -69,21 +79,57 @@ const PANELS: Panel[] = (() => {
   return out;
 })();
 
-/** Every edge moved inward by d, as CP-01's offset_triangle does it. */
-function inset(tri: V2[], d: number): V2[] {
-  const cx = (tri[0][0] + tri[1][0] + tri[2][0]) / 3, cy = (tri[0][1] + tri[1][1] + tri[2][1]) / 3;
+/** Edge i (tri[i] to tri[i + 1]) moved inward by d[i], as CP-01's
+    offset_triangle does it with one d for all three. */
+function inset(tri: V2[], d: number | number[]): V2[] {
+  const [cx, cy] = centroid(tri);
   const lines = tri.map((a, i) => {
     const b = tri[(i + 1) % 3];
+    const di = typeof d === "number" ? d : d[i];
     const dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy);
     let nx = -dy / len, ny = dx / len;
     if ((cx - a[0]) * nx + (cy - a[1]) * ny < 0) { nx = -nx; ny = -ny; }
-    return { p: [a[0] + nx * d, a[1] + ny * d] as V2, d: [dx, dy] as V2 };
+    return { p: [a[0] + nx * di, a[1] + ny * di] as V2, d: [dx, dy] as V2 };
   });
   return lines.map((l2, i) => {
     const l1 = lines[(i + 2) % 3];
     const det = l1.d[0] * l2.d[1] - l1.d[1] * l2.d[0];
     const t = ((l2.p[0] - l1.p[0]) * l2.d[1] - (l2.p[1] - l1.p[1]) * l2.d[0]) / det;
     return [l1.p[0] + t * l1.d[0], l1.p[1] + t * l1.d[1]] as V2;
+  });
+}
+
+function centroid(t: V2[]): V2 {
+  return [(t[0][0] + t[1][0] + t[2][0]) / 3, (t[0][1] + t[1][1] + t[2][1]) / 3];
+}
+const key = ([x, y]: V2) => `${x.toFixed(1)},${y.toFixed(1)}`;
+
+/** Every crease two panels share: 5 along the centre, 8 across and 10
+    diagonals. dir points across the crease, from panel a to panel b. */
+type Crease = { a: number; b: number; ends: [V2, V2]; dir: V2 };
+const CREASES: Crease[] = (() => {
+  const out: Crease[] = [];
+  PANELS.forEach((pa, a) => PANELS.forEach((pb, b) => {
+    if (b <= a) return;
+    const shared = pa.tri.filter(v => pb.tri.some(w => key(v) === key(w)));
+    if (shared.length !== 2) return;
+    const [e0, e1] = shared;
+    const len = Math.hypot(e1[0] - e0[0], e1[1] - e0[1]);
+    let dir: V2 = [-(e1[1] - e0[1]) / len, (e1[0] - e0[0]) / len];
+    const ca = centroid(pa.tri);
+    if ((ca[0] - e0[0]) * dir[0] + (ca[1] - e0[1]) * dir[1] > 0) dir = [-dir[0], -dir[1]];
+    out.push({ a, b, ends: [e0, e1], dir });
+  }));
+  return out;
+})();
+
+/** How far each edge of panel i sits back from its line for the web: half
+    the green on a crease, nothing on the mat's outside edge. */
+function webInset(i: number, g: number): number[] {
+  const tri = PANELS[i].tri;
+  return tri.map((v, j) => {
+    const w = key(tri[(j + 1) % 3]);
+    return CREASES.some(c => (c.a === i || c.b === i) && c.ends.every(e => key(e) === key(v) || key(e) === w)) ? g / 2 : 0;
   });
 }
 
@@ -145,14 +191,14 @@ const norm = (a: V3): V3 => { const l = Math.hypot(a[0], a[1], a[2]) || 1; retur
 
 // ------------------------------------------------------------ the folding
 
-export const STEPS = 5; // H, T1, T2, T3, T4
 const ease = (t: number) => t * t * (3 - 2 * t);
 
-/** Where each of the ten squares is at fold progress s (0 flat, 5 folded). */
-function poses(s: number, mode: Mode): M[] {
+/** The square fold: where each of the ten squares is at fold progress s
+    (0 flat, 5 folded). */
+function squarePoses(s: number, mode: Mode): M[] {
   const g = GAP[mode];
   const out: M[] = Array.from({ length: 10 }, () => IDENTITY);
-  for (let k = 0; k < STEPS; k++) {
+  for (let k = 0; k < 5; k++) {
     const f = Math.min(1, Math.max(0, s - k));
     if (f <= 0) break;
     const a = Math.PI * ease(f);
@@ -194,31 +240,176 @@ function poses(s: number, mode: Mode): M[] {
   return out;
 }
 
-const STEP_TEXT = [
-  "Step 1 of 5: in half, long edge to long edge",
-  "Step 2 of 5: the end square folds over the next",
-  "Step 3 of 5: the stack folds under the third",
-  "Step 4 of 5: and over the fourth",
-  "Step 5 of 5: the last square wraps under",
-];
-function stepText(s: number, mode: Mode) {
+/* The triangle folds: the three options in the hardcore-cases fold study
+   (docs/three-connected-fold-options.md). Each end of the mat rolls in
+   towards the centre square, one crease at a time, alternating diagonal
+   and cross crease, until five triangles sit on each half of the centre
+   square. The chains are make_connected_center_fold_animation.py's, one
+   per layer once the mat is folded in half. */
+export type Fold = "square" | "pinch" | "sweeps" | "zipper";
+type TriFold = Exclude<Fold, "square">;
+type Side = "left" | "right";
+
+const panel = (id: string) => PANELS.findIndex(p => p.id === id);
+const CHAINS: Record<Side, number[][]> = {
+  left: [["P4", "P3", "P7", "P8", "P12"], ["P2", "P1", "P5", "P6", "P10"]].map(c => c.map(panel)),
+  right: [["P19", "P20", "P16", "P15", "P11"], ["P17", "P18", "P14", "P13", "P9"]].map(c => c.map(panel)),
+};
+// The i-th crease in from each end: left D1 T1 D2 T2, right D5 T4 D4 T3.
+type Ref = [Side, number];
+const ORDERS: Record<TriFold, Ref[][]> = {
+  pinch: [0, 1, 2, 3].map(i => [["left", i], ["right", i]]),
+  sweeps: [...[0, 1, 2, 3].map((i): Ref[] => [["left", i]]), ...[0, 1, 2, 3].map((i): Ref[] => [["right", i]])],
+  zipper: [0, 1, 2, 3].flatMap((i): Ref[][] => [[["left", i]], [["right", i]]]),
+};
+export const stepsOf = (fold: Fold) => (fold === "square" ? 5 : 1 + ORDERS[fold].length);
+
+type Move = { moving: number[]; u: V3; sign: number; normal: V3; vertical: V3; r: number; fixed: V3; origin: V3 };
+
+/** One crease turning a packet by angle a. With gaps, as the square-fold
+    study does it: about an axis on the face it lands on, sliding so the
+    outer web stays g long while it can (once r times a passes g, the web
+    would have to stretch). Like paper: about the crease line. */
+function moveMatrix(mv: Move, a: number, mode: Mode): M {
+  if (mode === "paper") return rotation(mv.u, mv.sign * a, mv.origin);
+  const g = GAP.gaps;
+  const anchor = add(mv.fixed, scale(mv.normal, g));
+  const leg = Math.max(0, (g - mv.r * a) / 2);
+  const target = add(add(mv.fixed, scale(mv.normal, leg * (1 + Math.cos(a)) + mv.r * Math.sin(a))), scale(mv.vertical, mv.r * (1 - Math.cos(a)) + leg * Math.sin(a)));
+  const m = rotation(mv.u, mv.sign * a, anchor);
+  m[3] += target[0] - anchor[0]; m[7] += target[1] - anchor[1]; m[11] += target[2] - anchor[2];
+  return m;
+}
+
+const bodyZ = (pose: M[], ids: number[]) => {
+  let lo = Infinity, hi = -Infinity;
+  for (const i of ids) for (const [x, y] of PANELS[i].tri) for (const z of [0, T]) {
+    const w = apply(pose[i], [x, y, z])[2];
+    lo = Math.min(lo, w); hi = Math.max(hi, w);
+  }
+  return [lo, hi];
+};
+
+/** Works out each crease's move from where the stack is when it starts. The
+    study leaves which way each crease turns open; here diagonals tuck under
+    and cross creases roll over, which keeps each crease's own panels next
+    to the stack they land on, so no web wraps more than the square fold's
+    worst: 21.2 of its 22 mm. */
+function plan(fold: TriFold, mode: Mode): Move[][] {
+  const g = GAP[mode];
+  const sq = squarePoses(1, mode);
+  const pose = PANELS.map(p => sq[p.sq]);
+  return ORDERS[fold].map(step => {
+    const moves = step.map(([side, i]): Move => {
+      const plies = CHAINS[side];
+      const moving = plies.flatMap(c => c.slice(0, i + 1));
+      const [m0, s0] = [plies[0][i], plies[0][i + 1]]; // the bottom layer, still where it started
+      const [c0, c1] = PANELS[m0].tri.filter(v => PANELS[s0].tri.some(w => key(v) === key(w)));
+      const u = norm([c1[0] - c0[0], c1[1] - c0[1], 0]);
+      const cm = centroid(PANELS[m0].tri);
+      let normal: V3 = [-u[1], u[0], 0];
+      if ((cm[0] - c0[0]) * normal[0] + (cm[1] - c0[1]) * normal[1] < 0) normal = scale(normal, -1);
+      const under = i % 2 === 0;
+      const vertical: V3 = [0, 0, under ? -1 : 1];
+      const mv = bodyZ(pose, moving), st = bodyZ(pose, plies.map(c => c[i + 1]));
+      const axisZ = under ? (st[0] + mv[0]) / 2 : (st[1] + mv[1]) / 2;
+      // Each layer's crease web sits at that layer's mid-plane; the one
+      // furthest from the axis wraps outside the other.
+      const webs = plies.map(c => apply(pose[c[i]], [cm[0], cm[1], MID])[2]);
+      const outer = webs.reduce((a, z) => (Math.abs(axisZ - z) > Math.abs(axisZ - a) ? z : a));
+      const mid: V2 = [(c0[0] + c1[0]) / 2, (c0[1] + c1[1]) / 2];
+      return {
+        moving, u, normal, vertical,
+        sign: dot(cross(u, normal), vertical) > 0 ? 1 : -1,
+        r: Math.abs(axisZ - outer),
+        fixed: [mid[0] - (normal[0] * g) / 2, mid[1] - (normal[1] * g) / 2, outer],
+        origin: [c0[0], c0[1], MID],
+      };
+    });
+    for (const mv of moves) {
+      const m = moveMatrix(mv, Math.PI, mode);
+      for (const i of mv.moving) pose[i] = compose(m, pose[i]);
+    }
+    return moves;
+  });
+}
+
+const PLANS: Record<Mode, Record<TriFold, Move[][]>> = {
+  gaps: { pinch: plan("pinch", "gaps"), sweeps: plan("sweeps", "gaps"), zipper: plan("zipper", "gaps") },
+  paper: { pinch: plan("pinch", "paper"), sweeps: plan("sweeps", "paper"), zipper: plan("zipper", "paper") },
+};
+
+/** Where each of the twenty panels is at fold progress s. The triangle folds
+    start with the square fold's first step: in half. */
+function poses(s: number, mode: Mode, fold: Fold): M[] {
+  const sq = squarePoses(fold === "square" ? s : Math.min(s, 1), mode);
+  const out = PANELS.map(p => sq[p.sq]);
+  if (fold === "square") return out;
+  PLANS[mode][fold].forEach((step, k) => {
+    const f = Math.min(1, Math.max(0, s - 1 - k));
+    if (f <= 0) return;
+    for (const mv of step) {
+      const m = moveMatrix(mv, Math.PI * ease(f), mode);
+      for (const i of mv.moving) out[i] = compose(m, out[i]);
+    }
+  });
+  return out;
+}
+
+const STEP_TEXT: Record<Fold, string[]> = {
+  square: [
+    "the end square folds over the next",
+    "the stack folds under the third",
+    "and over the fourth",
+    "the last square wraps under",
+  ],
+  pinch: [
+    "both end triangles tuck under",
+    "both packets roll over onto the next squares",
+    "and tuck under along the next diagonals",
+    "and roll over onto the centre square",
+  ],
+  sweeps: [
+    "the left end triangle tucks under",
+    "it rolls over onto the next square",
+    "and tucks under along that square’s diagonal",
+    "and rolls over onto the centre square",
+    "now the right end triangle tucks under",
+    "it rolls over onto the next square",
+    "and tucks under along that square’s diagonal",
+    "and rolls over onto the other half of the centre",
+  ],
+  zipper: [
+    "the left end triangle tucks under",
+    "the right end triangle tucks under",
+    "the left packet rolls over onto the next square",
+    "the right packet rolls over onto the next square",
+    "the left packet tucks under along the next diagonal",
+    "the right packet tucks under along the next diagonal",
+    "the left packet rolls over onto the centre square",
+    "the right packet rolls over onto its other half",
+  ],
+};
+function stepText(s: number, mode: Mode, fold: Fold) {
+  const n = stepsOf(fold);
   if (s <= 0) return "Flat: 1524 × 610 mm, 4.5 mm thick";
-  if (s >= STEPS) return mode === "gaps" ? "Folded: 305 mm square, 10 layers, 45 mm tall" : "Folded like paper: 10 layers in the same 4.5 mm";
-  return STEP_TEXT[Math.min(STEPS - 1, Math.floor(s))];
+  if (s >= n) return mode === "gaps" ? "Folded: 305 mm square, 10 layers, 45 mm tall" : "Folded like paper: 10 layers in the same 4.5 mm";
+  const k = Math.min(n - 1, Math.floor(s));
+  return `Step ${k + 1} of ${n}: ${k === 0 ? "in half, long edge to long edge" : STEP_TEXT[fold][k - 1]}`;
 }
 
 // --------------------------------------------- panels passing through each other
 
-type Prism = { sq: number; pts: V3[]; axes: V3[]; edges: V3[] };
+type Prism = { pts: V3[]; axes: V3[]; edges: V3[] };
 
-/** Each panel as a full-thickness prism in its square's frame. */
-function prisms(mode: Mode) {
+/** Each panel as a full-thickness prism in its own frame. */
+function prisms(mode: Mode): Prism[] {
   return PANELS.map(p => {
     const t = inset(p.tri, GAP[mode] / 2);
     const pts: V3[] = [...t.map(([x, y]) => [x, y, 0] as V3), ...t.map(([x, y]) => [x, y, T] as V3)];
     const edges: V3[] = t.map((a, i) => { const b = t[(i + 1) % 3]; return norm([b[0] - a[0], b[1] - a[1], 0]); });
     const axes: V3[] = [[0, 0, 1], ...edges.map(e => [-e[1], e[0], 0] as V3)];
-    return { sq: p.sq, pts, axes, edges: [...edges, [0, 0, 1] as V3] };
+    return { pts, axes, edges: [...edges, [0, 0, 1] as V3] };
   });
 }
 
@@ -239,11 +430,11 @@ function overlaps(a: Prism, b: Prism) {
   return true;
 }
 
-/** Which panels pass through a panel of another square. */
+/** Which panels pass through another panel. */
 function collisions(local: Prism[], pose: M[]): boolean[] {
-  const world: Prism[] = local.map(p => {
-    const m = pose[p.sq];
-    return { sq: p.sq, pts: p.pts.map(q => apply(m, q)), axes: p.axes.map(d => turn(m, d)), edges: p.edges.map(d => turn(m, d)) };
+  const world: Prism[] = local.map((p, i) => {
+    const m = pose[i];
+    return { pts: p.pts.map(q => apply(m, q)), axes: p.axes.map(d => turn(m, d)), edges: p.edges.map(d => turn(m, d)) };
   });
   const box = world.map(w => {
     const lo: V3 = [Infinity, Infinity, Infinity], hi: V3 = [-Infinity, -Infinity, -Infinity];
@@ -253,7 +444,6 @@ function collisions(local: Prism[], pose: M[]): boolean[] {
   const hit = world.map(() => false);
   for (let i = 0; i < world.length; i++) {
     for (let j = i + 1; j < world.length; j++) {
-      if (world[i].sq === world[j].sq) continue;
       const A = box[i], B = box[j];
       if (A.hi[0] - B.lo[0] <= OVERLAP || B.hi[0] - A.lo[0] <= OVERLAP || A.hi[1] - B.lo[1] <= OVERLAP || B.hi[1] - A.lo[1] <= OVERLAP || A.hi[2] - B.lo[2] <= OVERLAP || B.hi[2] - A.lo[2] <= OVERLAP) continue;
       if (overlaps(world[i], world[j])) { hit[i] = true; hit[j] = true; }
@@ -283,13 +473,10 @@ function basis({ az, el }: View) {
   return { dir, f, r, u };
 }
 
-/** The squares' corners in world space. */
+/** The panels' corners in world space. */
 function corners(pose: M[]): V3[] {
   const pts: V3[] = [];
-  for (let i = 0; i < 10; i++) {
-    const x0 = Math.floor(i / 2) * SQ, y0 = (i % 2) * SQ;
-    for (const x of [x0, x0 + SQ]) for (const y of [y0, y0 + SQ]) for (const z of [0, T]) pts.push(toWorld(apply(pose[i], [x, y, z])));
-  }
+  PANELS.forEach((p, i) => { for (const [x, y] of p.tri) for (const z of [0, T]) pts.push(toWorld(apply(pose[i], [x, y, z]))); });
   return pts;
 }
 
@@ -309,7 +496,7 @@ function fit(pts: V3[], view: View, aspect: number, margin: number): Frame {
   return { target, dist };
 }
 
-const FLAT_POSE = poses(0, "gaps");
+const FLAT_POSE = poses(0, "gaps", "square");
 const FLAT_CORNERS = corners(FLAT_POSE);
 const MARGIN = 0.88;
 /** Folded, it is a fifth of the length, so it may come closer, but only so
@@ -386,7 +573,7 @@ const Still = memo(function Still() {
 type Scene = { dispose: () => void; poke: () => void };
 type SceneProps = {
   canvas: HTMLCanvasElement;
-  read: () => { s: number; mode: Mode; view: View };
+  read: () => { s: number; mode: Mode; fold: Fold; view: View };
   onReady: () => void;
   onHits: (n: number) => void;
 };
@@ -447,14 +634,14 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
   // draw in, or they flicker.
   const lambert = (color: string, i: number, side: THREE_NS.Side = THREE.FrontSide) =>
     keep(new THREE.MeshLambertMaterial({ color, side, polygonOffset: true, polygonOffsetFactor: 0, polygonOffsetUnits: -2 * i }));
-  const pinkMat = Array.from({ length: 10 }, (_, i) => lambert(PINK, i));
-  const hitMat = Array.from({ length: 10 }, (_, i) => lambert(HIT, i));
-  const webMat = Array.from({ length: 10 }, (_, i) => lambert(GREEN, i));
+  const pinkMat = PANELS.map((_, i) => lambert(PINK, i));
+  const hitMat = PANELS.map((_, i) => lambert(HIT, i));
+  const webMat = PANELS.map((_, i) => lambert(GREEN, i));
   const hingeMat = lambert(GREEN, 0, THREE.DoubleSide);
 
   type Build = {
     group: THREE_NS.Group;
-    squares: THREE_NS.Group[];
+    bodies: THREE_NS.Group[];
     panels: THREE_NS.Mesh[];
     hinges: { a: number; b: number; ends: V3[]; dir: V3; g: number; geo: THREE_NS.BufferGeometry }[];
     local: Prism[];
@@ -464,16 +651,11 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
   function build(mode: Mode): Build {
     const g = GAP[mode];
     const group = new THREE.Group();
-    const squares = Array.from({ length: 10 }, () => { const s = new THREE.Group(); s.matrixAutoUpdate = false; group.add(s); return s; });
-    // The web under each square, out to the mat's edge on the outside and to
-    // the start of the hinge inside.
-    for (let i = 0; i < 10; i++) {
-      const c = Math.floor(i / 2), row = i % 2;
-      const x0 = c * SQ + (c > 0 ? g / 2 : 0), x1 = (c + 1) * SQ - (c < COLS - 1 ? g / 2 : 0);
-      const y0 = row * SQ + (row === 1 ? g / 2 : 0), y1 = (row + 1) * SQ - (row === 0 ? g / 2 : 0);
-      squares[i].add(new THREE.Mesh(keep(prism([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], BUILD, BUILD + WEB)), webMat[i]));
-    }
-    const panels = PANELS.map(p => {
+    const bodies = PANELS.map(() => { const b = new THREE.Group(); b.matrixAutoUpdate = false; group.add(b); return b; });
+    const panels = PANELS.map((p, i) => {
+      // The web under the panel, out to the mat's edge on the outside and to
+      // the start of the hinge on a crease.
+      bodies[i].add(new THREE.Mesh(keep(prism(inset(p.tri, webInset(i, g)), BUILD, BUILD + WEB)), webMat[i]));
       const t = inset(p.tri, g / 2);
       const geo = keep(new THREE.BufferGeometry());
       const lower = prism(t, 0, BUILD), upper = prism(t, BUILD + WEB, T);
@@ -481,12 +663,11 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
       lower.dispose(); upper.dispose();
       geo.setAttribute("position", new THREE.Float32BufferAttribute(merged, 3));
       geo.computeVertexNormals();
-      const mesh = new THREE.Mesh(geo, pinkMat[p.sq]);
-      squares[p.sq].add(mesh);
+      const mesh = new THREE.Mesh(geo, pinkMat[i]);
+      bodies[i].add(mesh);
       return mesh;
     });
-    // The hinges: one strip across the long crease per column, one across
-    // each cross crease per row, each the full length of its crease.
+    // The hinges: one strip along every crease, its full length.
     const hinges: Build["hinges"] = [];
     const strip = () => {
       const geo = keep(new THREE.BufferGeometry());
@@ -506,14 +687,12 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
       group.add(mesh);
       return geo;
     };
-    for (let c = 0; c < COLS; c++) {
-      hinges.push({ a: sqIndex(c, 0), b: sqIndex(c, 1), ends: [[c * SQ, SQ - g / 2, MID], [(c + 1) * SQ, SQ - g / 2, MID]], dir: [0, 1, 0], g, geo: strip() });
-    }
-    for (let k = 1; k < COLS; k++) for (const row of [0, 1]) {
-      hinges.push({ a: sqIndex(k - 1, row), b: sqIndex(k, row), ends: [[k * SQ - g / 2, row * SQ, MID], [k * SQ - g / 2, (row + 1) * SQ, MID]], dir: [1, 0, 0], g, geo: strip() });
+    for (const c of CREASES) {
+      const ends = c.ends.map(([x, y]) => [x - (c.dir[0] * g) / 2, y - (c.dir[1] * g) / 2, MID] as V3);
+      hinges.push({ a: c.a, b: c.b, ends, dir: [c.dir[0], c.dir[1], 0], g, geo: strip() });
     }
     scene.add(group);
-    return { group, squares, panels, hinges, local: prisms(mode) };
+    return { group, bodies, panels, hinges, local: prisms(mode) };
   }
 
   const builds: Record<Mode, Build> = { gaps: build("gaps"), paper: build("paper") };
@@ -557,19 +736,19 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
     nrm.needsUpdate = true;
   }
 
-  let shownS = -1, shownMode: Mode | null = null, lastHits = -1;
+  let shownS = -1, shownMode: Mode | null = null, shownFold: Fold | null = null, shown: M[] = FLAT_POSE, lastHits = -1;
   let frame: Frame | null = null;
   let width = 0, height = 0;
 
-  function pose(s: number, mode: Mode) {
+  function pose(s: number, mode: Mode, fold: Fold) {
     const b = builds[mode];
     builds.gaps.group.visible = mode === "gaps";
     builds.paper.group.visible = mode === "paper";
-    const ps = poses(s, mode);
-    b.squares.forEach((sq, i) => place(sq, ps[i]));
+    const ps = poses(s, mode, fold);
+    b.bodies.forEach((body, i) => place(body, ps[i]));
     b.hinges.forEach(h => bend(h, ps));
     const hit = collisions(b.local, ps);
-    b.panels.forEach((mesh, i) => { mesh.material = (hit[i] ? hitMat : pinkMat)[PANELS[i].sq]; });
+    b.panels.forEach((mesh, i) => { mesh.material = (hit[i] ? hitMat : pinkMat)[i]; });
     const n = hit.filter(Boolean).length;
     if (n !== lastHits) { lastHits = n; onHits(n); }
     return ps;
@@ -579,12 +758,15 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
   const tick = (now: number) => {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
-    const { s, mode, view } = read();
+    const { s, mode, fold, view } = read();
     let busy = false;
-    let ps: M[] | null = null;
-    if (s !== shownS || mode !== shownMode) { ps = pose(s, mode); shownS = s; shownMode = mode; busy = true; }
+    if (s !== shownS || mode !== shownMode || fold !== shownFold) {
+      shown = pose(s, mode, fold);
+      shownS = s; shownMode = mode; shownFold = fold;
+      busy = true;
+    }
     // Keep the mat framed as it changes size, easing there.
-    const want = frameFor(ps ?? poses(shownS, mode), view, width && height ? width / height : ASPECT);
+    const want = frameFor(shown, view, width && height ? width / height : ASPECT);
     if (!frame || reduce) frame = want;
     else {
       const k = 1 - Math.exp(-dt * 5);
@@ -639,24 +821,39 @@ async function makeScene({ canvas, read, onReady, onHits }: SceneProps): Promise
 
 const SPEED = 1 / 1.1; // steps per second
 
+const FOLDS: { id: Fold; label: string }[] = [
+  { id: "square", label: "Square fold" },
+  { id: "pinch", label: "Twin pinch" },
+  { id: "sweeps", label: "Two sweeps" },
+  { id: "zipper", label: "Alternating zipper" },
+];
+
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export default function YogaMatFold() {
   const figRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [s, setS] = useState(0);
   const [mode, setMode] = useState<Mode>("gaps");
+  const [fold, setFold] = useState<Fold>("square");
+  // A fold chosen while the mat is folded another way: it unfolds first.
+  const [next, setNext] = useState<Fold | null>(null);
+  const nextRef = useRef<Fold | null>(null);
   const [target, setTarget] = useState<number | null>(null);
   const [near, setNear] = useState(false);
   const [ready, setReady] = useState(false);
   const [hits, setHits] = useState(0);
   const [touched, setTouched] = useState(false);
-  const live = useRef({ s: 0, mode: "gaps" as Mode, view: { az: START_AZ, el: START_EL } as View });
+  const live = useRef({ s: 0, mode: "gaps" as Mode, fold: "square" as Fold, view: { az: START_AZ, el: START_EL } as View });
   const sceneRef = useRef<Scene | null>(null);
+  const steps = stepsOf(fold);
 
   useEffect(() => {
     live.current.s = s;
     live.current.mode = mode;
+    live.current.fold = fold;
     sceneRef.current?.poke();
-  }, [s, mode]);
+  }, [s, mode, fold]);
 
   // Load three.js only once the demo is close to the screen.
   useEffect(() => {
@@ -684,8 +881,8 @@ export default function YogaMatFold() {
     return () => { cancelled = true; sceneRef.current?.dispose(); sceneRef.current = null; };
   }, [near]);
 
-  // Play the fold towards its target. A hand on the controls stops it at
-  // once, before React gets round to cancelling the frame.
+  // Play the fold towards its target. Taking the slider stops it at once,
+  // before React gets round to cancelling the frame.
   const run = useRef(0);
   useEffect(() => {
     if (target === null) return;
@@ -697,15 +894,23 @@ export default function YogaMatFold() {
       last = now;
       const prev = live.current.s;
       const dir = Math.sign(target - prev);
-      const next = prev + dir * SPEED * dt;
-      if (dir === 0 || (dir > 0 ? next >= target : next <= target)) {
+      const at = prev + dir * SPEED * dt;
+      if (dir === 0 || (dir > 0 ? at >= target : at <= target)) {
         live.current.s = target;
         setS(target);
-        setTarget(t => (t === target ? null : t));
+        const then = nextRef.current;
+        if (target === 0 && then) {
+          // Flat again: now fold the new way.
+          nextRef.current = null;
+          live.current.fold = then;
+          setFold(then);
+          setNext(null);
+          setTarget(stepsOf(then));
+        } else setTarget(t => (t === target ? null : t));
         return;
       }
-      live.current.s = next;
-      setS(next);
+      live.current.s = at;
+      setS(at);
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -714,28 +919,44 @@ export default function YogaMatFold() {
 
   // Until someone touches it, it folds and unfolds by itself while on screen.
   useEffect(() => {
-    if (!ready || touched) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!ready || touched || reducedMotion()) return;
     const fig = figRef.current;
     if (!fig) return;
+    const n = stepsOf(fold);
     let timer = 0, folded = false;
-    const run = () => {
-      const next = () => { folded = !folded; setTarget(folded ? STEPS : 0); timer = window.setTimeout(next, STEPS / SPEED * 1000 + 1800); };
-      timer = window.setTimeout(next, 900);
+    const play = () => {
+      const flip = () => { folded = !folded; setTarget(folded ? n : 0); timer = window.setTimeout(flip, n / SPEED * 1000 + 1800); };
+      timer = window.setTimeout(flip, 900);
     };
-    const io = new IntersectionObserver(([e]) => { window.clearTimeout(timer); if (e.isIntersecting) run(); }, { threshold: 0.4 });
+    const io = new IntersectionObserver(([e]) => { window.clearTimeout(timer); if (e.isIntersecting) play(); }, { threshold: 0.4 });
     io.observe(fig);
     return () => { io.disconnect(); window.clearTimeout(timer); };
-  }, [ready, touched]);
+  }, [ready, touched, fold]);
 
-  const touch = useCallback(() => { run.current++; setTouched(true); setNear(true); }, []);
+  const touch = useCallback(() => { setTouched(true); setNear(true); }, []);
+  const forgetNext = () => { nextRef.current = null; setNext(null); };
+  /** Put the mat at s now, with nothing playing. */
+  const jump = (to: number) => { run.current++; setTarget(null); live.current.s = to; setS(to); };
 
-  const folding = target !== null ? target === STEPS : s < STEPS;
+  // The pill names what pressing it does: reverse a fold that is playing,
+  // otherwise go to whichever end is further.
+  const toward = target !== null ? (target > 0 ? 0 : steps) : s >= steps ? 0 : steps;
   const press = () => {
     touch();
-    const to = target !== null ? (target === STEPS ? 0 : STEPS) : s >= STEPS ? 0 : STEPS;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setTarget(null); setS(to); }
-    else setTarget(to);
+    forgetNext();
+    if (reducedMotion()) jump(toward);
+    else setTarget(toward);
+  };
+
+  const choose = (f: Fold) => {
+    touch();
+    if (f === (next ?? fold)) return;
+    forgetNext();
+    if (reducedMotion()) { setFold(f); jump(stepsOf(f)); return; }
+    if (f === fold || live.current.s <= 0) { setFold(f); setTarget(stepsOf(f)); return; }
+    nextRef.current = f;
+    setNext(f);
+    setTarget(0);
   };
 
   // Drag (or arrow keys) to turn it.
@@ -746,7 +967,7 @@ export default function YogaMatFold() {
     sceneRef.current?.poke();
   };
 
-  const text = stepText(s, mode);
+  const text = stepText(s, mode, fold);
   const status = mode === "paper" && hits > 0 ? `${text}. ${hits} of 20 panels pass through another.` : `${text}.`;
 
   return (
@@ -783,19 +1004,24 @@ export default function YogaMatFold() {
         />
       </div>
       <div className="ui-try-controls">
+        <div className="ui-try-row" role="group" aria-label="Way to fold">
+          {FOLDS.map(f => (
+            <button key={f.id} type="button" className="ui-try-pill" aria-pressed={(next ?? fold) === f.id} onClick={() => choose(f.id)}>{f.label}</button>
+          ))}
+        </div>
         <div className="ui-try-row yoga-scrub-row">
-          <button type="button" className="ui-try-pill yoga-fold" onClick={press}>{folding ? "Fold" : "Unfold"}</button>
+          <button type="button" className="ui-try-pill yoga-fold" onClick={press}>{toward > 0 ? "Fold" : "Unfold"}</button>
           <label className="yoga-scrub">
             <span aria-hidden="true">Flat</span>
             <input
               type="range"
               min={0}
-              max={STEPS * 100}
+              max={steps * 100}
               step={1}
               value={Math.round(s * 100)}
               aria-label="Fold"
               aria-valuetext={text}
-              onChange={e => { touch(); setTarget(null); live.current.s = Number(e.target.value) / 100; setS(live.current.s); }}
+              onChange={e => { touch(); forgetNext(); jump(Number(e.target.value) / 100); }}
             />
             <span aria-hidden="true">Folded</span>
           </label>
@@ -807,9 +1033,11 @@ export default function YogaMatFold() {
         </div>
       </div>
       <figcaption className="ui-try-caption">
-        {mode === "gaps"
-          ? "Try it: fold it, scrub it, drag to turn it. The panels, hinge gaps and fold order are the CAD’s, checked live: no panel passes through another. The diagonals stay flat here; on the real mat they flex to help it collapse."
-          : "Try it: the same folds made like paper, about the crease lines with no gap. Panels 4.5 mm thick can’t do that: the dark ones are passing through another panel. The gaps are what give them room."}
+        {mode === "paper"
+          ? "Try it: the same folds made like paper, about the crease lines with no gap. Panels 4.5 mm thick can’t do that: the dark ones are passing through another panel. The gaps are what give them room."
+          : fold === "square"
+            ? "Try it: fold it, scrub it, drag to turn it. The panels, hinge gaps and fold order are the CAD’s, checked live: no panel passes through another. The diagonals stay flat here; on the real mat they flex to help it collapse."
+            : "Try it: the fold study’s triangle options. The ends tuck in on the diagonals and roll to the centre, five triangles a side. The study folds in half last, which would tear the long hinge on a joined mat, so here that comes first, as on the real sample. The study leaves which way each crease turns open: here diagonals tuck under and cross creases roll over, so every hinge wrap stays within its 22 mm. Checked live: no panel passes through another."}
       </figcaption>
     </figure>
   );
