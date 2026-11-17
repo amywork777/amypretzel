@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeFlashScript } from "./theme-toggle";
+import { SketchDefs } from "./_ui/group-marks";
 
 const SITE_URL = "https://amypretzel.com";
 const SITE_DESC =
@@ -67,7 +68,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
+    // The sketch pretzel; the SVG inks itself light or dark with the browser.
     icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
     ],
@@ -98,7 +101,7 @@ export default function RootLayout({
         <ThemeFlashScript />
         <link rel="preload" href="/fonts/areal.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
-      <body>{children}</body>
+      <body>{children}<SketchDefs /></body>
     </html>
   );
 }

@@ -7,9 +7,10 @@ import { BoilDefs } from "./taste/boil/Boil";
    pictures (Amy picked marks over tiles, a spectrum or a tidier strip,
    2026-11-16). Drawn in the taste kit's hand: wobbly 2px lines with a pen's
    overshoot, boiling a few times a second through the kit's SVG filter
-   (mounted once, by GroupMarksDefs). The base is HandMark from
+   (mounted once in the root layout, by SketchDefs). The base is HandMark from
    ~/code/taste/kit/marks/hand.tsx; the four drawings are new.
-   - Physical products: the long mat with its triangle creases, its end panel folding up
+   - Physical products: an iPad folio and an iPhone case as a part drawing,
+     with a centreline and a height dimension (Amy: "more hardware engineer-y")
    - AI tools for designers: a pencil drawing a line, with a spark
    - 3D and CAD: a wireframe cube with a dimension line
    - Tools and toys: a little ghost, after Cute Ghostty */
@@ -24,16 +25,21 @@ function Mark({ children, label }: { children: ReactNode; label: string }) {
 
 const marks: Record<string, () => ReactNode> = {
   products: () => (
-    <Mark label="A folding mat">
-      {/* the long mat lying flat, its triangle creases zigzagging along it */}
-      <path d="M3.5 34.2c13.6 1.3 27.2 2.6 40.8 3.9 3.2-3.4 6.4-6.8 9.6-10.1-13.4-1.3-26.9-2.6-40.4-3.9-3.3 3.4-6.7 6.7-10 10.1z" />
-      <path d="M13.6 24.2l9.6 11.8 10-10.4 10.6 12.3" />
-      {/* its end panel folding up off it */}
-      <path d="M44.3 38.1c-.6-5.5-1.2-11-1.9-16.5 3.4-3.4 6.7-6.7 10.1-10.1.5 5.5 1 11 1.4 16.5" />
-      <path d="M42.5 21.7c3.8 2.1 7.6 4.2 11.4 6.3" />
-      {/* folding back over onto the mat */}
-      <path d="M49.5 6.3c-3.9-1.8-8-1.2-11.2 1.7" />
-      <path d="M37.6 4.6l.6 3.6 3.6-.2" />
+    <Mark label="An iPad folio and an iPhone case, drawn like a part drawing">
+      {/* the iPad folio behind, its cover's hinge line */}
+      <path d="M8.6 5.5h21.6c1.7 0 2.9 1.2 2.9 2.9v27.4c0 1.7-1.2 2.9-2.9 2.9H8.6c-1.6 0-2.9-1.2-2.9-2.9V8.4c0-1.7 1.3-2.9 2.9-2.9z" />
+      <path d="M11.4 5.8v32.6" />
+      {/* the iPhone case in front (filled with the page so the folio hides behind it) */}
+      <path d="M30.6 12.2h12.8c2.2 0 3.8 1.7 3.8 3.9v24.3c0 2.2-1.6 3.9-3.8 3.9H30.6c-2.2 0-3.9-1.7-3.9-3.9V16.1c0-2.2 1.7-3.9 3.9-3.9z" style={{ fill: "var(--color-paper)" }} />
+      {/* its camera cut-out, two lenses, the side button */}
+      <path d="M31.2 15.2h5.4c.9 0 1.5.6 1.5 1.5v5.3c0 .9-.6 1.5-1.5 1.5h-5.4c-.8 0-1.5-.6-1.5-1.5v-5.3c0-.9.7-1.5 1.5-1.5z" />
+      <path d="M32.6 17.6v.1M35.3 20.3v.1" strokeWidth={2.6} />
+      <path d="M48.4 19.5v4.8" />
+      {/* drafting: a centreline, and the case's height dimensioned */}
+      <path d="M23.6 28.2h26.4" strokeWidth={1.2} strokeDasharray="4 1.6 1 1.6" />
+      <path d="M49.6 12.2h5.6M49.6 44.3h5.6" strokeWidth={1.4} />
+      <path d="M53.2 13.6v29.3" strokeWidth={1.4} />
+      <path d="M51.6 16.2l1.6-2.6 1.6 2.6M51.6 40.3l1.6 2.6 1.6-2.6" strokeWidth={1.4} />
     </Mark>
   ),
   "ai-tools": () => (
@@ -74,7 +80,7 @@ export function GroupMark({ id }: { id: string }) {
   return draw ? <span className="ui-group-markwrap">{draw()}</span> : null;
 }
 
-/** The boil filter the marks use; mount once on the page. */
-export function GroupMarksDefs() {
+/** The boil filter every sketch mark uses (these and the pretzel); mounted once, in the root layout. */
+export function SketchDefs() {
   return <BoilDefs scale={1.6} />;
 }

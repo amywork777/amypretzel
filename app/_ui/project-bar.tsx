@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { PretzelMark } from "./pretzel-mark";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -36,7 +36,7 @@ export function ProjectBar({ group, title, prev, next }: { group?: Place; title:
   return (
     <div className="ui-project-bar" data-shown={shown || undefined} inert={!shown}>
       <nav className="ui-column ui-column--narrow ui-project-bar-inner" aria-label="This project">
-        <Link href="/" className="ui-project-bar-mark" aria-label="Amy Zhou, home"><Image src="/pretzel.png" alt="" width={192} height={192} sizes="28px" /></Link>
+        <Link href="/" className="ui-project-bar-mark" aria-label="Amy Zhou, home"><PretzelMark weight={2} /></Link>
         <p className="ui-project-bar-place">
           {group && <><a href={group.href}>{group.title}</a><span aria-hidden="true">/</span></>}
           <span className="ui-project-bar-title">{title}</span>

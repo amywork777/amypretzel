@@ -284,13 +284,13 @@ a.ui-button { text-decoration: none; }
 
 /* === SITE HEADER === */
 .site-header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding-top: 22px; padding-bottom: var(--space-2); }
-/* The mark is a real salted soft pretzel (scripts/render-logo.mjs writes
-   /pretzel.png). Its mid-brown crust reads on paper and in dark mode alike.
-   Served directly: the image optimiser's cache kept serving older marks.
-   Hovering squishes it like soft dough. */
+/* The mark is the sketch pretzel (_ui/pretzel-mark.tsx), in ink like every
+   icon on the site: no coloured things (Amy, 2026-11-16). Hovering squishes
+   it like soft dough. */
 .site-mark { display: inline-flex; width: 44px; height: 44px; }
-.site-mark img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18)); transform-origin: 50% 85%; }
-.site-mark:hover img, .site-mark:focus-visible img { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
+.site-mark { color: var(--color-ink); }
+.site-mark svg { width: 100%; height: 100%; overflow: visible; transform-origin: 50% 85%; }
+.site-mark:hover svg, .site-mark:focus-visible svg { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
 @keyframes mark-squish {
   0% { transform: scale(1, 1); }
   18% { transform: scale(1.14, .84); }
@@ -310,8 +310,9 @@ a.ui-button { text-decoration: none; }
 .ui-project-bar[data-shown] { transform: none; }
 .ui-project-bar-inner { display: flex; align-items: center; gap: 14px; height: 52px; font-size: var(--text-sm); }
 .ui-project-bar-mark { display: inline-flex; flex: none; width: 28px; height: 28px; }
-.ui-project-bar-mark img { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 85%; }
-.ui-project-bar-mark:hover img, .ui-project-bar-mark:focus-visible img { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
+.ui-project-bar-mark { color: var(--color-ink); }
+.ui-project-bar-mark svg { width: 100%; height: 100%; overflow: visible; transform-origin: 50% 85%; }
+.ui-project-bar-mark:hover svg, .ui-project-bar-mark:focus-visible svg { animation: mark-squish .7s cubic-bezier(.3, .7, .3, 1); }
 .ui-project-bar-place { display: flex; align-items: baseline; gap: 8px; min-width: 0; flex: 1; margin: 0; white-space: nowrap; }
 .ui-project-bar-place a { color: var(--color-ink-soft); text-decoration: none; transition: color var(--ease); }
 .ui-project-bar-place a:hover { color: var(--color-ink); }
@@ -447,10 +448,11 @@ a.ui-list-row:hover .ui-list-title { color: var(--color-ink-soft); }
 
 /* The stray pretzel by the contact links: small, knocked askew, wiggles when found. */
 .secret-pretzel { display: inline-flex; width: 30px; height: 30px; margin-top: var(--space-5); transform: rotate(-24deg); }
-.secret-pretzel img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .2)); }
-.secret-pretzel:hover img, .secret-pretzel:focus-visible img { animation: secret-wiggle .5s ease-in-out; }
+.secret-pretzel { color: var(--color-ink-soft); }
+.secret-pretzel svg { width: 100%; height: 100%; overflow: visible; }
+.secret-pretzel:hover svg, .secret-pretzel:focus-visible svg { animation: secret-wiggle .5s ease-in-out; }
 @keyframes secret-wiggle { 25% { transform: rotate(14deg) scale(1.1); } 60% { transform: rotate(-8deg) scale(1.1); } }
-@media (prefers-reduced-motion: reduce) { .secret-pretzel:hover img, .secret-pretzel:focus-visible img { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .secret-pretzel:hover svg, .secret-pretzel:focus-visible svg { animation: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

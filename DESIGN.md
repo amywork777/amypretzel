@@ -100,14 +100,15 @@ The source of truth is `app/globals.css` (tokens and `ui-*` classes) and `app/_u
 
 Everything has been moved off the table except the work and a pretzel or two. The site is one sans, one ink, one line weight and two corner shapes, set compact and aligned. Nothing on the page competes with the objects, because the objects are the only things with colour in them.
 
-All the warmth is spent on a few small things: a baked pretzel for a logo that squishes like dough, and a pink one left lying by the contact links. The rest is almost severe by comparison. That contrast is the design: exact everywhere, with a few things that are soft enough to squeeze. (A WebGL table of six pretzels, one per chapter of Amy's life, used to open on a first desktop visit. Amy removed it on 2026-11-16 as unnecessary: it stood between visitors and the work and repeated the bio. Don't bring it back.)
+All the warmth is spent on a few small things: a hand-drawn pretzel for a logo that boils like a sketch and squishes like dough, and a smaller one left lying by the contact links. The rest is almost severe by comparison. That contrast is the design: exact everywhere, with a few things that are soft enough to squeeze. (A WebGL table of six pretzels, one per chapter of Amy's life, used to open on a first desktop visit. Amy removed it on 2026-11-16 as unnecessary: it stood between visitors and the work and repeated the bio. Don't bring it back.)
 
 "Cool" on this site means compact, simple, minimal and polished. Earlier drafts were rejected for a staggered image grid, an oversized serif and generous editorial spacing, which read as vibe coded. The Y2K window chrome and glossy pixel look that came before those survives only as the `/fishing` game.
 
 **Key Characteristics:**
 
 - One family at very few sizes; hierarchy comes from position, weight and ink strength.
-- No accent colour in the interface. Colour belongs to photographs and pretzels.
+- No accent colour in the interface. Colour belongs to photographs.
+- Only sketch icons. Every mark and icon (the pretzels, the group marks, the favicon) is drawn in ink with the taste kit's boiling line, never a coloured picture. Amy, 2026-11-16: "no more colored things only sketch icons."
 - Every rule, border and focus ring is 1px.
 - Links are pills, including the ones inside sentences.
 - One heavy 3D moment, and quiet everywhere else.
@@ -126,9 +127,9 @@ A true neutral scale from white to near-black, with a full inversion for dark mo
 - **Muted Ink** (`ink-muted`): idle icons, list markers, loading text. Too light for anything a visitor has to read.
 - **Rule** (`rule`, `rule-dark`): every hairline and pill border.
 
-### Pretzel colours
+### Pretzel colours (retired)
 
-Colour exists on the site in the pretzel marks, rendered from the 3D recipes in `app/logo-render/pretzel-geometry.ts`: the logo's lilac glaze, the secret pretzel's strawberry, and an eight-colour sprinkle mix. These are materials, not tokens. They never become interface colours.
+The pretzel marks used to be rendered from the 3D recipes in `app/logo-render/pretzel-geometry.ts` (lilac glaze, strawberry, sprinkles). Since 2026-11-16 they are ink sketches and the site has no coloured marks. The renderer stays for reference only; nothing on the site uses its output.
 
 ### Named Rules
 
@@ -183,7 +184,6 @@ The website is flat. Depth comes from hairlines and the surface tone, and there 
 
 ### Shadow Vocabulary
 
-- **Baked mark** (`filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18))`): grounds the logo pretzel. The secret pretzel has a smaller version.
 
 Frosted glass (a backdrop blur) appears only where something floats over the page: the pill button and the project bar.
 
@@ -195,7 +195,7 @@ Frosted glass (a backdrop blur) appears only where something floats over the pag
 
 Two corner families. Containers use the 6px radius: media frames, portraits, figure panels, outline buttons, and previous/next links. Anything you click to go somewhere is a full pill.
 
-The one drawn silhouette is the pretzel. It is rendered from 3D geometry (`app/logo-render/`) by `scripts/render-logo.mjs`, never redrawn by hand or as an icon.
+The pretzel is a sketch (`app/_ui/pretzel-mark.tsx`): one rope looped into two lobes, crossing in an X with the under-strand broken, in `currentColor` with a non-scaling line, boiling through `#taste-boil`. `SketchDefs` mounts that filter once in the root layout for every sketch mark. The favicon is the same drawing (`public/icon.svg`, inking itself light or dark; the PNGs and ICO are rasterised from it).
 
 ## Components
 
@@ -220,7 +220,7 @@ Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can
 
 ### Group
 
-`Group` in `app/_ui/list.tsx`: a native `details` closed to one line on a hairline. The name is the site's pill (500 weight, base size) and the line's only control: it fills with ink on hover and stays filled while the group is open. One soft sentence sits under it, indented to the pill's text; on the right, the group's own hand-drawn mark (`app/_ui/group-marks.tsx`), which Amy picked on 2026-11-16 over 2x2 picture tiles, an objects-to-software spectrum and a tidier picture strip, replacing the pile of thumbnails: the long triangulated mat with its end panel folding back (Physical products), a pencil drawing a line with a spark (AI tools), a wireframe cube with a dimension line (3D and CAD), a waving ghost after Cute Ghostty (Tools and toys). They are drawn in the taste kit's hand (2px round strokes, 64 by 48) and boil through the kit's SVG filter (`app/_ui/taste/`, copied from `~/code/taste/kit`, mounted once on the homepage), in soft ink; hovering the line inks the mark in, tips it a few degrees on a small spring and fills the name's pill, and an open group keeps it inked. Reduced motion holds a single frame. The picture pile (`ui-group-strip`) remains only as the fallback for a group without a mark. Every group line is the same height. `OpenOnHash` (`app/_ui/open-on-hash.tsx`) opens the group a fragment points at.
+`Group` in `app/_ui/list.tsx`: a native `details` closed to one line on a hairline. The name is the site's pill (500 weight, base size) and the line's only control: it fills with ink on hover and stays filled while the group is open. One soft sentence sits under it, indented to the pill's text; on the right, the group's own hand-drawn mark (`app/_ui/group-marks.tsx`), which Amy picked on 2026-11-16 over 2x2 picture tiles, an objects-to-software spectrum and a tidier picture strip, replacing the pile of thumbnails: an iPad folio and an iPhone case drawn like a part drawing, camera cut-out, side button, a dash-dot centreline and a height dimension (Physical products; Amy asked for it "more hardware engineer-y", replacing a folding mat), a pencil drawing a line with a spark (AI tools), a wireframe cube with a dimension line (3D and CAD), a waving ghost after Cute Ghostty (Tools and toys). They are drawn in the taste kit's hand (2px round strokes, 64 by 48) and boil through the kit's SVG filter (`app/_ui/taste/`, copied from `~/code/taste/kit`, mounted once on the homepage), in soft ink; hovering the line inks the mark in, tips it a few degrees on a small spring and fills the name's pill, and an open group keeps it inked. Reduced motion holds a single frame. The picture pile (`ui-group-strip`) remains only as the fallback for a group without a mark. Every group line is the same height. `OpenOnHash` (`app/_ui/open-on-hash.tsx`) opens the group a fragment points at.
 
 `Earlier` is a native `details` fold under a small pill ("Earlier, at Stanford and home"), filled while open like the group names. No count and no Show/Hide.
 
@@ -230,13 +230,13 @@ A label-size title sitting under a hairline, above a group of items, on the fact
 
 ### Navigation
 
-The header sits on the same column as the page under it (the list column on the homepage, the reading column on project pages), so the pretzel lines up with the text and the links end where the text ends. The 44px pretzel mark sits left and goes home; on the right sits only the theme toggle. Amy removed the Work and About links later on 2026-11-16: the homepage is one page, the bio at the top and the work under it, and the opening sentence's pills now filter the work. Hovering the mark squishes it like soft dough.
+The header sits on the same column as the page under it (the list column on the homepage, the reading column on project pages), so the pretzel lines up with the text and the links end where the text ends. The 44px sketch pretzel, in ink, sits left and goes home; on the right sits only the theme toggle. Amy removed the Work and About links later on 2026-11-16: the homepage is one page, the bio at the top and the work under it, and the opening sentence's pills now filter the work. Hovering the mark squishes it like soft dough.
 
 **Project bar.** On a project page, once the title has scrolled away, a slim 52px bar slides down from the top: a 28px pretzel home, the group the project sits in as a soft link back to it (opened), a hairline slash, the project's name in ink, and Previous and Next on the right. It is paper, nearly opaque, with a hairline under it, and it steps aside at the top (where the header is) and at the foot (where the bigger Previous and Next are). Group names come from `app/work.ts`, which also feeds the homepage groups, so a project's group is defined in one place.
 
 ### Small Pretzels
 
-- **Stray pretzel:** a pink, sprinkled 30px pretzel lies askew by the contact links, leads to the secret facts page, and wiggles when found. Keep it unlabelled. Do not add it to the nav.
+- **Stray pretzel:** a 30px sketch pretzel in soft ink lies askew by the contact links, leads to the secret facts page, and wiggles when found. Keep it unlabelled. Do not add it to the nav.
 
 ## Do's and Don'ts
 
