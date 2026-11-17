@@ -15,7 +15,6 @@ export const demos: Record<string, ComponentType> = {
   "region-maps": dynamic(() => import("../software/region-try").then(m => m.RegionTry)),
   "smart-dropper": dynamic(() => import("./smart-dropper")),
   "cad-steps": dynamic(() => import("./cad-steps")),
-  "studio": dynamic(() => import("./studio")),
   "selfie-booth": dynamic(() => import("./selfie-booth")),
   "cute-ghostty": dynamic(() => import("./cute-ghostty")),
   "lipflow": dynamic(() => import("./lipflow")),

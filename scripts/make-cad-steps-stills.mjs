@@ -19,7 +19,7 @@ const browser = await chromium.launch({ channel: "chrome", args: ["--use-angle=s
 // Reduced motion keeps it on the finished part; 1280 wide gives the reading
 // column's 764px stage, captured at twice that.
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2, reducedMotion: "reduce" });
-for (const slug of ["studio", "cad-steps"]) {
+for (const slug of ["cad-steps"]) {
   await page.goto(`${base}/software/${slug}`, { waitUntil: "networkidle" });
   await page.addStyleTag({ content: ".cad-stepper-label, .cad-stepper-ring { display: none !important; } .cad-stepper-stage img { visibility: hidden; }" });
   const stage = page.locator(".cad-stepper-stage");
