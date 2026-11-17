@@ -1,4 +1,4 @@
-import { PretzelMark } from "./_ui/pretzel-mark";
+import { PretzelRope } from "./_ui/pretzel-mark";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -15,7 +15,7 @@ export default function SiteNav({ column = "wide" }: { column?: keyof typeof col
     <header className="site-header">
       <a href="#main-content" className="skip-link">Skip to content</a>
       <div className={`${columns[column]} site-header-inner`}>
-        <Link href="/" className="site-mark" aria-label="Amy Zhou, home"><PretzelMark weight={2.4} /></Link>
+        <Link href="/" className="site-mark" aria-label="Amy Zhou, home"><PretzelRope px={44} /></Link>
         {/* Only the theme switch: Amy removed Work and About (2026-11-16); the
             pretzel goes home, and the page itself is the work and the about. */}
         <nav aria-label="Site">

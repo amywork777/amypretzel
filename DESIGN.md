@@ -195,7 +195,7 @@ Frosted glass (a backdrop blur) appears only where something floats over the pag
 
 Two corner families. Containers use the 6px radius: media frames, portraits, figure panels, outline buttons, and previous/next links. Anything you click to go somewhere is a full pill.
 
-The pretzel is a sketch (`app/_ui/pretzel-mark.tsx`): one rope looped into two lobes, crossing in an X with the under-strand broken, in `currentColor` with a non-scaling line, boiling through `#taste-boil`. `SketchDefs` mounts that filter once in the root layout for every sketch mark. The favicon is the same drawing (`public/icon.svg`, inking itself light or dark; the PNGs and ICO are rasterised from it).
+The pretzel is a sketch (`app/_ui/pretzel-mark.tsx`) in two forms. In the header and project bar it is `PretzelRope`: a rope with thickness, an ink outline about 1px at any size with paper inside, painted in layers so the ends pass over the belly and the left end over the twist (Amy picked it on 2026-11-16 over shaded-and-salted, a CAD sweep and a tilted one on a table). The tiny footer pretzel and the favicon are `PretzelMark`, the single line, which reads better under 20px. Both are `currentColor` and boil through `#taste-boil`. `SketchDefs` mounts that filter once in the root layout for every sketch mark. The favicon is the same drawing (`public/icon.svg`, inking itself light or dark; the PNGs and ICO are rasterised from it).
 
 ## Components
 
@@ -230,7 +230,7 @@ A label-size title sitting under a hairline, above a group of items, on the fact
 
 ### Navigation
 
-The header sits on the same column as the page under it (the list column on the homepage, the reading column on project pages), so the pretzel lines up with the text and the links end where the text ends. The 44px sketch pretzel, in ink, sits left and goes home; on the right sits only the theme toggle. Amy removed the Work and About links later on 2026-11-16: the homepage is one page, the bio at the top and the work under it, and the opening sentence's pills now filter the work. Hovering the mark squishes it like soft dough.
+The header sits on the same column as the page under it (the list column on the homepage, the reading column on project pages), so the pretzel lines up with the text and the links end where the text ends. The 44px rope pretzel, in ink, sits left and goes home; on the right sits only the theme toggle. Amy removed the Work and About links later on 2026-11-16: the homepage is one page, the bio at the top and the work under it, and the opening sentence's pills now filter the work. Hovering the mark squishes it like soft dough.
 
 **Project bar.** On a project page, once the title has scrolled away, a slim 52px bar slides down from the top: a 28px pretzel home, the group the project sits in as a soft link back to it (opened), a hairline slash, the project's name in ink, and Previous and Next on the right. It is paper, nearly opaque, with a hairline under it, and it steps aside at the top (where the header is) and at the foot (where the bigger Previous and Next are). Group names come from `app/work.ts`, which also feeds the homepage groups, so a project's group is defined in one place.
 
