@@ -13,8 +13,6 @@ import type { ComponentType } from "react";
    of pill controls, and a one-line soft caption starting "Try it:". */
 export const demos: Record<string, ComponentType> = {
   "region-maps": dynamic(() => import("../software/region-try").then(m => m.RegionTry)),
-  "extract": dynamic(() => import("./extract")),
-  "voice-input": dynamic(() => import("./voice-input")),
   "smart-dropper": dynamic(() => import("./smart-dropper")),
   "cad-steps": dynamic(() => import("./cad-steps")),
   "studio": dynamic(() => import("./studio")),

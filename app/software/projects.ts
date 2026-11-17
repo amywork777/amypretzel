@@ -328,7 +328,8 @@ const pictures: Record<string, Picture> = {
   studio: { image: "/work/studio.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
   lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
   "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },
-  ...Object.fromEntries(["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
+  extract: { image: "/work/extract.webp", video: { src: "/software/extract/parts.mp4", poster: "/software/extract/parts.webp", width: 1280, height: 720 } },
+  ...Object.fromEntries(["smart-dropper", "voice-input", "cad-steps", "sf-rats", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
 };
 
 export const softwareProjects = softwareSections.flatMap((section) =>
