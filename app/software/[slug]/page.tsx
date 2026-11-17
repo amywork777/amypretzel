@@ -11,7 +11,7 @@ import { renderBody } from "../../lib/render-body";
 import { splitLinks, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { softwareProjects } from "../projects";
-import { demos } from "../../demos";
+import { demos, videoFirst } from "../../demos";
 
 const SITE_URL = "https://amypretzel.com";
 
@@ -90,10 +90,17 @@ export default async function SoftwareProjectPage({
       <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.summary}{item?.proof && <> <span className="ui-proof">{item.proof}</span></>}</PageIntro>
 
       {/* A page with a mini demo leads with it, the software itself first, and
-          its demo video (if any) moves to just after the text. Otherwise a
+          its demo video (if any) moves to just after the text, unless the
+          video is the better of the two (videoFirst), when the demo sits
+          right under it. Otherwise a
           short demo from Amy's post on X when there is one, or the same
           screenshot as its row on the homepage, whole. */}
-      {Demo ? (
+      {Demo && picture?.video && videoFirst.has(project.slug) ? (
+        <>
+          <LeadVideo {...picture.video} label={`${project.title} demo`} />
+          <Demo />
+        </>
+      ) : Demo ? (
         <Demo />
       ) : picture?.video ? (
         <LeadVideo {...picture.video} label={`${project.title} demo`} />
@@ -112,7 +119,7 @@ export default async function SoftwareProjectPage({
         {otherLinks.length > 0 && <LinkList label="Links" links={otherLinks.map(l => ({ href: l.url, label: l.label }))} />}
       </section>
 
-      {Demo && picture?.video && <LeadVideo {...picture.video} label={`${project.title} demo`} className={picture.video.height > picture.video.width ? "ui-media ui-lead-video ui-lead-video--tall ui-after-text" : "ui-media ui-lead-video ui-after-text"} />}
+      {Demo && picture?.video && !videoFirst.has(project.slug) && <LeadVideo {...picture.video} label={`${project.title} demo`} className={picture.video.height > picture.video.width ? "ui-media ui-lead-video ui-lead-video--tall ui-after-text" : "ui-media ui-lead-video ui-after-text"} />}
 
       {project.photos && (
         <section className="ui-photo-pair">

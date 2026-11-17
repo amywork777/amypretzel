@@ -25,3 +25,8 @@ export const demos: Record<string, ComponentType> = {
   "clarinet-tuning-barrel": dynamic(() => import("./clarinet-tuning-barrel")),
   "lil-spider-maze": dynamic(() => import("./lil-spider-maze")),
 };
+
+/** Pages whose demo video is better than the mini demo: the video keeps the
+    lead and the demo sits right under it. Amy asked for this on Lipflow,
+    where her own video shows the real lip reading. */
+export const videoFirst = new Set(["lipflow"]);
