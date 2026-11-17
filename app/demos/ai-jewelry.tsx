@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import pieceData from "../../public/demos/ai-jewelry/charms.json";
 import "./ai-jewelry.css";
 
-/* A small, real version of the cleanup stage behind Taiyaki Jewelry: draw an
-   outline (or pick one), and it comes back as a charm that could be cast.
-   The image-to-3D model is not here; what runs is the part after it, the
-   geometry rules that make a shape survive lost-wax casting.
+/* A small, real version of the cleanup stage behind Taiyaki Jewelry. It opens
+   on three fully 3D pieces: simple sculpts after Taiyaki charms in Amy's photos
+   (Teddy the poodle, the goldfish, the duck with an umbrella). There are no
+   Taiyaki mesh files to show, so they were modelled from rounded shapes in
+   scripts/make-jewelry-charms.mjs, then put through the same casting rules in
+   3D there: parts under 0.8 mm thickened, loose bits dropped, a bail added
+   above the centre of mass. Their size, weight and what the cleanup changed
+   come from that script (charms.json); weight is the final mesh's volume
+   times the metal's density.
+
+   Or draw an outline (or pick one), and it comes back as a charm that could
+   be cast. The image-to-3D model is not here; what runs is the part after it,
+   the geometry rules that make a shape survive lost-wax casting.
 
    The outline is scaled so its longer side is 18 mm, rasterised at 0.1 mm,
    and cleaned the way a jewelry CAD designer would: gaps and inside corners
@@ -16,8 +26,8 @@ import "./ai-jewelry.css";
    back into a smooth outline, extruded 1.6 mm thick with rounded edges, and
    given a 1.2 mm wire jump ring at the top. Size and weight are worked out
    from that geometry and the metal's density. The 3D (three.js) loads only
-   when the demo is near the screen; before that, a still of the first charm
-   stands in, rendered from this same code. */
+   when the demo is near the screen; before that, a still of the piece stands
+   in, captured from this same code by the script. */
 
 // ---------------------------------------------------------------------------
 // The rules, in millimetres.
@@ -52,6 +62,12 @@ const METALS: Metal[] = [
   { id: "vermeil", label: "Gold vermeil", name: "gold vermeil", density: 10.36, f0: [1, 0.74, 0.32], roughness: 0.28 },
   { id: "gold", label: "14k gold", name: "14k gold", density: 13.1, f0: [0.98, 0.8, 0.5], roughness: 0.28 },
 ];
+
+type PieceId = keyof typeof pieceData;
+type Piece = (typeof pieceData)[PieceId];
+const PIECES = Object.keys(pieceData) as PieceId[];
+// Said in the accessible label, to match the caption.
+const AFTER: Record<PieceId, string> = { dog: "Teddy the poodle", fish: "the goldfish", duck: "the duck with an umbrella" };
 
 type SampleId = "heart" | "dog" | "star";
 const SAMPLES: { id: SampleId; label: string }[] = [
@@ -443,17 +459,19 @@ const pathOf = (loops: Pt[][]) => loops.map(l => `M${l.map(p => `${p[0].toFixed(
 
 type Viewer = {
   setCharm: (c: Charm) => void;
+  setPiece: (id: PieceId) => Promise<boolean>;
   setMetal: (m: Metal) => void;
   setActive: (on: boolean) => void;
   dispose: () => void;
 };
 
 async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainted: () => void): Promise<Viewer> {
-  const [THREE, { RoomEnvironment }, { OrbitControls }, { mergeVertices }] = await Promise.all([
+  const [THREE, { RoomEnvironment }, { OrbitControls }, { mergeVertices }, { MeshoptDecoder }] = await Promise.all([
     import("three"),
     import("three/examples/jsm/environments/RoomEnvironment.js"),
     import("three/examples/jsm/controls/OrbitControls.js"),
     import("three/examples/jsm/utils/BufferGeometryUtils.js"),
+    import("three/examples/jsm/libs/meshopt_decoder.module.js"),
   ]);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
@@ -476,6 +494,46 @@ async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainte
   const holder = new THREE.Group();
   scene.add(holder);
   let meshes: InstanceType<typeof THREE.Mesh>[] = [];
+  let showing = 0; // bumps on every change, so a slow download can't land late
+
+  /** A sculpted piece: one meshoptimizer-encoded closed mesh, bail included. */
+  const decodePiece = async (id: PieceId) => {
+    const info: Piece = pieceData[id];
+    const [buf] = await Promise.all([
+      fetch(`/demos/ai-jewelry/${id}.bin`).then(r => { if (!r.ok) throw new Error(r.statusText); return r.arrayBuffer(); }),
+      MeshoptDecoder.ready,
+    ]);
+    const bytes = new Uint8Array(buf);
+    const q = new Uint16Array(info.vertices * 4), idx = new Uint32Array(info.triangles * 3);
+    MeshoptDecoder.decodeVertexBuffer(new Uint8Array(q.buffer), info.vertices, 8, bytes.subarray(0, info.vertexBytes));
+    MeshoptDecoder.decodeIndexBuffer(new Uint8Array(idx.buffer), idx.length, 4, bytes.subarray(info.vertexBytes, info.vertexBytes + info.indexBytes));
+    const pos = new Float32Array(info.vertices * 3);
+    for (let v = 0; v < info.vertices; v++) for (let a = 0; a < 3; a++) {
+      pos[v * 3 + a] = info.min[a] + (q[v * 4 + a] / 65535) * (info.max[a] - info.min[a]);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setIndex(new THREE.BufferAttribute(info.vertices < 65536 ? Uint16Array.from(idx) : idx, 1));
+    geo.computeVertexNormals();
+    return geo;
+  };
+  const pieceGeometry = new Map<PieceId, ReturnType<typeof decodePiece>>();
+  const loadPiece = (id: PieceId) => {
+    let p = pieceGeometry.get(id);
+    if (p) return p;
+    p = decodePiece(id);
+    p.catch(() => pieceGeometry.delete(id));
+    pieceGeometry.set(id, p);
+    return p;
+  };
+  const clear = () => {
+    for (const m of meshes) {
+      holder.remove(m);
+      // Sculpted pieces stay cached; a drawn charm's geometry is its own.
+      if (!m.userData.piece) m.geometry.dispose();
+    }
+    meshes = [];
+  };
 
   const controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
@@ -529,7 +587,8 @@ async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainte
 
   return {
     setCharm(c) {
-      for (const m of meshes) { holder.remove(m); m.geometry.dispose(); }
+      showing++;
+      clear();
       const shape = new THREE.Shape(c.outer.map(([x, y]) => new THREE.Vector2(x, y)));
       shape.holes = c.holes.map(h => new THREE.Path(h.map(([x, y]) => new THREE.Vector2(x, y))));
       const extruded = new THREE.ExtrudeGeometry(shape, {
@@ -566,6 +625,25 @@ async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainte
       fitCamera(maxX - minX, maxY - minY);
       if (!raf) renderer.render(scene, camera);
     },
+    async setPiece(id) {
+      const token = ++showing;
+      const geo = await loadPiece(id);
+      if (token !== showing) return false;
+      clear();
+      const mesh = new THREE.Mesh(geo, material);
+      mesh.userData.piece = id;
+      meshes = [mesh];
+      holder.position.set(0, 0, 0);
+      holder.add(mesh);
+      // It turns about its bail, so frame about as wide as it gets as it turns.
+      const { min, max } = pieceData[id];
+      const reach = Math.hypot(Math.max(-min[0], max[0]), Math.max(-min[2], max[2]));
+      fitCamera(1.7 * reach, max[1] - min[1]);
+      if (!raf) renderer.render(scene, camera);
+      // Fetch the other pieces now, so switching is instant.
+      for (const other of PIECES) if (other !== id) loadPiece(other).catch(() => {});
+      return true;
+    },
     setMetal(m) {
       material.color.setRGB(...m.f0);
       material.roughness = m.roughness;
@@ -578,7 +656,8 @@ async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainte
       io.disconnect();
       document.removeEventListener("visibilitychange", sync);
       controls.dispose();
-      for (const m of meshes) m.geometry.dispose();
+      for (const m of meshes) if (!m.userData.piece) m.geometry.dispose();
+      for (const p of pieceGeometry.values()) p.then(geo => geo.dispose(), () => {});
       material.dispose();
       env.dispose();
       renderer.dispose();
@@ -591,11 +670,12 @@ async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainte
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export default function JewelryCharm() {
-  // The first charm is Teddy in silver, worked out the same way on the server,
-  // so the still and the numbers under it are there before any script runs.
-  const first = useMemo(() => makeCharm(sample("dog")) as Made, []);
-  const [phase, setPhase] = useState<"charm" | "draw" | "making">("charm");
-  const [made, setMade] = useState<Made>(first);
+  // It opens on the sculpted dog in silver: its still and numbers are there
+  // before any script runs. A drawn charm only exists once someone makes one.
+  const [phase, setPhase] = useState<"piece" | "charm" | "draw" | "making">("piece");
+  const [piece, setPiece] = useState<PieceId>("dog");
+  const [shown, setShown] = useState<string | null>(null); // what the 3D is showing
+  const [made, setMade] = useState<Made | null>(null);
   const [metal, setMetal] = useState<MetalId>("silver");
   const [loops, setLoops] = useState<Pt[][]>([]);
   const [picked, setPicked] = useState<SampleId | null>(null);
@@ -605,14 +685,15 @@ export default function JewelryCharm() {
   const [live, setLive] = useState(false);
   const [failed, setFailed] = useState(false);
   const [waited, setWaited] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const figureRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const padRef = useRef<SVGSVGElement>(null);
   const viewer = useRef<Viewer | null>(null);
   const drawing = useRef<Pt[] | null>(null);
-  const latest = useRef({ made, metal });
-  useEffect(() => { latest.current = { made, metal }; }, [made, metal]);
+  const latest = useRef(metal);
+  useEffect(() => { latest.current = metal; }, [metal]);
 
   // Start loading the 3D when the demo comes near the screen.
   useEffect(() => {
@@ -632,16 +713,30 @@ export default function JewelryCharm() {
         if (gone) { created.dispose(); return; }
         v = created;
         viewer.current = created;
-        const m = METALS.find(x => x.id === latest.current.metal) as Metal;
-        created.setMetal(m);
-        created.setCharm(latest.current.made.charm);
+        created.setMetal(METALS.find(x => x.id === latest.current) as Metal);
+        setReady(true);
       })
       .catch(() => { if (!gone) setFailed(true); });
     return () => { gone = true; v?.dispose(); viewer.current = null; };
   }, [near]);
 
   useEffect(() => { viewer.current?.setMetal(METALS.find(x => x.id === metal) as Metal); }, [metal]);
-  useEffect(() => { viewer.current?.setCharm(made.charm); }, [made]);
+
+  // Put the chosen piece, or the charm just made, in the 3D.
+  const target = phase === "piece" ? piece : phase === "draw" ? null : "charm";
+  useEffect(() => {
+    const v = viewer.current;
+    if (!ready || !v || !target) return;
+    let gone = false;
+    if (target === "charm") {
+      if (!made) return;
+      v.setCharm(made.charm);
+      queueMicrotask(() => { if (!gone) setShown("charm"); });
+    } else {
+      v.setPiece(target).then(ok => { if (ok && !gone) setShown(target); }, () => { if (!gone) setFailed(true); });
+    }
+    return () => { gone = true; };
+  }, [ready, target, made]);
 
   // After Make it, the cleaned outline shows on the drawing for a moment,
   // then the metal takes over once it's ready.
@@ -651,8 +746,14 @@ export default function JewelryCharm() {
     const t = window.setTimeout(() => setWaited(true), reduced() ? 0 : 1400);
     return () => window.clearTimeout(t);
   }, [phase]);
-  useEffect(() => { viewer.current?.setActive(mode === "charm"); }, [mode]);
+  const turning = mode === "charm" || mode === "piece";
+  useEffect(() => { viewer.current?.setActive(turning); }, [turning, ready]);
 
+  const choose = (id: PieceId) => {
+    setPiece(id);
+    setMessage(null);
+    setPhase("piece");
+  };
   const make = () => {
     const result = makeCharm(loops);
     if ("error" in result) { setMessage(result.error); return; }
@@ -705,33 +806,46 @@ export default function JewelryCharm() {
   };
 
   const m = METALS.find(x => x.id === metal) as Metal;
-  const c = made.charm;
-  const grams = (c.volume / 1000) * m.density;
-  const isFirst = made === first;
+  const c = made?.charm;
+  const p = pieceData[piece];
 
   let readout: string;
-  if (mode === "charm") readout = `${c.width.toFixed(1)} × ${c.height.toFixed(1)} mm with the ring, ${THICK.toFixed(1)} mm thick, about ${grams.toFixed(1)} g in ${m.name}. ${c.note}`;
-  else if (mode === "making") readout = c.note;
+  let label = "";
+  if (mode === "piece") {
+    const [w, h, d] = p.size;
+    readout = `${w.toFixed(1)} × ${h.toFixed(1)} × ${d.toFixed(1)} mm with the bail, about ${((p.volume / 1000) * m.density).toFixed(1)} g of solid ${m.name}. ${p.note}`;
+    label = `A ${m.name} ${p.label.toLowerCase()} charm, sculpted after Taiyaki's ${AFTER[piece]}, ${w.toFixed(0)} by ${h.toFixed(0)} mm with a bail at the top. Drag to turn it.`;
+  } else if (mode === "charm" && c) {
+    readout = `${c.width.toFixed(1)} × ${c.height.toFixed(1)} mm with the ring, ${THICK.toFixed(1)} mm thick, about ${((c.volume / 1000) * m.density).toFixed(1)} g in ${m.name}. ${c.note}`;
+    label = `A ${m.name} charm from your drawing, ${c.width.toFixed(0)} by ${c.height.toFixed(0)} mm, with a jump ring at the top. Drag to turn it.`;
+  } else if (mode === "making" && c) readout = c.note;
   else if (message) readout = message;
   else if (loops.length) readout = "The ends join and the line smooths out. Make it when it looks right.";
   else readout = "Draw one outline. The ends join up when you let go.";
 
-  const label = `A ${m.name} charm, ${c.width.toFixed(0)} by ${c.height.toFixed(0)} mm, with a jump ring at the top. Drag to turn it.`;
+  const onShow = (mode === "piece" && shown === piece) || (mode === "charm" && shown === "charm");
 
   return (
     <figure className="ui-try jc" ref={figureRef}>
       <div className="ui-media ui-try-stage jc-stage">
-        {mode === "charm" && isFirst && (
+        {mode === "piece" && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img className="jc-still" src="/demos/ai-jewelry/dog-silver.webp" alt="" width={W} height={H} data-gone={(live && !failed) || undefined} />
+          <img className="jc-still" src={`/demos/ai-jewelry/${piece}-silver.webp`} alt="" width={W} height={H} data-gone={(onShow && !failed) || undefined} />
         )}
-        <canvas ref={canvasRef} role="img" aria-label={label} data-ready={(mode === "charm" && live) || undefined} data-hidden={mode !== "charm" || undefined} />
-        {mode === "charm" && failed && !isFirst && (
+        <canvas
+          ref={canvasRef}
+          role="img"
+          aria-label={label}
+          data-ready={onShow || undefined}
+          data-piece={(mode === "piece" && onShow && piece) || undefined}
+          data-hidden={!turning || undefined}
+        />
+        {mode === "charm" && failed && c && (
           <svg className="jc-pad jc-flat" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
             <path d={pathOf([c.outer, ...c.holes].map(l => l.map(p => mmToPad(showFit, p))))} />
           </svg>
         )}
-        {mode !== "charm" && (
+        {(mode === "draw" || mode === "making") && (
           <svg
             ref={padRef}
             className="jc-pad"
@@ -745,7 +859,7 @@ export default function JewelryCharm() {
           >
             {mode === "draw" && !stroke && loops.length > 0 && <path d={pathOf(loops)} />}
             {stroke && <polyline points={stroke.map(p => p.join(",")).join(" ")} />}
-            {mode === "making" && (
+            {mode === "making" && made && c && (
               <>
                 <path className="jc-was" d={pathOf(made.from)} />
                 <path d={pathOf([c.outer, ...c.holes].map(l => l.map(p => mmToPad(made.fit, p))))} />
@@ -765,24 +879,28 @@ export default function JewelryCharm() {
               ))}
             </div>
             <div className="ui-try-row">
+              <button type="button" className="ui-try-pill" onClick={() => { setMessage(null); setPhase("piece"); }}>Back</button>
               <button type="button" className="ui-try-pill" disabled={loops.length === 0} onClick={make}>Make it</button>
             </div>
           </>
         ) : (
           <>
+            <div className="ui-try-row" role="group" aria-label="Piece">
+              {PIECES.map(id => (
+                <button key={id} type="button" className="ui-try-pill" aria-pressed={mode === "piece" && piece === id} disabled={mode === "making"} onClick={() => choose(id)}>{pieceData[id].label}</button>
+              ))}
+              <button type="button" className="ui-try-pill" aria-pressed={mode !== "piece"} disabled={mode === "making"} onClick={drawAgain}>Draw your own</button>
+            </div>
             <div className="ui-try-row" role="group" aria-label="Metal">
               {METALS.map(x => (
                 <button key={x.id} type="button" className="ui-try-pill" aria-pressed={metal === x.id} disabled={mode === "making"} onClick={() => setMetal(x.id)}>{x.label}</button>
               ))}
             </div>
-            <div className="ui-try-row">
-              <button type="button" className="ui-try-pill" disabled={mode === "making"} onClick={drawAgain}>Draw again</button>
-            </div>
           </>
         )}
       </div>
       <p className="jc-readout" aria-live="polite">{readout}</p>
-      <figcaption className="ui-try-caption">Try it: draw a shape or pick one, make it, then try each metal. This runs the castability cleanup on your drawing, not the AI that turns photos into 3D.</figcaption>
+      <figcaption className="ui-try-caption">Try it: turn a piece, try each metal, or draw your own. The 3D pieces are simple sculpts after real Taiyaki charms, cleaned up by the same casting rules. The AI that turns photos into 3D is not here.</figcaption>
     </figure>
   );
 }
