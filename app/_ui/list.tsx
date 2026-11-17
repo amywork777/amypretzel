@@ -36,8 +36,9 @@ export function List({ items, label, small }: { items: ListItem[]; label: string
 }
 
 /* A kind of work, closed to one line so the homepage stays short: the
-   group's name and one sentence about it, a strip of its first pictures,
-   and Show/Hide. It opens in place to the full list. Native details/summary, so
+   group's name as a pill (the line's one control, filled while open), one
+   sentence under it, and a strip of its first pictures. It opens in place
+   to the full list. Native details/summary, so
    it works without script and find-in-page opens it; OpenOnHash opens it when
    a link jumps to it. */
 export function Group({ id, title, note, items, children }: { id: string; title: string; note?: string; items: ListItem[]; children: ReactNode }) {

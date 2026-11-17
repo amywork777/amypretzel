@@ -283,14 +283,16 @@ a.ui-button { text-decoration: none; }
 /* Groups: each kind of work closed to one line, opening in place. */
 .home-groups { border-top: var(--line) solid var(--color-rule); }
 .ui-group { border-bottom: var(--line) solid var(--color-rule); scroll-margin-top: var(--space-5); }
-.ui-group > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-5); min-height: 84px; padding: var(--space-3) 0; cursor: pointer; list-style: none; }
+.ui-group > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-5); min-height: 84px; padding: var(--space-3) 0; cursor: pointer; list-style: none; }
 .ui-group > summary::-webkit-details-marker { display: none; }
 .ui-group-name { display: block; min-width: 0; }
-.ui-group-title { font-size: var(--text-base); font-weight: 500; line-height: 1.4; }
-.ui-group-note { display: block; margin-top: 1px; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); }
-/* Show / Hide is the site's pill, and fills with ink when the line is hovered. */
-.ui-group > summary::after { content: "Show"; min-width: 4.4em; padding: .3em .8em .34em; font-size: var(--text-sm); line-height: 1.1; text-align: center; color: var(--color-ink); border: var(--line) solid var(--color-rule); border-radius: var(--radius-pill); transition: color var(--ease), background-color var(--ease), border-color var(--ease); }
-.ui-group[open] > summary::after { content: "Hide"; }
+/* The group's name is its pill: the one control on the line. It fills with
+   ink while the group is open, and on hover. */
+.ui-group-title { display: inline-block; padding: .28em .8em .32em; font-size: var(--text-base); font-weight: 500; line-height: 1.2; color: var(--color-ink); border: var(--line) solid var(--color-rule); border-radius: var(--radius-pill); transition: color var(--ease), background-color var(--ease), border-color var(--ease); }
+.ui-group[open] .ui-group-title { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
+.ui-group > summary:focus-visible { outline: none; }
+.ui-group > summary:focus-visible .ui-group-title { outline: var(--line) solid var(--color-ink); outline-offset: 3px; }
+.ui-group-note { display: block; margin-top: 7px; padding-left: calc(.8em + var(--line)); font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); }
 /* The strip: the group's first pictures dealt into a loose overlapping pile,
    each a little askew, like prints left on the table. Hovering the line
    straightens them into a neat row. Each picture is cut out of
@@ -307,7 +309,7 @@ a.ui-button { text-decoration: none; }
 .ui-group-pic:nth-child(5) { z-index: 1; transform: rotate(-2deg) translateY(-1px); }
 .ui-group[open] .ui-group-strip { opacity: 0; transform: translateX(8px); pointer-events: none; }
 @media (hover: hover) {
-  .ui-group > summary:hover::after { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
+  .ui-group > summary:hover .ui-group-title { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
   .ui-group > summary:hover .ui-group-pic { transform: none; }
 }
 .ui-group-body { padding-bottom: var(--space-5); }
