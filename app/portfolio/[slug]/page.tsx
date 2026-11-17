@@ -5,6 +5,7 @@ import { SafeTweet } from "../../lib/safe-tweet";
 import { splitLinks } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { renderBody } from "../../lib/render-body";
+import { demos } from "../../demos";
 import { Page, PageIntro, SiteFooter } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
@@ -64,6 +65,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   // first image is the lead, rest stack below body
   const [lead, ...rest] = project.gallery;
+  const Demo = demos[project.slug];
   const leadCutout = (thumbs as Record<string, { leadCutout?: boolean }>)[project.slug]?.leadCutout ?? false;
 
   const coverAbs = project.cover?.startsWith("http")
@@ -116,6 +118,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <Image src={lead} alt={project.title} width={1600} height={900} sizes="(min-width: 860px) 764px, 100vw" priority />
         </div>
       ))}
+
+      {/* An object page keeps the photo of the real thing first, with its
+          mini demo right under it. */}
+      {Demo && <Demo />}
 
       {/* === TWEET EMBED (with launch video) === */}
       {project.tweetId && (

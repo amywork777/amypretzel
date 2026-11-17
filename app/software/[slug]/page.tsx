@@ -11,7 +11,7 @@ import { renderBody } from "../../lib/render-body";
 import { splitLinks, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { softwareProjects } from "../projects";
-import { RegionTry } from "../region-try";
+import { demos } from "../../demos";
 
 const SITE_URL = "https://amypretzel.com";
 
@@ -48,6 +48,7 @@ export default async function SoftwareProjectPage({
   if (!project) notFound();
 
   const picture = project.picture;
+  const Demo = demos[project.slug];
   // The page is headed by its homepage row (one line, the year) and walks
   // the homepage order with Previous and Next.
   const href = `/software/${project.slug}`;
@@ -88,11 +89,12 @@ export default async function SoftwareProjectPage({
       />
       <PageIntro title={project.title} meta={item?.year}>{item?.text ?? project.summary}{item?.proof && <> <span className="ui-proof">{item.proof}</span></>}</PageIntro>
 
-      {/* Region Maps leads with a small working version to play with. Others
-          lead with a short demo from Amy's post on X when there is one;
-          otherwise the same screenshot as its row on the homepage, whole. */}
-      {project.slug === "region-maps" ? (
-        <RegionTry />
+      {/* A page with a mini demo leads with it, the software itself first, and
+          its demo video (if any) moves to just after the text. Otherwise a
+          short demo from Amy's post on X when there is one, or the same
+          screenshot as its row on the homepage, whole. */}
+      {Demo ? (
+        <Demo />
       ) : picture?.video ? (
         <LeadVideo {...picture.video} label={`${project.title} demo`} />
       ) : picture && (picture.lead ? (
@@ -109,6 +111,8 @@ export default async function SoftwareProjectPage({
         <div>{renderBody(project.body)}</div>
         {otherLinks.length > 0 && <LinkList label="Links" links={otherLinks.map(l => ({ href: l.url, label: l.label }))} />}
       </section>
+
+      {Demo && picture?.video && <LeadVideo {...picture.video} label={`${project.title} demo`} className={picture.video.height > picture.video.width ? "ui-media ui-lead-video ui-lead-video--tall ui-after-text" : "ui-media ui-lead-video ui-after-text"} />}
 
       {project.photos && (
         <section className="ui-photo-pair">
