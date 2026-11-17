@@ -5,9 +5,8 @@ import { LinkList, TextLink } from "./_ui/link";
 import { SiteFooter } from "./_ui/layout";
 import { OpenOnHash } from "./_ui/open-on-hash";
 import BookOverlay from "./book/overlay";
-import { Earlier, Group, List, type ListItem } from "./_ui/list";
-import { projects, studyProjects, thumbOf } from "./portfolio/projects";
-import { softwareProjects } from "./software/projects";
+import { Earlier, Group, List } from "./_ui/list";
+import { workGroups } from "./work";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -50,51 +49,16 @@ const contactLinks = [
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
 ];
 
-/* Amy's own bio and portrait, then the things grouped by kind, each group
-   closed to one line with a strip of its pictures so the page stays short.
-   Opened, a group is a plain list like Felix Rieseberg's site: a picture, a
-   title, one line and a year. Physical products lead, since manufacturing is
-   what Amy is most into; the earlier studies fold away under one line. Years
-   come from a real source (launch post, repo, patent). */
-const cover = (slug: string) => projects.find(p => p.slug === slug)!;
-const object = (slug: string, text: string, year?: string): ListItem => ({ href: `/portfolio/${slug}`, ...thumbOf(slug), title: cover(slug).title, text, year });
-const objects: ListItem[] = [
-  object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026"),
-  object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025"),
-  object("iphone-finewoven", "Led materials and integration. Patent co-inventor.", "2023"),
-  object("ipad-smart-folio", "Apple accessories."),
-];
-const earlier: ListItem[] = studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, ...thumbOf(p.slug), title: p.title, text: p.role }));
-
-const app = (slug: string, text: string, year: string): ListItem => {
-  const p = softwareProjects.find(p => p.slug === slug)!;
-  return { href: `/software/${slug}`, image: p.picture!.image, cutout: p.picture!.cutout, title: p.title, text, year };
-};
-const aiTools: ListItem[] = [
-  app("region-maps", "Edit each part's color and material in a render.", "2026"),
-  app("extract", "Pull colors, materials and parts out of an image.", "2026"),
-  app("smart-dropper", "Copy one image's style onto another.", "2026"),
-  app("voice-input", "Speak prompts, in any language.", "2026"),
-];
-const cad: ListItem[] = [
-  app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
-  object("ai-jewelry", "AI that turns a sketch or photo into cast jewelry.", "2025"),
-  app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
-];
-const tools: ListItem[] = [
-  app("lipflow", "Silent dictation by lip reading. 700+ stars.", "2026"),
-  app("sf-rats", "A live map of free Bay Area events.", "2024"),
-  app("cute-ghostty", "A pastel terminal setup.", "2026"),
-  app("screenie", "A screen recorder that edits while you record.", "2026"),
-  app("selfie-booth", "An iPad photo booth that prints stickers.", "2026"),
-];
-
+/* Amy's own bio and portrait, then the things grouped by kind (app/work.ts),
+   each group closed to one line with a strip of its pictures so the page
+   stays short. Opened, a group is a plain list like Felix Rieseberg's site:
+   a picture, a title, one line and a year. */
 export default function Home() {
   return (
     <div className="home-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <BookOverlay />
-      <SiteNav />
+      <SiteNav column="list" />
       <main id="main-content" className="ui-column ui-column--list">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
           <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
@@ -110,22 +74,17 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <div className="home-groups">
-          <Group id="products" title="Physical products" note="Things I designed and took from sketch to factory." items={objects}>
-            <List items={objects} label="Physical products" />
-            <Earlier title="Earlier, at Stanford and home" count={earlier.length}>
-              <List items={earlier} label="Earlier objects" small />
-            </Earlier>
-          </Group>
-          <Group id="ai-tools" title="AI tools for designers" note="Features I built at Vizcom for industrial designers." items={aiTools}>
-            <List items={aiTools} label="AI tools for designers" />
-          </Group>
-          <Group id="cad" title="3D and CAD" note="Software and data for turning ideas into real CAD." items={cad}>
-            <List items={cad} label="3D and CAD" />
-          </Group>
-          <Group id="tools" title="Tools and toys" note="Side projects, mostly made for fun." items={tools}>
-            <List items={tools} label="Tools and toys" />
-          </Group>
+        <div id="work" className="home-groups">
+          {workGroups.map(g => (
+            <Group key={g.id} id={g.id} title={g.title} note={g.note} items={g.items}>
+              <List items={g.items} label={g.title} />
+              {g.earlier && (
+                <Earlier title="Earlier, at Stanford and home" count={g.earlier.length}>
+                  <List items={g.earlier} label="Earlier objects" small />
+                </Earlier>
+              )}
+            </Group>
+          ))}
         </div>
         <OpenOnHash />
         <SiteFooter home={false} />

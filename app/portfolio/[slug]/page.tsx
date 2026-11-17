@@ -8,6 +8,8 @@ import { renderBody } from "../../lib/render-body";
 import { Page, PageIntro } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
+import { ProjectBar } from "../../_ui/project-bar";
+import { groupOf } from "../../work";
 import { orderedProjects as projects, thumbOf } from "../projects";
 import thumbs from "../thumbs.json";
 import "react-tweet/theme.css";
@@ -89,8 +91,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     [project.tweetId, project.pdfPreview].filter(Boolean) as string[]
   );
 
+  const group = groupOf(`/portfolio/${project.slug}`);
+  const bar = group && { href: `/#${group.id}`, title: group.short };
+
   return (
-    <Page width="narrow">
+    <Page width="narrow" bar={<ProjectBar group={bar} title={project.title} prev={{ href: `/portfolio/${prev.slug}`, title: prev.title }} next={{ href: `/portfolio/${next.slug}`, title: next.title }} />}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

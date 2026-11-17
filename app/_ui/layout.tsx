@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import SiteNav from "../site-nav";
 import { TextLink } from "./link";
 
-/* Every page: the header, then one centred column. "wide" for indexes, "narrow" for reading. */
-export function Page({ width = "wide", children }: { width?: "wide" | "narrow"; children: ReactNode }) {
+/* Every page: the header, then one centred column. "wide" for indexes, "narrow" for reading.
+   "bar" is the project bar (ProjectBar) on project pages. */
+export function Page({ width = "wide", bar, children }: { width?: "wide" | "narrow"; bar?: ReactNode; children: ReactNode }) {
   return (
     <div className="ui-page">
-      <SiteNav />
+      <SiteNav column={width} />
+      {bar}
       <main id="main-content" className={width === "wide" ? "ui-column" : "ui-column ui-column--narrow"}>{children}</main>
     </div>
   );

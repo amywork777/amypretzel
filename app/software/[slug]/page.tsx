@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { Page, PageIntro } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
+import { ProjectBar } from "../../_ui/project-bar";
+import { groupOf } from "../../work";
 import { renderBody } from "../../lib/render-body";
 import { splitLinks, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
@@ -72,8 +74,11 @@ export default async function SoftwareProjectPage({
     creator: { "@type": "Person", name: "Amy Zhou", url: SITE_URL },
   };
 
+  const group = groupOf(`/software/${project.slug}`);
+  const bar = group && { href: `/#${group.id}`, title: group.short };
+
   return (
-    <Page width="narrow">
+    <Page width="narrow" bar={<ProjectBar group={bar} title={project.title} prev={{ href: `/software/${prev.slug}`, title: prev.title }} next={{ href: `/software/${next.slug}`, title: next.title }} />}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
