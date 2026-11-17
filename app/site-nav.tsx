@@ -16,12 +16,9 @@ export default function SiteNav({ column = "wide" }: { column?: keyof typeof col
       <a href="#main-content" className="skip-link">Skip to content</a>
       <div className={`${columns[column]} site-header-inner`}>
         <Link href="/" className="site-mark" aria-label="Amy Zhou, home"><Image src="/pretzel.png" alt="" width={192} height={192} sizes="44px" priority /></Link>
-        <nav aria-label="Main navigation">
-          {/* Native fragments so the links also work from project pages. */}
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/#work">Work</a>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/#about">About</a>
+        {/* Only the theme switch: Amy removed Work and About (2026-11-16); the
+            pretzel goes home, and the page itself is the work and the about. */}
+        <nav aria-label="Site">
           <ThemeToggle />
         </nav>
       </div>

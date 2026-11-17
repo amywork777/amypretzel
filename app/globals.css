@@ -149,9 +149,7 @@ a.ui-button { text-decoration: none; }
 .ui-intro .ui-lede { margin-top: var(--space-3); }
 .ui-section-heading { margin-top: var(--space-6); padding: var(--space-3) 0; border-top: var(--line) solid var(--color-rule); }
 .ui-section-heading h2 { font-size: var(--text-sm); font-weight: 500; }
-.ui-footer { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-5); margin-top: var(--space-8); padding-bottom: var(--space-7); }
-@media (min-width: 768px) { .ui-footer { margin-top: var(--space-9); } }
-.ui-footer-signoff { max-width: 16em; color: var(--color-ink-soft); }
+.ui-footer { height: var(--space-9); }
 .ui-prev-next { display: flex; justify-content: space-between; gap: var(--space-5); margin-top: var(--space-8); padding: var(--space-5) 0 var(--space-7); border-top: var(--line) solid var(--color-rule); }
 .ui-prev-next a { display: flex; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); color: var(--color-ink); text-decoration: none; border: var(--line) solid var(--color-rule); border-radius: var(--radius); transition: background-color var(--ease); }
 .ui-prev-next a:last-child { flex-direction: row-reverse; text-align: right; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); }

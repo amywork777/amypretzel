@@ -10,7 +10,7 @@ type Place = { href: string; title: string };
    so a long page still says where you are: the pretzel home, the group the
    project sits in (a link back to it, opened) and the project's name, then
    Previous and Next. It steps aside again near the top, where the header is,
-   and at the foot, where the bigger Previous and Next and the sign-off take over. */
+   and at the foot, where the bigger Previous and Next take over. */
 export function ProjectBar({ group, title, prev, next }: { group?: Place; title: string; prev: Place; next: Place }) {
   const [shown, setShown] = useState(false);
 

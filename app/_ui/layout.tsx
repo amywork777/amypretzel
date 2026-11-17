@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import SiteNav from "../site-nav";
-import { TextLink } from "./link";
 
 /* Every page: the header, then one centred column. "wide" for indexes, "narrow" for reading.
    "bar" is the project bar (ProjectBar) on project pages. */
@@ -32,11 +31,10 @@ export function SectionHeading({ id, note, children }: { id?: string; note?: str
   return <header className="ui-section-heading"><h2 id={id}>{children}</h2>{note && <p className="ui-section-note">{note}</p>}</header>;
 }
 
-/* The same sign-off ends every page. The pretzel and the header already go home. */
+/* The end of every page: just room to breathe. Amy removed the sign-off
+   ("I love meeting people who make things. Email me") on 2026-11-16; the
+   contact links sit with the bio on the homepage. The empty footer stays so
+   the project bar still knows where the page ends. */
 export function SiteFooter() {
-  return (
-    <footer className="ui-footer">
-      <p className="ui-display ui-footer-signoff">I love meeting people who make things. <TextLink href="mailto:amzyst@gmail.com">Email me</TextLink></p>
-    </footer>
-  );
+  return <footer className="ui-footer" aria-hidden="true" />;
 }
