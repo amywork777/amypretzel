@@ -22,4 +22,8 @@ export const demos: Record<string, ComponentType> = {
   "cute-ghostty": dynamic(() => import("./cute-ghostty")),
   "lipflow": dynamic(() => import("./lipflow")),
   "folding-yoga-mat": dynamic(() => import("./folding-yoga-mat")),
+  "ai-jewelry": dynamic(() => import("./ai-jewelry")),
+  "harp-instrument": dynamic(() => import("./harp-instrument")),
+  "clarinet-tuning-barrel": dynamic(() => import("./clarinet-tuning-barrel")),
+  "lil-spider-maze": dynamic(() => import("./lil-spider-maze")),
 };
