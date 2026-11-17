@@ -1,3 +1,5 @@
+import thumbs from "./thumbs.json";
+
 export type ProjectLink = { label: string; url: string };
 
 export type Project = {
@@ -638,3 +640,10 @@ const earlierSlugs = [
 export const studyProjects = earlierSlugs.map((slug) => bySlug.get(slug)!);
 /* Index order, used for previous and next on detail pages. */
 export const orderedProjects = [...selectedProjects, ...studyProjects];
+
+/* The list picture for an object: its cover, trimmed to 4:3 by
+   scripts/make-thumbs.mjs. Cut-outs are multiplied onto the media tone. */
+export const thumbOf = (slug: string) => ({
+  image: `/thumbs/${slug}.webp`,
+  cutout: (thumbs as Record<string, { cutout: boolean }>)[slug]?.cutout ?? false,
+});

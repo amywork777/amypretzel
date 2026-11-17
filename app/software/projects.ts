@@ -304,6 +304,17 @@ It's built for someone who isn't technical to run at an event: double-click Star
   },
 ];
 
+/* The picture for each tool: a screenshot of it in use (never a GitHub
+   card), shown in the homepage list and at the top of its page. Taiyaki 3D
+   is a cut-out of a part it made. */
+const pictures: Record<string, { image: string; cutout?: boolean; lead?: string }> = {
+  "region-maps": { image: "/home/region-maps.webp" },
+  studio: { image: "/home/studio.webp" },
+  lipflow: { image: "/home/lipflow-in-use.webp" },
+  "taiyaki-3d": { image: "/thumbs/taiyaki-3d.webp", cutout: true, lead: "/thumbs/taiyaki-3d-lead.webp" },
+  ...Object.fromEntries(["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "cute-ghostty", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
+};
+
 export const softwareProjects = softwareSections.flatMap((section) =>
-  section.projects.map((project) => ({ ...project, section: section.title }))
+  section.projects.map((project) => ({ ...project, section: section.title, picture: pictures[project.slug] }))
 );

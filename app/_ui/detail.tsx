@@ -1,13 +1,27 @@
+import Image from "next/image";
 import Link from "next/link";
 
-type Neighbour = { href: string; title: string };
+type Neighbour = { href: string; title: string; image?: string; cutout?: boolean };
 
-/* Previous / next at the foot of a detail page. */
+function Side({ label, n }: { label: string; n: Neighbour }) {
+  return (
+    <Link href={n.href}>
+      {n.image && (
+        <span className={n.cutout ? "ui-prev-next-pic ui-cutout" : "ui-prev-next-pic"}>
+          <Image src={n.image} alt="" fill sizes="72px" />
+        </span>
+      )}
+      <span className="ui-prev-next-text"><small>{label}</small>{n.title}</span>
+    </Link>
+  );
+}
+
+/* Previous / next at the foot of a detail page, each with its picture. */
 export function PrevNext({ label, prev, next }: { label: string; prev: Neighbour; next: Neighbour }) {
   return (
     <nav className="ui-prev-next" aria-label={label}>
-      <Link href={prev.href}><small>Previous</small>{prev.title}</Link>
-      <Link href={next.href}><small>Next</small>{next.title}</Link>
+      <Side label="Previous" n={prev} />
+      <Side label="Next" n={next} />
     </nav>
   );
 }

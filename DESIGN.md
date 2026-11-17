@@ -179,11 +179,12 @@ The font file is licensed and deliberately not in this repository. See the READM
 One centred column, at most 1120px wide for indexes and 860px for reading, with a 20px gutter that becomes 48px from 768px. Vertical rhythm comes from the nine-step spacing scale, and spacing stays tight on purpose.
 
 - **One page.** The whole site is the homepage. There is no Objects or Software index: `/portfolio` redirects to `/#products` and `/software` to `/#ai-tools`, and only the project pages live under them. Amy wants it as simple as possible, so don't add index pages, tabs or a work/personal switch back.
-- **Detail pages** lead with one 16:9 framed shot, the same box as its tile, then a 40em text column and a stack of media.
+- **Detail pages** lead with one picture, then a 40em text column and a stack of media. A cut-out object is trimmed and centred in a 16:9 frame so it fills it; a photo is shown whole at its own shape; a software page leads with the same screenshot as its homepage row. Previous and Next carry a small picture of where they go.
 - **Facts** put the title in a 180px margin with prose beside it.
-- **The homepage is plain stacked lists**, after Felix Rieseberg's site (felixrieseberg.com), which Amy picked after rejecting framed cards ("portfolio-y") and a captionless shelf ("format is a bit weird") on 2026-11-16. It opens with Amy's own statement ("I like building objects, and software to build objects", the two words as pills that jump to the groups), her portrait beside two short lines, and the contact pills. The first line names where she has worked, the names in 500 weight: "Now at Vizcom. Founded Taiyaki, Taya and Mobius. Before that, Apple and Stanford." (Amy chose this over a list or pills on 2026-11-16.) The second is her own "Mostly interested in" line. Keep her wording; don't rewrite it. There is no separate Work list: the bio already says where she has worked, so the things follow straight after, grouped by kind, each under a Section Heading with an optional soft note on the right: **Physical products** (Manufactured), **AI tools for designers** (At Vizcom), **3D and CAD**, **Tools and toys** (Side projects). Amy chose grouping by kind over grouping by company (2026-11-16) because it keeps the Vizcom tools together and the 3D work together, with manufacturing first.
-- **Every row in a group has a small picture** (Amy is a designer and wants pictures over text rows), then the title, one soft line and the year. A new thing goes in the group for what it is, not where it was made. App thumbnails are screenshots of the app in use (never a GitHub card), in `public/work/<slug>.webp`.
-- **Older work folds away.** The 13 Stanford and home studies sit closed under one "Earlier, at Stanford and home" line, so less is on the page. Keep new secondary work in the fold, not in the main lists.
+- **The homepage is plain stacked lists**, after Felix Rieseberg's site (felixrieseberg.com), which Amy picked after rejecting framed cards ("portfolio-y") and a captionless shelf ("format is a bit weird") on 2026-11-16. It opens with Amy's own statement ("I like building objects, and software to build objects", the two words as pills that jump to the groups), her portrait beside two short lines, and the contact pills. The first line says where she has worked, the names in 500 weight, and describes her startup by its ideas rather than its names: "Now at Vizcom. Before that I had a startup where we explored a few ideas: materials recycling, AI concept-to-CAD, and an AI journal you wear as jewelry. Earlier, Apple and Stanford." (Amy picked the ideas-without-names version on 2026-11-16, replacing "Founded Taiyaki, Taya and Mobius".) The second is her own "Mostly interested in" line. Keep her wording; don't rewrite it. There is no separate Work list: the bio already says where she has worked, so the things follow straight after, grouped by kind, each a closed Group with one soft sentence about it: **Physical products**, **AI tools for designers**, **3D and CAD**, **Tools and toys**. Amy chose grouping by kind over grouping by company (2026-11-16) because it keeps the Vizcom tools together and the 3D work together, with manufacturing first.
+- **The groups start closed.** Amy found a page of every project at once too much (2026-11-16) and chose closed groups over a few featured picks or two-per-group: each group is one line with its name, one sentence under it, a strip of its first five pictures and Show. No count: Amy asked to hide it. It opens in place to the full list. All the information stays on the page (find-in-page opens a group), and a link to a group's id (`/#products`, the statement pills, the Things nav link) opens it.
+- **Every row in an open group has a picture** (Amy is a designer and wants pictures over text rows), then the title, one soft line and the year. A new thing goes in the group for what it is, not where it was made. App pictures are screenshots of the app in use (never a GitHub card), in `public/work/<slug>.webp`, and are listed once in `pictures` in `app/software/projects.ts`. Object pictures come from `scripts/make-thumbs.mjs` (below).
+- **Older work folds away again** inside Physical products: the 13 Stanford and home studies sit closed under one "Earlier, at Stanford and home" line. Keep new secondary work in that fold.
 - Longer details (proof, process, where it was made) live on each project's own page; the homepage keeps one line per thing. The page ends with the sign-off footer.
 
 Phones start on the normal website. The pretzel table opens by itself only on a first desktop visit (701px and up); after that it opens from the Pretzels link or `/#book`.
@@ -224,13 +225,21 @@ Plain, and a little insistent. **Every link is a pill**, sized in `em` so it can
 
 ### List
 
-`List` in `app/_ui/list.tsx`: rows on hairlines in a 680px column. Each row is a 56px 4:3 thumbnail, the title (500 weight) with one soft line under it, and the year in soft tabular figures on the right; the whole row is the link and the title softens on hover. Objects are cut-outs on the light media tone, `contain` with multiply, so they hold up in dark mode; screens (`screen`) fill the frame with `cover`. The `small` size (44px, regular weight) is for the fold. The last row of a section drops its rule, since the next Section Heading draws one.
+`List` in `app/_ui/list.tsx`: rows on hairlines in a 680px column. Each row is a 96px 4:3 picture (72px on phones), the title (500 weight) with one soft line under it, and the year in soft tabular figures on the right; the whole row is the link and the title softens on hover. Every picture fills its frame with `cover`. Cut-outs (`cutout`) are objects trimmed onto white and multiplied, so the white becomes the light media tone and holds up in dark mode. The `small` size (56px, regular weight) is for the fold.
+
+**Peek.** On screens 1280px and wider with a pointer, hovering or focusing a row shows its picture at up to 280px in the empty margin to the right of the list, sliding in from 6px over .35s on the site curve. It is the list's one bit of motion; nowhere else.
+
+**Object pictures** are made by `scripts/make-thumbs.mjs` from each object's cover and first gallery image: a cut-out is trimmed to the object and re-centred on white (4:3 for the list in `public/thumbs/<slug>.webp`, 16:9 for the page lead in `public/thumbs/<slug>-lead.webp`), so a pendant fills its frame instead of being a speck in a wide render; a photo is cropped to 4:3 for the list and shown whole on the page. It writes `app/portfolio/thumbs.json`. Run it after adding or changing an object's cover or first gallery image.
+
+### Group
+
+`Group` in `app/_ui/list.tsx`: a native `details` closed to one line on a hairline. The name (500) with one soft sentence under it on the left; on the right the group's first five pictures as a loose overlapping pile, each a degree or two askew like prints left on the table (three on small screens, two on phones), then Show or Hide as the site's pill. Each picture is cut out of the one beneath by a 2px ring of page colour, which is a gap, not a line. Hovering the line straightens the pile and fills the pill with ink. The strip steps aside when the group opens, since the list shows the pictures properly. Every group line is the same height. `OpenOnHash` (`app/_ui/open-on-hash.tsx`) opens the group a fragment points at.
 
 `Earlier` is a native `details` fold: one soft line with a count and Show/Hide on the right.
 
 ### Section Heading
 
-A label-size title sitting under a hairline, above a group of items. It is the site's only section marker. There are no eyebrows, numbers or dividers.
+A label-size title sitting under a hairline, above a group of items, on the facts page. On the homepage the Group line plays this part. There are no eyebrows, numbers or dividers.
 
 ### Navigation
 
@@ -272,5 +281,5 @@ The signature, built in WebGL under `app/book/`. The code still says "book" beca
 - **Don't** add shadows, gradients, or cards to the website.
 - **Don't** add a second signature moment. The pretzels hold the whole motion budget.
 - **Don't** use `/fishing` styles on other pages, or load its pixel font outside that route.
-- **Don't** put product photos or images on the software list.
+- **Don't** open the homepage groups by default or add featured picks above them; Amy wants the page short.
 - **Don't** commit the font file.

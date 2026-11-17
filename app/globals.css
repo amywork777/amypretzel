@@ -153,8 +153,11 @@ a.ui-button { text-decoration: none; }
 @media (min-width: 768px) { .ui-footer { margin-top: var(--space-9); } }
 .ui-footer-signoff { max-width: 16em; color: var(--color-ink-soft); }
 .ui-prev-next { display: flex; justify-content: space-between; gap: var(--space-5); margin-top: var(--space-8); padding: var(--space-5) 0 var(--space-7); border-top: var(--line) solid var(--color-rule); }
-.ui-prev-next a { min-width: 0; padding: var(--space-3) var(--space-4); color: var(--color-ink); text-decoration: none; border: var(--line) solid var(--color-rule); border-radius: var(--radius); transition: background-color var(--ease); }
-.ui-prev-next a:last-child { text-align: right; }
+.ui-prev-next a { display: flex; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2); color: var(--color-ink); text-decoration: none; border: var(--line) solid var(--color-rule); border-radius: var(--radius); transition: background-color var(--ease); }
+.ui-prev-next a:last-child { flex-direction: row-reverse; text-align: right; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); }
+.ui-prev-next-pic { position: relative; flex: none; width: 64px; aspect-ratio: 4 / 3; border-radius: 4px; overflow: hidden; background: var(--color-media); }
+.ui-prev-next-pic img { object-fit: cover; }
+.ui-prev-next-text { min-width: 0; }
 .ui-prev-next a:hover { background: var(--color-surface); }
 .ui-prev-next small { display: block; font-size: var(--text-sm); color: var(--color-ink-soft); margin-bottom: 2px; }
 
@@ -188,7 +191,10 @@ a.ui-button { text-decoration: none; }
 @media (min-width: 768px) { .ui-detail-body { padding-top: var(--space-8); } }
 /* The lead shot sits in the same framed box as its tile on the index. */
 .ui-lead { position: relative; aspect-ratio: 16 / 9; margin-top: var(--space-6); }
-.ui-lead img { object-fit: contain; padding: 6%; mix-blend-mode: multiply; }
+.ui-lead img { object-fit: cover; }
+/* A photo lead is shown whole, at its own shape. */
+.ui-lead-photo { margin-top: var(--space-6); }
+.ui-lead-photo img { display: block; width: 100%; height: auto; }
 .ui-media-stack { padding-top: var(--space-6); }
 .ui-media-stack > * + * { margin-top: var(--space-5); }
 .ui-media-stack img, .ui-media-stack iframe { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--color-media); }
@@ -242,24 +248,73 @@ a.ui-button { text-decoration: none; }
 .personal-portrait { width: 110px; height: 110px; object-fit: cover; border-radius: var(--radius); }
 .personal-copy p { margin-bottom: 1em; }
 .personal-copy strong { font-weight: 500; color: var(--color-ink); }
-.home-list { padding-bottom: var(--space-7); scroll-margin-top: 80px; }
 @media (max-width: 420px) { .site-header nav { gap: 14px; } }
-.home-list .ui-section-heading { margin-top: 0; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); }
-.ui-section-note { font-size: 13px; color: var(--color-ink-soft); }
+
+/* Groups: each kind of work closed to one line, opening in place. */
+.home-groups { border-top: var(--line) solid var(--color-rule); }
+.ui-group { border-bottom: var(--line) solid var(--color-rule); scroll-margin-top: var(--space-5); }
+.ui-group > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-5); min-height: 84px; padding: var(--space-3) 0; cursor: pointer; list-style: none; }
+.ui-group > summary::-webkit-details-marker { display: none; }
+.ui-group-name { display: block; min-width: 0; }
+.ui-group-title { font-size: var(--text-base); font-weight: 500; line-height: 1.4; }
+.ui-group-note { display: block; margin-top: 1px; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); }
+/* Show / Hide is the site's pill, and fills with ink when the line is hovered. */
+.ui-group > summary::after { content: "Show"; min-width: 4.4em; padding: .3em .8em .34em; font-size: var(--text-sm); line-height: 1.1; text-align: center; color: var(--color-ink); border: var(--line) solid var(--color-rule); border-radius: var(--radius-pill); transition: color var(--ease), background-color var(--ease), border-color var(--ease); }
+.ui-group[open] > summary::after { content: "Hide"; }
+/* The strip: the group's first pictures dealt into a loose overlapping pile,
+   each a little askew, like prints left on the table. Hovering the line
+   straightens them into a neat row. Each picture is cut out of
+   the one beneath by a ring of page colour, not a line. It steps aside once
+   the group is open, since the list shows the pictures properly. */
+.ui-group-strip { display: flex; justify-content: flex-end; width: 220px; padding-right: 4px; transition: opacity .3s cubic-bezier(.2, .8, .2, 1), transform .3s cubic-bezier(.2, .8, .2, 1); }
+.ui-group-pic { position: relative; display: block; flex: none; width: 56px; aspect-ratio: 4 / 3; border-radius: 5px; overflow: hidden; background: var(--color-media); outline: 2px solid var(--color-paper); transition: margin .4s cubic-bezier(.2, .8, .2, 1), transform .4s cubic-bezier(.2, .8, .2, 1); }
+.ui-group-pic + .ui-group-pic { margin-left: -16px; }
+.ui-group-pic img { object-fit: cover; }
+.ui-group-pic:nth-child(1) { z-index: 5; transform: rotate(-3deg); }
+.ui-group-pic:nth-child(2) { z-index: 4; transform: rotate(2deg) translateY(-2px); }
+.ui-group-pic:nth-child(3) { z-index: 3; transform: rotate(-1.5deg) translateY(2px); }
+.ui-group-pic:nth-child(4) { z-index: 2; transform: rotate(2.5deg); }
+.ui-group-pic:nth-child(5) { z-index: 1; transform: rotate(-2deg) translateY(-1px); }
+.ui-group[open] .ui-group-strip { opacity: 0; transform: translateX(8px); pointer-events: none; }
+@media (hover: hover) {
+  .ui-group > summary:hover::after { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
+  .ui-group > summary:hover .ui-group-pic { transform: none; }
+}
+.ui-group-body { padding-bottom: var(--space-5); }
+.ui-group-body > .ui-list > li:first-child > .ui-list-row { border-top: var(--line) solid var(--color-rule); }
+@media (max-width: 560px) {
+  .ui-group > summary { gap: var(--space-3); }
+  .ui-group-strip { width: auto; }
+  .ui-group-pic { width: 44px; }
+  .ui-group-pic + .ui-group-pic { margin-left: -16px; }
+  .ui-group-pic:nth-child(n + 4) { display: none; }
+}
+@media (max-width: 430px) { .ui-group-pic:nth-child(n + 3) { display: none; } }
+
+/* Lists: inside an open group, plain rows like Felix Rieseberg's site. */
 .ui-list { list-style: none; margin: 0; padding: 0; }
-.ui-list-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3) var(--space-4); align-items: center; padding: 10px 0; border-bottom: var(--line) solid var(--color-rule); color: inherit; text-decoration: none; }
-.ui-list-thumb { position: relative; display: block; width: 56px; aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; background: var(--color-media); }
-.ui-list-thumb img { object-fit: contain; padding: 3px; mix-blend-mode: multiply; }
-.ui-list-thumb--screen img { object-fit: cover; padding: 0; mix-blend-mode: normal; }
+.ui-list-row { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3) var(--space-5); align-items: center; padding: var(--space-3) 0; border-bottom: var(--line) solid var(--color-rule); color: inherit; text-decoration: none; }
+.ui-list-thumb { position: relative; display: block; width: 96px; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--color-media); }
+.ui-list-thumb img, .ui-list-peek img { object-fit: cover; }
+/* Cut-outs are trimmed objects on white (scripts/make-thumbs.mjs); multiplied,
+   the white becomes the media tone, so they hold up in dark mode too. */
+.ui-cutout img { mix-blend-mode: multiply; }
 .ui-list-text { display: block; min-width: 0; }
 .ui-list-title { display: block; font-size: var(--text-base); font-weight: 500; line-height: 1.4; transition: color var(--ease); }
-.ui-list-line { display: block; margin-top: 1px; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); }
+.ui-list-line { display: block; margin-top: 2px; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); }
 .ui-list-year { font-size: 13px; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
 a.ui-list-row:hover .ui-list-title { color: var(--color-ink-soft); }
-.ui-list--small .ui-list-row { padding: 7px 0; }
-.ui-list--small .ui-list-thumb { width: 44px; }
+.ui-list--small .ui-list-row { padding: var(--space-2) 0; gap: var(--space-3) var(--space-4); }
+.ui-list--small .ui-list-thumb { width: 56px; border-radius: 4px; }
 .ui-list--small .ui-list-title { font-size: var(--text-sm); font-weight: 400; }
 .ui-list--small .ui-list-line { font-size: 13px; }
+/* Peek: on a wide screen with a pointer, the hovered row's picture shows
+   large in the empty margin beside the list. Hidden everywhere else. */
+.ui-list-peek { display: none; }
+@media (hover: hover) and (min-width: 1280px) {
+  .ui-list-peek { display: block; position: absolute; top: 50%; left: calc(100% + 48px); width: min(280px, calc((100vw - 680px) / 2 - 112px)); aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--color-media); opacity: 0; transform: translate(-6px, -50%) scale(.97); transform-origin: left center; pointer-events: none; transition: opacity .2s ease, transform .35s cubic-bezier(.2, .8, .2, 1); }
+  a.ui-list-row:hover .ui-list-peek, a.ui-list-row:focus-visible .ui-list-peek { opacity: 1; transform: translate(0, -50%) scale(1); }
+}
 /* Earlier work folds under one line that opens in place. */
 .ui-earlier summary { display: flex; align-items: center; gap: var(--space-2); padding: 12px 0; border-bottom: var(--line) solid var(--color-rule); font-size: var(--text-sm); color: var(--color-ink-soft); cursor: pointer; list-style: none; }
 .ui-earlier summary::-webkit-details-marker { display: none; }
@@ -267,10 +322,10 @@ a.ui-list-row:hover .ui-list-title { color: var(--color-ink-soft); }
 .ui-earlier[open] summary::after { content: "Hide"; }
 .ui-earlier summary:hover { color: var(--color-ink); }
 .ui-earlier-count { font-size: 13px; font-variant-numeric: tabular-nums; }
-/* The section heading's rule is the divider, so a list's last row drops its own. */
-.home-list > .ui-list:last-child > li:last-child, .home-list > .ui-list:last-child > li:last-child > .ui-list-row,
+/* The group's own rule closes it, so the last row and a closed fold drop theirs. */
+.ui-group-body > :last-child > li:last-child > .ui-list-row,
 .ui-earlier .ui-list > li:last-child > .ui-list-row, .ui-earlier:not([open]) summary { border-bottom: 0; }
-@media (max-width: 480px) { .ui-list-row { gap: var(--space-2) var(--space-3); } .ui-list-thumb { width: 52px; } }
+@media (max-width: 480px) { .ui-list-row { gap: var(--space-2) var(--space-4); } .ui-list-thumb { width: 72px; } .ui-list--small .ui-list-thumb { width: 48px; } }
 
 /* The stray pretzel by the contact links: small, knocked askew, wiggles when found. */
 .secret-pretzel { display: inline-flex; width: 30px; height: 30px; margin-top: var(--space-5); transform: rotate(-24deg); }

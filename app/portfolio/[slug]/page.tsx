@@ -8,7 +8,8 @@ import { renderBody } from "../../lib/render-body";
 import { Page, PageIntro } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
-import { orderedProjects as projects } from "../projects";
+import { orderedProjects as projects, thumbOf } from "../projects";
+import thumbs from "../thumbs.json";
 import "react-tweet/theme.css";
 
 const SITE_URL = "https://amypretzel.com";
@@ -59,6 +60,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   // first image is the lead, rest stack below body
   const [lead, ...rest] = project.gallery;
+  const leadCutout = (thumbs as Record<string, { leadCutout?: boolean }>)[project.slug]?.leadCutout ?? false;
 
   const coverAbs = project.cover?.startsWith("http")
     ? project.cover
@@ -95,12 +97,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       />
       <PageIntro title={project.title} meta={project.year}>{project.role}</PageIntro>
 
-      {/* === LEAD IMAGE === */}
-      {lead && (
-        <div className="ui-media ui-lead">
-          <Image src={lead} alt={project.title} fill sizes="(min-width: 860px) 764px, 100vw" priority />
+      {/* === LEAD IMAGE ===
+          A cut-out is trimmed and centred in a 16:9 frame (scripts/make-thumbs.mjs)
+          so the object fills it; a photo is shown whole, at its own shape. */}
+      {lead && (leadCutout ? (
+        <div className="ui-media ui-lead ui-cutout">
+          <Image src={`/thumbs/${project.slug}-lead.webp`} alt={project.title} fill sizes="(min-width: 860px) 764px, 100vw" priority />
         </div>
-      )}
+      ) : (
+        <div className="ui-media ui-lead-photo">
+          <Image src={lead} alt={project.title} width={1600} height={900} sizes="(min-width: 860px) 764px, 100vw" priority />
+        </div>
+      ))}
 
       {/* === TWEET EMBED (with launch video) === */}
       {project.tweetId && (
@@ -139,8 +147,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       <PrevNext
         label="More objects"
-        prev={{ href: `/portfolio/${prev.slug}`, title: prev.title }}
-        next={{ href: `/portfolio/${next.slug}`, title: next.title }}
+        prev={{ href: `/portfolio/${prev.slug}`, title: prev.title, ...thumbOf(prev.slug) }}
+        next={{ href: `/portfolio/${next.slug}`, title: next.title, ...thumbOf(next.slug) }}
       />
     </Page>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Page, PageIntro } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
@@ -28,8 +29,8 @@ export async function generateMetadata({
     title: p.title,
     description: p.summary,
     alternates: { canonical: url },
-    openGraph: { type: "article", url, title: ogTitle, description: p.summary },
-    twitter: { card: "summary", title: ogTitle, description: p.summary },
+    openGraph: { type: "article", url, title: ogTitle, description: p.summary, images: p.picture ? [{ url: `${SITE_URL}${p.picture.image}`, alt: p.title }] : undefined },
+    twitter: { card: p.picture ? "summary_large_image" : "summary", title: ogTitle, description: p.summary, images: p.picture ? [`${SITE_URL}${p.picture.image}`] : undefined },
   };
 }
 
@@ -42,6 +43,7 @@ export default async function SoftwareProjectPage({
   const project = softwareProjects.find((p) => p.slug === slug);
   if (!project) notFound();
 
+  const picture = project.picture;
   const idx = softwareProjects.findIndex((p) => p.slug === project.slug);
   const prev = idx > 0 ? softwareProjects[idx - 1] : softwareProjects[softwareProjects.length - 1];
   const next = idx < softwareProjects.length - 1 ? softwareProjects[idx + 1] : softwareProjects[0];
@@ -77,6 +79,17 @@ export default async function SoftwareProjectPage({
       />
       <PageIntro title={project.title} meta={project.section}>{project.summary}</PageIntro>
 
+      {/* The same screenshot as its row on the homepage, whole. */}
+      {picture && (picture.lead ? (
+        <div className={picture.cutout ? "ui-media ui-lead ui-cutout" : "ui-media ui-lead"}>
+          <Image src={picture.lead} alt={project.title} fill sizes="(min-width: 860px) 764px, 100vw" priority />
+        </div>
+      ) : (
+        <div className="ui-media ui-lead-photo">
+          <Image src={picture.image} alt={project.title} width={1200} height={900} sizes="(min-width: 860px) 764px, 100vw" priority />
+        </div>
+      ))}
+
       <section className="ui-prose ui-detail-body">
         <div>{renderBody(project.body)}</div>
         {otherLinks.length > 0 && <LinkList label="Links" links={otherLinks.map(l => ({ href: l.url, label: l.label }))} />}
@@ -86,8 +99,8 @@ export default async function SoftwareProjectPage({
 
       <PrevNext
         label="More software"
-        prev={{ href: `/software/${prev.slug}`, title: prev.title }}
-        next={{ href: `/software/${next.slug}`, title: next.title }}
+        prev={{ href: `/software/${prev.slug}`, title: prev.title, ...prev.picture }}
+        next={{ href: `/software/${next.slug}`, title: next.title, ...next.picture }}
       />
     </Page>
   );

@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
 import { LinkList, TextLink } from "./_ui/link";
-import { SectionHeading, SiteFooter } from "./_ui/layout";
+import { SiteFooter } from "./_ui/layout";
+import { OpenOnHash } from "./_ui/open-on-hash";
 import BookOverlay from "./book/overlay";
-import { Earlier, List, type ListItem } from "./_ui/list";
-import { projects, studyProjects } from "./portfolio/projects";
+import { Earlier, Group, List, type ListItem } from "./_ui/list";
+import { projects, studyProjects, thumbOf } from "./portfolio/projects";
 import { softwareProjects } from "./software/projects";
 
 const personJsonLd = {
@@ -49,13 +50,14 @@ const contactLinks = [
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
 ];
 
-/* Amy's own bio and portrait, then plain lists like Felix Rieseberg's site,
-   the things grouped by kind. Each row is a small picture, a
+/* Amy's own bio and portrait, then the things grouped by kind, each group
+   closed to one line with a strip of its pictures so the page stays short.
+   Opened, a group is a plain list like Felix Rieseberg's site: a picture, a
    title, one line and a year. Physical products lead, since manufacturing is
    what Amy is most into; the earlier studies fold away under one line. Years
    come from a real source (launch post, repo, patent). */
 const cover = (slug: string) => projects.find(p => p.slug === slug)!;
-const object = (slug: string, text: string, year?: string): ListItem => ({ href: `/portfolio/${slug}`, image: cover(slug).cover, title: cover(slug).title, text, year });
+const object = (slug: string, text: string, year?: string): ListItem => ({ href: `/portfolio/${slug}`, ...thumbOf(slug), title: cover(slug).title, text, year });
 const objects: ListItem[] = [
   object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026"),
   object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025"),
@@ -63,13 +65,12 @@ const objects: ListItem[] = [
   object("iphone-finewoven", "Led materials and integration. Patent co-inventor.", "2023"),
   object("ipad-smart-folio", "Apple accessories."),
 ];
-const earlier: ListItem[] = studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, image: p.cover, title: p.title, text: p.role }));
+const earlier: ListItem[] = studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, ...thumbOf(p.slug), title: p.title, text: p.role }));
 
-const screenshot: Record<string, string> = { studio: "/home/studio.webp", "taiyaki-3d": cover("taiyaki-3d").cover, "region-maps": "/home/region-maps.webp", lipflow: "/home/lipflow-in-use.webp" };
-const app = (slug: string, text: string, year: string): ListItem => ({
-  href: `/software/${slug}`, image: screenshot[slug] ?? `/work/${slug}.webp`, screen: slug !== "taiyaki-3d",
-  title: softwareProjects.find(p => p.slug === slug)!.title, text, year,
-});
+const app = (slug: string, text: string, year: string): ListItem => {
+  const p = softwareProjects.find(p => p.slug === slug)!;
+  return { href: `/software/${slug}`, image: p.picture!.image, cutout: p.picture!.cutout, title: p.title, text, year };
+};
 const aiTools: ListItem[] = [
   app("region-maps", "Edit each part's color and material in a render.", "2026"),
   app("extract", "Pull colors, materials and parts out of an image.", "2026"),
@@ -102,7 +103,7 @@ export default function Home() {
           <div className="personal-intro">
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
             <div className="personal-copy ui-prose">
-              <p>Now at <strong>Vizcom</strong>. Founded <strong>Taiyaki</strong>, <strong>Taya</strong> and <strong>Mobius</strong>. Before that, <strong>Apple</strong> and <strong>Stanford</strong>.</p>
+              <p>Now at <strong>Vizcom</strong>. Before that I had a startup where we explored a few ideas: materials recycling, AI concept-to-CAD, and an AI journal you wear as jewelry. Earlier, <strong>Apple</strong> and <strong>Stanford</strong>.</p>
               <p>Mostly interested in AI for CAD, engineering, and making physical things.</p>
               <LinkList label="Contact Amy" links={contactLinks} />
               {/* A second pretzel, pink and sprinkled, left lying here: it leads to the secret facts page. */}
@@ -110,25 +111,24 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="products" className="home-list" aria-labelledby="products-title">
-          <SectionHeading id="products-title" note="Manufactured">Physical products</SectionHeading>
-          <List items={objects} label="Physical products" />
-          <Earlier title="Earlier, at Stanford and home" count={earlier.length}>
-            <List items={earlier} label="Earlier objects" small />
-          </Earlier>
-        </section>
-        <section id="ai-tools" className="home-list" aria-labelledby="ai-tools-title">
-          <SectionHeading id="ai-tools-title" note="At Vizcom">AI tools for designers</SectionHeading>
-          <List items={aiTools} label="AI tools for designers" />
-        </section>
-        <section id="cad" className="home-list" aria-labelledby="cad-title">
-          <SectionHeading id="cad-title">3D and CAD</SectionHeading>
-          <List items={cad} label="3D and CAD" />
-        </section>
-        <section id="tools" className="home-list" aria-labelledby="tools-title">
-          <SectionHeading id="tools-title" note="Side projects">Tools and toys</SectionHeading>
-          <List items={tools} label="Tools and toys" />
-        </section>
+        <div className="home-groups">
+          <Group id="products" title="Physical products" note="Things I designed and took from sketch to factory." items={objects}>
+            <List items={objects} label="Physical products" />
+            <Earlier title="Earlier, at Stanford and home" count={earlier.length}>
+              <List items={earlier} label="Earlier objects" small />
+            </Earlier>
+          </Group>
+          <Group id="ai-tools" title="AI tools for designers" note="Features I built at Vizcom for industrial designers." items={aiTools}>
+            <List items={aiTools} label="AI tools for designers" />
+          </Group>
+          <Group id="cad" title="3D and CAD" note="Software and data for turning ideas into real CAD." items={cad}>
+            <List items={cad} label="3D and CAD" />
+          </Group>
+          <Group id="tools" title="Tools and toys" note="Side projects, mostly made for fun." items={tools}>
+            <List items={tools} label="Tools and toys" />
+          </Group>
+        </div>
+        <OpenOnHash />
         <SiteFooter home={false} />
       </main>
     </div>
