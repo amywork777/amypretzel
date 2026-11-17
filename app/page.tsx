@@ -43,7 +43,7 @@ const personJsonLd = {
 };
 
 const contactLinks = [
-  { href: "mailto:amzyst@gmail.com", label: "amzyst@gmail.com" },
+  { href: "mailto:amzyst@gmail.com", label: "Email" },
   { href: "https://x.com/amypretzel", label: "Twitter" },
   { href: "https://github.com/amywork777", label: "GitHub" },
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
