@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { LeadVideo } from "../../_ui/lead-video";
 import { notFound } from "next/navigation";
 import { Page, PageIntro } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
@@ -79,8 +80,11 @@ export default async function SoftwareProjectPage({
       />
       <PageIntro title={project.title} meta={project.section}>{project.summary}</PageIntro>
 
-      {/* The same screenshot as its row on the homepage, whole. */}
-      {picture && (picture.lead ? (
+      {/* A short demo from Amy's post on X when there is one; otherwise the
+          same screenshot as its row on the homepage, whole. */}
+      {picture?.video ? (
+        <LeadVideo {...picture.video} label={`${project.title} demo`} />
+      ) : picture && (picture.lead ? (
         <div className={picture.cutout ? "ui-media ui-lead ui-cutout" : "ui-media ui-lead"}>
           <Image src={picture.lead} alt={project.title} fill sizes="(min-width: 860px) 764px, 100vw" priority />
         </div>
@@ -94,6 +98,14 @@ export default async function SoftwareProjectPage({
         <div>{renderBody(project.body)}</div>
         {otherLinks.length > 0 && <LinkList label="Links" links={otherLinks.map(l => ({ href: l.url, label: l.label }))} />}
       </section>
+
+      {project.photos && (
+        <section className="ui-photo-pair">
+          {project.photos.map((src, i) => (
+            <Image key={src} src={src} alt={`${project.title}, ${i + 1}`} width={1200} height={1600} sizes="(min-width: 860px) 380px, 50vw" />
+          ))}
+        </section>
+      )}
 
       <Embeds embeds={[...demoEmbeds, ...embeds]} />
 

@@ -195,6 +195,14 @@ a.ui-button { text-decoration: none; }
 /* A photo lead is shown whole, at its own shape. */
 .ui-lead-photo { margin-top: var(--space-6); }
 .ui-lead-photo img { display: block; width: 100%; height: auto; }
+.ui-lead-video { margin-top: var(--space-6); }
+.ui-lead-video video { display: block; width: 100%; height: auto; }
+/* A phone recording stands in the middle of the frame, held to the screen. */
+.ui-lead-video--tall { display: flex; justify-content: center; background: #111; }
+.ui-lead-video--tall video { width: auto; max-width: 100%; max-height: min(78vh, 720px); }
+/* Photos of the real thing, two side by side. */
+.ui-photo-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); padding-top: var(--space-6); }
+.ui-photo-pair img { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--color-media); }
 .ui-media-stack { padding-top: var(--space-6); }
 .ui-media-stack > * + * { margin-top: var(--space-5); }
 .ui-media-stack img, .ui-media-stack iframe { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--color-media); }

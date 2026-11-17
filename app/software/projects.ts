@@ -16,6 +16,8 @@ export type SoftwareProject = {
   tags?: string[];
   demos?: SoftwareDemo[];
   links?: { label: string; href: string }[];
+  /** Photos shown in pairs after the text, e.g. the real thing in use. */
+  photos?: string[];
 };
 
 export type SoftwareSection = {
@@ -262,6 +264,7 @@ An iPad can't drive a USB printer, so a small Mac or Raspberry Pi sits in the mi
 
 It's built for someone who isn't technical to run at an event: double-click Start Booth on the Mac, open one address on the iPad, and lock it to the booth.`,
         tags: ["Python", "iPad", "Thermal printing"],
+        photos: ["/software/selfie-booth/booth.webp", "/software/selfie-booth/print.webp"],
         links: [
           { label: "GitHub", href: "https://github.com/amywork777/selfie-booth" },
         ],
@@ -272,11 +275,20 @@ It's built for someone who isn't technical to run at an event: double-click Star
 
 /* The picture for each tool: a screenshot of it in use (never a GitHub
    card), shown in the homepage list and at the top of its page. */
-const pictures: Record<string, { image: string; cutout?: boolean; lead?: string }> = {
+type Picture = {
+  image: string;
+  cutout?: boolean;
+  lead?: string;
+  /** A short demo that leads the page instead of the still, from Amy's post on X. */
+  /** `sound`: Amy talks in it, so it gets controls to unmute. */
+  video?: { src: string; poster: string; width: number; height: number; sound?: boolean };
+};
+const pictures: Record<string, Picture> = {
   "region-maps": { image: "/home/region-maps.webp" },
   studio: { image: "/home/studio.webp" },
-  lipflow: { image: "/home/lipflow-in-use.webp" },
-  ...Object.fromEntries(["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "cute-ghostty", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
+  lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
+  "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },
+  ...Object.fromEntries(["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
 };
 
 export const softwareProjects = softwareSections.flatMap((section) =>
