@@ -16,7 +16,9 @@ export type SoftwareProject = {
   tags?: string[];
   demos?: SoftwareDemo[];
   links?: { label: string; href: string }[];
-  /** Photos shown in pairs after the text, e.g. the real thing in use. */
+  /** Photos shown in pairs after the text, e.g. the real thing in use. An
+      .mp4 plays as a short muted loop, with the .webp of the same name as
+      its poster. */
   photos?: string[];
 };
 
@@ -153,6 +155,7 @@ Most AI apps are built for code. Studio puts the part beside the chat: the model
 
 Studio's CAD tools come from text-to-cad, open-source skills for AI agents by Jake (earthtojake on GitHub). We build Studio together, in the open.`,
         tags: ["AI CAD", "Desktop app", "Open source"],
+        photos: ["/software/studio/simulate.mp4", "/software/studio/drawing.mp4"],
         links: [
           { label: "texttocad.studio", href: "https://texttocad.studio" },
           { label: "GitHub", href: "https://github.com/amywork777/studio" },
@@ -285,7 +288,7 @@ type Picture = {
 };
 const pictures: Record<string, Picture> = {
   "region-maps": { image: "/home/region-maps.webp" },
-  studio: { image: "/home/studio.webp" },
+  studio: { image: "/work/studio.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
   lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
   "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },
   ...Object.fromEntries(["extract", "smart-dropper", "voice-input", "cad-steps", "sf-rats", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),

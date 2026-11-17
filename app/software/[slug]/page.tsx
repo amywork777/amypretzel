@@ -101,7 +101,9 @@ export default async function SoftwareProjectPage({
 
       {project.photos && (
         <section className="ui-photo-pair">
-          {project.photos.map((src, i) => (
+          {project.photos.map((src, i) => src.endsWith(".mp4") ? (
+            <LeadVideo key={src} src={src} poster={src.replace(/\.mp4$/, ".webp")} width={1280} height={720} label={`${project.title}, ${i + 1}`} className="ui-media ui-photo-video" />
+          ) : (
             <Image key={src} src={src} alt={`${project.title}, ${i + 1}`} width={1200} height={1600} sizes="(min-width: 860px) 380px, 50vw" />
           ))}
         </section>

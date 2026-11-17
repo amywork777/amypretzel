@@ -203,6 +203,8 @@ a.ui-button { text-decoration: none; }
 /* Photos of the real thing, two side by side. */
 .ui-photo-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); padding-top: var(--space-6); }
 .ui-photo-pair img { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--color-media); }
+.ui-photo-pair .ui-photo-video { align-self: start; }
+.ui-photo-video video { display: block; width: 100%; height: auto; }
 .ui-media-stack { padding-top: var(--space-6); }
 .ui-media-stack > * + * { margin-top: var(--space-5); }
 .ui-media-stack img, .ui-media-stack iframe { display: block; width: 100%; height: auto; border-radius: var(--radius); background: var(--color-media); }
