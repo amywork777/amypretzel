@@ -69,7 +69,7 @@ const DIM = "#B07FD0"; //  cute-greeting.sh: \033[38;2;176;127;208m
 const MESSAGES = [
   "your terminal is feeling extra cute today ♡",
   "pastel dreams loaded ₊✩‧₊˚",
-  "go make something adorable ੨੎",
+  "go make something adorable ੨ৎ",
   "you + this terminal = iconic ✧",
   "stay cute, code cuter ⋆˚",
 ];
@@ -127,7 +127,7 @@ _cute_greeting() {
   set -- \
     "your terminal is feeling extra cute today ♡" \
     "pastel dreams loaded ₊✩‧₊˚" \
-    "go make something adorable ੨੎" \
+    "go make something adorable ੨ৎ" \
     "you + this terminal = iconic ✧" \
     "stay cute, code cuter ⋆˚"
   local n=$(( $` + "{RANDOM:-0}" + String.raw` % $# + 1 ))
@@ -139,7 +139,7 @@ _cute_greeting() {
 ` + GHOST.join("\n") + String.raw`
 GHOST
   printf '%s%s%s\n' "$dim" "$msg" "$reset"
-  printf '%s%s%s\n' "$dim" "₊✩‧₊˚ ੨੎ ˚₊✩‧₊" "$reset"
+  printf '%s%s%s\n' "$dim" "₊✩‧₊˚ ੨ৎ ˚₊✩‧₊" "$reset"
 }
 
 _cute_greeting
@@ -170,7 +170,9 @@ function greeting(n: number): Line[] {
   return [
     ...GHOST.map(t => ({ ...line({ t, c: PINK }), ghost: true })),
     line({ t: MESSAGES[n], c: DIM }),
-    line({ t: "₊✩‧₊˚ ੨੎ ˚₊✩‧₊", c: DIM }),
+    // The script has U+0A4E here, which no font draws (an empty box); the
+    // kaomoji it means is ੨ৎ, with U+09CE.
+    line({ t: "₊✩‧₊˚ ੨ৎ ˚₊✩‧₊", c: DIM }),
   ];
 }
 

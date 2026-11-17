@@ -406,7 +406,7 @@ The studies explored ceramic and silicone variants. Ceramic gave the object weig
     ],
     body: `A precision-machined telescoping barrel for a clarinet, the short section between the mouthpiece and the upper joint. Adjustable length lets the player fine-tune intonation without swapping out an entire barrel.
 
-Built for a Stanford music + product design class. I play clarinet, and the standard correction for intonation drift (the instrument going flat as the body warms and the air column lengthens) is either to pull the existing barrel out a few millimeters or to keep a longer second barrel in your case. A telescoping barrel collapses both options into one and lets the player make the correction continuously, on the fly.
+Built for a Stanford music + product design class. I play clarinet, and the standard correction for intonation drift (the instrument going sharp as it warms up, because sound travels faster in warm air) is either to pull the existing barrel out a few millimeters or to keep a longer second barrel in your case. A telescoping barrel collapses both options into one and lets the player make the correction continuously, on the fly.
 
 The construction is two interlocking aluminum sleeves with a precision sliding fit and an o-ring seal to maintain the integrity of the air column. The fit tolerance is the whole game: too loose and the seal leaks past the o-ring, killing the tone; too tight and the player can't slide the barrel mid-piece without breaking embouchure. I machined the sleeves with a few microns of intentional clearance and tuned the o-ring squeeze ratio to land the friction in the right window, enough to hold position when set, light enough to slide under thumb pressure.
 

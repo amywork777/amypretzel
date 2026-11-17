@@ -15,7 +15,7 @@ import "./harp-instrument.css";
      so the string lengths are this drawing's, not measured off the harp.
    - Tension per string is T = (2 L f)^2 mu, with mu for 0.20 mm steel music
      wire (7850 kg/m3) on every string. Summed, that's the load the frame
-     carries: about 50 lb, the "tens of pounds" the project was about.
+     carries: 358 N, about 81 lb, the "tens of pounds" the project was about.
    - The sound is synthesized with Karplus-Strong (a noise burst circulating
      in a delay line one period long, filtered a little each time round),
      tuned to each note with a fractional-delay allpass. */
