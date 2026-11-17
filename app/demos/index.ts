@@ -25,7 +25,9 @@ export const demos: Record<string, ComponentType> = {
   "lil-spider-maze": dynamic(() => import("./lil-spider-maze")),
 };
 
-/** Pages whose demo video is better than the mini demo: the video keeps the
-    lead and the demo sits right under it. Amy asked for this on Lipflow,
-    where her own video shows the real lip reading. */
-export const videoFirst = new Set(["lipflow"]);
+/** Pages whose real video is better than the mini demo: the video keeps the
+    lead and the demo sits right under it. Amy asked for this on Lipflow
+    (her video shows the real lip reading); Smart Dropper's launch shows the
+    real tool working and Cute Ghostty's the real terminal, where the demos
+    replay or imitate. */
+export const videoFirst = new Set(["lipflow", "smart-dropper", "cute-ghostty"]);

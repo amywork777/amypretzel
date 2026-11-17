@@ -19,6 +19,9 @@ export type Project = {
   links?: ProjectLink[];
   /** Twitter/X status ID, if set, the tweet (with any embedded video) renders inline near the top of the project page */
   tweetId?: string;
+  /** The real thing on video (a launch film), which leads the page instead of
+      the still, the most dynamic accurate example. Replaces the tweet it came from. */
+  video?: { src: string; poster: string; width: number; height: number; sound?: boolean };
   /** Path or URL to a PDF; if set, an inline PDF viewer renders below the body */
   pdfPreview?: string;
 };
@@ -89,7 +92,7 @@ The work in progress was voice isolation in louder rooms, better journal organiz
       { label: "Watch demo", url: "https://www.notion.so/taya-necklace-ai-jewelry-device-2b8fc3fa1d2a80389f99e88d602b8b2c?source=copy_link#2b8fc3fa1d2a80c5837df15630b5739c" },
       { label: "Launch post", url: "https://x.com/amypretzel/status/1973055244528742531" },
     ],
-    tweetId: "1973055244528742531",
+    video: { src: "/portfolio/taya-pendant/launch.mp4", poster: "/portfolio/taya-pendant/launch.webp", width: 1280, height: 720, sound: true },
   },
 
   {

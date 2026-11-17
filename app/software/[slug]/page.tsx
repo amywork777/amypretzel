@@ -66,7 +66,7 @@ export default async function SoftwareProjectPage({
   });
   const { embeds, rest: otherLinks } = splitLinks(
     project.links?.map(l => ({ label: l.label, url: l.href })),
-    (project.demos ?? []).map(d => d.src)
+    [...(project.demos ?? []).map(d => d.src), ...(picture?.site ? [picture.site] : [])]
   );
 
   const jsonLd = {
@@ -102,6 +102,10 @@ export default async function SoftwareProjectPage({
         </>
       ) : Demo ? (
         <Demo />
+      ) : picture?.site ? (
+        <div className="ui-media ui-lead-site">
+          <iframe src={picture.site} title={`${project.title}, live`} />
+        </div>
       ) : picture?.video ? (
         <LeadVideo {...picture.video} label={`${project.title} demo`} />
       ) : picture && (picture.lead ? (

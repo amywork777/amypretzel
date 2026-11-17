@@ -105,11 +105,13 @@ I designed and shipped it at Vizcom, from concept through launch. The demos belo
         demos: [
           {
             label: "Launch",
-            src: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7444813978851250176?compact=1",
+            src: "/software/extract/launch.mp4",
+            href: "https://www.linkedin.com/feed/update/urn:li:ugcPost:7444813978851250176/",
           },
           {
             label: "Walkthrough",
-            src: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7448804353336958976?compact=1",
+            src: "/software/extract/walkthrough.mp4",
+            href: "https://www.linkedin.com/feed/update/urn:li:ugcPost:7448804353336958976/",
           },
         ],
       },
@@ -131,12 +133,9 @@ I built it at Vizcom as part of the canvas toolset, covering the interaction des
         ],
         demos: [
           {
-            label: "Demo",
-            src: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7456926108953772032?compact=1",
-          },
-          {
             label: "Follow-up",
-            src: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7458733876840910849?compact=1",
+            src: "/software/smart-dropper/demo.mp4",
+            href: "https://www.linkedin.com/feed/update/urn:li:ugcPost:7458733876840910849/",
           },
         ],
       },
@@ -150,16 +149,10 @@ I built it at Vizcom as part of the canvas toolset, covering the interaction des
 
 Speaking a change mid-sketch is faster than typing it, and it keeps your hands free for drawing. A prompt in Japanese or German should work as well as one in English.
 
-I shipped both as product features at Vizcom. The launch demo is below.`,
+I shipped both as product features at Vizcom. The launch demo is at the top.`,
         tags: ["Product feature", "Prompting", "Input UX"],
         links: [
           { label: "Try it in Vizcom", href: "https://app.vizcom.com" },
-        ],
-        demos: [
-          {
-            label: "Voice input",
-            src: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7450253895211315200?compact=1",
-          },
         ],
       },
     ],
@@ -314,7 +307,9 @@ It's built for someone who isn't technical to run at an event: double-click Star
 ];
 
 /* The picture for each tool: a screenshot of it in use (never a GitHub
-   card), shown in the homepage list and at the top of its page. */
+   card), shown in the homepage list. The top of its page leads with the
+   most dynamic, accurate example there is (Amy's rule): a mini demo, the
+   live site, or the real video, and the still only when there's nothing else. */
 type Picture = {
   image: string;
   cutout?: boolean;
@@ -322,14 +317,19 @@ type Picture = {
   /** A short demo that leads the page instead of the still, from Amy's post on X. */
   /** `sound`: Amy talks in it, so it gets controls to unmute. */
   video?: { src: string; poster: string; width: number; height: number; sound?: boolean };
+  /** A live site of Amy's that leads the page itself, running in a frame. */
+  site?: string;
 };
 const pictures: Record<string, Picture> = {
   "region-maps": { image: "/work/region-maps.webp" },
   studio: { image: "/work/studio.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
   lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
   "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },
+  "voice-input": { image: "/work/voice-input.webp", video: { src: "/software/voice-input/demo.mp4", poster: "/software/voice-input/demo.webp", width: 1146, height: 720, sound: true } },
+  "smart-dropper": { image: "/work/smart-dropper.webp", video: { src: "/software/smart-dropper/launch.mp4", poster: "/software/smart-dropper/launch.webp", width: 1146, height: 720, sound: true } },
+  "sf-rats": { image: "/work/sf-rats.webp", site: "https://sfrats-map.vercel.app" },
   extract: { image: "/work/extract.webp", video: { src: "/software/extract/parts.mp4", poster: "/software/extract/parts.webp", width: 1280, height: 720 } },
-  ...Object.fromEntries(["smart-dropper", "voice-input", "cad-steps", "sf-rats", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
+  ...Object.fromEntries(["cad-steps", "screenie", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
 };
 
 export const softwareProjects = softwareSections.flatMap((section) =>

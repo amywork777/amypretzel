@@ -6,6 +6,7 @@ import { splitLinks } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { renderBody } from "../../lib/render-body";
 import { demos } from "../../demos";
+import { LeadVideo } from "../../_ui/lead-video";
 import { Page, PageIntro, SiteFooter } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
@@ -64,7 +65,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const around = neighbours(href);
 
   // first image is the lead, rest stack below body
-  const [lead, ...rest] = project.gallery;
+  // The first image leads, unless a launch film does; then it joins the rest.
+  const [lead, ...afterLead] = project.gallery;
+  const rest = project.video ? project.gallery : afterLead;
   const Demo = demos[project.slug];
   const leadCutout = (thumbs as Record<string, { leadCutout?: boolean }>)[project.slug]?.leadCutout ?? false;
 
@@ -109,7 +112,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* === LEAD IMAGE ===
           A cut-out is trimmed and centred in a 16:9 frame (scripts/make-thumbs.mjs)
           so the object fills it; a photo is shown whole, at its own shape. */}
-      {lead && (leadCutout ? (
+      {project.video ? (
+        <LeadVideo {...project.video} label={`${project.title} launch film`} />
+      ) : lead && (leadCutout ? (
         <div className="ui-media ui-lead ui-cutout">
           <Image src={`/thumbs/${project.slug}-lead.webp`} alt={project.title} fill sizes="(min-width: 860px) 764px, 100vw" priority />
         </div>
