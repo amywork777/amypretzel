@@ -49,7 +49,7 @@ if (process.argv[2] === "stills") {
   await page.addStyleTag({ content: ".jc-still { visibility: hidden; }" });
   const stage = page.locator(".jc-stage");
   await stage.evaluate(el => el.scrollIntoView({ block: "center" }));
-  for (const id of ["dog", "fish", "duck"]) {
+  for (const id of ["dog", "fish"]) {
     await page.locator(".jc button", { hasText: new RegExp(`^${id}$`, "i") }).click();
     await page.waitForSelector(`.jc-stage canvas[data-ready][data-piece="${id}"]`, { timeout: 30000 });
     await page.waitForTimeout(900);
@@ -476,7 +476,9 @@ await MeshoptEncoder.ready;
 mkdirSync(outDir, { recursive: true });
 const meta = {};
 
-for (const piece of PIECES) {
+// The duck is kept here but not shipped: its sculpt read as a snowman (2026-11-16).
+// The fish leads (Amy, 2026-11-16), so it is written first and the pills follow.
+for (const piece of PIECES.filter(p => p.id !== "duck").sort((a, b) => (a.id === "fish" ? -1 : b.id === "fish" ? 1 : 0))) {
   const t0 = Date.now();
   const bounds = extent(piece);
   const { f, owner, nx, ny, nz, origin } = evaluate(piece, bounds);

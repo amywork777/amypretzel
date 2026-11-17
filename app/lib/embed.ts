@@ -29,7 +29,7 @@ function domainOf(url: string) {
 
 export function toEmbed(url: string, label: string): Embed | null {
   // Internal pages and anchors are navigation, not media.
-  if (!url.startsWith("http") && !url.endsWith(".pdf")) return null;
+  if (!url.startsWith("http") && !url.endsWith(".pdf") && !url.endsWith(".mp4")) return null;
   const domain = domainOf(url);
 
   const tweet = url.match(/(?:x|twitter)\.com\/[^/]+\/status\/(\d+)/);

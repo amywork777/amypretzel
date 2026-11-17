@@ -6,7 +6,7 @@ import "./ai-jewelry.css";
 
 /* A small, real version of the cleanup stage behind Taiyaki Jewelry. It opens
    on three fully 3D pieces: simple sculpts after Taiyaki charms in Amy's photos
-   (Teddy the poodle, the goldfish, the duck with an umbrella). There are no
+   (Teddy the poodle, the goldfish; the duck with an umbrella was cut, its sculpt read as a snowman). There are no
    Taiyaki mesh files to show, so they were modelled from rounded shapes in
    scripts/make-jewelry-charms.mjs, then put through the same casting rules in
    3D there: parts under 0.8 mm thickened, loose bits dropped, a bail added
@@ -67,7 +67,7 @@ type PieceId = keyof typeof pieceData;
 type Piece = (typeof pieceData)[PieceId];
 const PIECES = Object.keys(pieceData) as PieceId[];
 // Said in the accessible label, to match the caption.
-const AFTER: Record<PieceId, string> = { dog: "Teddy the poodle", fish: "the goldfish", duck: "the duck with an umbrella" };
+const AFTER: Record<PieceId, string> = { dog: "Teddy the poodle", fish: "the goldfish" };
 
 type SampleId = "heart" | "dog" | "star";
 const SAMPLES: { id: SampleId; label: string }[] = [
@@ -670,10 +670,10 @@ async function createViewer(canvas: HTMLCanvasElement, reduce: boolean, onPainte
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export default function JewelryCharm() {
-  // It opens on the sculpted dog in silver: its still and numbers are there
+  // It opens on the sculpted goldfish in silver (Amy picked it as the hero): its still and numbers are there
   // before any script runs. A drawn charm only exists once someone makes one.
   const [phase, setPhase] = useState<"piece" | "charm" | "draw" | "making">("piece");
-  const [piece, setPiece] = useState<PieceId>("dog");
+  const [piece, setPiece] = useState<PieceId>("fish");
   const [shown, setShown] = useState<string | null>(null); // what the 3D is showing
   const [made, setMade] = useState<Made | null>(null);
   const [metal, setMetal] = useState<MetalId>("silver");

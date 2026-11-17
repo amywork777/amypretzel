@@ -7,6 +7,8 @@ import { Embeds } from "../../lib/embeds";
 import { renderBody } from "../../lib/render-body";
 import { demos } from "../../demos";
 import { LeadVideo } from "../../_ui/lead-video";
+import { Gallery, type GalleryImage } from "../../_ui/gallery";
+import { imageSize } from "../../lib/image-size";
 import { Page, PageIntro, SiteFooter } from "../../_ui/layout";
 import { LinkList } from "../../_ui/link";
 import { PrevNext } from "../../_ui/detail";
@@ -69,6 +71,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const [lead, ...afterLead] = project.gallery;
   const rest = project.video ? project.gallery : afterLead;
   const Demo = demos[project.slug];
+  // Real sizes, read at build, so the grid holds each photo's shape before it loads.
+  const gallery: GalleryImage[] = rest.map((src, i) => ({ src, ...imageSize(src), alt: `${project.title}, ${i + 2}` }));
   const leadCutout = (thumbs as Record<string, { leadCutout?: boolean }>)[project.slug]?.leadCutout ?? false;
 
   const coverAbs = project.cover?.startsWith("http")
@@ -156,14 +160,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
 
-      {/* === REMAINING GALLERY === */}
-      {rest.length > 0 && (
-        <section className="ui-media-stack">
-          {rest.map((src, i) => (
-            <Image key={src} src={src} alt={`${project.title}, ${i + 2}`} width={1600} height={1200} />
-          ))}
-        </section>
-      )}
+      {/* === REMAINING GALLERY === a grid once there are four or more, each opening full size. */}
+      {gallery.length > 0 && <Gallery images={gallery} title={project.title} />}
 
       {around && <PrevNext label="More work" prev={around.prev} next={around.next} />}
       <SiteFooter />
