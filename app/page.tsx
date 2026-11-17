@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import SiteNav from "./site-nav";
-import { LinkList, TextLink } from "./_ui/link";
+import { LinkList } from "./_ui/link";
 import { SiteFooter } from "./_ui/layout";
 import { OpenOnHash } from "./_ui/open-on-hash";
+import { KindFilter } from "./_ui/kind-filter";
 import { Earlier, Group, List } from "./_ui/list";
 import { workGroups } from "./work";
 
@@ -60,7 +61,7 @@ export default function Home() {
       <main id="main-content" className="ui-column ui-column--list">
         <section id="about" className="home-intro" aria-labelledby="intro-title">
           <h1 id="intro-title" className="sr-only">Amy Zhou</h1>
-          <p className="ui-display home-statement">I like building <TextLink href="#products">objects</TextLink>, and <TextLink href="#ai-tools">software</TextLink> to build objects.</p>
+          <p className="ui-display home-statement">I like building <KindFilter kind="objects">objects</KindFilter>, and <KindFilter kind="software">software</KindFilter> to build objects.</p>
           <div className="personal-intro">
             <Image className="personal-portrait" src="/amy-portrait.jpg" alt="Amy Zhou" width={800} height={800} sizes="110px" priority />
             <div className="personal-copy ui-prose">

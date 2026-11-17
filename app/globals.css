@@ -334,6 +334,20 @@ a.ui-button { text-decoration: none; }
 /* === LISTS: the homepage is plain stacked lists, like Felix Rieseberg's site === */
 .ui-column--list { max-width: calc(680px + 2 * var(--gutter, 20px)); }
 .home-statement { max-width: 20em; }
+/* The sentence's two pills filter the work list (KindFilter): filled while on. */
+.home-kind { font: inherit; letter-spacing: inherit; background: transparent; cursor: pointer; }
+.home-kind[aria-pressed="true"] { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
+.home-kind:focus-visible { outline: var(--line) solid var(--color-ink); outline-offset: 3px; }
+/* Rows are an object (/portfolio/) or software (/software/); the other kind
+   steps out, and so does a group or fold left with nothing in it. */
+.home-groups[data-show="objects"] .ui-list li:has(> a[href^="/software/"]),
+.home-groups[data-show="software"] .ui-list li:has(> a[href^="/portfolio/"]),
+.home-groups[data-show="objects"] .ui-group:not(:has(a[href^="/portfolio/"])),
+.home-groups[data-show="software"] .ui-group:not(:has(a[href^="/software/"])),
+.home-groups[data-show="software"] .ui-earlier { display: none; }
+.home-groups[data-show] .ui-list li { animation: home-kind-in .35s ease both; }
+@keyframes home-kind-in { from { opacity: 0; transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .home-groups[data-show] .ui-list li { animation: none; } }
 .personal-intro { display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: var(--space-7); }
 @media (min-width: 768px) { .personal-intro { grid-template-columns: 110px 1fr; gap: 40px; margin-top: 56px; } }
 .personal-portrait { width: 110px; height: 110px; object-fit: cover; border-radius: var(--radius); }
