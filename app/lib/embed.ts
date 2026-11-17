@@ -4,6 +4,8 @@
  * coverage (Medium, Fabbaloo, Google Patents, Notion) sets X-Frame-Options
  * or a frame-ancestors policy, so those stay as plain links.
  */
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 export type Embed =
   | { kind: "tweet"; id: string; label: string; href: string }
   | { kind: "frame"; src: string; height: number; label: string; href: string; domain: string }
@@ -51,12 +53,15 @@ export function toEmbed(url: string, label: string): Embed | null {
   // reports "viewer is not available", which embeds as an empty box.
 
   // GitHub renders a repo card as an image, which is lighter than an iframe
-  // and shows the description, language and star count.
+  // and shows the description, language and star count. The card is saved
+  // with the site (scripts/fetch-github-cards.mjs), because loading it from
+  // GitHub on each visit sometimes timed out into a broken image.
   const repo = url.match(/^https:\/\/github\.com\/([^/?#]+)\/([^/?#]+)\/?$/);
   if (repo) {
+    const saved = `/github/${repo[1]}-${repo[2]}.png`;
     return {
       kind: "image",
-      src: `https://opengraph.githubassets.com/1/${repo[1]}/${repo[2]}`,
+      src: existsSync(join(process.cwd(), "public", saved)) ? saved : `https://opengraph.githubassets.com/1/${repo[1]}/${repo[2]}`,
       label,
       href: url,
       domain,
