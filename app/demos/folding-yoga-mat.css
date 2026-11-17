@@ -1,0 +1,31 @@
+/* The folding yoga mat demo. Builds on the shared .ui-try frame in
+   globals.css; only what that frame doesn't have lives here. */
+
+/* The still drawn on the server sits under the canvas until it's ready. */
+.yoga-stage .yoga-still { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transition: opacity .2s ease .3s; }
+/* The canvas is see-through, so the still goes once the mat is drawn over it. */
+.yoga-stage[data-ready] .yoga-still { opacity: 0; }
+/* Sideways drags turn the mat; up and down still scroll the page on a phone. */
+.yoga-stage canvas { touch-action: pan-y; cursor: grab; }
+.yoga-stage canvas:active { cursor: grabbing; }
+.yoga-stage canvas:focus-visible { outline: var(--line) solid #1c1c1c; outline-offset: -1px; }
+
+.yoga-try .ui-try-controls { align-items: center; }
+.yoga-scrub-row { flex: 1 1 100%; flex-wrap: nowrap; gap: var(--space-4); }
+/* Wide enough for "Unfold", so the pill keeps its size either way. */
+.yoga-fold { flex: none; min-width: 5.4em; }
+
+.yoga-scrub { flex: 1; display: flex; align-items: center; gap: var(--space-3); min-width: 0; font-size: var(--text-sm); color: var(--color-ink-soft); }
+.yoga-scrub input { flex: 1; min-width: 0; height: 32px; margin: 0; background: transparent; appearance: none; -webkit-appearance: none; cursor: pointer; }
+.yoga-scrub input:focus-visible { outline: var(--line) solid var(--color-ink); outline-offset: 2px; border-radius: var(--radius-pill); }
+.yoga-scrub input::-webkit-slider-runnable-track { height: 1px; background: var(--color-rule); }
+.yoga-scrub input::-moz-range-track { height: 1px; background: var(--color-rule); }
+.yoga-scrub input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 14px; margin-top: -7px; border: 0; border-radius: var(--radius-pill); background: var(--color-ink); }
+.yoga-scrub input::-moz-range-thumb { width: 24px; height: 14px; border: 0; border-radius: var(--radius-pill); background: var(--color-ink); }
+
+.yoga-status { flex: 1 1 18em; min-width: 0; margin: 0; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 560px) {
+  .yoga-scrub-row { gap: var(--space-3); }
+  .yoga-scrub { gap: var(--space-2); }
+}
