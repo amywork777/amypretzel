@@ -1,0 +1,21 @@
+/* Harp mini demo (app/demos/harp-instrument.tsx). The stage is the media
+   box, which stays light in dark mode, so the drawing keeps the light ink. */
+
+.harp-stage { outline: none; }
+.harp-stage:focus-visible { outline: var(--line) solid currentColor; outline-offset: 4px; }
+.harp-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
+.harp-svg path, .harp-svg circle { fill: none; vector-effect: non-scaling-stroke; stroke-width: 1px; }
+.harp-line { stroke: #1c1c1c; }
+.harp-faint { stroke: rgba(28, 28, 28, .26); }
+.harp-string { stroke: #1c1c1c; stroke-opacity: .5; }
+.harp-svg text { font-family: inherit; font-size: 17px; fill: rgba(28, 28, 28, .6); font-variant-numeric: tabular-nums; pointer-events: none; }
+.harp-key { opacity: 0; transition: opacity var(--ease); }
+.harp-stage:focus-visible .harp-key { opacity: 1; }
+
+.harp-readout { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; font-size: var(--text-sm); line-height: 1.45; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; text-align: right; }
+.harp-readout span:first-child { color: var(--color-ink); }
+
+@media (max-width: 600px) {
+  .harp-tension, .harp-key, .harp-labels-pill { display: none; }
+  .harp-readout { margin-left: 0; align-items: flex-start; text-align: left; }
+}
