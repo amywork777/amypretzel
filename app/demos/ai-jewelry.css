@@ -1,0 +1,23 @@
+/* Taiyaki Jewelry mini demo: the drawing pad, the still and the readout.
+   Everything else is the shared .ui-try frame in globals.css. The stage keeps
+   its light media tone in dark mode, so lines on it are a fixed ink. */
+.jc-stage { user-select: none; -webkit-user-select: none; }
+.jc-still { transition: opacity .3s ease; }
+.jc-still[data-gone] { opacity: 0; }
+.jc-stage canvas { cursor: grab; }
+.jc-stage canvas:active { cursor: grabbing; }
+.jc-stage canvas[data-hidden] { visibility: hidden; }
+.jc-pad { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; }
+.jc-pad path, .jc-pad polyline, .jc-pad circle { fill: none; stroke: #1c1c1c; stroke-width: 1; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+.jc-pad .jc-was { stroke: rgba(28, 28, 28, .28); }
+.jc-pad[data-making] { cursor: default; }
+.jc-flat path { fill: #c8c8c8; stroke: none; }
+.jc-hint { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; font-size: var(--text-sm); color: rgba(28, 28, 28, .5); pointer-events: none; }
+.jc-readout { margin: var(--space-3) 0 0; min-height: 1.5em; font-size: var(--text-sm); color: var(--color-ink-soft); }
+.jc-readout + .ui-try-caption { margin-top: var(--space-2); }
+/* On phones the action pill takes its own line in both modes, so switching
+   between drawing and metal doesn't move anything below. */
+@media (max-width: 560px) {
+  .jc .ui-try-controls > .ui-try-row:last-child { flex-basis: 100%; }
+  .jc-readout { min-height: 3em; }
+}
