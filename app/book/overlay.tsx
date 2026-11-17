@@ -31,7 +31,7 @@ export default function BookOverlay() {
     // The pretzels open by themselves once, on a first desktop visit. After that the
     // homepage is the homepage, including when Home is clicked from a project;
     // the Pretzels link or /#book still opens it on any device. Deep links to
-    // other anchors (/#software etc.) are never hijacked.
+    // other anchors (/#products etc.) are never hijacked.
     const autoOpen = desktop && hash === "" && !hasSeenBook();
     if (hash === "#book" || autoOpen) {
       // the open decision must run after hydration; the server renders null

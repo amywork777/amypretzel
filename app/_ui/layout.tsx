@@ -26,8 +26,8 @@ export function PageIntro({ title, meta, children }: { title: string; meta?: Rea
 }
 
 /* A small label sitting on a hairline, above a group of items. */
-export function SectionHeading({ id, children }: { id?: string; children: ReactNode }) {
-  return <header className="ui-section-heading"><h2 id={id}>{children}</h2></header>;
+export function SectionHeading({ id, note, children }: { id?: string; note?: string; children: ReactNode }) {
+  return <header className="ui-section-heading"><h2 id={id}>{children}</h2>{note && <p className="ui-section-note">{note}</p>}</header>;
 }
 
 /* Sign-off at the bottom of the page. The homepage leaves out the link home. */

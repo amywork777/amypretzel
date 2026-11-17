@@ -49,17 +49,18 @@ const contactLinks = [
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
 ];
 
-/* Plain lists, like Felix Rieseberg's site: Work, then Objects, then Software,
-   each row a small picture, a title, one line and a year. Manufacturing leads
-   Objects and the CAD tools lead Software; the earlier studies fold away under
-   one line. Years come from a real source (launch post, repo, patent). */
+/* Plain lists, like Felix Rieseberg's site: a short Work list of names and
+   roles, then the things grouped by kind. Each row is a small picture, a
+   title, one line and a year. Physical products lead, since manufacturing is
+   what Amy is most into; the earlier studies fold away under one line. Years
+   come from a real source (launch post, repo, patent). */
 const work = [
-  { name: "Vizcom", role: "Now", text: "Building AI tools for industrial designers: Region Maps, Extract, Smart Dropper, voice input, and a yoga mat taken from render to production." },
-  { name: "Taiyaki", role: "Founder", text: "AI concept-to-CAD for hardware teams, and sketch-to-jewelry cast in silver and gold." },
-  { name: "Taya", role: "Founder", text: "A wearable AI journal designed as jewelry." },
-  { name: "Mobius", role: "Founder", text: "Materials trading and recycling." },
-  { name: "Apple", role: "Product design engineer", text: "Materials and integration for the iPhone FineWoven case, patent co-inventor. iPad accessories." },
-  { name: "Stanford", role: "Student", text: "Product design and mechanical engineering, with a minor in music." },
+  { name: "Vizcom", role: "Now" },
+  { name: "Taiyaki", role: "Founder" },
+  { name: "Taya", role: "Founder" },
+  { name: "Mobius", role: "Founder" },
+  { name: "Apple", role: "Product design engineer" },
+  { name: "Stanford", role: "Student" },
 ];
 
 const cover = (slug: string) => projects.find(p => p.slug === slug)!;
@@ -78,15 +79,19 @@ const app = (slug: string, text: string, year: string): ListItem => ({
   href: `/software/${slug}`, image: screenshot[slug] ?? `/work/${slug}.webp`, screen: slug !== "taiyaki-3d",
   title: softwareProjects.find(p => p.slug === slug)!.title, text, year,
 });
-const software: ListItem[] = [
-  app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
-  app("taiyaki-3d", "AI concept-to-CAD for hardware teams.", "2025"),
+const aiTools: ListItem[] = [
   app("region-maps", "Edit each part's color and material in a render.", "2026"),
-  app("lipflow", "Silent dictation by lip reading. 700+ stars.", "2026"),
-  app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
   app("extract", "Pull colors, materials and parts out of an image.", "2026"),
   app("smart-dropper", "Copy one image's style onto another.", "2026"),
   app("voice-input", "Speak prompts, in any language.", "2026"),
+];
+const cad: ListItem[] = [
+  app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
+  app("taiyaki-3d", "AI concept-to-CAD for hardware teams.", "2025"),
+  app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
+];
+const tools: ListItem[] = [
+  app("lipflow", "Silent dictation by lip reading. 700+ stars.", "2026"),
   app("sf-rats", "A live map of free Bay Area events.", "2024"),
   app("cute-ghostty", "A pastel terminal setup.", "2026"),
   app("screenie", "A screen recorder that edits while you record.", "2026"),
@@ -112,22 +117,30 @@ export default function Home() {
           <ul className="ui-list ui-list--plain">
             {work.map(w => (
               <li key={w.name} className="ui-list-row">
-                <span className="ui-list-text"><span className="ui-list-title">{w.name}</span><span className="ui-list-line">{w.text}</span></span>
+                <span className="ui-list-title">{w.name}</span>
                 <span className="ui-list-year">{w.role}</span>
               </li>
             ))}
           </ul>
         </section>
-        <section id="objects" className="home-list" aria-labelledby="objects-title">
-          <SectionHeading id="objects-title">Objects</SectionHeading>
-          <List items={objects} label="Objects" />
+        <section id="products" className="home-list" aria-labelledby="products-title">
+          <SectionHeading id="products-title" note="Manufactured">Physical products</SectionHeading>
+          <List items={objects} label="Physical products" />
           <Earlier title="Earlier, at Stanford and home" count={earlier.length}>
             <List items={earlier} label="Earlier objects" small />
           </Earlier>
         </section>
-        <section id="software" className="home-list" aria-labelledby="software-title">
-          <SectionHeading id="software-title">Software</SectionHeading>
-          <List items={software} label="Software" />
+        <section id="ai-tools" className="home-list" aria-labelledby="ai-tools-title">
+          <SectionHeading id="ai-tools-title" note="At Vizcom">AI tools for designers</SectionHeading>
+          <List items={aiTools} label="AI tools for designers" />
+        </section>
+        <section id="cad" className="home-list" aria-labelledby="cad-title">
+          <SectionHeading id="cad-title">3D and CAD</SectionHeading>
+          <List items={cad} label="3D and CAD" />
+        </section>
+        <section id="tools" className="home-list" aria-labelledby="tools-title">
+          <SectionHeading id="tools-title" note="Side projects">Tools and toys</SectionHeading>
+          <List items={tools} label="Tools and toys" />
         </section>
         <SiteFooter home={false} />
       </main>

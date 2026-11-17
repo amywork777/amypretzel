@@ -16,8 +16,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/work", destination: "/", permanent: true },
-      { source: "/portfolio", destination: "/#objects", permanent: true },
-      { source: "/software", destination: "/#software", permanent: true },
+      { source: "/portfolio", destination: "/#products", permanent: true },
+      { source: "/software", destination: "/#ai-tools", permanent: true },
     ];
   },
 };

@@ -14,9 +14,7 @@ export default function SiteNav() {
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/#work">Work</a>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/#objects">Objects</a>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/#software">Software</a>
+          <a href="/#products">Things</a>
           <BookNavLink />
           <ThemeToggle />
         </nav>
