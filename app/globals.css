@@ -247,6 +247,11 @@ a.ui-button { text-decoration: none; }
 .ui-media-stack iframe.ui-pdf { height: auto; aspect-ratio: 8.5 / 11; border: var(--line) solid var(--color-rule); }
 .ui-embeds { padding-top: var(--space-7); display: grid; gap: var(--space-6); }
 .ui-embed { margin: 0; }
+/* A vertical reel or TikTok reads at phone width, not stretched across the column. */
+.ui-embed--narrow { max-width: 420px; }
+/* A video sits at its own shape: a tall phone clip is held to the screen's height, not stretched to the column. */
+.ui-embed--video .ui-embed-frame { width: fit-content; max-width: 100%; }
+.ui-embed--video .ui-embed-frame video { width: auto; max-width: 100%; max-height: min(80vh, 720px); }
 .ui-embed-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: 10px; font-size: var(--text-sm); }
 .ui-embed-head .ui-meta { color: var(--color-ink-muted); }
 .ui-embed-frame { position: relative; border: var(--line) solid var(--color-rule); }

@@ -30,4 +30,4 @@ export const demos: Record<string, ComponentType> = {
     (her video shows the real lip reading); Smart Dropper's launch shows the
     real tool working and Cute Ghostty's the real terminal, where the demos
     replay or imitate. */
-export const videoFirst = new Set(["lipflow", "smart-dropper", "cute-ghostty"]);
+export const videoFirst = new Set(["region-maps", "lipflow", "smart-dropper", "cute-ghostty"]);

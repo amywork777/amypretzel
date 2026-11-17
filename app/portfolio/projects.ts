@@ -40,7 +40,7 @@ export const projects: Project[] = [
       "/portfolio/folding-yoga-mat/fold-sequence.webp",
     ],
     links: [
-      { label: "Tara's original reel", url: "https://www.instagram.com/reels/DcBtdArysMc/" },
+      { label: "The inspiration: Tara's original reel", url: "https://www.instagram.com/reels/DcBtdArysMc/" },
     ],
     body: `A full-size yoga mat that folds like origami into a square you can carry in a backpack, taken from a Vizcom render to a manufactured sample.
 
@@ -138,9 +138,6 @@ The cleanup stage encodes the rules that take a jewelry CAD designer years to in
 - Memorial pieces from a single photograph
 - Custom commission work from a hand sketch
 - Storytelling jewelry that wouldn't be economical to model in CAD from scratch`,
-    links: [
-      { label: "Launch post", url: "https://www.linkedin.com/feed/update/urn:li:activity:7340491665603772416/" },
-    ],
   },
 
 
@@ -242,7 +239,7 @@ Most of the engineering was structural. I sized the frame walls so deflection un
 
 Designing for sound is its own kind of discipline. You can't simulate timbre the way you can simulate stress; you build, you listen, you redistribute mass and string-anchor stiffness, and you build the next one. Recording linked below.`,
     links: [
-      { label: "Listen", url: "https://drive.google.com/file/d/1Pk-t70xBEB0dF-G3Ecy7gSXF8dOjhMaG/view" },
+      { label: "Listen", url: "/portfolio/harp-instrument/playing.mp4" },
     ],
   },
 
@@ -268,7 +265,7 @@ The acoustics live in the coupling between three subsystems: the breath channel 
 
 The body is a turned aluminum tube; the membrane is a thin polymer film stretched across one end. Most of the design work was iterating on membrane tension, breath-channel geometry, and the small slots that direct airflow over the membrane edge. Recording linked below.`,
     links: [
-      { label: "Listen", url: "https://drive.google.com/file/d/1tKC5K0He7XORUA2binunJYOy3iCnOWDI/view" },
+      { label: "Listen", url: "/portfolio/membrane-whistle/playing.mp4" },
     ],
   },
 

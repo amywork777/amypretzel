@@ -1,5 +1,5 @@
-"""Bake a part's build, step by step, into the static files the CAD stepper demo reads
-(app/demos/cad-stepper.tsx): public/demos/<slug>/steps.json (the steps, as words) and steps.bin
+"""Bake a part's build, step by step, into the static files the CAD stepper demo read
+(app/demos/cad-stepper.tsx, now in git history; the page shows stills of it): public/demos/<slug>/steps.json (the steps, as words) and steps.bin
 (each step's solid as a mesh, its edges and any sketch lines). Nothing here is drawn or guessed:
 every step is a solid a CAD kernel (OpenCascade) built, meshed as it was.
 

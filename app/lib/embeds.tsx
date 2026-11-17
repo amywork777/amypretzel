@@ -13,7 +13,7 @@ export function Embeds({ embeds }: { embeds: Embed[] }) {
   return (
     <section className="ui-embeds" aria-label="Project links">
       {embeds.map((embed) => (
-        <figure className="ui-embed" key={embed.kind === "tweet" ? embed.id : embed.src}>
+        <figure className={embed.kind === "frame" && embed.narrow ? "ui-embed ui-embed--narrow" : embed.kind === "video" ? "ui-embed ui-embed--video" : "ui-embed"} key={embed.kind === "tweet" ? embed.id : embed.src}>
           <figcaption className="ui-embed-head">
             <TextLink href={embed.href}>{embed.label}</TextLink>
             <span className="ui-meta">{embed.kind === "tweet" ? "x.com" : embed.domain}</span>
@@ -25,7 +25,7 @@ export function Embeds({ embeds }: { embeds: Embed[] }) {
               <Image src={embed.src} alt={embed.label} width={1200} height={600} unoptimized />
             ) : embed.kind === "video" ? (
               // #t=0.1 makes the browser paint a first frame instead of an empty box.
-              <video src={`${embed.src}#t=0.1`} aria-label={embed.label} controls muted loop playsInline preload="metadata" />
+              <video src={embed.sound ? embed.src : `${embed.src}#t=0.1`} poster={embed.sound ? embed.src.replace(/\.mp4$/, ".webp") : undefined} aria-label={embed.label} controls muted={!embed.sound} loop={!embed.sound} playsInline preload="metadata" />
             ) : (<>
               <span className="ui-embed-loading" aria-hidden="true">Loading {embed.domain}</span>
               <iframe

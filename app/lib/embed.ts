@@ -8,15 +8,14 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 export type Embed =
   | { kind: "tweet"; id: string; label: string; href: string }
-  | { kind: "frame"; src: string; height: number; label: string; href: string; domain: string }
+  | { kind: "frame"; src: string; height: number; label: string; href: string; domain: string; narrow?: boolean }
   | { kind: "image"; src: string; label: string; href: string; domain: string }
-  | { kind: "video"; src: string; label: string; href: string; domain: string };
+  | { kind: "video"; src: string; label: string; href: string; domain: string; sound?: boolean };
 
 // Amy's own sites, which set no framing headers, so they can run live in the page.
 const LIVE_SITES = [
   "sfrats-map.vercel.app",
   "cute-ghostty.vercel.app",
-  "landing-two-phi-66.vercel.app",
   "tayanecklace.com",
 ];
 
@@ -47,6 +46,17 @@ export function toEmbed(url: string, label: string): Embed | null {
       href: url,
       domain,
     };
+  }
+
+  // An Instagram reel or post, and a TikTok video, through their own
+  // embed players, which credit the creator and link back to the original.
+  const insta = url.match(/instagram\.com\/(?:reels?|p)\/([^/?#]+)/);
+  if (insta) {
+    return { kind: "frame", src: `https://www.instagram.com/reel/${insta[1]}/embed/captioned/`, height: 760, label, href: url, domain, narrow: true };
+  }
+  const tiktok = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  if (tiktok) {
+    return { kind: "frame", src: `https://www.tiktok.com/embed/v2/${tiktok[1]}`, height: 740, label, href: url, domain, narrow: true };
   }
 
   // Hugging Face only frames a dataset that has a working viewer; this one
@@ -80,6 +90,13 @@ export function toEmbed(url: string, label: string): Embed | null {
       href: url,
       domain,
     };
+  }
+
+  // A recording saved with the site (from Drive, whose player cut tall
+  // videos short): its own player, with sound, its poster the .webp of the
+  // same name.
+  if (url.startsWith("/") && url.endsWith(".mp4")) {
+    return { kind: "video", src: url, label, href: url, domain: "video", sound: true };
   }
 
   if (url.endsWith(".pdf")) {

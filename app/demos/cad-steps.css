@@ -1,0 +1,11 @@
+/* CAD-Steps: ten states in a numbered grid, five across, two across on a phone. */
+.cad-steps-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-4) var(--space-3); counter-reset: none; }
+.cad-steps-cell { margin: 0; min-width: 0; }
+.cad-steps-shot { aspect-ratio: 1; overflow: hidden; }
+.cad-steps-shot img { display: block; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
+.cad-steps-label { margin: 8px 0 0; font-size: var(--text-sm); line-height: 1.35; color: var(--color-ink); }
+.cad-steps-n { display: inline-block; min-width: 1.4em; color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+.cad-steps-detail { display: block; padding-left: 1.4em; color: var(--color-ink-soft); }
+@media (max-width: 600px) {
+  .cad-steps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

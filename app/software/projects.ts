@@ -40,7 +40,7 @@ export const softwareSections: SoftwareSection[] = [
         meta: "Color and material",
         summary:
           "Splits a product render into parts so each one's color, material, and pattern can be edited without re-rendering.",
-        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom. The boot above is a small version you can try, made from a frame of the launch video.
+        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom. The loop above is from the launch video, and under it is a small version you can try, made from a frame of the same video.
 
 Colorways are decided part by part: this strap in leather, that shell in matte black, the trim in brass. Before, that meant exporting the render and painting it somewhere else, then painting it again for every option. I built Region Maps at Vizcom together with our designer, from splitting the render into regions to the editor for each one.
 
@@ -299,17 +299,17 @@ type Picture = {
   lead?: string;
   /** A short demo that leads the page instead of the still, from Amy's post on X. */
   /** `sound`: Amy talks in it, so it gets controls to unmute. */
-  video?: { src: string; poster: string; width: number; height: number; sound?: boolean };
+  video?: { src: string; poster: string; width: number; height: number; sound?: boolean; rate?: number };
   /** A live site of Amy's that leads the page itself, running in a frame. */
   site?: string;
 };
 const pictures: Record<string, Picture> = {
-  "region-maps": { image: "/work/region-maps.webp" },
+  "region-maps": { image: "/work/region-maps.webp", video: { src: "/software/region-maps/lead.mp4", poster: "/software/region-maps/lead.webp", width: 1280, height: 720 } },
   studio: { image: "/work/studio.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
   lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
   "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },
   "voice-input": { image: "/work/voice-input.webp", video: { src: "/software/voice-input/demo.mp4", poster: "/software/voice-input/demo.webp", width: 1146, height: 720, sound: true } },
-  "smart-dropper": { image: "/work/smart-dropper.webp", video: { src: "/software/smart-dropper/launch.mp4", poster: "/software/smart-dropper/launch.webp", width: 1146, height: 720, sound: true } },
+  "smart-dropper": { image: "/work/smart-dropper.webp", video: { src: "/software/smart-dropper/launch.mp4", poster: "/software/smart-dropper/launch.webp", width: 1146, height: 720, sound: true, rate: 1.5 } },
   "sf-rats": { image: "/work/sf-rats.webp", site: "https://sfrats-map.vercel.app" },
   extract: { image: "/work/extract.webp", video: { src: "/software/extract/parts.mp4", poster: "/software/extract/parts.webp", width: 1280, height: 720 } },
   ...Object.fromEntries(["cad-steps", "selfie-booth"].map(slug => [slug, { image: `/work/${slug}.webp` }])),
