@@ -144,7 +144,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* === PDF VIEWER === */}
       {project.pdfPreview && (
         <section className="ui-media-stack">
-          <iframe src={project.pdfPreview} title={`${project.title} document preview`} className="h-[70vh] sm:h-[85vh]" loading="lazy" />
+          {/* A whole page at the column's width, so the filing reads like
+              paper rather than a strip; #view=FitH fits the page to the frame. */}
+          <iframe src={`${project.pdfPreview}#view=FitH&toolbar=0`} title={`${project.title} document preview`} className="ui-pdf" loading="lazy" allowFullScreen />
           <p className="ui-meta">If the viewer doesn&apos;t load on your device, open the PDF from the references above.</p>
         </section>
       )}
