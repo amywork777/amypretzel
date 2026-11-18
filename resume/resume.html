@@ -1,0 +1,133 @@
+<!doctype html>
+<!-- Amy's resume. Edit here, then `node scripts/render-resume.mjs` writes
+     public/amy-zhou-resume.pdf, which the homepage's Resume pill links to.
+     Set in the site's style: one sans, one ink, 1px rules. Arial rather than
+     Areal, because the PDF embeds its font and is public. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Amy Zhou, Resume</title>
+<style>
+  @page { size: letter; margin: 0.5in 0.6in; }
+  :root {
+    --ink: #1c1c1c;
+    --soft: rgba(28, 28, 28, .62);
+    --rule: rgba(28, 28, 28, .18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9.7pt;
+    line-height: 1.38;
+    letter-spacing: -.005em;
+    color: var(--ink);
+    background: #fff;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding-bottom: 9px; border-bottom: 1px solid var(--ink); }
+  h1 { font-size: 22pt; font-weight: 400; letter-spacing: -.03em; line-height: 1; }
+  .contact { text-align: right; color: var(--soft); line-height: 1.5; }
+
+  section { padding: 9px 0 9px; border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: 0; }
+  h2 { font-size: 8.5pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); margin-bottom: 5px; }
+
+  .role + .role { margin-top: 9px; }
+  .role-head { display: flex; justify-content: space-between; gap: 16px; }
+  .role-head strong { font-weight: 700; }
+  .role-head .sep { color: var(--soft); }
+  .when { color: var(--soft); white-space: nowrap; }
+  .where { color: var(--soft); }
+  ul { list-style: none; margin-top: 3px; }
+  li { padding-left: 12px; text-indent: -12px; }
+  li + li { margin-top: 1.5px; }
+  li::before { content: "•"; display: inline-block; width: 12px; text-indent: 0; padding-left: 1px; }
+
+  .summary { padding: 10px 0 9px; border-bottom: 1px solid var(--rule); }
+  .degree { display: flex; justify-content: space-between; gap: 16px; }
+  .note { color: var(--soft); margin-top: 2px; }
+  .skills { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; }
+  .skills dt { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Amy Zhou</h1>
+  <div class="contact">
+    San Francisco, CA<br>
+    <a href="https://amypretzel.com">amypretzel.com</a> · <a href="https://linkedin.com/in/amy7">linkedin.com/in/amy7</a> · <a href="mailto:amzyst@gmail.com">amzyst@gmail.com</a>
+  </div>
+</header>
+
+
+<section>
+  <h2>Experience</h2>
+  <div>
+    <div class="role">
+      <div class="role-head"><span><strong>Vizcom</strong><span class="sep"> · </span><span class="title">Product Design Engineer</span></span><span class="when">2026 – Present</span></div>
+      <ul>
+        <li>Design and build new AI image workflows for industrial designers, including multi-view generation, region-based materials, print and pattern application, and custom model training.</li>
+        <li>Design tools that turn canvas work into presentation-ready documents for design reviews.</li>
+        <li>Lead design-system work, consolidating duplicated UI into a shared component library.</li>
+      </ul>
+    </div>
+    <div class="role">
+      <div class="role-head"><span><strong>Taya</strong><span class="sep"> · </span><span class="title">Co-Founder &amp; CTO</span></span><span class="when">2024 – 2025</span></div>
+      <ul>
+        <li>Co-founded a venture-backed AI hardware startup; raised $5M.</li>
+        <li>Built AI CAD that generated manufacturable 3D geometry from text and images, then pivoted to an AI jewelry wearable that captures and transforms voice memories.</li>
+        <li>Led all engineering: AI pipelines, firmware, electronics and mechanical design.</li>
+      </ul>
+    </div>
+    <div class="role">
+      <div class="role-head"><span><strong>Mobius</strong><span class="sep"> · </span><span class="title">Co-Founder &amp; COO</span></span><span class="when">2023 – 2024</span></div>
+      <ul>
+        <li>Co-founded a materials intelligence startup for circular supply chains.</li>
+        <li>Led operations, product and customer workflows that helped manufacturers sell post-industrial byproduct through scrap aggregation, sourcing optimization and transparent recycling.</li>
+      </ul>
+    </div>
+    <div class="role">
+      <div class="role-head"><span><strong>Apple</strong><span class="sep"> · </span><span class="title">Product Design Engineer</span></span><span class="when">2021 – 2023</span></div>
+      <ul>
+        <li>Led materials development and mechanical integration for the FineWoven iPhone Case (US Patent Application 20250088581).</li>
+        <li>Designed and prototyped softgoods enclosures for iPad accessories, focused on materials innovation, durability testing and user experience.</li>
+      </ul>
+    </div>
+    <div class="role">
+      <div class="role-head"><span><strong>Swope Design Solutions</strong><span class="sep"> · </span><span class="title">Mechanical Engineer</span></span><span class="when">2021</span></div>
+      <ul>
+        <li>Took medical and consumer hardware from concept to functional prototype: silicone molding, machining, mechanical testing and assembly.</li>
+        <li>Improved machine shop workflows.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Education</h2>
+  <div>
+    <div class="role-head"><strong>Stanford University</strong><span class="when">2024</span></div>
+    <div>M.S. Mechanical Engineering, Product Realization &amp; Materials</div>
+    <div>B.S. Engineering, Product Design · Minor in Music</div>
+    <ul style="margin-top:4px">
+      <li><strong>Researcher, SHAPE Lab:</strong> designed mechanisms and instrumentation for a force-feedback haptic perception device, through prototyping and user testing.</li>
+      <li><strong>Course Instructor:</strong> designed and taught a Stanford engineering course on textile construction, material behavior and sustainable design.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Skills</h2>
+  <dl class="skills">
+    <dt>AI</dt><dd>AI-assisted development (Claude Code, Codex, Cursor), LLM integration, image generation models, LoRA fine-tuning, AI workflow design</dd>
+    <dt>Software</dt><dd>Python, TypeScript, React, Next.js, Three.js, Figma</dd>
+    <dt>Hardware + CAD</dt><dd>SolidWorks, Fusion 360, NX, DFM, GD&amp;T, mechanical–electrical integration, firmware, CNC machining, additive manufacturing, rapid prototyping</dd>
+    <dt>Languages</dt><dd>Mandarin (proficient)</dd>
+  </dl>
+</section>
+
+</body>
+</html>

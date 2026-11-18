@@ -47,6 +47,7 @@ const contactLinks = [
   { href: "https://x.com/amypretzel", label: "Twitter" },
   { href: "https://github.com/amywork777", label: "GitHub" },
   { href: "https://linkedin.com/in/amy7", label: "LinkedIn" },
+  { href: "/amy-zhou-resume.pdf", label: "Resume" },
 ];
 
 /* Amy's own bio and portrait, then the things grouped by kind (app/work.ts),

@@ -5,7 +5,9 @@ import type { ReactNode } from "react";
    rather than sitting inside a sentence. */
 type LinkProps = { href: string; children: ReactNode; className?: string; standalone?: boolean };
 
-const isExternal = (href: string) => /^https?:\/\//.test(href);
+/* Files in public/ (the resume PDF) open in a new tab like external links;
+   next/link would try to route to them. */
+const isExternal = (href: string) => /^https?:\/\//.test(href) || /\.pdf$/.test(href);
 
 /* The one link: a pill that fills with ink on hover, like the pill button.
    External links open in a new tab; internal ones go through next/link. */
