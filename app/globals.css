@@ -290,6 +290,9 @@ a.ui-button { text-decoration: none; }
 
 /* === SITE HEADER === */
 .site-header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding-top: 22px; padding-bottom: var(--space-2); }
+/* Project pages: the pretzel, then a Back pill to the project's group. */
+.site-header-start { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
+.site-back { font-size: var(--text-sm); white-space: nowrap; }
 /* The mark is the sketch pretzel (_ui/pretzel-mark.tsx), in ink like every
    icon on the site: no coloured things (Amy, 2026-11-16). Hovering squishes
    it like soft dough. */
@@ -453,11 +456,11 @@ a.ui-list-row:hover .ui-list-title { color: var(--color-ink-soft); }
 @media (max-width: 480px) { .ui-list-row { gap: var(--space-2) var(--space-4); } .ui-list-thumb { width: 72px; } .ui-list--small .ui-list-thumb { width: 48px; } }
 
 /* The stray pretzel at the foot of every page: tiny, faint, knocked askew, wiggles when found. */
-.secret-pretzel { display: inline-flex; width: 18px; height: 18px; transform: rotate(-24deg); color: var(--color-ink-soft); opacity: .6; transition: opacity .2s; }
-.secret-pretzel:hover, .secret-pretzel:focus-visible { opacity: 1; }
-.secret-pretzel svg { width: 100%; height: 100%; overflow: visible; }
+.secret-pretzel { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-ink-soft); text-decoration: none; opacity: .7; transition: opacity .2s, color .2s; }
+.secret-pretzel:hover, .secret-pretzel:focus-visible { opacity: 1; color: var(--color-ink); }
+.secret-pretzel svg { flex: none; width: 18px; height: 18px; overflow: visible; transform: rotate(-24deg); }
 .secret-pretzel:hover svg, .secret-pretzel:focus-visible svg { animation: secret-wiggle .5s ease-in-out; }
-@keyframes secret-wiggle { 25% { transform: rotate(14deg) scale(1.1); } 60% { transform: rotate(-8deg) scale(1.1); } }
+@keyframes secret-wiggle { 25% { transform: rotate(-10deg) scale(1.1); } 60% { transform: rotate(-32deg) scale(1.1); } }
 @media (prefers-reduced-motion: reduce) { .secret-pretzel:hover svg, .secret-pretzel:focus-visible svg { animation: none; } }
 
 @media (prefers-reduced-motion: reduce) {

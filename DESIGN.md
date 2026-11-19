@@ -230,13 +230,13 @@ A label-size title sitting under a hairline, above a group of items, on the fact
 
 ### Navigation
 
-The header sits on the same column as the page under it (the list column on the homepage, the reading column on project pages), so the pretzel lines up with the text and the links end where the text ends. The 44px sketch pretzel, in ink, sits left and goes home; on the right sits only the theme toggle. Amy removed the Work and About links later on 2026-11-16: the homepage is one page, the bio at the top and the work under it, and the opening sentence's pills now filter the work. Hovering the mark squishes it like soft dough.
+The header sits on the same column as the page under it (the list column on the homepage, the reading column on project pages), so the pretzel lines up with the text and the links end where the text ends. The 44px sketch pretzel, in ink, sits left and goes home; on the right sits only the theme toggle. Amy removed the Work and About links later on 2026-11-16: the homepage is one page, the bio at the top and the work under it, and the opening sentence's pills now filter the work. Hovering the mark squishes it like soft dough. On a project page a small pill sits beside the pretzel, "Back to" the project's group (its short name from `app/work.ts`), linking to `/#<group>` so the homepage opens that group and scrolls to it. Feedback on 2026-11-18 asked for a visible way back out of a project; the pretzel alone didn't read as one.
 
 **Project bar.** On a project page, once the title has scrolled away, a slim 52px bar slides down from the top: a 28px pretzel home, the group the project sits in as a soft link back to it (opened), a hairline slash, the project's name in ink, and Previous and Next on the right. It is paper, nearly opaque, with a hairline under it, and it steps aside at the top (where the header is) and at the foot (where the bigger Previous and Next are). Group names come from `app/work.ts`, which also feeds the homepage groups, so a project's group is defined in one place.
 
 ### Small Pretzels
 
-- **Stray pretzel:** an 18px sketch pretzel, faint and askew, lies at the foot of every page (not the facts page). Only one pretzel is in view at a time: Amy moved this one from the contact links to the footer on 2026-11-16. It leads to the secret facts page, and wiggles when found. Keep it unlabelled. Do not add it to the nav.
+- **Stray pretzel:** an 18px sketch pretzel, faint and askew, lies at the foot of every page (not the facts page). Only one pretzel is in view at a time: Amy moved this one from the contact links to the footer on 2026-11-16. It leads to the secret facts page, and wiggles when found. Since 2026-11-18 it carries a soft label, "psst, a secret", because feedback said it wasn't clear it was an easter egg; the facts page opens "You found the secret page." Keep the label that short and don't name what's behind it. Do not add it to the nav.
 
 ## Do's and Don'ts
 

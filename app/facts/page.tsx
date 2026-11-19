@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function FactsPage() {
   return (
     <Page width="narrow">
-      <PageIntro title="Cool facts.">Things about making physical stuff that I think are neat.</PageIntro>
+      <PageIntro title="Cool facts.">You found the secret page. Here are some things about making physical stuff that I think are neat.</PageIntro>
       <section aria-label="All facts" className="ui-facts">
         {facts.map(f => (
           <article key={f.slug} id={f.slug} className="ui-fact" aria-labelledby={`${f.slug}-title`}>

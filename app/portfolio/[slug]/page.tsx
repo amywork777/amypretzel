@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const bar = group && { href: `/#${group.id}`, title: group.short };
 
   return (
-    <Page width="narrow" bar={around && <ProjectBar group={bar} title={project.title} prev={around.prev} next={around.next} />}>
+    <Page width="narrow" back={bar} bar={around && <ProjectBar group={bar} title={project.title} prev={around.prev} next={around.next} />}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
