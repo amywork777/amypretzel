@@ -95,7 +95,7 @@ function Panel({ id }: { id: string }) {
   // holds still while the steps change; w and h are the file's own size.
   const img = (src: string, alt: string, w: number, h: number) => (
     <div className="st-shot" data-fit={Math.abs(w / h - 1.6) > 0.02 ? "contain" : undefined}>
-      <Image src={src} alt={alt} fill sizes="(min-width: 1200px) 880px, 100vw" />
+      <Image src={src} alt={alt} fill sizes="(min-width: 860px) 764px, 100vw" />
     </div>
   );
   switch (id) {

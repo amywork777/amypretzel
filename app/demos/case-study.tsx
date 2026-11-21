@@ -15,7 +15,7 @@ export function Hero({ src, width, height, alt }: { src: string; width: number; 
   return (
     <figure className="st st-wide st-hero">
       <div className="st-hero-stage">
-        <Image src={src} width={width} height={height} alt={alt} priority sizes="(min-width: 1296px) 1100px, 92vw" />
+        <Image src={src} width={width} height={height} alt={alt} priority sizes="(min-width: 860px) 764px, 100vw" />
       </div>
     </figure>
   );
@@ -45,7 +45,7 @@ export function Anatomy({ id, heading, lede, src, ratio, alt, caption, parts }: 
       </header>
       <Sheet title={caption} note={on ? `${on} of ${parts.length}` : "Point at a number"}>
         <div className="st-anat-stage" style={{ aspectRatio: ratio }} data-lit={lit ? "" : undefined}>
-          <Image src={src} alt={alt} fill sizes="(min-width: 1296px) 1200px, 100vw" />
+          <Image src={src} alt={alt} fill sizes="(min-width: 860px) 764px, 100vw" />
           <svg className="st-anat-dim" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <path fillRule="evenodd" d={`M0 0H100V100H0Z M${x} ${y}H${x + w}V${y + h}H${x}Z`} />
             <rect x={x} y={y} width={w} height={h} vectorEffect="non-scaling-stroke" />
@@ -84,7 +84,7 @@ function DetailFigure({ d, i }: { d: Detail; i: number }) {
   return (
     <figure ref={ref} className="st-rule" data-in={seen || undefined} style={{ ["--i" as string]: i % 2 }}>
       <div className="st-rule-frame">
-        <Image data-fade={d.fade} src={d.src} alt={d.alt} width={d.w} height={d.h} sizes="(min-width: 1296px) 500px, (min-width: 640px) 45vw, 90vw" />
+        <Image data-fade={d.fade} src={d.src} alt={d.alt} width={d.w} height={d.h} sizes="(min-width: 860px) 372px, 90vw" />
       </div>
       <figcaption>
         <span className="st-rule-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>

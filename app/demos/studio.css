@@ -4,10 +4,11 @@
    rounded frame with one caption line. Ink and hairlines only: the pictures
    are the only things with colour in them. */
 
-.st { --st-ease: cubic-bezier(.2, .8, .2, 1); --st-wide: min(1200px, calc(100vw - 2 * var(--gutter))); }
+.st { --st-ease: cubic-bezier(.2, .8, .2, 1); }
 
 /* Wider than the reading column, centred on it. On a phone it is the column. */
-.st-wide { width: var(--st-wide); margin-inline: calc((100% - var(--st-wide)) / 2); }
+/* Chapters sit in the reading column, like every other project page. */
+.st-wide { width: 100%; }
 
 /* --- Chapters ------------------------------------------------------------- */
 .st-chapter { max-width: 40em; margin-bottom: var(--space-6); }
@@ -68,7 +69,7 @@
 }
 @keyframes st-ping { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(2.1); } }
 
-.st-anat-list { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--space-5); }
+.st-anat-list { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-5); }
 .st-anat-list li { border-top: var(--line) solid var(--color-rule); }
 .st-anat-row { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: var(--space-3); row-gap: 3px; width: 100%; padding: 12px 0 16px; text-align: left; font: inherit; font-size: var(--text-sm); line-height: 1.45; color: inherit; background: none; border: 0; cursor: pointer; transition: opacity .25s ease; }
 .st-anat-n { grid-row: span 2; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; border: var(--line) solid var(--color-rule); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--color-ink-soft); transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
@@ -76,7 +77,6 @@
 .st-anat-d { color: var(--color-ink-soft); text-wrap: pretty; }
 .st-anat-list li[data-on] .st-anat-n { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
 .st-anat-list[data-lit] li:not([data-on]) .st-anat-row { opacity: .4; }
-@media (max-width: 900px) { .st-anat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
   .st-anat-list { grid-template-columns: minmax(0, 1fr); }
   .st-anat-dot { width: 20px; height: 20px; margin: -10px 0 0 -10px; font-size: 10px; border-width: 1.5px; }
@@ -105,11 +105,8 @@
 
 /* --- The job, step by step ------------------------------------------------ */
 /* A rail of steps by phase beside one stage that never changes size. */
-.st-tour-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
-.st-tabs { display: flex; flex-direction: column; gap: var(--space-5); position: sticky; top: 76px; }
 .st-phase { display: flex; flex-direction: column; gap: 6px; }
 .st-phase-name { padding-left: 10px; font-size: 12px; color: var(--color-ink-muted); }
-.st-phase-tabs { display: flex; flex-direction: column; gap: 2px; }
 .st-tab.ui-try-pill { justify-content: flex-start; display: flex; align-items: center; width: 100%; min-height: 34px; padding: 0 10px; text-align: left; border-color: transparent; border-radius: 8px; color: var(--color-ink-soft); }
 @media (hover: hover) { .st-tab.ui-try-pill:hover { border-color: transparent; background: var(--color-surface); color: var(--color-ink); } }
 .st-tab.ui-try-pill[aria-selected="true"] { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
@@ -135,13 +132,11 @@
 .st-spec dt { color: var(--color-ink-muted); }
 .st-spec dd { margin: 0; color: var(--color-ink); text-wrap: pretty; }
 
-@media (max-width: 900px) {
-  .st-tour-body { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-  .st-tabs { position: static; flex-direction: row; flex-wrap: wrap; gap: var(--space-3) var(--space-5); }
-  .st-phase-name { padding-left: 0; }
-  .st-phase-tabs { flex-direction: row; flex-wrap: wrap; gap: var(--space-2); }
-  .st-tab.ui-try-pill { width: auto; padding: 0 .85em; border-color: var(--color-rule); border-radius: var(--radius-pill); color: var(--color-ink); }
-}
+.st-tour-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.st-tabs { display: flex; flex-direction: row; flex-wrap: wrap; gap: var(--space-3) var(--space-5); }
+.st-phase-name { padding-left: 0; }
+.st-phase-tabs { display: flex; flex-direction: row; flex-wrap: wrap; gap: var(--space-2); }
+.st-tab.ui-try-pill { width: auto; padding: 0 .85em; border-color: var(--color-rule); border-radius: var(--radius-pill); color: var(--color-ink); }
 @media (max-width: 640px) {
   .st-step-side { grid-template-columns: minmax(0, 1fr); }
   .st-step-nav { grid-column: 1; }
@@ -174,9 +169,3 @@
 }
 @keyframes st-hero-in { from { opacity: 0; transform: translateY(16px) scale(.985); } to { opacity: 1; transform: none; } }
 
-/* The build film, after the text, at the same width as the chapters. Scoped to
-   a page that has the hero, since this file stays loaded after a visit. */
-body:has(.st-hero) .ui-lead-video.ui-after-text {
-  --st-wide: min(1200px, calc(100vw - 2 * var(--gutter)));
-  width: var(--st-wide); margin-inline: calc((100% - var(--st-wide)) / 2); border-radius: 10px;
-}
