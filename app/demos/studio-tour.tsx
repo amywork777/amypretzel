@@ -5,6 +5,7 @@ import { useRef, useState, type KeyboardEvent } from "react";
 import { LeadVideo } from "../_ui/lead-video";
 import { Sheet, Wipe } from "./studio-parts";
 import StudioPrinciples from "./studio-principles";
+import StudioAnatomy from "./studio-anatomy";
 import StageViewer from "./studio-stage";
 import "./studio.css";
 
@@ -129,6 +130,7 @@ export default function StudioTour() {
   };
   return (
     <div className="st st-after">
+      <StudioAnatomy />
       <StudioPrinciples />
       <section className="st-wide st-tour" aria-labelledby="st-tour-h">
         <header className="st-chapter">

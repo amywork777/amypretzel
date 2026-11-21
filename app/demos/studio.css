@@ -13,7 +13,6 @@
 .st-chapter { max-width: 40em; margin-bottom: var(--space-6); }
 .st-head { margin: 0; font-size: clamp(22px, 2vw, 28px); font-weight: 400; line-height: 1.15; letter-spacing: -.03em; color: var(--color-ink); text-wrap: balance; }
 .st-lede { margin: var(--space-3) 0 0; font-size: var(--text-base); line-height: 1.5; color: var(--color-ink-soft); text-wrap: pretty; }
-.st-anat { margin-top: var(--space-8); }
 .st-after { display: flex; flex-direction: column; gap: var(--space-9); margin-top: var(--space-9); }
 .st-after .ui-try { margin-block: 0; }
 
@@ -165,9 +164,19 @@
 .st-kind-n { opacity: .55; font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .st-stage-stage { aspect-ratio: 4 / 3; } }
 
-/* The build film leads at the same width as the chapters under it. Scoped to
-   a page that has the anatomy, since this file stays loaded after a visit. */
-body:has(.st-anat) .ui-lead-video:not(.ui-after-text) {
+/* The hero: the whole app on the media surface, inset like a product shot,
+   settling in once on load. */
+.st-hero { margin-block: var(--space-6) 0; }
+.st-hero-stage { padding: clamp(14px, 5%, 64px); border-radius: 14px; background: var(--color-media); overflow: hidden; }
+.st-hero-stage img { display: block; width: 100%; height: auto; border-radius: 10px; outline: var(--line) solid rgba(28, 28, 28, .1); outline-offset: -1px; }
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .st-hero-stage img { animation: st-hero-in 1.1s var(--st-ease) .1s both; }
+}
+@keyframes st-hero-in { from { opacity: 0; transform: translateY(16px) scale(.985); } to { opacity: 1; transform: none; } }
+
+/* The build film, after the text, at the same width as the chapters. Scoped to
+   a page that has the hero, since this file stays loaded after a visit. */
+body:has(.st-hero) .ui-lead-video {
   --st-wide: min(1200px, calc(100vw - 2 * var(--gutter)));
   width: var(--st-wide); margin-inline: calc((100% - var(--st-wide)) / 2); border-radius: 10px;
 }
