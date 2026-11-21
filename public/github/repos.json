@@ -1,0 +1,37 @@
+{
+  "amywork777/studio": {
+    "description": "Studio: a CAD app for mechanical engineers",
+    "stars": 39,
+    "language": "TypeScript"
+  },
+  "earthtojake/text-to-cad": {
+    "description": "Design physical products with AI",
+    "stars": 27024,
+    "language": "Python"
+  },
+  "amywork777/cad-steps-dataset": {
+    "description": "Intermediate state dataset for parametric CAD - capturing geometry at each construction step",
+    "stars": 1,
+    "language": "Python"
+  },
+  "amywork777/lipflow": {
+    "description": "Wispr Flow for your lips: hold a key, silently mouth words, and they're typed at your cursor. Runs locally on your Mac.",
+    "stars": 723,
+    "language": "Python"
+  },
+  "amywork777/SFRATS": {
+    "description": "",
+    "stars": 1,
+    "language": "TypeScript"
+  },
+  "amywork777/CuteGhostty": {
+    "description": "Cute Ghostty - A cute customized Ghostty terminal emulator for macOS",
+    "stars": 89,
+    "language": "HTML"
+  },
+  "amywork777/selfie-booth": {
+    "description": "iPad selfie booth that prints on a USB thermal label printer",
+    "stars": 1,
+    "language": "Python"
+  }
+}

@@ -11,6 +11,7 @@ export type Embed =
   | { kind: "tweet"; id: string; label: string; href: string }
   | { kind: "frame"; src: string; height: number; label: string; href: string; domain: string; narrow?: boolean }
   | { kind: "image"; src: string; label: string; href: string; domain: string }
+  | { kind: "repo"; owner: string; name: string; description: string; stars: number; language: string; label: string; href: string; domain: string }
   | { kind: "video"; src: string; label: string; href: string; domain: string; poster: string; width: number; height: number; sound: boolean };
 
 // Amy's own sites, which set no framing headers, so they can run live in the page.
@@ -19,6 +20,14 @@ const LIVE_SITES = [
   "cute-ghostty.vercel.app",
   "tayanecklace.com",
 ];
+
+let repos: Record<string, { description: string; stars: number; language: string }> | null = null;
+function repoInfo() {
+  if (repos) return repos;
+  const file = join(process.cwd(), "public", "github", "repos.json");
+  try { repos = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {}; } catch { repos = {}; }
+  return repos!;
+}
 
 function domainOf(url: string) {
   try {
@@ -63,20 +72,15 @@ export function toEmbed(url: string, label: string): Embed | null {
   // Hugging Face only frames a dataset that has a working viewer; this one
   // reports "viewer is not available", which embeds as an empty box.
 
-  // GitHub renders a repo card as an image, which is lighter than an iframe
-  // and shows the description, language and star count. The card is saved
-  // with the site (scripts/fetch-github-cards.mjs), because loading it from
-  // GitHub on each visit sometimes timed out into a broken image.
+  // A GitHub repo is one quiet row in the site's own type (app/lib/embeds.tsx):
+  // its name, its description and, once it has a following, its stars. The
+  // details are saved with the site by scripts/fetch-github-cards.mjs, so a
+  // page never waits on GitHub. GitHub's own card image was louder than the
+  // page around it (Amy, 2026-11-21).
   const repo = url.match(/^https:\/\/github\.com\/([^/?#]+)\/([^/?#]+)\/?$/);
   if (repo) {
-    const saved = `/github/${repo[1]}-${repo[2]}.png`;
-    return {
-      kind: "image",
-      src: existsSync(join(process.cwd(), "public", saved)) ? saved : `https://opengraph.githubassets.com/1/${repo[1]}/${repo[2]}`,
-      label,
-      href: url,
-      domain,
-    };
+    const info = repoInfo()[`${repo[1]}/${repo[2]}`];
+    return { kind: "repo", owner: repo[1], name: repo[2], description: info?.description ?? "", stars: info?.stars ?? 0, language: info?.language ?? "", label, href: url, domain };
   }
 
   const drive = url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/);
@@ -121,7 +125,7 @@ export function splitLinks(
   const seen = new Set(alreadyShown);
   for (const link of links ?? []) {
     const embed = toEmbed(link.url, link.label);
-    const id = embed ? (embed.kind === "tweet" ? embed.id : embed.src) : "";
+    const id = embed ? (embed.kind === "tweet" ? embed.id : embed.kind === "repo" ? embed.href : embed.src) : "";
     if (embed && !seen.has(id)) {
       seen.add(id);
       embeds.push(embed);

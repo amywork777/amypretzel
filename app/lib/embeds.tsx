@@ -12,8 +12,11 @@ const PLAYER = /youtube\.com\/embed|instagram\.com|tiktok\.com/;
  * card, a document. Each one keeps a caption that links out, so the section
  * still works if a third party stops allowing embeds.
  */
-export function Embeds({ embeds }: { embeds: Embed[] }) {
-  if (embeds.length === 0) return null;
+export function Embeds({ embeds: all }: { embeds: Embed[] }) {
+  if (all.length === 0) return null;
+  // Repos read as one list of code after the media, not a card apiece.
+  const repos = all.filter((e): e is Extract<Embed, { kind: "repo" }> => e.kind === "repo");
+  const embeds = all.filter((e): e is Exclude<Embed, { kind: "repo" }> => e.kind !== "repo");
   return (
     <section className="ui-embeds" aria-label="Project links">
       {embeds.map((embed) => {
@@ -66,6 +69,24 @@ export function Embeds({ embeds }: { embeds: Embed[] }) {
           </figure>
         );
       })}
+      {repos.length > 0 && (
+        <ul className="ui-repos" aria-label="Code">
+          {repos.map(r => (
+            <li key={r.href}>
+              <a className="ui-repo" href={r.href} target="_blank" rel="noreferrer">
+                <span className="ui-repo-name"><span className="ui-repo-owner">{r.owner}/</span>{r.name}</span>
+                {r.description && <span className="ui-repo-desc">{r.description}</span>}
+                <span className="ui-repo-meta">{[r.stars >= 20 ? `${starCount(r.stars)} stars` : "", r.language, "GitHub"].filter(Boolean).join(" · ")}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
+}
+
+/** 39, 723, 27k: whole stars under ten thousand, then thousands. */
+function starCount(n: number) {
+  return n >= 10000 ? `${Math.round(n / 1000)}k` : n.toLocaleString("en-US");
 }

@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -35,6 +37,8 @@ export async function generateMetadata({
   const url = `/portfolio/${slug}`;
   const ogTitle = `${p.title}, Amy Zhou`;
   const cover = p.cover?.startsWith("http") ? p.cover : `${SITE_URL}${p.cover}`;
+  // Its own link preview (public/og/<slug>.jpg, made by scripts/make-og.py), else its cover.
+  const og = existsSync(join(process.cwd(), "public", "og", `${slug}.jpg`)) ? `${SITE_URL}/og/${slug}.jpg` : cover;
   return {
     title: p.title,
     description: p.role,
@@ -44,13 +48,13 @@ export async function generateMetadata({
       url,
       title: ogTitle,
       description: p.role,
-      images: p.cover ? [{ url: cover, alt: p.title }] : undefined,
+      images: [{ url: og, width: 2400, height: 1260, alt: p.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: p.role,
-      images: p.cover ? [cover] : undefined,
+      images: [og],
     },
   };
 }

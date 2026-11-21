@@ -267,6 +267,16 @@ a.ui-button { text-decoration: none; }
 /* The patent: one US letter page fills the column; the viewer scrolls through the rest. */
 .ui-media-stack iframe.ui-pdf { height: auto; aspect-ratio: 8.5 / 11; border: var(--line) solid var(--color-rule); }
 .ui-embeds { padding-top: var(--space-7); display: grid; gap: var(--space-6); }
+/* A page's repos: one list of rows on hairlines, like the homepage's, the
+   name in ink, its description soft, its details on the right. */
+.ui-repos { list-style: none; margin: 0; padding: 0; border-bottom: var(--line) solid var(--color-rule); }
+.ui-repo { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-5); row-gap: 2px; padding: 14px 0 15px; border-top: var(--line) solid var(--color-rule); color: var(--color-ink); text-decoration: none; }
+.ui-repo-name { font-weight: 500; transition: color var(--ease); }
+.ui-repo-owner { font-weight: 400; color: var(--color-ink-soft); }
+.ui-repo-desc { grid-column: 1; font-size: var(--text-sm); color: var(--color-ink-soft); text-wrap: pretty; }
+.ui-repo-meta { grid-column: 2; grid-row: 1; align-self: baseline; font-size: var(--text-sm); color: var(--color-ink-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (hover: hover) { .ui-repo:hover .ui-repo-name { color: var(--color-ink-soft); } }
+@media (max-width: 560px) { .ui-repo { grid-template-columns: minmax(0, 1fr); } .ui-repo-meta { grid-column: 1; grid-row: auto; } }
 .ui-embed { margin: 0; }
 /* A vertical reel or TikTok reads at phone width, not stretched across the column. */
 .ui-embed--narrow { max-width: 420px; }

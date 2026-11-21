@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { LeadVideo } from "../../_ui/lead-video";
@@ -29,12 +31,14 @@ export async function generateMetadata({
   if (!p) return {};
   const url = `/software/${slug}`;
   const ogTitle = `${p.title}, Amy Zhou`;
+  // Its own link preview (public/og/<slug>.jpg, made by scripts/make-og.py), else its cover.
+  const og = `${SITE_URL}${existsSync(join(process.cwd(), "public", "og", `${slug}.jpg`)) ? `/og/${slug}.jpg` : p.picture?.image ?? "/og-image.png"}`;
   return {
     title: p.title,
     description: p.summary,
     alternates: { canonical: url },
-    openGraph: { type: "article", url, title: ogTitle, description: p.summary, images: p.picture ? [{ url: `${SITE_URL}${p.picture.image}`, alt: p.title }] : undefined },
-    twitter: { card: p.picture ? "summary_large_image" : "summary", title: ogTitle, description: p.summary, images: p.picture ? [`${SITE_URL}${p.picture.image}`] : undefined },
+    openGraph: { type: "article", url, title: ogTitle, description: p.summary, images: [{ url: og, width: 2400, height: 1260, alt: p.title }] },
+    twitter: { card: "summary_large_image", title: ogTitle, description: p.summary, images: [og] },
   };
 }
 
