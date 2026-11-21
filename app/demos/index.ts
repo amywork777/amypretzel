@@ -40,4 +40,4 @@ export const demosAfter: Record<string, ComponentType> = {
     real tool working and Cute Ghostty's the real terminal, where the demos
     replay or imitate. Studio leads with a hero still instead, its
     build film after the text. */
-export const videoFirst = new Set(["lipflow", "smart-dropper", "cute-ghostty"]);
+export const videoFirst = new Set(["region-maps", "lipflow", "smart-dropper", "cute-ghostty"]);

@@ -1,12 +1,12 @@
 "use client";
 
 import { RegionTry } from "../software/region-try";
-import { Anatomy, Details, Hero, type AnatomyPart, type Detail } from "./case-study";
+import { Anatomy, Details, type AnatomyPart, type Detail } from "./case-study";
 
 /* Region Maps as a design case study, on the same pieces as Studio's page
    (case-study.tsx). Vizcom is a closed app, so every picture is a frame of
    its own launch film or tutorial recordings (public/software/region-maps/):
-   hero.webp the launch film above its caption, anatomy.webp the editor while
+   the launch film leads the page (Amy prefers it to a still), anatomy.webp the editor while
    recolouring the chair (demo-2), the close-ups cut from the same clips.
    What each part says comes from those frames and the page's own text. */
 
@@ -61,17 +61,9 @@ const DETAILS: Detail[] = [
   },
 ];
 
-/** Leads the page: the hero still, then the small version to try. */
+/** Under the launch film, which leads the page (videoFirst): the small version to try. */
 export default function RegionMapsLead() {
-  return (
-    <>
-      <Hero
-        src="/software/region-maps/hero.webp" width={1280} height={560}
-        alt="Region Maps in Vizcom: a boot render with its sole outlined as one region, beside the colour picker and the Regions panel"
-      />
-      <RegionTry />
-    </>
-  );
+  return <RegionTry />;
 }
 
 /** After the text: the editor part by part, then four details up close. */
