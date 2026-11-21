@@ -176,7 +176,7 @@
 
 /* The build film, after the text, at the same width as the chapters. Scoped to
    a page that has the hero, since this file stays loaded after a visit. */
-body:has(.st-hero) .ui-lead-video {
+body:has(.st-hero) .ui-lead-video.ui-after-text {
   --st-wide: min(1200px, calc(100vw - 2 * var(--gutter)));
   width: var(--st-wide); margin-inline: calc((100% - var(--st-wide)) / 2); border-radius: 10px;
 }

@@ -12,7 +12,7 @@ import type { ComponentType } from "react";
    Every demo uses the shared .ui-try frame in globals.css: the stage, a row
    of pill controls, and a one-line soft caption starting "Try it:". */
 export const demos: Record<string, ComponentType> = {
-  "region-maps": dynamic(() => import("../software/region-try").then(m => m.RegionTry)),
+  "region-maps": dynamic(() => import("./region-maps-case")),
   "smart-dropper": dynamic(() => import("./smart-dropper")),
   "cad-steps": dynamic(() => import("./cad-steps")),
   "selfie-booth": dynamic(() => import("./selfie-booth")),
@@ -31,6 +31,7 @@ export const demos: Record<string, ComponentType> = {
     interface is designed by, the job step by step, then a model to turn over. */
 export const demosAfter: Record<string, ComponentType> = {
   "studio": dynamic(() => import("./studio-tour")),
+  "region-maps": dynamic(() => import("./region-maps-case").then(m => m.RegionMapsAfter)),
 };
 
 /** Pages whose real video is better than the mini demo: the video keeps the
@@ -39,4 +40,4 @@ export const demosAfter: Record<string, ComponentType> = {
     real tool working and Cute Ghostty's the real terminal, where the demos
     replay or imitate. Studio leads with a hero still instead, its
     build film after the text. */
-export const videoFirst = new Set(["region-maps", "lipflow", "smart-dropper", "cute-ghostty"]);
+export const videoFirst = new Set(["lipflow", "smart-dropper", "cute-ghostty"]);

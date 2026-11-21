@@ -40,7 +40,7 @@ export const softwareSections: SoftwareSection[] = [
         meta: "Color and material",
         summary:
           "Splits a product render into parts so each one's color, material, and pattern can be edited without re-rendering.",
-        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom. The loop above is from the launch video, and under it is a small version you can try, made from a frame of the same video.
+        body: `Region Maps splits a product render into its parts, then lets you change the color, material, and pattern of each part without re-rendering or leaving Vizcom. Above is a small version you can try, made from a frame of the launch video; the launch loop follows this text.
 
 Colorways are decided part by part: this strap in leather, that shell in matte black, the trim in brass. Before, that meant exporting the render and painting it somewhere else, then painting it again for every option. I built Region Maps at Vizcom together with our designer, from splitting the render into regions to the editor for each one.
 
