@@ -196,9 +196,12 @@ export default function StageViewer() {
   const info = pick ? sizes[pick] : null;
 
   return (
-    <section className="ui-try st-stage" aria-label="A linear stage built in Studio, in 3D">
-      <h2 className="st-head">Turn it over</h2>
-      <Sheet fig="3" title="Linear stage, 25 parts" note={ready ? "Drag to turn" : failed ? "Still" : "Loading the model"}>
+    <section className="ui-try st-wide st-stage" aria-labelledby="st-stage-h">
+      <header className="st-chapter">
+        <h2 id="st-stage-h" className="st-head">A whole machine, to turn over</h2>
+        <p className="st-lede">25 parts from my assembly demo, exported by the same CAD engine Studio runs. Drag it, pull it apart, pick a part.</p>
+      </header>
+      <Sheet title="Linear stage, 25 parts" note={ready ? "Drag to turn" : failed ? "Still" : "Loading the model"}>
         <div ref={wrap} className="ui-try-stage st-stage-stage">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="st-stage-still" src="/software/studio/linear-stage.webp" alt="" data-gone={ready || undefined} />
@@ -226,7 +229,7 @@ export default function StageViewer() {
           >{k.label}{sizes[k.id]?.count > 1 && <span className="st-kind-n"> ×{sizes[k.id].count}</span>}</button>
         ))}
       </div>
-      <p className="ui-try-caption">Try it: drag to turn it, pull it apart, pick a part. This is the real model from my assembly demo, exported by the same CAD engine Studio runs. Change the rail spacing from 60 to 90 mm in Studio and all 25 parts follow their mates; the bought parts are simplified catalogue shapes, apart from the motor, which is the vendor&apos;s STEP.</p>
+      <p className="ui-try-caption">Change the rail spacing from 60 to 90 mm in Studio and all 25 parts follow their mates; the bought parts are simplified catalogue shapes, apart from the motor, which is the vendor&apos;s STEP.</p>
     </section>
   );
 }

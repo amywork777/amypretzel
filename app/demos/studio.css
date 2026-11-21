@@ -1,116 +1,173 @@
-/* Studio page: frames drawn like engineering drawing sheets, a wipe between
-   a drawing and its CAD, the tour tabs and the 3D stage. Ink and hairlines
-   only, as everywhere else; the drawing look is all in the line work. */
+/* Studio page: a design case study. The visual chapters break out of the
+   reading column to a wide stage (text stays at reading width), each opens
+   with a real title and one line, and every picture of Studio sits in a quiet
+   rounded frame with one caption line. Ink and hairlines only: the pictures
+   are the only things with colour in them. */
 
-.st { --st-tick: 6px; }
-.st-head { margin: 0 0 var(--space-3); font-size: var(--text-sm); font-weight: 400; color: var(--color-ink-soft); padding-top: var(--space-3); border-top: var(--line) solid var(--color-rule); }
+.st { --st-ease: cubic-bezier(.2, .8, .2, 1); --st-wide: min(1200px, calc(100vw - 2 * var(--gutter))); }
 
-/* --- The sheet ---------------------------------------------------------- */
-.st-sheet { margin: 0; border: var(--line) solid var(--color-rule); border-radius: var(--radius); padding: 0 0 0; background: var(--color-paper); }
-.st-zones { display: grid; color: var(--color-ink-muted); font-size: 10px; line-height: 1; font-variant-numeric: tabular-nums; user-select: none; }
-.st-zones--x { grid-template-columns: repeat(6, 1fr); margin-left: 22px; height: 22px; }
-.st-zones--x span { display: grid; place-items: center; border-left: var(--line) solid var(--color-rule); }
-.st-zones--x span:first-child { border-left: 0; }
-.st-zones--x span { position: relative; }
-.st-zones--x span::after { content: ""; position: absolute; left: -1px; bottom: 0; height: var(--st-tick); border-left: var(--line) solid var(--color-ink-muted); }
-.st-zones--x span:first-child::after { display: none; }
-.st-sheet-body { display: grid; grid-template-columns: 22px minmax(0, 1fr); }
-.st-zones--y { grid-template-rows: repeat(4, 1fr); }
-.st-zones--y span { display: grid; place-items: center; border-top: var(--line) solid var(--color-rule); }
-.st-zones--y span:first-child { border-top: 0; }
-.st-sheet-stage { position: relative; border-top: var(--line) solid var(--color-rule); border-left: var(--line) solid var(--color-rule); background: var(--color-media); overflow: hidden; }
+/* Wider than the reading column, centred on it. On a phone it is the column. */
+.st-wide { width: var(--st-wide); margin-inline: calc((100% - var(--st-wide)) / 2); }
+
+/* --- Chapters ------------------------------------------------------------- */
+.st-chapter { max-width: 40em; margin-bottom: var(--space-6); }
+.st-head { margin: 0; font-size: clamp(22px, 2vw, 28px); font-weight: 400; line-height: 1.15; letter-spacing: -.03em; color: var(--color-ink); text-wrap: balance; }
+.st-lede { margin: var(--space-3) 0 0; font-size: var(--text-base); line-height: 1.5; color: var(--color-ink-soft); text-wrap: pretty; }
+.st-anat { margin-top: var(--space-8); }
+.st-after { display: flex; flex-direction: column; gap: var(--space-9); margin-top: var(--space-9); }
+.st-after .ui-try { margin-block: 0; }
+
+/* --- The frame ------------------------------------------------------------ */
+.st-sheet { margin: 0; }
+.st-sheet-stage { position: relative; border-radius: 10px; background: var(--color-media); overflow: hidden; outline: var(--line) solid var(--color-rule); outline-offset: -1px; }
 .st-sheet-stage > * { display: block; }
+.st-cap { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-5); margin-top: var(--space-3); font-size: var(--text-sm); line-height: 1.4; }
+.st-cap-t { color: var(--color-ink); }
+.st-cap-n { flex: none; color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
 
-/* Title block: cells on hairlines, a tiny key over each value. */
-.st-block { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; border-top: var(--line) solid var(--color-rule); font-size: var(--text-sm); line-height: 1.3; }
-.st-block-cell { display: flex; flex-direction: column; gap: 2px; padding: 7px 12px 8px; min-width: 0; }
-.st-block-cell + .st-block-cell { border-left: var(--line) solid var(--color-rule); }
-.st-block-key { font-size: 10px; color: var(--color-ink-muted); }
-.st-block-fig { min-width: 52px; font-variant-numeric: tabular-nums; }
-.st-block-title { color: var(--color-ink); }
-.st-block-note { color: var(--color-ink-soft); text-align: right; }
-@media (max-width: 560px) {
-  .st-block { grid-template-columns: auto minmax(0, 1fr); }
-  .st-block-note { display: none; }
-  .st-zones--x { grid-template-columns: repeat(4, 1fr); }
-  .st-zones--x span:nth-child(n + 5) { display: none; }
-}
-
-/* Rise in once on the way into view, when scripts run and motion is fine. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-  .st-sheet { opacity: 0; transform: translateY(14px); transition: opacity .7s cubic-bezier(.2, .8, .2, 1), transform .7s cubic-bezier(.2, .8, .2, 1); }
+  .st-sheet { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--st-ease), transform .8s var(--st-ease); }
   .st-sheet[data-in] { opacity: 1; transform: none; }
-  .st-sheet .st-zones span { opacity: 0; transition: opacity .4s ease; }
-  .st-sheet[data-in] .st-zones span { opacity: 1; }
-  .st-sheet[data-in] .st-zones--x span:nth-child(1) { transition-delay: .15s; }
-  .st-sheet[data-in] .st-zones--x span:nth-child(2) { transition-delay: .2s; }
-  .st-sheet[data-in] .st-zones--x span:nth-child(3) { transition-delay: .25s; }
-  .st-sheet[data-in] .st-zones--x span:nth-child(4) { transition-delay: .3s; }
-  .st-sheet[data-in] .st-zones--x span:nth-child(5) { transition-delay: .35s; }
-  .st-sheet[data-in] .st-zones--x span:nth-child(6) { transition-delay: .4s; }
-  .st-sheet[data-in] .st-zones--y span { transition-delay: .3s; }
-  .st-panel-media, .st-panel-text, .st-spec { animation: st-in .45s cubic-bezier(.2, .8, .2, 1) both; }
+  .st-panel-media, .st-step-side { animation: st-in .5s var(--st-ease) both; }
 }
 @keyframes st-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-/* --- The wipe ------------------------------------------------------------ */
+/* --- The wipe ------------------------------------------------------------- */
 .st-wipe { position: relative; width: 100%; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
 .st-wipe-layer { position: absolute; inset: 0; }
 .st-wipe-layer img { object-fit: cover; }
 .st-wipe-top { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
-.st-wipe-line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 0; border-left: var(--line) solid var(--color-ink); pointer-events: none; }
-html[data-theme="dark"] .st-wipe-line { border-color: #1c1c1c; }
+.st-wipe-line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 0; border-left: var(--line) solid #fff; pointer-events: none; }
 .st-wipe-knob { position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%); padding: 6px 11px 7px; border-radius: var(--radius-pill); background: #1c1c1c; color: #fff; font-size: 12px; line-height: 1; white-space: nowrap; transition: transform var(--ease); }
 .st-wipe:hover .st-wipe-knob, .st-wipe-input:focus-visible ~ .st-wipe-line .st-wipe-knob { transform: translate(-50%, -50%) scale(1.08); }
-.st-wipe-tag { position: absolute; bottom: 10px; padding: 4px 9px 5px; border-radius: var(--radius-pill); font-size: 12px; line-height: 1; color: #1c1c1c; background: rgba(255, 255, 255, .78); border: var(--line) solid rgba(28, 28, 28, .16); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); pointer-events: none; transition: opacity .25s ease; }
-.st-wipe-tag--l { left: 10px; }
-.st-wipe-tag--r { right: 10px; }
+.st-wipe-tag { position: absolute; bottom: 12px; padding: 4px 9px 5px; border-radius: var(--radius-pill); font-size: 12px; line-height: 1; color: #1c1c1c; background: rgba(255, 255, 255, .82); border: var(--line) solid rgba(28, 28, 28, .16); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); pointer-events: none; transition: opacity .25s ease; }
+.st-wipe-tag--l { left: 12px; }
+.st-wipe-tag--r { right: 12px; }
 .st-wipe-tag[data-dim] { opacity: 0; }
 .st-wipe-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; }
 .st-wipe-input:focus-visible { opacity: 0; }
 .st-wipe:has(.st-wipe-input:focus-visible) { outline: var(--line) solid var(--color-ink); outline-offset: 4px; }
 
-/* --- From the drawing ---------------------------------------------------- */
-.st-from-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--space-5); align-items: start; }
-.st-from-side { display: flex; flex-direction: column; gap: var(--space-4); padding-top: 22px; }
-.st-spec { margin: 0; font-size: var(--text-sm); line-height: 1.45; }
+/* --- The anatomy ---------------------------------------------------------- */
+/* One real screen, lit part by part: a veil with a hole cut where the chosen
+   part is, a 1px frame round the hole, and ink dots to point at. */
+.st-anat-stage { position: relative; aspect-ratio: 16 / 10; }
+.st-anat-stage img { object-fit: cover; }
+.st-anat-dim { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .35s var(--st-ease); }
+.st-anat-dim path { fill: rgba(20, 20, 20, .55); transition: d .4s var(--st-ease); }
+.st-anat-dim rect { fill: none; stroke: #fff; stroke-width: 1; transition: x .4s var(--st-ease), y .4s var(--st-ease), width .4s var(--st-ease), height .4s var(--st-ease); }
+.st-anat-stage[data-lit] .st-anat-dim { opacity: 1; }
+.st-anat-dot { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; padding: 0; display: grid; place-items: center; border-radius: 50%; border: 2px solid #fff; background: #1c1c1c; color: #fff; font: inherit; font-size: 12px; line-height: 1; font-variant-numeric: tabular-nums; cursor: pointer; transition: transform .3s var(--st-ease), background-color .2s ease, color .2s ease, opacity .2s ease; }
+.st-anat-dot::before { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 1px solid #1c1c1c; opacity: 0; transform: scale(1); }
+.st-anat-dot::after { content: ""; position: absolute; inset: -8px; border-radius: 50%; }
+.st-anat-dot[data-on] { transform: scale(1.15); background: #fff; color: #1c1c1c; border-color: #1c1c1c; }
+.st-anat-stage[data-lit] .st-anat-dot:not([data-on]) { opacity: .5; }
+@media (hover: hover) { .st-anat-dot:hover { transform: scale(1.15); } }
+/* Until one is chosen, the dots breathe once in turn to say they can be touched. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .st-sheet[data-in] .st-anat-stage:not([data-lit]) .st-anat-dot::before { animation: st-ping 1.4s var(--st-ease) both; animation-delay: calc(.5s + var(--n) * .12s); }
+}
+@keyframes st-ping { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(2.1); } }
+
+.st-anat-list { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--space-5); }
+.st-anat-list li { border-top: var(--line) solid var(--color-rule); }
+.st-anat-row { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: var(--space-3); row-gap: 3px; width: 100%; padding: 12px 0 16px; text-align: left; font: inherit; font-size: var(--text-sm); line-height: 1.45; color: inherit; background: none; border: 0; cursor: pointer; transition: opacity .25s ease; }
+.st-anat-n { grid-row: span 2; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; border: var(--line) solid var(--color-rule); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--color-ink-soft); transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
+.st-anat-t { color: var(--color-ink); font-weight: 500; }
+.st-anat-d { color: var(--color-ink-soft); text-wrap: pretty; }
+.st-anat-list li[data-on] .st-anat-n { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
+.st-anat-list[data-lit] li:not([data-on]) .st-anat-row { opacity: .4; }
+@media (max-width: 900px) { .st-anat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .st-anat-list { grid-template-columns: minmax(0, 1fr); }
+  .st-anat-dot { width: 20px; height: 20px; margin: -10px 0 0 -10px; font-size: 10px; border-width: 1.5px; }
+}
+
+/* --- The rules ------------------------------------------------------------ */
+/* Six details up close, one frame size: the crop sits on the media surface
+   like a piece of the app laid on the table, with its rule under it. */
+.st-rules-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7) var(--space-5); }
+.st-rule { margin: 0; }
+.st-rule-frame { aspect-ratio: 4 / 3; display: grid; place-items: center; padding: 8%; border-radius: 10px; background: var(--color-media); overflow: hidden; }
+.st-rule-frame img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; border-radius: 8px; outline: var(--line) solid rgba(28, 28, 28, .1); outline-offset: -1px; transition: transform .6s var(--st-ease); }
+/* A crop that runs on past the frame fades out instead of stopping mid-line. */
+.st-rule-frame img[data-fade="b"] { -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); }
+.st-rule-frame img[data-fade="br"] { -webkit-mask-image: linear-gradient(#000 72%, transparent), linear-gradient(90deg, #000 80%, transparent); -webkit-mask-composite: source-in; mask-image: linear-gradient(#000 72%, transparent), linear-gradient(90deg, #000 80%, transparent); mask-composite: intersect; }
+@media (hover: hover) { .st-rule:hover .st-rule-frame img { transform: scale(1.025); } }
+.st-rule figcaption { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: var(--space-3); row-gap: 3px; margin-top: var(--space-4); font-size: var(--text-sm); line-height: 1.45; }
+.st-rule-n { grid-row: span 2; padding-top: 1px; font-size: 11px; color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+.st-rule-t { color: var(--color-ink); font-weight: 500; }
+.st-rule-d { max-width: 34em; color: var(--color-ink-soft); text-wrap: pretty; }
+@media (max-width: 640px) { .st-rules-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); } }
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .st-rule { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--st-ease), transform .8s var(--st-ease); transition-delay: calc(var(--i, 0) * 100ms); }
+  .st-rule[data-in] { opacity: 1; transform: none; }
+}
+
+/* --- The job, step by step ------------------------------------------------ */
+/* A rail of steps by phase beside one stage that never changes size. */
+.st-tour-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+.st-tabs { display: flex; flex-direction: column; gap: var(--space-5); position: sticky; top: 76px; }
+.st-phase { display: flex; flex-direction: column; gap: 6px; }
+.st-phase-name { padding-left: 10px; font-size: 12px; color: var(--color-ink-muted); }
+.st-phase-tabs { display: flex; flex-direction: column; gap: 2px; }
+.st-tab.ui-try-pill { justify-content: flex-start; display: flex; align-items: center; width: 100%; min-height: 34px; padding: 0 10px; text-align: left; border-color: transparent; border-radius: 8px; color: var(--color-ink-soft); }
+@media (hover: hover) { .st-tab.ui-try-pill:hover { border-color: transparent; background: var(--color-surface); color: var(--color-ink); } }
+.st-tab.ui-try-pill[aria-selected="true"] { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
+.st-tab-n { margin-right: .75em; font-size: 11px; font-variant-numeric: tabular-nums; opacity: .5; }
+
+.st-panel-media { position: relative; aspect-ratio: 16 / 10; }
+.st-shot { position: absolute; inset: 0; }
+.st-shot img { object-fit: cover; object-position: top left; }
+.st-shot[data-fit="contain"] img { object-fit: contain; object-position: center; }
+.st-panel-media .st-wipe { position: absolute; top: 0; bottom: 0; left: 50%; width: auto; height: 100%; transform: translateX(-50%); }
+.st-panel-media .st-shot-video { display: grid; place-items: center; background: #0e0e0e; }
+.st-panel-media .st-shot-video video { width: 100%; height: 100%; object-fit: contain; }
+
+.st-step-side { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: var(--space-3) var(--space-6); margin-top: var(--space-5); align-items: start; }
+.st-step-want { margin: 0; padding-top: 8px; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.3; letter-spacing: -.02em; color: var(--color-ink); text-wrap: balance; }
+.st-step-nav { grid-column: 2; display: flex; align-items: center; gap: var(--space-2); }
+.st-step-count { margin-left: auto; font-size: 12px; color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+
+/* You / Studio rows on a step: a muted key beside each answer, on hairlines. */
+.st-spec { margin: 0; font-size: var(--text-sm); line-height: 1.5; }
 .st-spec > div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: var(--space-3); padding: 9px 0 10px; border-top: var(--line) solid var(--color-rule); }
 .st-spec > div:last-child { border-bottom: var(--line) solid var(--color-rule); }
 .st-spec dt { color: var(--color-ink-muted); }
-.st-spec dd { margin: 0; color: var(--color-ink); }
-.st-spec ul { margin: 0; padding: 0; list-style: none; }
-.st-spec li { font-variant-numeric: tabular-nums; }
-.st-spec li::before { content: "— "; color: var(--color-ink-muted); }
-@media (max-width: 700px) {
-  .st-from-grid { grid-template-columns: minmax(0, 1fr); }
-  .st-from-side { padding-top: 0; }
-  .st-from-pair .st-wipe { aspect-ratio: 1 / 1 !important; }
+.st-spec dd { margin: 0; color: var(--color-ink); text-wrap: pretty; }
+
+@media (max-width: 900px) {
+  .st-tour-body { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .st-tabs { position: static; flex-direction: row; flex-wrap: wrap; gap: var(--space-3) var(--space-5); }
+  .st-phase-name { padding-left: 0; }
+  .st-phase-tabs { flex-direction: row; flex-wrap: wrap; gap: var(--space-2); }
+  .st-tab.ui-try-pill { width: auto; padding: 0 .85em; border-color: var(--color-rule); border-radius: var(--radius-pill); color: var(--color-ink); }
+}
+@media (max-width: 640px) {
+  .st-step-side { grid-template-columns: minmax(0, 1fr); }
+  .st-step-nav { grid-column: 1; }
 }
 
-/* --- After the text ------------------------------------------------------ */
-.st-after { display: flex; flex-direction: column; gap: var(--space-8); margin-top: var(--space-8); }
-.st-after .ui-try { margin: 0; }
-.st-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
-.st-tab[aria-selected="true"] { color: var(--color-paper); background: var(--color-ink); border-color: var(--color-ink); }
-.st-tab-n { margin-right: .5em; font-size: 11px; font-variant-numeric: tabular-nums; opacity: .5; }
-.st-shot { position: relative; width: 100%; }
-.st-shot img { object-fit: cover; object-position: top left; }
-.st-shot-video { border-radius: 0; }
-.st-shot-video video { display: block; width: 100%; height: auto; }
-.st-panel-text { max-width: 40em; margin: var(--space-4) 0 0; font-size: var(--text-sm); line-height: 1.5; color: var(--color-ink-soft); min-height: 4.5em; }
-
-/* --- The stage ----------------------------------------------------------- */
-.st-stage-stage { aspect-ratio: 16 / 9; background: var(--color-media); }
+/* --- The stage ------------------------------------------------------------ */
+.st-stage-stage { aspect-ratio: 16 / 8; background: var(--color-media); }
 .st-stage-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .4s ease; }
 .st-stage-still[data-gone] { opacity: 0; }
 .st-stage-stage canvas { cursor: grab; touch-action: pan-y; }
 .st-stage-stage canvas:active { cursor: grabbing; }
-.st-stage-readout { position: absolute; left: 12px; top: 12px; margin: 0; display: flex; flex-direction: column; gap: 1px; padding: 8px 12px 9px; border-radius: var(--radius); font-size: 12px; line-height: 1.35; color: #1c1c1c; background: rgba(255, 255, 255, .82); border: var(--line) solid rgba(28, 28, 28, .16); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-variant-numeric: tabular-nums; pointer-events: none; }
+.st-stage-readout { position: absolute; left: 14px; top: 14px; margin: 0; display: flex; flex-direction: column; gap: 1px; padding: 8px 12px 9px; border-radius: 8px; font-size: 12px; line-height: 1.35; color: #1c1c1c; background: rgba(255, 255, 255, .85); border: var(--line) solid rgba(28, 28, 28, .14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-variant-numeric: tabular-nums; pointer-events: none; }
 .st-stage-readout b { font-weight: 500; }
 .st-stage-readout span { color: rgba(28, 28, 28, .6); }
-.st-stage-controls { justify-content: flex-start; }
+.st-stage-controls { justify-content: flex-start; margin-top: var(--space-4); }
 .st-range { display: inline-flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); color: var(--color-ink-soft); }
 .st-range input { width: 200px; accent-color: var(--color-ink); }
 .st-kinds { margin-top: var(--space-3); }
 .st-kinds .ui-try-part:disabled { opacity: .35; cursor: default; }
 .st-kind-n { opacity: .55; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .st-stage-stage { aspect-ratio: 4 / 3; } }
+
+/* The build film leads at the same width as the chapters under it. Scoped to
+   a page that has the anatomy, since this file stays loaded after a visit. */
+body:has(.st-anat) .ui-lead-video:not(.ui-after-text) {
+  --st-wide: min(1200px, calc(100vw - 2 * var(--gutter)));
+  width: var(--st-wide); margin-inline: calc((100% - var(--st-wide)) / 2); border-radius: 10px;
+}

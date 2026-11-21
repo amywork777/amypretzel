@@ -168,23 +168,29 @@ I shipped both as product features at Vizcom. The launch demo is at the top.`,
         meta: "AI CAD app",
         summary:
           "A free, open-source AI CAD app for mechanical engineers: describe a part, get a real feature-tree model, then test it and send it to be made.",
-        body: `Studio is a free, open-source CAD app for mechanical engineers, on Mac and Windows. Describe a part and the AI builds a real CAD model with a feature tree, so you can change any step by hand, test it, and send it to be made.
+        body: `Studio is a free, open-source CAD app for mechanical engineers, on Mac and Windows. Describe a part, or hand it a sketch or an old drawing, and the AI builds a real CAD model with a feature tree. From there you work the way engineers already do with a colleague's model: read it, change it, check it and send it to be made, without leaving the app.
 
-Most AI apps are built for code, and most AI 3D tools make meshes: a shape you can look at but can't dimension, edit or send to a machine shop. Engineers work in feature trees, so that's what Studio makes. Jake (earthtojake on GitHub) and I build it together, in the open, on his text-to-cad skills for AI agents.
+I designed and built Studio end to end, in the open: what sits where on the screen, the words it uses, the rules every change is held to, and the code under all of it. Its CAD runs on text-to-cad, Jake's (earthtojake on GitHub) open-source CAD skills for AI agents.
 
-## The engineering problem
+## The design problem
 
-A part that looks right in a chat can still be too thin to machine, collide with the part it mates to, or be impossible to mold. So the AI can't have the last word. Everything it builds has to be something an engineer can read, check and change, the same way they would check a colleague's model.
+Most AI apps are built for code, and most AI 3D tools make meshes: a shape you can look at but can't dimension, edit or send to a machine shop. Engineers work in feature trees, in CAD they've used for years, and they put their name on what gets made. A part that looks right in a chat can still be too thin to machine or collide with the part it mates to. So the AI can't have the last word, and the interface's job is to keep the engineer in charge without asking them to learn a new tool. Three goals came out of that:
+
+- Keep the engineer in charge. The AI drafts and you decide: every step sits in the feature tree, and anything it had to assume is written down so you know what to check
+- Get all the way to a made part. Checks, drawings and toolpaths sit next to the model, so "will it hold?" and "can it be made?" get asked while a change is still cheap
+- Keep the work your own. It runs on your own Claude or ChatGPT account, so there's no extra AI bill, and every project is an ordinary folder on your computer
 
 ### How it went
 
-- The part sits beside the chat: the model and its feature history, a toolbar with the CAD tools engineers already know, and engineering drawings
-- Strength and fit checks, and manufacturability checks for CNC, 3D printing, molding and sheet metal, run on the model itself
-- It runs on your own Claude or ChatGPT account, so there's no extra AI bill
-- Every project is an ordinary folder on your computer, with each change saved as a version, so nothing is locked inside the app
+- The model sits beside the chat, never under it, so you watch the part change while you talk, and fix a step in words or by hand, whichever is faster
+- The layout comes from SolidWorks, which most engineers learned on: the ribbon, the FeatureManager and the view cube are where they expect, so the only new thing on screen is the AI
+- I wrote the interface's rules down as laws that every change is checked against, a few of them by lint: engineering words rather than git's, colour only for passed, warning and failed, no made-up numbers
+- Changing a number rebuilds from that step, so you steer a design instead of re-rolling it
+- It says what it doesn't know: a derived dimension is labelled derived, and a machine program that hasn't been run on a machine is labelled unproven
+- Each change is saved as a version, so trying an idea never costs you the last good one
 - Under it: build123d and OpenCASCADE for the geometry, with my own feature tree on top; Netgen and CalculiX for strength checks; FreeCAD for toolpaths
 
-It's free at texttocad.studio. Below, a tab for each part of the job, and a model to turn over.`,
+It's free at texttocad.studio.`,
         tags: ["AI CAD", "Desktop app", "Open source"],
         links: [
           { label: "texttocad.studio", href: "https://texttocad.studio" },

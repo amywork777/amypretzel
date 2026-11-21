@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-/* Shared pieces of the Studio page: a frame drawn like an engineering drawing
-   sheet (zone numbers and letters on the border, a title block under it), a
-   wipe that compares two pictures of the same thing, and a hook that lets a
-   frame rise in once as it scrolls into view. All ink, all 1px, no colour:
-   the drawing look comes from line work and labels, the way the homepage's
-   part-drawing mark does. */
+/* Shared pieces of the Studio page: a quiet rounded frame with one caption
+   line, a wipe that compares two pictures of the same thing, and a hook that
+   lets a frame rise in once as it scrolls into view. Ink and hairlines only:
+   the pictures of Studio are the only things with colour in them. */
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -26,21 +24,17 @@ export function useReveal<T extends HTMLElement>() {
   return [ref, seen] as const;
 }
 
-/** A frame with a drawing border: zone numbers along the top, letters down
-    the side, and a title block (figure number, title, a note) under it. */
-export function Sheet({ fig, title, note, children, className }: { fig: string; title: string; note?: ReactNode; children: ReactNode; className?: string }) {
+/** A quiet frame for a picture of Studio: the stage on the media surface,
+    rounded, with one caption line under it (the title in ink, a note in soft
+    ink on the right). It rises in once as it scrolls into view. */
+export function Sheet({ title, note, children, className }: { title: string; note?: ReactNode; children: ReactNode; className?: string }) {
   const [ref, seen] = useReveal<HTMLElement>();
   return (
     <figure ref={ref} className={`st-sheet${className ? ` ${className}` : ""}`} data-in={seen || undefined}>
-      <div className="st-zones st-zones--x" aria-hidden="true">{[1, 2, 3, 4, 5, 6].map(n => <span key={n}>{n}</span>)}</div>
-      <div className="st-sheet-body">
-        <div className="st-zones st-zones--y" aria-hidden="true">{["A", "B", "C", "D"].map(n => <span key={n}>{n}</span>)}</div>
-        <div className="st-sheet-stage">{children}</div>
-      </div>
-      <figcaption className="st-block">
-        <span className="st-block-cell st-block-fig"><span className="st-block-key">Fig.</span>{fig}</span>
-        <span className="st-block-cell st-block-title"><span className="st-block-key">Title</span>{title}</span>
-        {note && <span className="st-block-cell st-block-note"><span className="st-block-key">Note</span>{note}</span>}
+      <div className="st-sheet-stage">{children}</div>
+      <figcaption className="st-cap">
+        <span className="st-cap-t">{title}</span>
+        {note && <span className="st-cap-n">{note}</span>}
       </figcaption>
     </figure>
   );
@@ -69,7 +63,7 @@ export function Wipe({ before, after, beforeLabel, afterLabel, ratio, label, swe
       const t0 = performance.now(), leg = 650;
       const tick = (t: number) => {
         if (touched.current) return;
-        const k = Math.min((t - t0) / leg, keys.length - 1);
+        const k = Math.max(0, Math.min((t - t0) / leg, keys.length - 1));
         const i = Math.min(Math.floor(k), keys.length - 2), f = k - i;
         const ease = f < .5 ? 2 * f * f : 1 - (-2 * f + 2) ** 2 / 2;
         setPos(keys[i] + (keys[i + 1] - keys[i]) * ease);
