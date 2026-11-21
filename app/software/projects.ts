@@ -311,7 +311,7 @@ type Picture = {
 };
 const pictures: Record<string, Picture> = {
   "region-maps": { image: "/work/region-maps.webp", video: { src: "/software/region-maps/lead.mp4", poster: "/software/region-maps/lead.webp", width: 1280, height: 720 } },
-  studio: { image: "/work/studio.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
+  studio: { image: "/work/studio-cover.webp", video: { src: "/software/studio/build.mp4", poster: "/software/studio/build.webp", width: 1280, height: 720 } },
   lipflow: { image: "/home/lipflow-in-use.webp", video: { src: "/software/lipflow/demo.mp4", poster: "/software/lipflow/poster.webp", width: 720, height: 1280, sound: true } },
   "cute-ghostty": { image: "/work/cute-ghostty.webp", video: { src: "/software/cute-ghostty/demo.mp4", poster: "/software/cute-ghostty/poster.webp", width: 872, height: 720 } },
   "voice-input": { image: "/work/voice-input.webp", video: { src: "/software/voice-input/demo.mp4", poster: "/software/voice-input/demo.webp", width: 1146, height: 720, sound: true } },
