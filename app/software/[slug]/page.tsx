@@ -11,7 +11,7 @@ import { renderBody } from "../../lib/render-body";
 import { splitLinks, localVideo, type Embed } from "../../lib/embed";
 import { Embeds } from "../../lib/embeds";
 import { softwareProjects } from "../projects";
-import { demos, videoFirst } from "../../demos";
+import { demos, demosAfter, videoFirst } from "../../demos";
 
 const SITE_URL = "https://amypretzel.com";
 
@@ -49,6 +49,7 @@ export default async function SoftwareProjectPage({
 
   const picture = project.picture;
   const Demo = demos[project.slug];
+  const After = demosAfter[project.slug];
   // The page is headed by its homepage row (one line, the year) and walks
   // the homepage order with Previous and Next.
   const href = `/software/${project.slug}`;
@@ -124,6 +125,8 @@ export default async function SoftwareProjectPage({
       </section>
 
       {Demo && picture?.video && !videoFirst.has(project.slug) && <LeadVideo {...picture.video} label={`${project.title} demo`} className={picture.video.height > picture.video.width ? "ui-media ui-lead-video ui-lead-video--tall ui-after-text" : "ui-media ui-lead-video ui-after-text"} />}
+
+      {After && <After />}
 
       {project.photos && (
         <section className="ui-photo-pair">

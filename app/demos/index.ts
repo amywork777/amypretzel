@@ -23,11 +23,20 @@ export const demos: Record<string, ComponentType> = {
   "harp-instrument": dynamic(() => import("./harp-instrument")),
   "clarinet-tuning-barrel": dynamic(() => import("./clarinet-tuning-barrel")),
   "lil-spider-maze": dynamic(() => import("./lil-spider-maze")),
+  "studio": dynamic(() => import("./studio")),
+};
+
+/** A second, longer demo that sits after a page's text, for a page with more
+    to show than one frame holds. Studio: a tab per part of the app, then a
+    model to turn over. */
+export const demosAfter: Record<string, ComponentType> = {
+  "studio": dynamic(() => import("./studio-tour")),
 };
 
 /** Pages whose real video is better than the mini demo: the video keeps the
     lead and the demo sits right under it. Amy asked for this on Lipflow
     (her video shows the real lip reading); Smart Dropper's launch shows the
     real tool working and Cute Ghostty's the real terminal, where the demos
-    replay or imitate. */
-export const videoFirst = new Set(["region-maps", "lipflow", "smart-dropper", "cute-ghostty"]);
+    replay or imitate. Studio's build film leads, and the drawing-to-CAD
+    comparison sits under it. */
+export const videoFirst = new Set(["region-maps", "lipflow", "smart-dropper", "cute-ghostty", "studio"]);

@@ -182,10 +182,10 @@ A part that looks right in a chat can still be too thin to machine, collide with
 - Strength and fit checks, and manufacturability checks for CNC, 3D printing, molding and sheet metal, run on the model itself
 - It runs on your own Claude or ChatGPT account, so there's no extra AI bill
 - Every project is an ordinary folder on your computer, with each change saved as a version, so nothing is locked inside the app
+- Under it: build123d and OpenCASCADE for the geometry, with my own feature tree on top; Netgen and CalculiX for strength checks; FreeCAD for toolpaths
 
-The two clips below show a strength check and a drawing.`,
+It's free at texttocad.studio. Below, a tab for each part of the job, and a model to turn over.`,
         tags: ["AI CAD", "Desktop app", "Open source"],
-        photos: ["/software/studio/simulate.mp4", "/software/studio/drawing.mp4"],
         links: [
           { label: "texttocad.studio", href: "https://texttocad.studio" },
           { label: "GitHub", href: "https://github.com/amywork777/studio" },
