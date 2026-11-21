@@ -12,7 +12,7 @@ import { BoilDefs } from "./taste/boil/Boil";
    - Physical products: an iPad folio and an iPhone case as a part drawing,
      with a centreline and a height dimension (Amy: "more hardware engineer-y")
    - AI tools for designers: a pencil drawing a line, with a spark
-   - 3D and CAD: a wireframe cube with a dimension line
+   - CAD software: a wireframe cube with a dimension line
    - Tools and toys: a little ghost, after Cute Ghostty */
 
 function Mark({ children, label }: { children: ReactNode; label: string }) {

@@ -29,17 +29,15 @@ export type WorkGroup = {
 
 export const workGroups: WorkGroup[] = [
   {
-    id: "products",
-    title: "Physical products",
-    short: "Products",
-    note: "Things I designed and took from sketch to factory.",
+    id: "cad",
+    title: "CAD software",
+    short: "CAD software",
+    note: "Software and data for turning ideas into real CAD.",
     items: [
-      object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026", "AI agents did the CAD and found the factory."),
-      object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025", "Co-founded; raised about $5M, a16z speedrun."),
-      object("iphone-finewoven", "Led materials and integration.", "2023", "Patent co-inventor."),
-      object("ipad-smart-folio", "Apple accessories."),
+      app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
+      object("ai-jewelry", "AI that turns a sketch or photo into cast jewelry.", "2025"),
+      app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
     ],
-    earlier: studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, ...thumbOf(p.slug), title: p.title, text: p.role })),
   },
   {
     id: "ai-tools",
@@ -54,15 +52,17 @@ export const workGroups: WorkGroup[] = [
     ],
   },
   {
-    id: "cad",
-    title: "3D and CAD",
-    short: "3D and CAD",
-    note: "Software and data for turning ideas into real CAD.",
+    id: "products",
+    title: "Physical products",
+    short: "Products",
+    note: "Things I designed and took from sketch to factory.",
     items: [
-      app("studio", "Open-source AI CAD for mechanical engineers.", "2026"),
-      object("ai-jewelry", "AI that turns a sketch or photo into cast jewelry.", "2025"),
-      app("cad-steps", "A dataset of CAD models built step by step.", "2026"),
+      object("folding-yoga-mat", "From a creator's render to a manufactured mat.", "2026", "AI agents did the CAD and found the factory."),
+      object("taya-pendant", "A wearable AI journal designed as jewelry.", "2025", "Co-founded; raised about $5M, a16z speedrun."),
+      object("iphone-finewoven", "Led materials and integration.", "2023", "Patent co-inventor."),
+      object("ipad-smart-folio", "Apple accessories."),
     ],
+    earlier: studyProjects.map(p => ({ href: `/portfolio/${p.slug}`, ...thumbOf(p.slug), title: p.title, text: p.role })),
   },
   {
     id: "tools",
