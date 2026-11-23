@@ -22,6 +22,8 @@ const personJsonLd = {
   ],
   knowsAbout: [
     "Product design",
+    "CAD software",
+    "AI tools for engineers",
     "Mechanical engineering",
     "Industrial design",
     "AI hardware",

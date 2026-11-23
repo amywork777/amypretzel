@@ -14,6 +14,10 @@
 .st-chapter { max-width: 40em; margin-bottom: var(--space-6); }
 .st-head { margin: 0; font-size: clamp(22px, 2vw, 28px); font-weight: 400; line-height: 1.15; letter-spacing: -.03em; color: var(--color-ink); text-wrap: balance; }
 .st-lede { margin: var(--space-3) 0 0; font-size: var(--text-base); line-height: 1.5; color: var(--color-ink-soft); text-wrap: pretty; }
+/* On a case study page the text's own chapters ("The design problem") are
+   titled like the picture chapters after it, so the page has one rhythm. */
+.ui-page:has(.st-chapter) .ui-detail-body h2 { margin-bottom: var(--space-3); font-size: clamp(22px, 2vw, 28px); font-weight: 400; line-height: 1.15; letter-spacing: -.03em; text-wrap: balance; }
+.ui-page:has(.st-chapter) .ui-detail-body :is(p, ul, ol) + h2 { margin-top: var(--space-8); }
 .st-after { display: flex; flex-direction: column; gap: var(--space-9); margin-top: var(--space-9); }
 .st-after .ui-try { margin-block: 0; }
 

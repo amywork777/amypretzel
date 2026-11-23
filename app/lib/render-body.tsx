@@ -4,6 +4,8 @@ import type React from "react";
    - lines starting with `## ` become h2
    - lines starting with `### ` become h3
    - lines starting with `- ` become list items (consecutive ones group)
+   - lines starting with `1. ` become numbered points set side by side
+     (.ui-points): the first sentence is the point's title, the rest its text
    - **bold** becomes <strong>
    - blank-line-separated paragraphs otherwise
 */
@@ -22,6 +24,26 @@ export function renderBody(body: string) {
             <li key={i}>{renderInline(l.replace(/^-\s+/, ""))}</li>
           ))}
         </ul>
+      );
+      return;
+    }
+
+    // numbered points: "1. Title sentence. The rest."
+    if (lines.every((l) => /^\d+\.\s/.test(l.trim()))) {
+      blocks.push(
+        <ol key={bi} className="ui-points">
+          {lines.map((l, i) => {
+            const text = l.trim().replace(/^\d+\.\s+/, "");
+            const cut = text.indexOf(". ");
+            return (
+              <li key={i}>
+                <span className="ui-point-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <strong>{cut < 0 ? text : text.slice(0, cut)}</strong>
+                {cut >= 0 && <span>{renderInline(text.slice(cut + 2))}</span>}
+              </li>
+            );
+          })}
+        </ol>
       );
       return;
     }

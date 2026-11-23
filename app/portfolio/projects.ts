@@ -112,7 +112,7 @@ Taiyaki Jewelry pairs image-conditioned 3D generation with a CAD-style geometry 
 
 ## Technical overview
 
-The pipeline is engineered for *castability*, not just rendering. The output of the model has to survive being printed in resin, invested in plaster, burned out, replaced with molten metal, and finished by hand. Generative geometry that doesn't account for any of that physical reality produces a beautiful render and a broken casting.
+The pipeline is engineered for castability, not just rendering. The output of the model has to survive being printed in resin, invested in plaster, burned out, replaced with molten metal, and finished by hand. Generative geometry that doesn't account for any of that physical reality produces a beautiful render and a broken casting.
 
 ### Geometry pipeline
 

@@ -119,6 +119,13 @@ button:disabled { cursor: default; }
 .ui-prose li { margin-bottom: .25em; }
 .ui-prose li::marker { color: var(--color-ink-muted); }
 .ui-prose strong { color: var(--color-ink); font-weight: 500; }
+/* Numbered points set side by side on hairlines (a case study's goals): the
+   number in muted figures, the point in ink, its reason soft under it. */
+.ui-points { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-5); margin: var(--space-5) 0 var(--space-6); padding: 0; }
+.ui-points li { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; padding-top: var(--space-3); border-top: var(--line) solid var(--color-rule); font-size: var(--text-base); line-height: 1.45; color: var(--color-ink-soft); }
+.ui-point-n { font-size: var(--text-sm); color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+.ui-points strong { margin-bottom: var(--space-1); text-wrap: balance; }
+.ui-points span { text-wrap: pretty; }
 
 /* === LINKS === */
 /* Every link is the pill button, sized to the text around it so it can sit

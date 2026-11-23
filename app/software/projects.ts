@@ -176,18 +176,15 @@ I designed and built Studio end to end, in the open: what sits where on the scre
 
 Most AI apps are built for code, and most AI 3D tools make meshes: a shape you can look at but can't dimension, edit or send to a machine shop. Engineers work in feature trees, in CAD they've used for years, and they put their name on what gets made. A part that looks right in a chat can still be too thin to machine or collide with the part it mates to. So the AI can't have the last word, and the interface's job is to keep the engineer in charge without asking them to learn a new tool. Three goals came out of that:
 
-- Keep the engineer in charge. The AI drafts and you decide: every step sits in the feature tree, and anything it had to assume is written down so you know what to check
-- Get all the way to a made part. Checks, drawings and toolpaths sit next to the model, so "will it hold?" and "can it be made?" get asked while a change is still cheap
-- Keep the work your own. It runs on your own Claude or ChatGPT account, so there's no extra AI bill, and every project is an ordinary folder on your computer
+1. Keep the engineer in charge. The AI drafts and you decide: every step sits in the feature tree, and anything it had to assume is written down so you know what to check.
+2. Get all the way to a made part. Checks, drawings and toolpaths sit next to the model, so "will it hold?" and "can it be made?" get asked while a change is still cheap.
+3. Keep the work your own. It runs on your own Claude or ChatGPT account, so there's no extra AI bill, and every project is an ordinary folder on your computer.
 
 ### How it went
 
-- The model sits beside the chat, never under it, so you watch the part change while you talk, and fix a step in words or by hand, whichever is faster
 - The layout comes from SolidWorks, which most engineers learned on: the ribbon, the FeatureManager and the view cube are where they expect, so the only new thing on screen is the AI
 - I wrote the interface's rules down as laws that every change is checked against, a few of them by lint: engineering words rather than git's, colour only for passed, warning and failed, no made-up numbers
 - Changing a number rebuilds from that step, so you steer a design instead of re-rolling it
-- It says what it doesn't know: a derived dimension is labelled derived, and a machine program that hasn't been run on a machine is labelled unproven
-- Each change is saved as a version, so trying an idea never costs you the last good one
 - Under it: build123d and OpenCASCADE for the geometry, with my own feature tree on top; Netgen and CalculiX for strength checks; FreeCAD for toolpaths
 
 It's free at texttocad.studio.`,
